@@ -1,0 +1,151 @@
+.columna_marcada1{
+  background:#abc8f7;
+  color: #000000;
+}
+
+.titulo{
+    text-decoration: underline;
+    font-style: italic;
+}
+.subtitulo{
+    font-size: 0.7em;
+}
+.fecha{
+    float: right;
+}
+
+.titulotabla{
+    background: #4285f4;
+    color: #fff;
+    font-weight: bold;
+}
+.tabladp{
+    background: #bababa;
+    color:#fff;
+}
+.tablaho{
+    background: #37b358;
+    color:#fff;
+}
+.tablamar{
+    background: #4285f4;
+    color:#fff;
+}
+.tablaagrupado{
+    background: #ea4335;
+    color:#fff;
+}
+.reportevacadesc{
+        background: #ea4335;
+    color: #fff;
+    font-weight: bold;
+}
+.center{
+    text-align: center;
+}
+.fila{
+    font-size: 1.2em;
+}
+
+.fila p{
+    text-align: left;
+    color:#999999;
+    margin: 1px;
+    font-size: 0.85em;
+    font-weight: bold;
+    font-style: italic;    
+}
+.fila .punto{
+    border-radius: 2px;
+    width: 4px;
+    height: 4px;
+    text-align: center;
+    margin: 7px auto;
+}
+.fila .noasistio{
+    background: #ea4335;
+}
+.fila .asistio{
+    background: #28a745;
+}
+
+.fila .fecha{
+    font-size: 0.85em;
+    font-weight: bold;
+}
+.fila .hora{
+    font-size: 0.85em;
+    font-weight: bold;        
+}
+
+.fila .subtitulo{
+    text-align: center;
+    color: black;
+    font-size: 0.7em;
+    font-weight: bold;
+    font-style: inherit;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+.fila .asistencia{
+    color: #2d9147; 
+    font-weight: bold; 
+}
+
+table {
+    border-collapse: collapse;
+    width   : 730px;
+    margin-top: 15px;
+    font-size: 0.7em;    
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/*********** detalle horario ***************/
+h2{
+    text-align: center;
+    font-style: italic;
+    text-decoration: underline;
+}
+.horario{
+    border: 1px solid #000;
+    padding: 0px 5px 5px 10px;
+}
+.center{
+    text-align: center !important;
+}
+.negro{
+    color: #000 !important;
+}
+
+.horario .horainicio{
+    padding-left: 125px;
+}
+.horario .horarefrigeriinicio{
+    padding-left: 110px;
+}
+.horario .horarefrigerifin{
+    padding-left: 100px;
+}
+.horario .horafin{
+    padding-left: 131px;
+}
+
+
+.horario .activo{
+    color: #37b358 !important;
+}
+.horario .desactivo{
+    color: #eb6357 !important;    
+}
+
+.tablafila2{
+  background: #e6e3e3;
+}
+.tablafila1{
+  background: #ffffff;
+}
