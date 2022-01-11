@@ -160,7 +160,12 @@ class UserController extends Controller
 	    if($validarurl <> 'true'){return $validarurl;}
 	    /******************************************************/
 	    View::share('titulo','Lista de usuarios');
-	    $listausuarios = User::where('id','<>',$this->prefijomaestro.'00000001')->orderBy('id', 'asc')->get();
+        $array_rols    = WEBRol::where('ind_meta','=',1)
+                         ->pluck('id')
+                         ->toArray();
+                 
+	    $listausuarios = User::where('id','<>',$this->prefijomaestro.'00000001')
+	    				->whereIn('rol_id',$array_rols)->orderBy('id', 'asc')->get();
 
 		return View::make('usuario/listausuarios',
 						 [
@@ -278,7 +283,8 @@ class UserController extends Controller
 	    if($validarurl <> 'true'){return $validarurl;}
 	    /******************************************************/
 	    View::share('titulo','Lista de Roles');
-	    $listaroles = WEBRol::where('id','<>',$this->prefijomaestro.'00000001')->orderBy('id', 'asc')->get();
+	    $listaroles = WEBRol::where('id','<>',$this->prefijomaestro.'00000001')
+	    				->where('ind_meta','=',1)->orderBy('id', 'asc')->get();
 
 		return View::make('usuario/listaroles',
 						 [
@@ -312,6 +318,7 @@ class UserController extends Controller
 
 			$cabecera            	 =	new WEBRol;
 			$cabecera->id 	     	 =  $idrol;
+			$cabecera->ind_meta 	 =  1;
 			$cabecera->fecha_crea 	 =  $this->fechaactual;
 			$cabecera->nombre 	     =  $request['nombre'];
 			$cabecera->save();
@@ -403,7 +410,8 @@ class UserController extends Controller
 	    if($validarurl <> 'true'){return $validarurl;}
 	    /******************************************************/
 	     View::share('titulo','Lista Permisos');
-	    $listaroles = WEBRol::where('id','<>',$this->prefijomaestro.'00000001')->orderBy('id', 'asc')->get();
+	    $listaroles = WEBRol::where('id','<>',$this->prefijomaestro.'00000001')
+	    				->where('ind_meta','=',1)->orderBy('id', 'asc')->get();
 
 		return View::make('usuario/listapermisos',
 						 [

@@ -45,6 +45,14 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-listado-de-opciones', 'UserController@actionAjaxListarOpciones');
 	Route::any('/ajax-activar-permisos', 'UserController@actionAjaxActivarPermisos');
 
+	Route::any('/gestion-plan-contable/{idopcion}', 'PlanContableController@actionListarPlanContable');
+	Route::any('/ajax-plan-contable', 'PlanContableController@actionAjaxListarPlanContable');
+	Route::any('/ajax-modal-configuracion-plan-contable', 'PlanContableController@actionAjaxConfiguracionPlanContable');
+	Route::any('/guardar-configuracion-cuenta-contable/{idopcion}', 'PlanContableController@actionGuardarConfiguracionPlanContable');
+
+
+
+
 
    	Route::any('/enviocorreos', 'CorreoController@enviocorreo');
    	Route::any('/pruebaquery', 'PruebaController@pruebas');

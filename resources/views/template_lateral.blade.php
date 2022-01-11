@@ -55,6 +55,7 @@
     <script src="{{ asset('public/lib/scroll/js/jquery-scrollpanel-0.7.0.js') }}" type="text/javascript"></script>
     <script src="{{ asset('public/lib/scroll/js/scroll.js') }}" type="text/javascript"></script>   
     <script src="{{ asset('public/js/general/general.js?v='.$version) }}" type="text/javascript"></script>
+    <script src="{{ asset('public/js/general/gmeta.js?v='.$version) }}" type="text/javascript"></script>
 
     @yield('script')
 

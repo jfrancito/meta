@@ -11,6 +11,18 @@ var App = (function () {
         "<'row be-datatable-footer'<'col-sm-5'i><'col-sm-7'p>>"
     } );
 
+    $("#nso").dataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf'
+        ],
+        "lengthMenu": [[500, 1000, -1], [500, 1000, "All"]],
+        columnDefs:[{
+            targets: "_all",
+            sortable: false
+        }]
+    });
+
 
     $("#table1").dataTable({
         dom: 'Bfrtip',
