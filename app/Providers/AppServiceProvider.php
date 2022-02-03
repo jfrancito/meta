@@ -22,8 +22,9 @@ class AppServiceProvider extends ServiceProvider
         
         Schema::defaultStringLength(191);    
         View::share('capeta', '/meta');  
-        View::share('version', '1.33');
+        View::share('version', '1.66');
         View::share('titulo', '');
+        View::share('redondeo', 4);
 
         Validator::extend('unico', function($attribute, $value, $parameters , $validator){
             $tabla      = $parameters[0].'.'.$parameters[1];

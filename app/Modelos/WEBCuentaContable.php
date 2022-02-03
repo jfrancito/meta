@@ -12,4 +12,10 @@ class WEBCuentaContable extends Model
 	public $incrementing = false;
 	public $keyType = 'string';
 
+    public function asientomodelodetalle()
+    {
+        return $this->hasMany('App\Modelos\WEBAsientoModeloDetalle', 'cuenta_contable_id', 'id');
+    }
+
+
 }

@@ -119,6 +119,23 @@ class PlanContableController extends Controller
 
 	}
 
+	public function actionAjaxComboCuentaContableNivel(Request $request)
+	{
+
+		$nivel 					=   $request['nivel'];
+		$anio  					=   $this->anio;
+		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel(Session::get('empresas_meta')->COD_EMPR,$nivel,$anio);
+		$combo_cuenta  			= 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
+		$defecto_cuenta			= 	'';
+
+		return View::make('plancontable/combo/cnrocuentanombre',
+						 [		 	
+						 	'combo_cuenta' 			=> $combo_cuenta,
+						 	'defecto_cuenta' 		=> $defecto_cuenta,
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
 
 
 
