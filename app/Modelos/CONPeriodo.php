@@ -18,6 +18,17 @@ class CONPeriodo extends Model
     }
 
 
+    public function migrar_venta()
+    {
+        return $this->hasMany('App\Modelos\WEBHistorialMigrar', 'COD_PERIODO', 'COD_PERIODO');
+    }
+
+    public function documento_ctble()
+    {
+        return $this->hasMany('App\Modelos\CMPDocumentoCtble', 'COD_PERIODO', 'COD_PERIODO');
+    }
+
+
 }
 
 

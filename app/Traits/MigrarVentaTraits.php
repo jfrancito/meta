@@ -87,7 +87,7 @@ trait MigrarVentaTraits
 
 
 
-	private function mv_agregar_historial_ventas($lista_ventas_migrar_emitida,$lista_ventas_migrar_anulada)
+	private function mv_agregar_historial_ventas($lista_ventas_migrar_emitida,$lista_ventas_migrar_anulada,$tipo_asiento)
 	{
 	
 		//ver e insertar uno a uno los documentos
@@ -96,7 +96,8 @@ trait MigrarVentaTraits
 
 			$documento_anulado 							=   1;
 			$documento_ctble 							= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$item->COD_DOCUMENTO_CTBLE)->first();
-			$historialmigrar 							=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$item->COD_DOCUMENTO_CTBLE)->first();
+			$historialmigrar 							=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$item->COD_DOCUMENTO_CTBLE)
+															->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
 
 			if($documento_ctble->COD_CATEGORIA_ESTADO_DOC_CTBLE == 'EDC0000000000002'){
 				$documento_anulado 						=   0;
@@ -137,7 +138,8 @@ trait MigrarVentaTraits
 
 			$documento_anulado 							=   0;
 			$documento_ctble 							= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$item->COD_DOCUMENTO_CTBLE)->first();
-			$historialmigrar 							=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$item->COD_DOCUMENTO_CTBLE)->first();
+			$historialmigrar 							=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$item->COD_DOCUMENTO_CTBLE)
+															->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
 
 
 			if(count($historialmigrar)<=0){
@@ -175,32 +177,53 @@ trait MigrarVentaTraits
 
 
 
-	private function mv_lista_ventas_asignar()
+	private function mv_lista_ventas_asignar($tipo_asiento)
 	{
 		
 		$array_empresas  		    = 		$this->mv_array_empresa_venta();
-
 		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
 											->where('IND_ASIENTO_MODELO','=',0)
 											->where('IND_ERROR','<>',1)
-											//->where('ind_anulado','=',0)
+											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
 											->get();
+		return $lista_ventas;
 
+	}
+
+	private function mv_lista_ventas_asignar_xdocumento($documento_id,$tipo_asiento)
+	{
+		
+		$array_empresas  		    = 		$this->mv_array_empresa_venta();
+		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
+											->where('IND_ASIENTO_MODELO','=',0)
+											->where('COD_REFERENCIA','=',$documento_id)
+											->where('IND_ERROR','<>',1)
+											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
+											->get();
 		return $lista_ventas;
 
 	}
 
 
+	private function mv_lista_ventas_observadas($tipo_asiento,$empresa_id)
+	{
+		
 
+		$array_empresas  		    = 		$this->mv_array_empresa_venta();
+		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
+											->where('IND_ASIENTO_MODELO','=',-1)
+											->where('IND_ERROR','=',1)
+											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
+											->where('COD_EMPR','=',$empresa_id)
+											->orderby('COD_REFERENCIA','asc')
+											->get();
+		return $lista_ventas;
 
+	}
 
-
-
-
-	private function mv_asignar_asiento_modelo($historialmigrar)
+	private function mv_asignar_asiento_modelo($historialmigrar,$tipo_asiento)
 	{
 	
-		$tipo_asiento 				=		'TAS0000000000003';
 		$documento_ctble 			= 		CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$historialmigrar->COD_REFERENCIA)->first();
 		$periodo 					= 		CONPeriodo::where('COD_PERIODO','=',$documento_ctble->COD_PERIODO)->first();
 		$anio 						= 		$periodo->COD_ANIO;
@@ -235,10 +258,10 @@ trait MigrarVentaTraits
 
 
 
-	private function mv_update_historial_ventas($documento_ctble_cod)
+	private function mv_update_historial_ventas($documento_ctble_cod,$tipo_asiento)
 	{
 	
-		$tipo_asiento 				=		'TAS0000000000003';
+
 		$documento_ctble 			= 		CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$documento_ctble_cod)->first();
 		$periodo 					= 		CONPeriodo::where('COD_PERIODO','=',$documento_ctble->COD_PERIODO)->first();
 		$anio 						= 		$periodo->COD_ANIO;
@@ -269,14 +292,14 @@ trait MigrarVentaTraits
       		$mensaje = $row['mensaje'];
       		$asiento_modelo_id = $row['asiento_modelo_id'];
 
-      		$historialmigrar 						=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$documento_ctble_cod)->first();
+      		$historialmigrar 						=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$documento_ctble_cod)
+      													->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
 			
       		if($codigo=='1'){
 
 				$historialmigrar->IND_ERROR 			=   -1;
 				$historialmigrar->IND_ASIENTO_MODELO 	=   0;
 				$historialmigrar->COD_ASIENTO_MODELO 	=   $asiento_modelo_id;
-				$historialmigrar->TXT_ERROR 			=   '';
 				$historialmigrar->IND_CORREO 			=   -1;
 				$historialmigrar->save();
 

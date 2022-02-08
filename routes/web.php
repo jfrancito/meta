@@ -71,6 +71,10 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-registro-diario', 'RegistroDiarioController@actionAjaxRegistroDiario');
 	Route::any('/ajax-modal-detalle-asiento', 'RegistroDiarioController@actionAjaxModalDetalleAsiento');
 
+	Route::any('/gestion-observacion-documentos-ventas', 'MigrarVentaController@actionListarObservacionDocumentos');
+	Route::any('/ajax-modal-detalle-producto-migracion-ventas', 'MigrarVentaController@actionAjaxModalDetalleProductoMigracionVentas');
+	Route::any('/generar-asiento-contables-xdocumentos', 'MigrarVentaController@actionGenerarAsientoContablesXDocumentos');
+
 
    	Route::any('/enviocorreos', 'CorreoController@enviocorreo');
    	Route::any('/pruebaquery', 'PruebaController@pruebas');

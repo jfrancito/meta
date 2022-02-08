@@ -14,4 +14,14 @@ class WEBHistorialMigrar extends Model
     public $keyType = 'string';
 
    
+    public function periodo()
+    {
+        return $this->belongsTo('App\Modelos\CONPeriodo', 'COD_PERIODO', 'COD_PERIODO');
+    }
+
+    public function documento_ctble()
+    {
+        return $this->belongsTo('App\Modelos\CMPDocumentoCtble', 'COD_REFERENCIA', 'COD_DOCUMENTO_CTBLE');
+    }
+
 }

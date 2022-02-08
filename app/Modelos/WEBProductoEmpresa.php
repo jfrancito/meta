@@ -14,4 +14,14 @@ class WEBProductoEmpresa extends Model
     public $keyType = 'string';
 
     
+    public function cuentacontabletercero()
+    {
+        return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_tercero_id', 'id');
+    }
+
+    public function cuentacontablerelacionada()
+    {
+        return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_relacionada_id', 'id');
+    }
+
 }

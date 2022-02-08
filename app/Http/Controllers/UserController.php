@@ -14,8 +14,12 @@ use Session;
 use Hashids;
 
 
+use App\Traits\MigrarVentaTraits;
+
 class UserController extends Controller
 {
+
+	use MigrarVentaTraits;
 
     public function actionLogin(Request $request){
 
@@ -128,7 +132,16 @@ class UserController extends Controller
 	{
 
 		View::share('titulo','Bienvenido Sistema Contable "☯ META"');
-		return View::make('bienvenido');
+
+
+	    $tipo_asiento 					=	'TAS0000000000003';	
+		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento,Session::get('empresas_meta')->COD_EMPR);
+
+
+		return View::make('bienvenido',
+						 [
+						 	'lista_ventas' => $lista_ventas,
+						 ]);
 	}
 
 	public function actionCerrarSesion()

@@ -8,6 +8,27 @@
 
 @section('section')
 
+  <div class="be-content">
+    <div class="main-content container-fluid">
+        <div class="row">
+            <div class="col-xs-12 col-md-6 col-lg-3">
+                <div class="widget widget-tile">
+                  <div id="spark1" class="chart sparkline"></div>
+                  <div class="data-info">
+                    <div class="desc">Ventas sin asiento</div>
+                    <div class="value">
+                        <a href="{{ url('/gestion-observacion-documentos-ventas') }}">
+                            <span class="indicator indicator-equal mdi mdi-chevron-right">
+                            </span><span data-toggle="counter" data-end="{{count($lista_ventas)}}" class="number">0</span>
+                        </a>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
 
 @stop 
 
