@@ -40,7 +40,10 @@ trait MigrarVentaTraits
 											->pluck('COD_PERIODO')
 											->toArray();
 
-		$lista_migrar_ventas		=		WEBViewMigrarVenta::leftJoin('WEB.historialmigrar', 'WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+		$lista_migrar_ventas		=		WEBViewMigrarVenta::leftJoin('WEB.historialmigrar', function ($join) {
+									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+									                 ->where('WEB.historialmigrar.IND_ASIENTO_MODELO', '=', 1);
+									        })
 											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
 											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
 											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
@@ -49,7 +52,6 @@ trait MigrarVentaTraits
 											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
 											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
 											->get();
-
 
 		return $lista_migrar_ventas;
 
