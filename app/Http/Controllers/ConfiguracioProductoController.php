@@ -20,7 +20,7 @@ use Keygen;
 use App\Traits\GeneralesTraits;
 use App\Traits\PlanContableTraits;
 use App\Traits\ConfiguracionProductoTraits;
-
+use App\Traits\MigrarVentaTraits;
 
 class ConfiguracioProductoController extends Controller
 {
@@ -28,6 +28,7 @@ class ConfiguracioProductoController extends Controller
 	use GeneralesTraits;
 	use PlanContableTraits;
 	use ConfiguracionProductoTraits;
+	use MigrarVentaTraits;
 
 	public function actionListarConfiguracionProducto($idopcion)
 	{
@@ -43,16 +44,19 @@ class ConfiguracioProductoController extends Controller
         $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 
-		$array_productos_empresa    	=	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
-											->where('anio','=',$anio)
-											->pluck('producto_id')
-											->toArray();
-		$empresa_id 					=   Session::get('empresas_meta')->COD_EMPR;
+		// $array_productos_empresa    	=	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+		// 									->where('anio','=',$anio)
+		// 									->pluck('producto_id')
+		// 									->toArray();
 
+		$empresa_id 					=   Session::get('empresas_meta')->COD_EMPR;
+		$tipo_asiento 					=	'TAS0000000000003';
+		$lista_productos_sc 		 	= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento,$empresa_id,$anio);
+		$array_productos_empresa    	=	ALMProducto::whereIn('COD_PRODUCTO',$lista_productos_sc)
+											->pluck('COD_PRODUCTO')
+											->toArray();
 
 		$lista_configuracion_producto 	= 	$this->cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa);
-
-
 		$defecto_producto				= 	'';
 
 		return View::make('configuracionproducto/listaconfiguracionproducto',
@@ -93,6 +97,8 @@ class ConfiguracioProductoController extends Controller
 						 	'ajax' 							=> true,						 	
 						 ]);
 	}
+
+
 
 
 	public function actionAjaxModalConfiguracionProductoCuentaContable(Request $request)

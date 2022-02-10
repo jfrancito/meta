@@ -78,8 +78,7 @@ function ajax_normal_guardar_lista(data,link,btnclick) {
         data    :   data,
         success: function (data) {
             cerrarcargando();
-            //console.log(data);
-            $('.'+btnclick).click();
+            location.reload();
         },
         error: function (data) {
             cerrarcargando();

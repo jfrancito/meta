@@ -11,20 +11,27 @@
   <div class="be-content">
     <div class="main-content container-fluid">
         <div class="row">
-            <div class="col-xs-12 col-md-6 col-lg-3">
-                <div class="widget widget-tile">
-                  <div id="spark1" class="chart sparkline"></div>
-                  <div class="data-info">
-                    <div class="desc">Ventas sin asiento</div>
-                    <div class="value">
-                        <a href="{{ url('/gestion-observacion-documentos-ventas') }}">
-                            <span class="indicator indicator-equal mdi mdi-chevron-right">
-                            </span><span data-toggle="counter" data-end="{{count($lista_ventas)}}" class="number">0</span>
-                        </a>
-                    </div>
+
+            <div class="col-xs-12 col-md-3">
+              <div class="panel panel-default">
+                <div class="panel-heading panel-heading-divider xs-pb-15">Diario Ventas</div>
+                <div class="panel-body xs-pt-25">
+                  <div class="row user-progress user-progress-small">
+                    <div class="col-md-12"><span class="title">
+                        <a href="{{ url('/gestion-observacion-documentos-ventas') }}">Ventas sin asiento ({{count($lista_ventas)}})</a>
+                    </span></div>
                   </div>
+
+                  <div class="row user-progress user-progress-small">
+                    <div class="col-md-12"><span class="title">
+                        <a href="{{ url('/gestion-configuracion-producto/1R') }}">Productos sin configurar ({{count($lista_productos_sc)}})</a>
+                    </span></div>
+                  </div>
+
                 </div>
+              </div>
             </div>
+
         </div>
     </div>
   </div>

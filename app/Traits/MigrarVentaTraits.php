@@ -13,6 +13,8 @@ use App\Modelos\CONPeriodo;
 use App\Modelos\WEBViewMigrarVenta;
 use App\Modelos\CMPDocumentoCtble;
 use App\Modelos\WEBHistorialMigrar;
+use App\Modelos\CMPDetalleProducto;
+use App\Modelos\WEBProductoEmpresa;
 
 use View;
 use Session;
@@ -222,6 +224,38 @@ trait MigrarVentaTraits
 		return $lista_ventas;
 
 	}
+
+
+
+
+	private function mv_lista_productos_sin_configuracion($tipo_asiento,$empresa_id,$anio)
+	{
+		
+		$array_ventas_con_error		=		WEBHistorialMigrar::where('COD_EMPR','=',$empresa_id)
+											->where('IND_ASIENTO_MODELO','=',-1)
+											->where('IND_ERROR','=',1)
+											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
+											->pluck('COD_REFERENCIA')
+											->toArray();
+
+		$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
+											->where('activo','=',1)
+											->where('anio','=',$anio)
+											->where('cuenta_contable_relacionada_id','<>','')
+											->where('cuenta_contable_tercero_id','<>','')
+											->pluck('producto_id')
+											->toArray();
+
+		$lista_productos_sc			=		CMPDetalleProducto::whereIn('COD_TABLA',$array_ventas_con_error)
+											->whereNotIn('COD_PRODUCTO',$array_producto_empresas)
+											->groupBy('COD_PRODUCTO')
+											->pluck('COD_PRODUCTO')
+											->toArray();
+
+		return $lista_productos_sc;
+
+	}
+
 
 	private function mv_asignar_asiento_modelo($historialmigrar,$tipo_asiento)
 	{

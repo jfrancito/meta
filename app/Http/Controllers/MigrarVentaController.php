@@ -170,8 +170,6 @@ class MigrarVentaController extends Controller
 		$lista_ventas_migrar_anulado 		= 	$this->mv_lista_ventas_migrar_agrupado_anulado();
 		$this->mv_agregar_historial_ventas($lista_ventas_migrar_emitido,$lista_ventas_migrar_anulado,$tipo_asiento);
 
-
-
 		foreach($lista_ventas_migrar_emitido as $index => $item){
 			$respuesta = $this->mv_update_historial_ventas($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
 		}

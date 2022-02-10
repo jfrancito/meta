@@ -133,14 +133,16 @@ class UserController extends Controller
 
 		View::share('titulo','Bienvenido Sistema Contable "☯ META"');
 
+	    $anio  							=   $this->anio;
 
 	    $tipo_asiento 					=	'TAS0000000000003';	
 		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento,Session::get('empresas_meta')->COD_EMPR);
-
+		$lista_productos_sc 		 	= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento,Session::get('empresas_meta')->COD_EMPR,$anio);
 
 		return View::make('bienvenido',
 						 [
-						 	'lista_ventas' => $lista_ventas,
+						 	'lista_ventas' 		 => $lista_ventas,
+						 	'lista_productos_sc' => $lista_productos_sc,
 						 ]);
 	}
 
