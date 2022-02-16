@@ -8,87 +8,106 @@
 @stop
 @section('section')
 
-  <div class="be-content contenido migracion">
+  <div class="be-content contenido archivople">
     <div class="main-content container-fluid">
           <div class="row">
             <div class="col-sm-12">
               <div class="panel panel-default panel-border-color panel-border-color-success">
-                <div class="panel-heading">Observaciones de las Ventas
+                <div class="panel-heading">Libros Electronicos - PLE
                   <div class="tools tooltiptop">
 
-                    <a href="#" class="tooltipcss opciones buscarregistrodiario">
-                      <span class="tooltiptext">Buscar Registro Diario</span>
-                      <span class="icon mdi mdi-search"></span>
-                    </a>
+                    <div class="dropdown">
+                      <span class="icon mdi mdi-more-vert dropdown-toggle" id="menudespacho" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></span>
 
-<!--                     <form method="POST" id='formgenerarasiento' action="{{ url('/generar-asiento-contables-xdocumentos') }}" style="display: inline-block;" >
-                      {{ csrf_field() }}
-                      <input type="hidden" id='documentos' name='documentos' >
-                      <a href="#" class="tooltipcss" id='generarasientos' >
-                        <span class="tooltiptext">Generar Asiento Contable</span>
-                        <span class="icon mdi mdi-mail-send"></span>
-                      </a>
-                    </form> -->
+                      <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
+                        <li>
+                          <a href="#" class='descargararchivo'><b>Descargar archivo</b> <span class="mdi mdi-check-circle"></span></a>
+                        </li>
+                      </ul>
+
+                    </div>
 
                   </div>
                   <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}} </span>
+
                 </div>
+
                 <div class="panel-body">
                   <div class='filtrotabla row'>
-
                     <div class="col-xs-12">
 
 
-                      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
-                          <div class="form-group">
-                            <label class="col-sm-12 control-label labelleft" >Año :</label>
-                            <div class="col-sm-12 abajocaja" >
-                              {!! Form::select( 'anio', $combo_anio_pc, $anio,
-                                                [
-                                                  'class'       => 'select2 form-control control input-xs' ,
-                                                  'id'          => 'anio',
-                                                  'required'    => '',
-                                                  'data-aw'     => '1',
-                                                ]) !!}
+                      <form method="POST"
+                      id="formdescargar"
+                      target="_blank"
+                      action="{{ url('/descargar-archivo-ple') }}" 
+                      style="border-radius: 0px;" 
+                      >
+                        {{ csrf_field() }}
+
+
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
+                            <div class="form-group">
+                              <label class="col-sm-12 control-label labelleft" >Año :</label>
+                              <div class="col-sm-12 abajocaja" >
+                                {!! Form::select( 'anio', $combo_anio_pc, $anio,
+                                                  [
+                                                    'class'       => 'select2 form-control control input-xs' ,
+                                                    'id'          => 'anio',
+                                                    'required'    => '',
+                                                    'data-aw'     => '1',
+                                                  ]) !!}
+                              </div>
                             </div>
-                          </div>
-                      </div>
+                        </div>
 
 
-                      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte ajax_anio">
-                          @include('general.combo.cperiodo', ['sel_periodo' => $sel_periodo])
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte ajax_anio">
+                            @include('general.combo.cperiodo', ['sel_periodo' => $sel_periodo])
 
-                      </div>
+                        </div>
 
 
-                      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
-                          <div class="form-group">
-                            <label class="col-sm-12 control-label labelleft" >Tipo Asiento :</label>
-                            <div class="col-sm-12 abajocaja" >
-                              {!! Form::select( 'tipo_asiento_id', $combo_tipo_asiento, $sel_tipo_asiento,
-                                                [
-                                                  'class'       => 'select2 form-control control input-xs' ,
-                                                  'id'          => 'tipo_asiento_id',
-                                                  'required'    => '',
-                                                  'data-aw'     => '1',
-                                                ]) !!}
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
+                            <div class="form-group">
+                              <label class="col-sm-12 control-label labelleft" >Tipo Asiento :</label>
+                              <div class="col-sm-12 abajocaja" >
+                                {!! Form::select( 'tipo_asiento_id', $combo_tipo_asiento, $sel_tipo_asiento,
+                                                  [
+                                                    'class'       => 'select2 form-control control input-xs' ,
+                                                    'id'          => 'tipo_asiento_id',
+                                                    'required'    => '',
+                                                    'data-aw'     => '1',
+                                                  ]) !!}
+                              </div>
                             </div>
-                          </div>
-                      </div>
+                        </div>
+
+                        
+                        <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
+
+                      </form>
+
 
                     </div>
 
 
+
+
+
                   </div>
+
                   <div class='listajax'>
-                    @include('migracion.ajax.alistaobservacionventas')
+                    
                   </div>
+ 
+
+
                 </div>
               </div>
             </div>
           </div>
     </div>
-  @include('migracion.modal.mmigracion')
   </div>
 
 @stop
@@ -139,6 +158,6 @@
     });
 
   </script>
-  <script src="{{ asset('public/js/migracion/migracion.js?v='.$version) }}" type="text/javascript"></script>
+  <script src="{{ asset('public/js/archivople/archivople.js?v='.$version) }}" type="text/javascript"></script>
 
 @stop

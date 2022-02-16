@@ -18,4 +18,9 @@ class WEBAsiento extends Model
         return $this->belongsTo('App\Modelos\CONPeriodo', 'COD_PERIODO', 'COD_PERIODO');
     }
 
+    public function moneda()
+    {
+        return $this->belongsTo('App\Modelos\CMPCategoria', 'COD_CATEGORIA_MONEDA', 'COD_CATEGORIA');
+    }
+
 }

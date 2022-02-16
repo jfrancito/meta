@@ -74,6 +74,15 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-observacion-documentos-ventas', 'MigrarVentaController@actionListarObservacionDocumentos');
 	Route::any('/ajax-modal-detalle-producto-migracion-ventas', 'MigrarVentaController@actionAjaxModalDetalleProductoMigracionVentas');
 	Route::any('/generar-asiento-contables-xdocumentos', 'MigrarVentaController@actionGenerarAsientoContablesXDocumentos');
+	Route::any('/ajax-observacion-documentos-ventas', 'MigrarVentaController@actionAjaxObeservacionDocumentosVentas');
+
+
+	Route::any('/gestion-libros-electronico-ple/{idopcion}', 'ArchivoController@actionGestionLibrosElectronicoPle');
+	Route::any('/descargar-archivo-ple', 'ArchivoController@actionDescargarArchivoPle');
+	Route::any('/registro-ventas-txt', 'ArchivoController@actionRegistroVentasTxt');
+
+
+
 
 
    	Route::any('/enviocorreos', 'CorreoController@enviocorreo');

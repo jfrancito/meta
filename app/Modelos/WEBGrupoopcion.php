@@ -16,7 +16,7 @@ class WEBGrupoopcion extends Model
 
     public function opcion()
     {
-        return $this->hasMany('App\Modelos\WEBOpcion', 'grupoopcion_id', 'id');
+        return $this->hasMany('App\Modelos\WEBOpcion', 'grupoopcion_id', 'id')->where('ind_meta', '=', 1);
     }
 
 

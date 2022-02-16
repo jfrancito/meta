@@ -23,4 +23,15 @@ class CMPDocumentoCtble extends Model
         return $this->belongsTo('App\Modelos\CONPeriodo', 'COD_PERIODO', 'COD_PERIODO');
     }
     
+    public function tipo_documento()
+    {
+        return $this->belongsTo('App\Modelos\CMPCategoria', 'COD_CATEGORIA_TIPO_DOC', 'COD_CATEGORIA');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo('App\Modelos\STDEmpresa', 'COD_EMPR_RECEPTOR', 'COD_EMPR');
+    }
+
+
 }

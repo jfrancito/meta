@@ -152,13 +152,49 @@ class MigrarVentaController extends Controller
 	    $tipo_asiento 					=	'TAS0000000000003';	
 		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento,Session::get('empresas_meta')->COD_EMPR);
 		$funcion 						= 	$this;
+
+	    $sel_tipo_asiento 				=	'';
+	    $sel_periodo 					=	'';
+	    $anio  							=   $this->anio;
+        $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+	    $combo_tipo_asiento 			= 	$this->gn_generacion_combo_categoria('TIPO_ASIENTO','Seleccione tipo asiento','');
+	    $combo_periodo 					= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+
 		return View::make('migracion/listaobservacionventas',
 						 [
 						 	'funcion' 			=> $funcion,	
-						 	'lista_ventas' 		=> $lista_ventas,				 	
+						 	'lista_ventas' 		=> $lista_ventas,
+						 	'combo_tipo_asiento'	=> $combo_tipo_asiento,
+						 	'combo_anio_pc'			=> $combo_anio_pc,
+						 	'combo_periodo'			=> $combo_periodo,
+						 	'anio'					=> $anio,
+						 	'sel_tipo_asiento'	 	=> $sel_tipo_asiento,
+						 	'sel_periodo'	 		=> $sel_periodo,
+
 						 ]);
 	}
 
+	public function actionAjaxObeservacionDocumentosVentas(Request $request)
+	{
+
+
+		$tipo_asiento_id 		=   $request['tipo_asiento_id'];
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+
+		$lista_ventas 			= 	$this->mv_lista_ventas_observadas_xperiodo($tipo_asiento_id,Session::get('empresas_meta')->COD_EMPR,$periodo_id);
+
+		$funcion 				= 	$this;
+		
+		return View::make('migracion/ajax/alistaobservacionventas',
+						 [
+
+						 	'lista_ventas'			=> $lista_ventas,
+						 	'funcion'				=> $funcion,			 	
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
 
 
 	public function actionMigrarVentas()
@@ -170,6 +206,7 @@ class MigrarVentaController extends Controller
 		$lista_ventas_migrar_anulado 		= 	$this->mv_lista_ventas_migrar_agrupado_anulado();
 		$this->mv_agregar_historial_ventas($lista_ventas_migrar_emitido,$lista_ventas_migrar_anulado,$tipo_asiento);
 
+
 		foreach($lista_ventas_migrar_emitido as $index => $item){
 			$respuesta = $this->mv_update_historial_ventas($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
 		}
@@ -179,7 +216,6 @@ class MigrarVentaController extends Controller
 
 		//asignar asiento
 		$lista_ventas 				= 	$this->mv_lista_ventas_asignar($tipo_asiento);
-
 
 		foreach($lista_ventas as $index => $item){
 			$respuesta2 = $this->mv_asignar_asiento_modelo($item,$tipo_asiento);

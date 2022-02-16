@@ -225,6 +225,22 @@ trait MigrarVentaTraits
 
 	}
 
+	private function mv_lista_ventas_observadas_xperiodo($tipo_asiento,$empresa_id,$periodo_id)
+	{
+		
+
+		$array_empresas  		    = 		$this->mv_array_empresa_venta();
+		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
+											->where('IND_ASIENTO_MODELO','=',-1)
+											->where('IND_ERROR','=',1)
+											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
+											->where('COD_PERIODO','=',$periodo_id)
+											->where('COD_EMPR','=',$empresa_id)
+											->orderby('COD_REFERENCIA','asc')
+											->get();
+		return $lista_ventas;
+
+	}
 
 
 

@@ -7,7 +7,7 @@
       <th>Nro</th>
       <th>Fecha Emision</th>
       <th>Observación</th>
-
+<!-- 
       <th>
         <div class="text-center be-checkbox be-checkbox-sm has-primary">
           <input  type="checkbox"
@@ -20,7 +20,7 @@
                   name="todo_asignar"
             ></label>
         </div>
-      </th>
+      </th> -->
 
     </tr>
   </thead>
@@ -36,7 +36,7 @@
         <td>{{$item->documento_ctble->NRO_DOC}}</td>
         <td>{{date_format(date_create($item->documento_ctble->FEC_EMISION), 'd-m-Y')}}</td>
         <td>{{$item->TXT_ERROR}}</td>
-        
+<!--         
         <td>
 
             <div class="text-center be-checkbox be-checkbox-sm has-primary">
@@ -51,7 +51,7 @@
               ></label>
             </div>
 
-        </td>
+        </td> -->
       </tr>                    
     @endforeach
   </tbody>

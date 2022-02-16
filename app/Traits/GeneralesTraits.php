@@ -85,6 +85,24 @@ trait GeneralesTraits
 	 	return  $combo;					 			
 	}
 
+	private function gn_generacion_combo_categoria_xarrayid($txt_grupo,$titulo,$todo,$array_ids) {
+		
+		$array 						= 	DB::table('CMP.CATEGORIA')
+        								->where('COD_ESTADO','=',1)
+        								->where('TXT_GRUPO','=',$txt_grupo)
+        								->whereIn('COD_CATEGORIA', $array_ids)
+		        						->pluck('NOM_CATEGORIA','COD_CATEGORIA')
+										->toArray();
+
+		if($todo=='TODO'){
+			$combo  				= 	array('' => $titulo , $todo => $todo) + $array;
+		}else{
+			$combo  				= 	array('' => $titulo) + $array;
+		}
+
+	 	return  $combo;					 			
+	}
+
 
 	public function gn_background_fila_activo($activo)
 	{

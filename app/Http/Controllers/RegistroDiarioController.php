@@ -26,6 +26,9 @@ Use Nexmo;
 use Keygen;
 
 
+
+use Illuminate\Support\Facades\Storage;
+
 class RegistroDiarioController extends Controller
 {
 
@@ -43,7 +46,6 @@ class RegistroDiarioController extends Controller
 	    View::share('titulo','Comprobantes Diario');
 	    $sel_tipo_asiento 		=	'';
 	    $sel_periodo 			=	'';
-
 	    $anio  					=   $this->anio;
         $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 		$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);

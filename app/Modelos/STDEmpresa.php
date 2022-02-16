@@ -17,6 +17,14 @@ class STDEmpresa extends Model
         return $this->hasMany('App\Modelos\WEBUserEmpresaCentro', 'empresa_id', 'id');
     }
 
+    public function documento_ctble()
+    {
+        return $this->hasMany('App\Modelos\CMPDocumentoCtble', 'COD_EMPR_RECEPTOR', 'COD_EMPR');
+    }
 
+    public function tipo_documento()
+    {
+        return $this->belongsTo('App\Modelos\CMPCategoria', 'COD_TIPO_DOCUMENTO', 'COD_CATEGORIA');
+    }
 
 }
