@@ -202,7 +202,15 @@ trait ArchivoTraits
 			$codigo_09  			= 	'';
 			$identidad_cliente_10  	= 	intval($documento->empresa->tipo_documento->CODIGO_SUNAT);
 			$documento_cliente_11  	= 	$documento->empresa->NRO_DOCUMENTO;
-			$nombre_cliente_12  	= 	$documento->empresa->NOM_EMPR;
+
+			$txt_anulado 			= 	'';
+
+			if($item->IND_EXTORNO==1){
+				$txt_anulado 			= 	'*** ANULADO *** ';
+			}
+
+
+			$nombre_cliente_12  	= 	$txt_anulado.$documento->empresa->NOM_EMPR;
 			$v_f_e_13  				= 	'0.00';//falta
 
 			//suma de las 70
@@ -259,7 +267,12 @@ trait ArchivoTraits
 			$codigo_32  			= 	'';//falta
 			$codigo_33  			= 	'';//falta
 			$codigo_34  			= 	'';//falta
+
 			$codigo_35  			= 	'1';//falta
+
+			if($item->IND_EXTORNO==1){
+				$codigo_35 			= 	'2';
+			}
 
 	      	fwrite($datos, $periodo_01."|");
 	      	fwrite($datos, $correlativo_02."|");
