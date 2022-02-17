@@ -192,7 +192,7 @@ trait ArchivoTraits
 
 	    	$mes_01 				= 	str_pad($item->periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
 	    	$periodo_01  			= 	$item->periodo->COD_ANIO.$mes_01."00";
-	    	$correlativo_02  		= 	str_pad($index+1, 10, "0", STR_PAD_LEFT);
+	    	$correlativo_02  		= 	str_pad($index+1, 9, "0", STR_PAD_LEFT);
 	    	$codigo_03  			= 	'M'.$correlativo_02;
 	    	$fecha_emision_04  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
 			$fecha_vencimiento_05  	= 	'01/01/0001';
@@ -242,7 +242,7 @@ trait ArchivoTraits
 			$moneda_26 				= 	$item->moneda->CODIGO_SUNAT;
 
 			$tipo_cambio_27 		= 	$item->CAN_TIPO_CAMBIO;
-			$tipo_cambio_27       	= 	number_format($tipo_cambio_27, 2, '.', '');
+			$tipo_cambio_27       	= 	number_format($tipo_cambio_27, 3, '.', '');
 
 
 			$fecha_asociada_28 		=   '01/01/0001';
