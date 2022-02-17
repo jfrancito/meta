@@ -268,11 +268,13 @@ trait ArchivoTraits
 			$codigo_33  			= 	'';//falta
 			$codigo_34  			= 	'';//falta
 
-			$codigo_35  			= 	'1';//falta
+			$codigo_35  			= 	'1';
 
 			if($item->IND_EXTORNO==1){
 				$codigo_35 			= 	'2';
 			}
+
+			$codigo_36  			= 	'';
 
 	      	fwrite($datos, $periodo_01."|");
 	      	fwrite($datos, $correlativo_02."|");
@@ -311,7 +313,8 @@ trait ArchivoTraits
 	      	fwrite($datos, $codigo_32."|");
 	      	fwrite($datos, $codigo_33."|");
 	      	fwrite($datos, $codigo_34."|");
-	      	fwrite($datos, $codigo_35.PHP_EOL);
+	      	fwrite($datos, $codigo_35."|");
+	      	fwrite($datos, $codigo_36.PHP_EOL);
 
 
 
