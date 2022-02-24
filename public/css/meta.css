@@ -5,6 +5,31 @@
 }
 
 
+.scroll_text{
+  height:300px;
+  overflow:auto;
+  padding:0px 15px;
+}
+.scroll_text::-webkit-scrollbar {  
+  width: 8px;  
+}  
+.scroll_text::-webkit-scrollbar-track {  
+  background-color: #E7E7E7;
+}  
+.scroll_text::-webkit-scrollbar-thumb {  
+  background-color: rgba(223, 86, 86, 0.69);
+  border: 1px solid rgba(92, 92, 92, 0.5);
+  border-radius: 10px;
+}  
+.scroll_text::-webkit-scrollbar-thumb:hover {  
+  background-color: #000;
+} 
+
+.scroll_text_heigth_aler{
+  height:400px !important;
+}
+
+
 .widget-chart-container{
   margin-top: 15px;
 }

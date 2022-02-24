@@ -15,11 +15,13 @@ use Hashids;
 
 
 use App\Traits\MigrarVentaTraits;
+use App\Traits\AlertaTraits;
 
 class UserController extends Controller
 {
 
 	use MigrarVentaTraits;
+	use AlertaTraits;
 
     public function actionLogin(Request $request){
 
@@ -138,11 +140,13 @@ class UserController extends Controller
 	    $tipo_asiento 					=	'TAS0000000000003';	
 		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento,Session::get('empresas_meta')->COD_EMPR);
 		$lista_productos_sc 		 	= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento,Session::get('empresas_meta')->COD_EMPR,$anio);
+		$lista_documento_sin_enviar 	= 	$this->al_lista_documentos_sin_enviar_agrupado(Session::get('empresas_meta')->COD_EMPR);
 
 		return View::make('bienvenido',
 						 [
 						 	'lista_ventas' 		 => $lista_ventas,
 						 	'lista_productos_sc' => $lista_productos_sc,
+						 	'lista_documento_sin_enviar' => $lista_documento_sin_enviar,
 						 ]);
 	}
 
