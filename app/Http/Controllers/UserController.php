@@ -137,16 +137,18 @@ class UserController extends Controller
 
 	    $anio  							=   $this->anio;
 
-	    $tipo_asiento 					=	'TAS0000000000003';	
+	    $tipo_asiento 					=	'TAS0000000000003';
 		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento,Session::get('empresas_meta')->COD_EMPR);
 		$lista_productos_sc 		 	= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento,Session::get('empresas_meta')->COD_EMPR,$anio);
 		$lista_documento_sin_enviar 	= 	$this->al_lista_documentos_sin_enviar_agrupado(Session::get('empresas_meta')->COD_EMPR);
+		$lista_documento_correlativo 	= 	$this->al_lista_documentos_correlativos_faltante_agrupado(Session::get('empresas_meta')->COD_EMPR);
 
 		return View::make('bienvenido',
 						 [
 						 	'lista_ventas' 		 => $lista_ventas,
 						 	'lista_productos_sc' => $lista_productos_sc,
 						 	'lista_documento_sin_enviar' => $lista_documento_sin_enviar,
+						 	'lista_documento_correlativo' => $lista_documento_correlativo,
 						 ]);
 	}
 

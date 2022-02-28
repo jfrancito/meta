@@ -41,5 +41,36 @@ class AlertaCotroller extends Controller
 						 ]);
 	}
 
+	public function actionAjaxModalDetalleDocumentoCorrelativos(Request $request)
+	{
+
+
+		$empresa  	 					= 	$request['empresa'];
+		$empresa_txt  	 				= 	$request['empresa_txt'];
+		$categoria  	 				= 	$request['categoria'];
+		$categoria_txt  	 			= 	$request['categoria_txt'];
+		$serie  	 					= 	$request['serie'];
+		$min_doc  	 					= 	$request['min_doc'];
+		$max_doc  	 					= 	$request['max_doc'];
+
+		$lista_documento_correlativo_detalle 	= 	$this->al_lista_documentos_correlativo_detallado($empresa,$categoria,$serie);
+		
+
+		//dd($lista_documento_correlativo_detalle);
+
+		return View::make('alerta.modal.ajax.mlistadetalledocumentoscorrelativos',
+						 [
+						 	'empresa' => $empresa,
+						 	'empresa_txt' => $empresa_txt,
+						 	'categoria' => $categoria,
+						 	'categoria_txt' => $categoria_txt,
+						 	'serie' => $serie,
+						 	'min_doc' => $min_doc,
+						 	'max_doc' => $max_doc,
+						 	'lista_documento_correlativo_detalle' => $lista_documento_correlativo_detalle,
+						 ]);
+	}
+
+
 
 }

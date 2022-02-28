@@ -81,10 +81,8 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/registro-ventas-txt', 'ArchivoController@actionRegistroVentasTxt');
 
 
-
 	Route::any('/ajax-modal-detalle-documento-sin-enviar-sunat', 'AlertaCotroller@actionAjaxModalDetalleDocumentoSinEnviarSunat');
-
-
+	Route::any('/ajax-modal-detalle-documento-correlativos', 'AlertaCotroller@actionAjaxModalDetalleDocumentoCorrelativos');
 
 
    	Route::any('/enviocorreos', 'CorreoController@enviocorreo');

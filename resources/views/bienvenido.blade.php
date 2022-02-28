@@ -12,23 +12,6 @@
     <div class="main-content container-fluid">
         <div class="row">
 
-            <div class="col-xs-12 col-md-4">
-              <div class="panel panel-default">
-                <div class="panel-heading panel-heading-divider xs-pb-15">Documentos sin enviar a sunat</div>
-                <div class="panel-body xs-pt-25">
-                  @foreach($lista_documento_sin_enviar as $index => $item)
-                                <div class="row user-progress user-progress-small">
-                                  <div class="col-md-12"><span class="title">
-                                      <a  href="#" 
-                                          class='btndetallesunat' 
-                                          data_empresa = "{{$item->COD_EMPR_EMISOR}}">{{$item->TXT_EMPR_EMISOR}} ({{$item->cantidad}})</a>
-                                  </span></div>
-                                </div>
-                  @endforeach
-                </div>
-              </div>
-            </div>
-
             <div class="col-xs-12 col-md-3">
               <div class="panel panel-default">
                 <div class="panel-heading panel-heading-divider xs-pb-15">Diario Ventas</div>
@@ -48,6 +31,56 @@
                 </div>
               </div>
             </div>
+
+            <div class="col-xs-12 col-md-4">
+              <div class="panel panel-default">
+                <div class="panel-heading panel-heading-divider xs-pb-15">Documentos sin enviar a sunat</div>
+                <div class="panel-body xs-pt-25">
+                  @foreach($lista_documento_sin_enviar as $index => $item)
+                                <div class="row user-progress user-progress-small">
+                                  <div class="col-md-12"><span class="title">
+                                      <a  href="#" 
+                                          class='btndetallesunat' 
+                                          data_empresa = "{{$item->COD_EMPR_EMISOR}}">{{$item->TXT_EMPR_EMISOR}} ({{$item->cantidad}})</a>
+                                  </span></div>
+                                </div>
+                  @endforeach
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-12 col-md-5">
+              <div class="panel panel-default">
+                <div class="panel-heading panel-heading-divider xs-pb-15">Correlativos Faltantes</div>
+                <div class="panel-body xs-pt-25">
+                  @foreach($lista_documento_correlativo as $index => $item)
+                    @if($item->DIFERENCIA > 0)  
+
+                      <div class="row user-progress user-progress-small">
+                        <div class="col-md-12"><span class="title">
+                            <a  href="#" 
+                                class='btndetallecorrelativo' 
+                                data_empresa = "{{$item->COD_EMPR}}"
+                                data_empresa_txt = "{{$item->TXT_EMPR_EMISOR}}"
+                                data_categoria = "{{$item->COD_CATEGORIA}}"
+                                data_categoria_txt = "{{$item->NOM_CATEGORIA}}"
+                                data_serie = "{{$item->NRO_SERIE}}"
+                                data_min_doc = "{{$item->MINDOC}}"
+                                data_max_doc = "{{$item->MANDOC}}"
+                                >{{$item->TXT_EMPR_EMISOR}} - {{$item->NOM_CATEGORIA}} - {{$item->NRO_SERIE}} ({{$item->DIFERENCIA}})</a>
+                        </span></div>
+                      </div>
+
+                    @endif
+
+
+                  @endforeach
+                </div>
+              </div>
+            </div>
+
+
+
 
         </div>
     </div>
