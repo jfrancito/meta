@@ -1,4 +1,8 @@
 
+.ocultar{
+  display: none;
+}
+
 .background-th{
   background: #5f99f5;
   color: #fff;

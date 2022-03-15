@@ -79,6 +79,12 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-libros-electronico-ple/{idopcion}', 'ArchivoController@actionGestionLibrosElectronicoPle');
 	Route::any('/descargar-archivo-ple', 'ArchivoController@actionDescargarArchivoPle');
 	Route::any('/registro-ventas-txt', 'ArchivoController@actionRegistroVentasTxt');
+	Route::any('/archivo-ple-excel/{anio}/{tipo_asiento_id}/{periodo_id}/{documento}', 'ArchivoController@actionDescargarArchivoPleExcel');
+	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');
+
+
+
+
 
 
 	Route::any('/ajax-modal-detalle-documento-sin-enviar-sunat', 'AlertaCotroller@actionAjaxModalDetalleDocumentoSinEnviarSunat');

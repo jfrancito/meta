@@ -5,6 +5,8 @@
       <th>Nro Cuenta</th>
       <th>Nivel</th>
       <th>Nombre</th>
+      <th>Cuenta transferencia debe</th>
+      <th>Cuenta transferencia haber</th>
     </tr>
   </thead>
   <tbody>
@@ -16,6 +18,8 @@
         <td>{{$item->nro_cuenta}}</td>
         <td>{{$item->nivel}}</td>
         <td>{{$item->nombre}}</td>
+        <td>{{$item->cuenta_contable_transferencia_debe}}</td>
+        <td>{{$item->cuenta_contable_transferencia_haber}}</td>
       </tr>                    
     @endforeach
   </tbody>

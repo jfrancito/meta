@@ -121,14 +121,14 @@ trait AlertaTraits
         $min                        =        WEBViewMigrarVentaCabecera::where('COD_EMPR','=',$empresa)
                                             ->where('COD_CATEGORIA','=',$categoria)
                                             ->where('NRO_SERIE','=',$serie)
-                                            ->where(DB::raw("YEAR(DC.FEC_EMISION) >= 2022"))
+                                            ->where(DB::raw("YEAR(FEC_EMISION) >= 2022"))
                                             //->whereIn('COD_PERIODO',$array_periodo)
                                             ->min('NRO_CORRELATIVO');
 
         $max                        =        WEBViewMigrarVentaCabecera::where('COD_EMPR','=',$empresa)
                                             ->where('COD_CATEGORIA','=',$categoria)
                                             ->where('NRO_SERIE','=',$serie)
-                                            ->where(DB::raw("YEAR(DC.FEC_EMISION) >= 2022"))
+                                            ->where(DB::raw("YEAR(FEC_EMISION) >= 2022"))
                                             //->whereIn('COD_PERIODO',$array_periodo)
                                             ->max('NRO_CORRELATIVO');
 
@@ -144,7 +144,7 @@ trait AlertaTraits
         $lista_documento            =       WEBViewMigrarVentaCabecera::where('COD_EMPR','=',$empresa)
                                             ->where('COD_CATEGORIA','=',$categoria)
                                             ->where('NRO_SERIE','=',$serie)
-                                            ->where(DB::raw("YEAR(DC.FEC_EMISION) >= 2022"))
+                                            ->where(DB::raw("YEAR(FEC_EMISION) >= 2022"))
                                             //->whereIn('COD_PERIODO',$array_periodo)
                                             ->pluck('NRO_CORRELATIVO')
                                             ->toArray();

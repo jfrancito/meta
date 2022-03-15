@@ -30,7 +30,7 @@ use Session;
 use Hashids;
 Use Nexmo;
 use Keygen;
-
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class ArchivoController extends Controller
@@ -61,17 +61,21 @@ class ArchivoController extends Controller
 	    $combo_tipo_asiento 	= 	$this->gn_generacion_combo_categoria_xarrayid('TIPO_ASIENTO','Seleccione tipo asiento','',$array_id_tipo_asiento);
 	    $combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
 		$funcion 				= 	$this;
-		
+		$combo_tran_gratuita 	= 	$this->gn_combo_transferencia_gratuita();
+		$lista_asiento          =   array();
+
 		return View::make('archivople/descargararchivople',
 						 [
 						 	'combo_tipo_asiento'	=> $combo_tipo_asiento,
 						 	'combo_anio_pc'			=> $combo_anio_pc,
 						 	'combo_periodo'			=> $combo_periodo,
+						 	'combo_tran_gratuita'	=> $combo_tran_gratuita,
 						 	'anio'					=> $anio,
 						 	'sel_tipo_asiento'	 	=> $sel_tipo_asiento,
 						 	'sel_periodo'	 		=> $sel_periodo,					 	
 						 	'idopcion' 				=> $idopcion,
-						 	'funcion' 				=> $funcion,						 	
+						 	'funcion' 				=> $funcion,
+						 	'lista_asiento' 		=> $lista_asiento,						 	
 						 ]);
 	}
 
@@ -83,26 +87,39 @@ class ArchivoController extends Controller
 		$anio 					=   $request['anio'];
 		$periodo_id 			=   $request['periodo_id'];
 		$tipo_asiento_id 		=   $request['tipo_asiento_id'];
+		$documento 				=   $request['documento'];
+
+
 		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
 	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
 
-	    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
-	    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-	    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-	    							->orderby('FEC_ASIENTO','asc')
-	    							->get();
-
 	    //ventas 
 	    if($tipo_asiento_id == 'TAS0000000000003'){
+
+	    	//array de documentos
+		    $array_asientos 		= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    							->pluck('TXT_REFERENCIA')
+                                        ->toArray();
+
+		    $array_documentos 		= 	CMPDocumentoCtble::whereIn('COD_DOCUMENTO_CTBLE',$array_asientos)
+		    							->TransGratuita($documento)
+		    							->pluck('COD_DOCUMENTO_CTBLE')
+                                        ->toArray();
+
+		    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    							->whereIn('TXT_REFERENCIA',$array_documentos)
+		    							->orderby('FEC_ASIENTO','asc')
+		    							->get();
 
 			$nombre = $this->ar_crear_nombre_venta($anio,$mes).'.txt';
 			$path = storage_path('ventas/'.$nombre);
 	    	$this->archivo_ple_ventas($anio,$mes,$listaasiento,$nombre,$path);
 		    if (file_exists($path)) {
-
 		        return Response::download($path);
-
-
 		    }
 
 	    }
@@ -110,6 +127,107 @@ class ArchivoController extends Controller
 
 
 	}
+
+
+
+
+
+	public function actionAjaxBuscarListaPle(Request $request)
+	{
+
+		$anio 					=   $request['anio'];
+		$tipo_asiento_id 		=   $request['tipo_asiento_id'];
+		$periodo_id 			=   $request['periodo_id'];
+		$documento 				=   $request['documento'];
+		$idopcion 				=   $request['idopcion'];
+
+		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
+	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
+	    //ventas 
+	    if($tipo_asiento_id == 'TAS0000000000003'){
+
+	    	//array de documentos
+		    $array_asientos 		= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    							->pluck('TXT_REFERENCIA')
+                                        ->toArray();
+
+		    $array_documentos 		= 	CMPDocumentoCtble::whereIn('COD_DOCUMENTO_CTBLE',$array_asientos)
+		    							->TransGratuita($documento)
+		    							->pluck('COD_DOCUMENTO_CTBLE')
+                                        ->toArray();
+
+		    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    							->whereIn('TXT_REFERENCIA',$array_documentos)
+		    							->orderby('FEC_ASIENTO','asc')
+		    							->get();
+
+			$nombre = $this->ar_crear_nombre_venta($anio,$mes).'.txt';
+			$path = storage_path('ventas/'.$nombre);
+	    	$lista_asiento = $this->archivo_ple_ventas($anio,$mes,$listaasiento,$nombre,$path);
+	    	$funcion 				= 	$this;
+
+			return View::make('archivople/ajax/alistaregistrodiarioventas',
+							 [
+							 	'lista_asiento'			=> $lista_asiento,					 	
+							 	'idopcion' 				=> $idopcion,
+							 	'funcion' 				=> $funcion,
+							 	'ajax' 					=> true,					 	
+							 ]);
+
+
+
+	    }
+
+	}
+
+	public function actionDescargarArchivoPleExcel($anio,$tipo_asiento_id,$periodo_id,$documento)
+	{
+
+		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
+	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
+	    //ventas 
+	    if($tipo_asiento_id == 'TAS0000000000003'){
+
+	    	//array de documentos
+		    $array_asientos 		= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    							->pluck('TXT_REFERENCIA')
+                                        ->toArray();
+
+		    $array_documentos 		= 	CMPDocumentoCtble::whereIn('COD_DOCUMENTO_CTBLE',$array_asientos)
+		    							->TransGratuita($documento)
+		    							->pluck('COD_DOCUMENTO_CTBLE')
+                                        ->toArray();
+
+		    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    							->whereIn('TXT_REFERENCIA',$array_documentos)
+		    							->orderby('FEC_ASIENTO','asc')
+		    							->get();
+
+			$nombre = $this->ar_crear_nombre_venta($anio,$mes).'.txt';
+			$path = storage_path('ventas/'.$nombre);
+	    	$lista_asiento = $this->archivo_ple_ventas($anio,$mes,$listaasiento,$nombre,$path);
+
+			$titulo =   'AIENTO VENTAS';
+		    Excel::create($titulo, function($excel) use ($lista_asiento,$titulo) {
+		        $excel->sheet('Pedidos', function($sheet) use ($listadetracciones,$titulo) {
+
+		            $sheet->loadView('archivople/excel/archivopleexcelventas')->with('listadetracciones',$listadetracciones)
+		                                         		 			   ->with('titulo',$titulo)
+		                                         		 			   ->with('funcion',$funcion);                                        		 
+		        });
+		    })->export('xls');
+	    }
+
+	}
+
 
 
 

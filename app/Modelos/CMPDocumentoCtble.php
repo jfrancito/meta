@@ -33,5 +33,11 @@ class CMPDocumentoCtble extends Model
         return $this->belongsTo('App\Modelos\STDEmpresa', 'COD_EMPR_RECEPTOR', 'COD_EMPR');
     }
 
+    public function scopeTransGratuita($query,$trangratuita){
+        if(trim($trangratuita) != 'TODOS'){
+            $query->where('IND_GRATUITO', '=', $trangratuita);
+        }
+    }
+
 
 }

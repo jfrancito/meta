@@ -18,14 +18,25 @@
 
                     <div class="dropdown">
                       <span class="icon mdi mdi-more-vert dropdown-toggle" id="menudespacho" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></span>
-
+                      <a href="#" class="tooltipcss opciones buscarple">
+                        <span class="tooltiptext">Buscar PLE</span>
+                        <span class="icon mdi mdi-search"></span>
+                      </a>
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
                         <li>
-                          <a href="#" class='descargararchivo'><b>Descargar archivo</b> <span class="mdi mdi-check-circle"></span></a>
+                          <a href="#" class='descargararchivo'><b>Descargar archivo txt</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
+<!--                         <li>
+                          <a  href="{{url('/archivo-ple-excel')}}"
+                              target="_blank"
+                              data-href="{{url('/archivo-ple-excel')}}"
+                              class='descargararchivoexcel'><b>Descargar archivo excel</b> <span class="mdi mdi-check-circle"></span></a>
+                        </li> -->
                       </ul>
-
                     </div>
+
+
+
 
                   </div>
                   <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}} </span>
@@ -84,6 +95,22 @@
                         </div>
 
                         
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajadocuento cajareporte ocultar">
+                            <div class="form-group">
+                              <label class="col-sm-12 control-label labelleft" >DOCUMENTO :</label>
+                              <div class="col-sm-12 abajocaja" >
+                                {!! Form::select( 'documento', $combo_tran_gratuita, 'TODOS',
+                                                  [
+                                                    'class'       => 'select2 form-control control input-xs' ,
+                                                    'id'          => 'documento',
+                                                    'required'    => '',
+                                                    'data-aw'     => '1',
+                                                  ]) !!}
+                              </div>
+                            </div>
+                        </div>
+
+
                         <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
 
                       </form>
@@ -100,7 +127,6 @@
                   <div class='listajax'>
                     
                   </div>
- 
 
 
                 </div>

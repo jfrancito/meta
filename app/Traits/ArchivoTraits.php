@@ -176,15 +176,17 @@ trait ArchivoTraits
 	public function archivo_ple_ventas($anio,$mes,$listaasiento,$nombre,$path){
 
 
-
-
 	    if (file_exists($path)) {
 	        unlink("storage/ventas/".$nombre);
 	    } 
 
 		$datos = fopen("storage/ventas/".$nombre, "a");
 		//llenado de datalle
+		$array_detalle_asiento 		=	array();
+
 	    foreach($listaasiento as $index => $item){
+
+
 
 	    	$documento 				= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$item->TXT_REFERENCIA)->first();
 	    	//1->afecto ; 0->no afecto
@@ -316,11 +318,53 @@ trait ArchivoTraits
 	      	fwrite($datos, $codigo_35."|");
 	      	fwrite($datos, $codigo_36.PHP_EOL);
 
+	    	$array_nuevo_asiento 	=	array();
+			$array_nuevo_asiento    =	array(
+				"periodo" 					=> $periodo_01,
+				"codigo_unico_operacion" 	=> $correlativo_02,
+				"correlativo_asiento" 		=> $codigo_03,
+				"fecha_emision" 			=> $fecha_emision_04,
+				"fecha_vencimiento" 		=> $fecha_vencimiento_05,
+				"tipo_comprobante" 			=> $tipo_documento_06,
+	            "nro_serie" 				=> $nro_serie_07,
+	            "nro_documento" 			=> $nro_correlativo_08,
+	            "registro_tickets" 			=> $codigo_09,
+	            "tipo_documento_identidad" 	=> $identidad_cliente_10,
+	            "documento_identidad" 		=> $documento_cliente_11,
+	            "nombre_cliente" 			=> $nombre_cliente_12,
+	            "valor_facturado_exportacion"=> $v_f_e_13,
+	            "base_imponible_gravada" 	=> $suma_70_14,
+	            "descuento_base_imponible" 	=> $codigo_15,
+	            "impuesto_generl_ventas" 	=> $suma_40_16,
+	            "descuento_impuesto_generl_ventas" => $codigo_17,
+	            "importe_total_operacion_exonerada" => $codigo_18,
+	            "importe_total_operacion_inafecta" => $codigo_19,
+	            "impuesto_selectivo_consumo" => $codigo_20,
+	            "base_imponible_operacion_gravada_impuesto_operacion_gravada" => $codigo_21,
+	            "impuesto_venta_arroz_pilado" => $codigo_22,
+	            "impuesto_consumo_bolsa_plastico" => $codigo_23,
+	            "otros_conceptos" 			=> $codigo_24,
+	            "importe_total_comprobnte_pago" => $importe_total_25,
+	            "codigo_moneda"     		=> $moneda_26,
+	            "tipo_cambio"     			=> $tipo_cambio_27,
+	            "fecha_emision_comprobante_pago_modifica" => $fecha_asociada_28,
+	            "tipo_comprobante_pago_modifica" => $tipo_asociado_29,
+	            "nro_serie_modifica" => $serie_asociada_30,
+	            "nro_documento_modifica" => $nro_asociada_31,
+	            "identificacion_contrato" => $codigo_32,
+	            "inconsistencia_tipo_cambio" => $codigo_33,
+	            "indicador_comprobante_pago" => $codigo_34,
+	            "estado_indica_oportunidad_anotacion" => $codigo_35,
+	            "campo_libre_utilizacion" => $codigo_36,
+			);
 
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
 
 	    }
 	    fclose($datos);
 
+
+	    return $array_detalle_asiento;
 
     }
 

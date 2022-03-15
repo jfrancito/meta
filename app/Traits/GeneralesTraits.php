@@ -129,6 +129,12 @@ trait GeneralesTraits
 	    return $combo;
 	}
 
+	public function gn_combo_transferencia_gratuita()
+	{
+		$combo  	= 	array('TODOS' => 'TODOS' , '1' => 'Tranferencia gratuita');
+	    return $combo;
+	}
+
 
 	private function gn_generacion_combo_productos($titulo,$todo)
 	{

@@ -23,6 +23,21 @@ var App = (function () {
         }]
     });
 
+    $("#ple").dataTable({
+        dom: 'Bfrtip',
+        "scrollX": true,
+        buttons: [
+            'csv', 'excel', 'pdf'
+        ],
+        "lengthMenu": [[250, 500, -1], [250, 500, "All"]],
+        columnDefs:[{
+            targets: "_all",
+            sortable: false
+        }]
+    });
+
+
+
 
     $("#table1").dataTable({
         dom: 'Bfrtip',
