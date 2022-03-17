@@ -83,9 +83,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');
 
 
-
-
-
+	Route::any('/gestion-listado-compras/{idopcion}', 'ComprasController@actionListarCompras');
+	Route::any('/ajax-combo-periodo-xanio-xempresa', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresa');
+	Route::any('/ajax-listado-compras', 'ComprasController@actionAjaxListarCompras');
 
 	Route::any('/ajax-modal-detalle-documento-sin-enviar-sunat', 'AlertaCotroller@actionAjaxModalDetalleDocumentoSinEnviarSunat');
 	Route::any('/ajax-modal-detalle-documento-correlativos', 'AlertaCotroller@actionAjaxModalDetalleDocumentoCorrelativos');
