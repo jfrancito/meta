@@ -255,13 +255,26 @@ trait MigrarVentaTraits
 											->pluck('COD_REFERENCIA')
 											->toArray();
 
-		$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
-											->where('activo','=',1)
-											->where('anio','=',$anio)
-											->where('cuenta_contable_relacionada_id','<>','')
-											->where('cuenta_contable_tercero_id','<>','')
-											->pluck('producto_id')
-											->toArray();
+
+		if($tipo_asiento=='TAS0000000000003'){
+
+			$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
+												->where('activo','=',1)
+												->where('anio','=',$anio)
+												->where('cuenta_contable_venta_relacionada_id','<>','')
+												->where('cuenta_contable_venta_tercero_id','<>','')
+												->pluck('producto_id')
+												->toArray();
+
+		}else{
+			$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
+												->where('activo','=',1)
+												->where('anio','=',$anio)
+												->where('cuenta_contable_compra_id','<>','')
+												->pluck('producto_id')
+												->toArray();
+		}
+
 
 		$lista_productos_sc			=		CMPDetalleProducto::whereIn('COD_TABLA',$array_ventas_con_error)
 											->whereNotIn('COD_PRODUCTO',$array_producto_empresas)

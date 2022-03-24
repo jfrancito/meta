@@ -16,17 +16,17 @@ class WEBProductoEmpresa extends Model
     
     public function cuentacontabletercero()
     {
-        return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_tercero_id', 'id');
+        return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_venta_tercero_id', 'id');
     }
 
     public function cuentacontablerelacionada()
     {
-        return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_relacionada_id', 'id');
+        return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_venta_relacionada_id', 'id');
     }
 
     public function cuentacontablecompra()
     {
-        return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_id', 'id');
+        return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_compra_id', 'id');
     }
 
 }

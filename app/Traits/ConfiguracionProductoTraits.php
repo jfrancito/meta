@@ -26,9 +26,9 @@ trait ConfiguracionProductoTraits
 									            ->whereIn('WEB.productoempresas.empresa_id',[$empresa_id])
 									            ->whereIn('WEB.productoempresas.anio',[$anio]);
 									        })
-											->leftJoin('WEB.cuentacontables as relacionada', 'relacionada.id', '=', 'WEB.productoempresas.cuenta_contable_relacionada_id')
-											->leftJoin('WEB.cuentacontables as tercero', 'tercero.id', '=', 'WEB.productoempresas.cuenta_contable_tercero_id')
-											->leftJoin('WEB.cuentacontables as cuentacompra', 'cuentacompra.id', '=', 'WEB.productoempresas.cuenta_contable_id')
+											->leftJoin('WEB.cuentacontables as relacionada', 'relacionada.id', '=', 'WEB.productoempresas.cuenta_contable_venta_relacionada_id')
+											->leftJoin('WEB.cuentacontables as tercero', 'tercero.id', '=', 'WEB.productoempresas.cuenta_contable_venta_tercero_id')
+											->leftJoin('WEB.cuentacontables as cuentacompra', 'cuentacompra.id', '=', 'WEB.productoempresas.cuenta_contable_compra_id')
 											->whereIn('ALM.PRODUCTO.COD_PRODUCTO',$array_productos_empresa)
 											->select(DB::raw("ALM.PRODUCTO.COD_PRODUCTO as producto_id,
 																ALM.PRODUCTO.NOM_PRODUCTO as producto_nombre,

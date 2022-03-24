@@ -19,17 +19,17 @@ class WEBCuentaContable extends Model
 
     public function productoempresatercero()
     {
-        return $this->hasMany('App\Modelos\WEBProductoEmpresa', 'cuenta_contable_tercero_id', 'id');
+        return $this->hasMany('App\Modelos\WEBProductoEmpresa', 'cuenta_contable_venta_tercero_id', 'id');
     }
 
     public function productoempresarelacionada()
     {
-        return $this->hasMany('App\Modelos\WEBProductoEmpresa', 'cuenta_contable_relacionada_id', 'id');
+        return $this->hasMany('App\Modelos\WEBProductoEmpresa', 'cuenta_contable_venta_relacionada_id', 'id');
     }
 
     public function productoempresacompra()
     {
-        return $this->hasMany('App\Modelos\WEBProductoEmpresa', 'cuenta_contable_id', 'id');
+        return $this->hasMany('App\Modelos\WEBProductoEmpresa', 'cuenta_contable_compra_id', 'id');
     }
 
 }

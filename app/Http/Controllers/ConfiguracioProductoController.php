@@ -155,13 +155,13 @@ class ConfiguracioProductoController extends Controller
 				$cabecera            	 						=	new WEBProductoEmpresa;
 				$cabecera->id 	     	 						=   $idproductoempresa;
 				if($ind_venta_compra == '1'){
-					$cabecera->cuenta_contable_relacionada_id 	=   $cuenta_contable_rel_id;
-					$cabecera->cuenta_contable_tercero_id 		=   $cuenta_contable_ter_id;
-					$cabecera->cuenta_contable_id 				=   '';
+					$cabecera->cuenta_contable_venta_relacionada_id 	=   $cuenta_contable_rel_id;
+					$cabecera->cuenta_contable_venta_tercero_id 		=   $cuenta_contable_ter_id;
+					$cabecera->cuenta_contable_compra_id 				=   '';
 				}else{
-					$cabecera->cuenta_contable_relacionada_id 	=   '';
-					$cabecera->cuenta_contable_tercero_id 		=   '';
-					$cabecera->cuenta_contable_id 				=   $cuenta_contable_compra_id;
+					$cabecera->cuenta_contable_venta_relacionada_id 	=   '';
+					$cabecera->cuenta_contable_venta_tercero_id 		=   '';
+					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
 				}
 				$cabecera->anio 								=  	$anio;
 				$cabecera->producto_id 							=   $item['producto_id'];
@@ -173,10 +173,10 @@ class ConfiguracioProductoController extends Controller
             }else{
             	
 				if($ind_venta_compra == '1'){
-					$cabecera->cuenta_contable_relacionada_id 	=   $cuenta_contable_rel_id;
-					$cabecera->cuenta_contable_tercero_id 		=   $cuenta_contable_ter_id;
+					$cabecera->cuenta_contable_venta_relacionada_id 	=   $cuenta_contable_rel_id;
+					$cabecera->cuenta_contable_venta_tercero_id 		=   $cuenta_contable_ter_id;
 				}else{
-					$cabecera->cuenta_contable_id 				=   $cuenta_contable_compra_id;
+					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
 				}
 				$cabecera->activo 								=  1;
 				$cabecera->empresa_id 	 						=   Session::get('empresas_meta')->COD_EMPR;

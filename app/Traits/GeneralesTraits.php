@@ -231,18 +231,18 @@ trait GeneralesTraits
 			//ventas
 			if($tipo_asiento == 'TAS0000000000003'){
 				if($ind_cliente == 0){
-					if(trim($empresa->cuenta_contable_tercero_id) != ''){
+					if(trim($empresa->cuenta_contable_venta_tercero_id) != ''){
 						$cuenta_contable = 	$empresa->cuentacontabletercero->nro_cuenta .' '.$empresa->cuentacontabletercero->nombre;
 					}
 				}else{
-					if(trim($empresa->cuenta_contable_relacionada_id) !=  ''){
+					if(trim($empresa->cuenta_contable_venta_relacionada_id) !=  ''){
 						$cuenta_contable = 	$empresa->cuentacontablerelacionada->nro_cuenta .' '.$empresa->cuentacontablerelacionada->nombre;
 					}
 				}	
 			}
 			//compras
 			if($tipo_asiento == 'TAS0000000000004'){
-				if(trim($empresa->cuenta_contable_id) != ''){
+				if(trim($empresa->cuenta_contable_compra_id) != ''){
 					$cuenta_contable = 	$empresa->cuentacontablecompra->nro_cuenta .' '.$empresa->cuentacontablecompra->nombre;
 				}
 			}
