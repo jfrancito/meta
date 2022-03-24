@@ -90,5 +90,40 @@ class ComprasController extends Controller
 						 ]);
 	}
 
+	public function actionAjaxBuscarCompraseleccionada(Request $request)
+	{
+
+		$documento_ctble_id 	=   $request['documento_ctble_id'];
+		$compra     			= 	$this->co_documento_compra($documento_ctble_id);
+		$listadetallecompra     = 	$this->co_detalle_compra($documento_ctble_id);
+
+		$tipo_asiento_id 		= 	'TAS0000000000004';
+		$empresa_id 			= 	Session::get('empresas_meta')->COD_EMPR;
+		$cod_moneda 			= 	$compra->COD_MONEDA;
+		$cod_proveedor 			= 	$compra->COD_PROVEEDOR;
+		$proveedor     			= 	$this->gn_data_empresa($cod_proveedor);
+		$relacionado 			=   $proveedor->IND_RELACIONADO;
+
+		$iconotipocliente     	= 	$this->co_asiento_modelo($tipo_asiento_id,$empresa_id,$relacionado,$cod_moneda,'tipo_cliente');
+		$iconomoneda     		= 	$this->co_asiento_modelo($tipo_asiento_id,$empresa_id,$relacionado,$cod_moneda,'moneda_id');
+
+
+
+		$funcion 				= 	$this;
+		
+		return View::make('compras/ajax/aasignarasiento',
+						 [
+
+						 	'compra'				=> $compra,
+						 	'listadetallecompra'	=> $listadetallecompra,
+						 	'iconotipocliente'		=> $iconotipocliente,
+						 	'iconomoneda'			=> $iconomoneda,
+						 	'funcion'				=> $funcion,			 	
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
+
+
 
 }

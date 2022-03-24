@@ -27,4 +27,9 @@ class WEBCuentaContable extends Model
         return $this->hasMany('App\Modelos\WEBProductoEmpresa', 'cuenta_contable_relacionada_id', 'id');
     }
 
+    public function productoempresacompra()
+    {
+        return $this->hasMany('App\Modelos\WEBProductoEmpresa', 'cuenta_contable_id', 'id');
+    }
+
 }

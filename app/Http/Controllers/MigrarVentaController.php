@@ -120,8 +120,10 @@ class MigrarVentaController extends Controller
 
 	public function actionAjaxModalDetalleProductoMigracionVentas(Request $request)
 	{
-		$tipo_asiento 			=	'TAS0000000000003';
+
 		$cod_documento_id 		=   $request['cod_documento_id'];
+		$tipo_asiento 			=   $request['cod_tipo_asiento'];
+
 		$idopcion 				=   $request['idopcion'];
 	    $listadetalleproducto 	= 	$this->gn_detalle_producto_xcoddocumento($cod_documento_id);
 		$funcion 				= 	$this;
@@ -140,19 +142,21 @@ class MigrarVentaController extends Controller
 						 	'funcion' 				=> $funcion,
 						 	'indclienterelter' 		=> $indclienterelter,
 						 	'anio_documento' 		=> $anio_documento,
+						 	'tipo_asiento' 			=> $tipo_asiento,
 						 	'ajax' 					=> true,						 	
 						 ]);
 	}
 
 
-	public function actionListarObservacionDocumentos()
+	public function actionListarObservacionDocumentos($tipo_asiento)
 	{
-
 	    View::share('titulo','Observaciones en documentos de venta');
-	    $tipo_asiento 					=	'TAS0000000000003';	
+	    if($tipo_asiento == '3'){$tipo_asiento = 'TAS0000000000003';}
+	    if($tipo_asiento == '4'){$tipo_asiento = 'TAS0000000000004';}
+
+
 		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento,Session::get('empresas_meta')->COD_EMPR);
 		$funcion 						= 	$this;
-
 	    $sel_tipo_asiento 				=	'';
 	    $sel_periodo 					=	'';
 	    $anio  							=   $this->anio;

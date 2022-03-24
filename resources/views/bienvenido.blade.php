@@ -9,81 +9,150 @@
 @section('section')
 
   <div class="be-content bienvenido">
-    <div class="main-content container-fluid">
-        <div class="row">
 
-            <div class="col-xs-12 col-md-3">
-              <div class="panel panel-default">
-                <div class="panel-heading panel-heading-divider xs-pb-15">Diario Ventas</div>
-                <div class="panel-body xs-pt-25">
-                  <div class="row user-progress user-progress-small">
-                    <div class="col-md-12"><span class="title">
-                        <a href="{{ url('/gestion-observacion-documentos-ventas') }}">Ventas sin asiento ({{count($lista_ventas)}})</a>
-                    </span></div>
-                  </div>
+        <div class="main-content container-fluid">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="panel panel-default panel-table">
+                <div class="panel-heading"> 
+                  <div class="title">Observaciones de asientos</div>
+                </div>
+                <div class="panel-body table-responsive">
+                  <table class="table table-striped table-borderless">
+                    <thead>
+                      <tr>
+                        <th>Tipo de asiento</th>
+                        <th>Observación</th>
+                        <th>Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody class="no-border-x">
+                      <tr>
+                        <td>Ventas</td>
+                        <td>Ventas sin asientos</td>
+                        <td class="actions">
+                          <a href="{{ url('/gestion-observacion-documentos/3') }}">
+                          <span class="badge badge-primary">{{count($lista_ventas)}}</span>
+                          </a>
+                        </td>
+                      </tr>
 
-                  <div class="row user-progress user-progress-small">
-                    <div class="col-md-12"><span class="title">
-                        <a href="{{ url('/gestion-configuracion-producto/1R') }}">Productos sin configurar ({{count($lista_productos_sc)}})</a>
-                    </span></div>
-                  </div>
+                      <tr>
+                        <td>Ventas</td>
+                        <td>Productos sin configurar</td>
+                        <td class="actions">
+                          <a href="{{ url('/gestion-configuracion-producto/1R/3') }}">
+                          <span class="badge badge-primary">{{count($lista_productos_sc)}}</span>
+                          </a>
+                        </td>
+                      </tr>
 
+
+                      <tr>
+                        <td>Compras</td>
+                        <td>Compras sin asientos</td>
+                        <td class="actions">
+                          <a href="{{ url('/gestion-observacion-documentos/4') }}">
+                          <span class="badge badge-success">{{count($lista_compras)}}</span>
+                          </a>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>Compras</td>
+                        <td>Compras sin configurar</td>
+                        <td class="actions">
+                          <a href="{{ url('/gestion-configuracion-producto/1R/4') }}">
+                          <span class="badge badge-success">{{count($lista_productos_sc_comp)}}</span>
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
 
-            <div class="col-xs-12 col-md-4">
-              <div class="panel panel-default">
-                <div class="panel-heading panel-heading-divider xs-pb-15">Documentos sin enviar a sunat</div>
-                <div class="panel-body xs-pt-25">
-                  @foreach($lista_documento_sin_enviar as $index => $item)
-                                <div class="row user-progress user-progress-small">
-                                  <div class="col-md-12"><span class="title">
-                                      <a  href="#" 
-                                          class='btndetallesunat' 
-                                          data_empresa = "{{$item->COD_EMPR_EMISOR}}">{{$item->TXT_EMPR_EMISOR}} ({{$item->cantidad}})</a>
-                                  </span></div>
-                                </div>
-                  @endforeach
+            <div class="col-md-6">
+              <div class="panel panel-default panel-table">
+                <div class="panel-heading"> 
+                  <div class="title">Documentos sin enviar a sunat</div>
+                </div>
+                <div class="panel-body table-responsive">
+                  <table class="table table-striped table-borderless">
+                    <thead>
+                      <tr>
+                        <th>Empresa</th>
+                        <th>Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody class="no-border-x">
+
+                    @foreach($lista_documento_sin_enviar as $index => $item)
+                        <tr>
+                          <td>{{$item->TXT_EMPR_EMISOR}}</td>
+                          <td class="actions">
+                              <a  href="#" 
+                                  class='btndetallesunat' 
+                                  data_empresa = "{{$item->COD_EMPR_EMISOR}}"><span class="badge badge-primary">{{$item->cantidad}}</span></a>
+                          </td>
+                        </tr>
+                    @endforeach
+
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
 
-            <div class="col-xs-12 col-md-5">
-              <div class="panel panel-default">
-                <div class="panel-heading panel-heading-divider xs-pb-15">Correlativos Faltantes</div>
-                <div class="panel-body xs-pt-25">
-                  @foreach($lista_documento_correlativo as $index => $item)
-                    @if($item->DIFERENCIA > 0)  
-
-                      <div class="row user-progress user-progress-small">
-                        <div class="col-md-12"><span class="title">
-                            <a  href="#" 
-                                class='btndetallecorrelativo' 
-                                data_empresa = "{{$item->COD_EMPR}}"
-                                data_empresa_txt = "{{$item->TXT_EMPR_EMISOR}}"
-                                data_categoria = "{{$item->COD_CATEGORIA}}"
-                                data_categoria_txt = "{{$item->NOM_CATEGORIA}}"
-                                data_serie = "{{$item->NRO_SERIE}}"
-                                data_min_doc = "{{$item->MINDOC}}"
-                                data_max_doc = "{{$item->MANDOC}}"
-                                >{{$item->TXT_EMPR_EMISOR}} - {{$item->NOM_CATEGORIA}} - {{$item->NRO_SERIE}} ({{$item->DIFERENCIA}})</a>
-                        </span></div>
-                      </div>
-
-                    @endif
 
 
-                  @endforeach
+            <div class="col-md-6">
+              <div class="panel panel-default panel-table">
+                <div class="panel-heading"> 
+                  <div class="title">Correlativos Faltantes</div>
+                </div>
+                <div class="panel-body table-responsive">
+                  <table class="table table-striped table-borderless">
+                    <thead>
+                      <tr>
+                        <th>Observación</th>
+                      </tr>
+                    </thead>
+                    <tbody class="no-border-x">
+                        @foreach($lista_documento_correlativo as $index => $item)
+                          @if($item->DIFERENCIA > 0)  
+                          <tr>
+                            <td class="actions">
+                                  <a  href="#" 
+                                      class='btndetallecorrelativo' 
+                                      data_empresa = "{{$item->COD_EMPR}}"
+                                      data_empresa_txt = "{{$item->TXT_EMPR_EMISOR}}"
+                                      data_categoria = "{{$item->COD_CATEGORIA}}"
+                                      data_categoria_txt = "{{$item->NOM_CATEGORIA}}"
+                                      data_serie = "{{$item->NRO_SERIE}}"
+                                      data_min_doc = "{{$item->MINDOC}}"
+                                      data_max_doc = "{{$item->MANDOC}}"
+                                      >{{$item->TXT_EMPR_EMISOR}} - {{$item->NOM_CATEGORIA}} - {{$item->NRO_SERIE}} ({{$item->DIFERENCIA}})</a>
+                            </td>
+                          </tr>
+                          @endif
+                        @endforeach
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
 
+
+          </div>
 
 
 
         </div>
-    </div>
+
+
+
     @include('alerta.modal.malertas')
   </div>
 

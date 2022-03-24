@@ -21,6 +21,8 @@ class Controller extends BaseController
 	public $anio;
 	public $prefijomaestro;
 	public $fechaActual;
+	public $array_empresas;
+	public $anio_inicio;
 
 	public function __construct()
 	{
@@ -34,6 +36,9 @@ class Controller extends BaseController
 		$this->fin 						= date_format(date_create(date('Y-m-d')), 'd-m-Y');
 		$this->anio 					= $anio;
 		$this->prefijomaestro			= $this->funciones->prefijomaestra();
+		$this->array_empresas			= ['IACHEM0000001339','EMP0000000000007'];
+		$this->anio_inicio				= 2022;
+
 
 	}
 

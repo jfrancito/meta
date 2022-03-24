@@ -50,11 +50,13 @@ $(document).ready(function(){
 
         var _token                  =   $('#token').val();
         var cod_documento_id        =   $(this).attr('data_cod_documento');
+        var cod_tipo_asiento        =   $(this).attr('data_cod_tipo_asiento');
         var idopcion                =   $('#idopcion').val();
 
         data                        =   {
                                             _token                  : _token,
                                             cod_documento_id        : cod_documento_id,
+                                            cod_tipo_asiento        : cod_tipo_asiento,
                                             idopcion                : idopcion
                                         };
 

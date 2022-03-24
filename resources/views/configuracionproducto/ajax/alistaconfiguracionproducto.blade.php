@@ -1,12 +1,21 @@
 <table id="nso" class="table table-striped table-borderless table-hover td-color-borde td-padding-7 listatabla">
   <thead>
     <tr>
-      <th>Año</th>
-      <th>Producto</th>
-      <th>Tipo</th>
-      <th>CC Relacionada</th>
-      <th>CC Tercero</th>
-      <th>
+      <th colspan="3" class='center background-th-celeste'>Información </th>
+
+      <th colspan="2" class='center background-th-verde'>Venta</th>
+      <th class='center background-th-celeste'>Compra</th>
+      <th class='center background-th-verde'>Sel</th>
+    </tr>
+
+    <tr>
+      <th class='background-th-celeste'>Año</th>
+      <th class='background-th-celeste'>Producto</th>
+      <th class='background-th-celeste'>Tipo</th>
+      <th class='background-th-verde'>CC Relacionada</th>
+      <th class='background-th-verde'>CC Tercero</th>
+      <th class='background-th-celeste'>Cuenta contable</th>
+      <th class='background-th-verde'>
         <div class="text-center be-checkbox be-checkbox-sm has-primary">
           <input  type="checkbox"
                   class="todo_asignar input_asignar"
@@ -19,7 +28,6 @@
             ></label>
         </div>
       </th>
-
     </tr>
   </thead>
   <tbody>
@@ -37,7 +45,7 @@
         </td>
         <td>{{$item->nombre_nro_cuenta_r}}</td>
         <td>{{$item->nombre_nro_cuenta_t}}</td>
-
+        <td>{{$item->nombre_nro_cuenta_compra}}</td>
         <td>
 
             <div class="text-center be-checkbox be-checkbox-sm has-primary">

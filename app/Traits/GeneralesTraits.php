@@ -23,6 +23,12 @@ use Keygen;
 trait GeneralesTraits
 {
 
+	public function gn_data_empresa($cod_empresa_id)
+	{
+		$empresa 		= 	STDEmpresa::where('COD_EMPR','=',$cod_empresa_id)->first();
+	 	return  $empresa;
+	}
+
 	private function gn_generacion_combo_array($titulo, $todo , $array)
 	{
 		if($todo=='TODO'){
@@ -209,7 +215,7 @@ trait GeneralesTraits
 	}
 
 
-	public function gn_cuenta_contable_xproducto_xempresa_xanio($cod_producto,$cod_empresa,$ind_cliente,$anio_documento)
+	public function gn_cuenta_contable_xproducto_xempresa_xanio($cod_producto,$cod_empresa,$ind_cliente,$anio_documento,$tipo_asiento)
 	{
 
 		$cuenta_contable= 	'';
@@ -217,21 +223,27 @@ trait GeneralesTraits
 		$empresa 		= 	WEBProductoEmpresa::where('producto_id','=',$cod_producto)
 							->where('empresa_id','=',$cod_empresa)
 							->where('anio','=',$anio_documento)
+							->where('cod_categoria_tipo_asiento','=',$tipo_asiento)
 		        			->first();
 
 		if(count($empresa)>0){
 
-
-			if($ind_cliente == 0){
-				
-				if(trim($empresa->cuenta_contable_tercero_id) != ''){
-					$cuenta_contable = 	$empresa->cuentacontabletercero->nro_cuenta .' '.$empresa->cuentacontabletercero->nombre;
-				}
-
-			}else{
-				
-				if(trim($empresa->cuenta_contable_relacionada_id) !=  ''){
-					$cuenta_contable = 	$empresa->cuentacontablerelacionada->nro_cuenta .' '.$empresa->cuentacontablerelacionada->nombre;
+			//ventas
+			if($tipo_asiento == 'TAS0000000000003'){
+				if($ind_cliente == 0){
+					if(trim($empresa->cuenta_contable_tercero_id) != ''){
+						$cuenta_contable = 	$empresa->cuentacontabletercero->nro_cuenta .' '.$empresa->cuentacontabletercero->nombre;
+					}
+				}else{
+					if(trim($empresa->cuenta_contable_relacionada_id) !=  ''){
+						$cuenta_contable = 	$empresa->cuentacontablerelacionada->nro_cuenta .' '.$empresa->cuentacontablerelacionada->nombre;
+					}
+				}	
+			}
+			//compras
+			if($tipo_asiento == 'TAS0000000000004'){
+				if(trim($empresa->cuenta_contable_id) != ''){
+					$cuenta_contable = 	$empresa->cuentacontablecompra->nro_cuenta .' '.$empresa->cuentacontablecompra->nombre;
 				}
 			}
 

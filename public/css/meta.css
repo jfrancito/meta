@@ -1,3 +1,15 @@
+.center{
+  text-align: center;
+}
+
+
+.mdi-check-circle{
+  color : #34a853;
+}
+
+.mdi-close-circle{
+  color : #ea4335;
+}
 
 .ocultar{
   display: none;
@@ -5,7 +17,15 @@
 
 .background-th{
   background: #5f99f5;
-  color: #fff;
+}
+
+
+.background-th-celeste{
+  background: #ADD8E6;
+}
+
+.background-th-verde{
+  background: #6dc982;
 }
 
 

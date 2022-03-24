@@ -24,4 +24,9 @@ class WEBProductoEmpresa extends Model
         return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_relacionada_id', 'id');
     }
 
+    public function cuentacontablecompra()
+    {
+        return $this->belongsTo('App\Modelos\WEBCuentaContable', 'cuenta_contable_id', 'id');
+    }
+
 }

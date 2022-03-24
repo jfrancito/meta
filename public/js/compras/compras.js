@@ -2,7 +2,7 @@ $(document).ready(function(){
 
     var carpeta = $("#carpeta").val();
 
-    $(".compra").on('click','.buscarcompras', function() {
+    $(".compras").on('click','.buscarcompras', function() {
 
         event.preventDefault();
         var anio                    =   $('#anio').val();
@@ -28,9 +28,14 @@ $(document).ready(function(){
         ajax_normal(data,"/ajax-listado-compras");
 
     });
+    $(".compras").on('click','.clistacompras', function() {
+        activaTab('listacompras');
+    });
 
 
-    $(".compra").on('change','#anio', function() {
+
+
+    $(".compras").on('change','#anio', function() {
 
         event.preventDefault();
         var anio        =   $('#anio').val();
@@ -45,5 +50,29 @@ $(document).ready(function(){
         ajax_normal_combo(data,"/ajax-combo-periodo-xanio-xempresa","ajax_anio")                    
 
     });
+
+    $(".compras").on('dblclick','.dobleclickac', function(e) {
+
+        var _token                  =   $('#token').val();
+        var documento_ctble_id      =   $(this).attr('data_documento_ctble_id');
+        var idopcion                =   $('#idopcion').val();
+
+
+        activaTab('asiento');
+        data                        =   {
+                                            _token                  : _token,
+                                            documento_ctble_id      : documento_ctble_id,
+                                            idopcion                : idopcion,
+                                        };
+
+        ajax_normal_seccion(data,"/ajax-buscar-compra-seleccionada","crearasientoajax");
+
+    });
+
+
+    function activaTab(tab){
+        $('.nav-tabs a[href="#' + tab + '"]').tab('show');
+    }
+
 
 });

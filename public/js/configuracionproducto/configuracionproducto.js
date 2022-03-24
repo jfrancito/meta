@@ -63,13 +63,20 @@ $(document).ready(function(){
     $(".configuracionproducto").on('click','.btn-guardar-configuracion', function() {
 
         var array_productos           =   $('#array_productos').val();
+
         var cuenta_contable_rel_id    =   $('#cuenta_contable_rel_id').val();
         var cuenta_contable_ter_id    =   $('#cuenta_contable_ter_id').val();
-
+        var cuenta_contable_compra_id =   $('#cuenta_contable_compra_id').val();
+        var ind_venta_compra          =   $('#ind_venta_compra').val();
         var _token                    =   $('#token').val();
         //validacioones
-        if(cuenta_contable_rel_id  ==''){ alerterrorajax("Seleccione una cuenta contable relacionadas."); return false;}
-        if(cuenta_contable_ter_id  ==''){ alerterrorajax("Seleccione una cuenta contable tercero."); return false;}
+        if(ind_venta_compra=='1'){
+            if(cuenta_contable_rel_id  ==''){ alerterrorajax("Seleccione una cuenta contable relacionadas."); return false;}
+            if(cuenta_contable_ter_id  ==''){ alerterrorajax("Seleccione una cuenta contable tercero."); return false;} 
+        }else{
+            if(cuenta_contable_compra_id  ==''){ alerterrorajax("Seleccione una cuenta contable de compra."); return false;} 
+        }
+
         //cerrar modal
         $('#modal-configuracion-producto-cuenta-contable').niftyModal('hide');
 
@@ -77,6 +84,8 @@ $(document).ready(function(){
                                 _token                   : _token,
                                 cuenta_contable_rel_id   : cuenta_contable_rel_id,
                                 cuenta_contable_ter_id   : cuenta_contable_ter_id,
+                                cuenta_contable_compra_id   : cuenta_contable_compra_id,
+                                ind_venta_compra         : ind_venta_compra,
                                 array_productos          : array_productos,
                             };
 
@@ -86,6 +95,12 @@ $(document).ready(function(){
 
 
 
+    $(".configuracionproducto").on('click','#ventastab', function() {
+        $("#ind_venta_compra").val("1");
+    });
+    $(".configuracionproducto").on('click','#comprastab', function() {
+        $("#ind_venta_compra").val("2");
+    });
 
 
 

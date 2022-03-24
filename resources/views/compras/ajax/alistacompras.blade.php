@@ -15,7 +15,8 @@
   </thead>
   <tbody>
     @foreach($listacompras as $index => $item)
-      <tr>
+      <tr class="seleccionar dobleclickac"
+        data_documento_ctble_id = "{{$item->COD_DOCUMENTO_CTBLE}}">
         <td>{{$item->NRO_SERIE}}</td>
         <td>{{$item->NRO_DOC}}</td>
         <td>{{date_format(date_create($item->FEC_EMISION), 'd-m-Y')}}</td>

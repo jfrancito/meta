@@ -8,6 +8,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Crypt;
 use App\Modelos\WEBViewMigrarCompras;
+use App\Modelos\WEBAsientoModelo;
+
 use View;
 use Session;
 use Hashids;
@@ -33,7 +35,8 @@ trait ComprasTraits
 													  sum(WEB.viewmigrarcompras.CAN_SUB_TOTAL) as CAN_SUB_TOTAL,
 													  sum(WEB.viewmigrarcompras.CAN_IMPUESTO_VTA) as CAN_IMPUESTO_VTA,
 													  sum(WEB.viewmigrarcompras.CAN_TOTAL) as CAN_TOTAL,
-													  WEB.viewmigrarcompras.NOM_ESTADO'))
+													  WEB.viewmigrarcompras.NOM_ESTADO,
+													  WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE'))
 									->groupBy('WEB.viewmigrarcompras.NRO_SERIE')
 									->groupBy('WEB.viewmigrarcompras.NRO_DOC')
 									->groupBy('WEB.viewmigrarcompras.FEC_EMISION')
@@ -41,11 +44,60 @@ trait ComprasTraits
 									->groupBy('WEB.viewmigrarcompras.NOM_PROVEEDOR')
 									->groupBy('WEB.viewmigrarcompras.NOM_MONEDA')
 									->groupBy('WEB.viewmigrarcompras.NOM_ESTADO')
+									->groupBy('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
 									->get();
 
 		return $lista_compras;
 
 	}
+
+	private function co_documento_compra($documento_ctble_id)
+	{
+		$compra		=		WEBViewMigrarCompras::where('COD_DOCUMENTO_CTBLE','=',$documento_ctble_id)->first();
+		return $compra;
+	}
+
+	private function co_detalle_compra($documento_ctble_id)
+	{
+		$listadetallecompra		=		WEBViewMigrarCompras::where('COD_DOCUMENTO_CTBLE','=',$documento_ctble_id)->get();
+		return $listadetallecompra;
+	}
+
+
+	private function co_asiento_modelo($tipo_asiento_id,$empresa_id,$relacionado,$cod_moneda,$atributo)
+	{	
+
+		$icono 					=		'mdi-close-circle';
+
+		//tipo de cliente
+		if($atributo == 'tipo_cliente'){
+			$check					=		WEBAsientoModelo::where('tipo_asiento_id','=',$tipo_asiento_id)
+											->where('empresa_id','=',$empresa_id)
+											->where('activo','=',1)
+											->where($atributo,'=',$relacionado)
+											->get();
+		}
+
+		if($atributo == 'moneda_id'){
+			$check					=		WEBAsientoModelo::where('tipo_asiento_id','=',$tipo_asiento_id)
+											->where('empresa_id','=',$empresa_id)
+											->where('activo','=',1)
+											->where('tipo_cliente','=',$relacionado)
+											->where($atributo,'=',$relacionado)
+											->get();
+		}
+
+
+
+		if(count($check)>0){
+			$icono 					=		'mdi-check-circle';
+		}
+
+
+		return $icono;
+	}
+
+	
 
 
 }

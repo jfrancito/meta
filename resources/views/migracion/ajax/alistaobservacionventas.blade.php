@@ -6,6 +6,7 @@
       <th>Serie</th>
       <th>Nro</th>
       <th>Fecha Emision</th>
+      <th>Tipo Asiento</th>
       <th>Observación</th>
 <!-- 
       <th>
@@ -35,6 +36,7 @@
         <td>{{$item->documento_ctble->NRO_SERIE}}</td>
         <td>{{$item->documento_ctble->NRO_DOC}}</td>
         <td>{{date_format(date_create($item->documento_ctble->FEC_EMISION), 'd-m-Y')}}</td>
+        <td>{{$item->TXT_CATEGORIA_TIPO_ASIENTO}}</td>
         <td>{{$item->TXT_ERROR}}</td>
 <!--         
         <td>

@@ -8,7 +8,7 @@
 @stop
 @section('section')
 
-  <div class="be-content contenido compra">
+  <div class="be-content contenido compras">
     <div class="main-content container-fluid">
           <div class="row">
             <div class="col-sm-12">
@@ -90,12 +90,31 @@
                   </div>
 
 
-                  <div class='listajax'>
-                    @include('compras.ajax.alistacompras')
-                  </div>
+                      <div class="panel panel-default">
+                        <div class="tab-container">
+                          <ul class="nav nav-tabs">
+                            <li class="active"><a href="#listacompras" class='clistacompras'  data-toggle="tab">Lista de compras</a></li>
+                            <li class=""><a href="#asiento" class='casiento' data-toggle="tab">Crear Asiento</a></li>
+                          </ul>
+                          <div class="tab-content">
+                            <div id="listacompras" class="tab-pane active cont">
+                              <div class='listajax'>
+                                @include('compras.ajax.alistacompras')
+                              </div>
+                            </div>
+                            <div id="asiento" class="tab-pane cont">
+                              <div class='crearasientoajax'>
+                                  Seleccione una compra
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+ 
 
 
                 </div>
+
               </div>
             </div>
           </div>

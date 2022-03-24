@@ -30,7 +30,7 @@ class ConfiguracioProductoController extends Controller
 	use ConfiguracionProductoTraits;
 	use MigrarVentaTraits;
 
-	public function actionListarConfiguracionProducto($idopcion)
+	public function actionListarConfiguracionProducto($idopcion,$tipo_asiento)
 	{
 
 		/******************* validar url **********************/
@@ -38,24 +38,20 @@ class ConfiguracioProductoController extends Controller
 	    if($validarurl <> 'true'){return $validarurl;}
 	    /******************************************************/
 	    View::share('titulo','Configuración Producto');
+
+	    if($tipo_asiento == '3'){$tipo_asiento = 'TAS0000000000003';}
+	    if($tipo_asiento == '4'){$tipo_asiento = 'TAS0000000000004';}
+
 	    $combo_producto  				= 	$this->gn_generacion_combo_productos('Seleccione producto', '');
 		$funcion 						= 	$this;
 	    $anio  							=   $this->anio;
         $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
-
-		// $array_productos_empresa    	=	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
-		// 									->where('anio','=',$anio)
-		// 									->pluck('producto_id')
-		// 									->toArray();
-
 		$empresa_id 					=   Session::get('empresas_meta')->COD_EMPR;
-		$tipo_asiento 					=	'TAS0000000000003';
 		$lista_productos_sc 		 	= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento,$empresa_id,$anio);
 		$array_productos_empresa    	=	ALMProducto::whereIn('COD_PRODUCTO',$lista_productos_sc)
 											->pluck('COD_PRODUCTO')
 											->toArray();
-
 		$lista_configuracion_producto 	= 	$this->cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa);
 		$defecto_producto				= 	'';
 
@@ -108,19 +104,25 @@ class ConfiguracioProductoController extends Controller
 		$anio  					=   $this->anio;
 
 		$array_cuenta_pc     	= 	$this->pc_array_nro_cuentas_nombre(Session::get('empresas_meta')->COD_EMPR,$anio);
+
 		$combo_cuenta_rel		= 	$this->gn_generacion_combo_array('Seleccione cuenta contable relacionada', '' , $array_cuenta_pc);
 		$combo_cuenta_ter		= 	$this->gn_generacion_combo_array('Seleccione cuenta contable tercero', '' , $array_cuenta_pc);
+		$combo_cuenta_com		= 	$this->gn_generacion_combo_array('Seleccione cuenta contable compra', '' , $array_cuenta_pc);
 
 		$defecto_cuenta_rel		= 	'';
 		$defecto_cuenta_ter		= 	'';
+		$defecto_cuenta_com		= 	'';
+
 		$funcion 				= 	$this;
 
 		return View::make('configuracionproducto/modal/ajax/mcuentacontable',
 						 [		 	
 						 	'combo_cuenta_rel' 		=> $combo_cuenta_rel,
 						 	'combo_cuenta_ter' 		=> $combo_cuenta_ter,
+						 	'combo_cuenta_com' 		=> $combo_cuenta_com,
 						 	'defecto_cuenta_rel' 	=> $defecto_cuenta_rel,
 						 	'defecto_cuenta_ter' 	=> $defecto_cuenta_ter,
+						 	'defecto_cuenta_com' 	=> $defecto_cuenta_com,
 						 	'array_productos' 		=> $array_productos,
 						 	'funcion' 				=> $funcion,
 						 	'ajax' 					=> true,						 	
@@ -135,9 +137,11 @@ class ConfiguracioProductoController extends Controller
 		$array_productos 			=   json_decode($request['array_productos'],true);
 		$cuenta_contable_rel_id 	=   $request['cuenta_contable_rel_id'];
 		$cuenta_contable_ter_id 	=   $request['cuenta_contable_ter_id'];
+		$cuenta_contable_compra_id 	=   $request['cuenta_contable_compra_id'];
+		$ind_venta_compra 			=   $request['ind_venta_compra'];
+		$anio  						=   $this->anio;
 
 
-		$anio  					=   $this->anio;
 
 		foreach ($array_productos as $key => $item) {
 
@@ -147,26 +151,37 @@ class ConfiguracioProductoController extends Controller
 
             if (count($cabecera)<=0) {
 
-				$idproductoempresa 							=   $this->funciones->getCreateIdMaestra('web.productoempresas');
-				$cabecera            	 					=	new WEBProductoEmpresa;
-				$cabecera->id 	     	 					=   $idproductoempresa;
-				$cabecera->cuenta_contable_relacionada_id 	=   $cuenta_contable_rel_id;
-				$cabecera->cuenta_contable_tercero_id 		=   $cuenta_contable_ter_id;
-				$cabecera->anio 							=  	$anio;
-				$cabecera->producto_id 						=   $item['producto_id'];
-				$cabecera->empresa_id 	 					=   Session::get('empresas_meta')->COD_EMPR;
-				$cabecera->fecha_crea 	 					=   $this->fechaactual;
-				$cabecera->usuario_crea 					=   Session::get('usuario_meta')->id;
+				$idproductoempresa 								=   $this->funciones->getCreateIdMaestra('web.productoempresas');
+				$cabecera            	 						=	new WEBProductoEmpresa;
+				$cabecera->id 	     	 						=   $idproductoempresa;
+				if($ind_venta_compra == '1'){
+					$cabecera->cuenta_contable_relacionada_id 	=   $cuenta_contable_rel_id;
+					$cabecera->cuenta_contable_tercero_id 		=   $cuenta_contable_ter_id;
+					$cabecera->cuenta_contable_id 				=   '';
+				}else{
+					$cabecera->cuenta_contable_relacionada_id 	=   '';
+					$cabecera->cuenta_contable_tercero_id 		=   '';
+					$cabecera->cuenta_contable_id 				=   $cuenta_contable_compra_id;
+				}
+				$cabecera->anio 								=  	$anio;
+				$cabecera->producto_id 							=   $item['producto_id'];
+				$cabecera->empresa_id 	 						=   Session::get('empresas_meta')->COD_EMPR;
+				$cabecera->fecha_crea 	 						=   $this->fechaactual;
+				$cabecera->usuario_crea 						=   Session::get('usuario_meta')->id;
 				$cabecera->save();
 
             }else{
-
-				$cabecera->cuenta_contable_relacionada_id 	=   $cuenta_contable_rel_id;
-				$cabecera->cuenta_contable_tercero_id 		=   $cuenta_contable_ter_id;
-				$cabecera->activo 							=  1;
-				$cabecera->empresa_id 	 					=   Session::get('empresas_meta')->COD_EMPR;
-				$cabecera->fecha_mod 	 					=   $this->fechaactual;
-				$cabecera->usuario_mod 						=   Session::get('usuario_meta')->id;
+            	
+				if($ind_venta_compra == '1'){
+					$cabecera->cuenta_contable_relacionada_id 	=   $cuenta_contable_rel_id;
+					$cabecera->cuenta_contable_tercero_id 		=   $cuenta_contable_ter_id;
+				}else{
+					$cabecera->cuenta_contable_id 				=   $cuenta_contable_compra_id;
+				}
+				$cabecera->activo 								=  1;
+				$cabecera->empresa_id 	 						=   Session::get('empresas_meta')->COD_EMPR;
+				$cabecera->fecha_mod 	 						=   $this->fechaactual;
+				$cabecera->usuario_mod 							=   Session::get('usuario_meta')->id;
 				$cabecera->save();	
 
             }

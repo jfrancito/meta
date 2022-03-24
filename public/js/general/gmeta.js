@@ -32,6 +32,10 @@ $(".be-content").on('click','.checkbox_asignar', function() {
 var carpeta = $("#carpeta").val();
 //ajax normal
 
+function activaTab(tab){
+    $('.nav-tabs a[href="#' + tab + '"]').tab('show');
+}
+
 function ajax_normal_combo(data,link,contenedor) {
     abrircargando();
     $.ajax({
@@ -68,6 +72,26 @@ function ajax_normal(data,link) {
         }
     });
 }
+
+function ajax_normal_seccion(data,link,contenedor) {
+    $("."+contenedor).html("");
+    abrircargando();
+    $.ajax({
+        type    :   "POST",
+        url     :   carpeta+link,
+        data    :   data,
+        success: function (data) {
+            cerrarcargando();
+            $("."+contenedor).html(data);
+
+        },
+        error: function (data) {
+            cerrarcargando();
+            error500(data);
+        }
+    });
+}
+
 
 function ajax_normal_guardar_lista(data,link,btnclick) {
 

@@ -251,6 +251,7 @@ trait MigrarVentaTraits
 											->where('IND_ASIENTO_MODELO','=',-1)
 											->where('IND_ERROR','=',1)
 											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
+											->where('TXT_ERROR','=','Hay productos que no tienen asociados cuenta contable')
 											->pluck('COD_REFERENCIA')
 											->toArray();
 

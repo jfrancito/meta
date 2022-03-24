@@ -10,35 +10,69 @@
 	<div  class="row regla-modal">
 	    <div class="col-md-12">
 
-	        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	            <div class="form-group">
-					<label class="col-sm-12 control-label labelleft negrita" >Cuenta contable relacionada: </label>
-					<div class="col-sm-12 abajocaja" >
-					  {!! Form::select( 'cuenta_contable_rel_id', $combo_cuenta_rel, $defecto_cuenta_rel,
-					                    [
-					                      'class'       => 'select2 form-control control input-xs combo' ,
-					                      'id'          => 'cuenta_contable_rel_id',
-					                      'data-aw'     => '1',
-					                    ]) !!}
-					</div>
-				</div>
-	        </div>
+              <div class="panel panel-default">
+                <div class="tab-container">
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a href="#ventas" id="ventastab" data-toggle="tab">Ventas</a></li>
+                    <li><a href="#compras" id="comprastab" data-toggle="tab">Compras</a></li>
+                  </ul>
+                  <div class="tab-content">
+                    <div id="ventas" class="tab-pane active cont">
 
-	        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	            <div class="form-group">
-					<label class="col-sm-12 control-label labelleft negrita" >Cuenta contable tercero: </label>
-					<div class="col-sm-12 abajocaja" >
-					  {!! Form::select( 'cuenta_contable_ter_id', $combo_cuenta_ter, $defecto_cuenta_ter,
-					                    [
-					                      'class'       => 'select2 form-control control input-xs combo' ,
-					                      'id'          => 'cuenta_contable_ter_id',
-					                      'data-aw'     => '1',
-					                    ]) !!}
-					</div>
-				</div>
-	        </div>
+				        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				            <div class="form-group">
+								<label class="col-sm-12 control-label labelleft negrita" >Cuenta contable relacionada: </label>
+								<div class="col-sm-12 abajocaja" >
+								  {!! Form::select( 'cuenta_contable_rel_id', $combo_cuenta_rel, $defecto_cuenta_rel,
+								                    [
+								                      'class'       => 'select2 form-control control input-xs combo' ,
+								                      'id'          => 'cuenta_contable_rel_id',
+								                      'data-aw'     => '1',
+								                    ]) !!}
+								</div>
+							</div>
+				        </div>
+
+				        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				            <div class="form-group">
+								<label class="col-sm-12 control-label labelleft negrita" >Cuenta contable tercero: </label>
+								<div class="col-sm-12 abajocaja" >
+								  {!! Form::select( 'cuenta_contable_ter_id', $combo_cuenta_ter, $defecto_cuenta_ter,
+								                    [
+								                      'class'       => 'select2 form-control control input-xs combo' ,
+								                      'id'          => 'cuenta_contable_ter_id',
+								                      'data-aw'     => '1',
+								                    ]) !!}
+								</div>
+							</div>
+				        </div>
 
 
+                    </div>
+                    <div id="compras" class="tab-pane cont">
+  				        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				            <div class="form-group">
+								<label class="col-sm-12 control-label labelleft negrita" >Cuenta contable compras: </label>
+								<div class="col-sm-12 abajocaja" >
+								  {!! Form::select( 'cuenta_contable_compra_id', $combo_cuenta_com, $defecto_cuenta_com,
+								                    [
+								                      'class'       => 'select2 form-control control input-xs combo' ,
+								                      'id'          => 'cuenta_contable_compra_id',
+								                      'data-aw'     => '1',
+								                    ]) !!}
+								</div>
+							</div>
+				        </div>
+                    </div>
+
+
+
+
+                  </div>
+                </div>
+              </div>
+
+                <input type="hidden" name="ind_venta_compra" id ="ind_venta_compra" value="1">
 
 	    </div>
 	    <div class="col-md-6">

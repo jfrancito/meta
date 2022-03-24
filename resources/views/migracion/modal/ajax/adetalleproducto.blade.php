@@ -21,8 +21,14 @@
 	      	<th>Linea</th>
 	        <th>Producto</th>
 	        <th>Cantidad</th>
-	        <th class='@if($indclienterelter == 1) background-th @endif'>CC Relacionada</th>
-	        <th class='@if($indclienterelter == 0) background-th @endif'>CC Tercero</th>
+
+		    @if($tipo_asiento == 'TAS0000000000003')
+		        <th class='@if($indclienterelter == 1) background-th @endif'>CC Relacionada</th>
+		        <th class='@if($indclienterelter == 0) background-th @endif'>CC Tercero</th>
+		    @else
+	        	<th class='background-th'>Cuenta Corriente</th>
+		    @endif
+
 	      </tr>
 	    </thead>
 	    <tbody>
@@ -31,22 +37,40 @@
 	      	   <td>{{$index + 1}}</td>
 		       <td>{{$item->TXT_NOMBRE_PRODUCTO}}</td>
 		       <td>{{$item->CAN_PRODUCTO}}</td>
-		       <td>
-		       	{{$funcion->gn_cuenta_contable_xproducto_xempresa_xanio(
-		       		$item->COD_PRODUCTO,
-		       		Session::get('empresas_meta')->COD_EMPR,
-		       		1,
-		       		$anio_documento)
-		       	}}
-		       </td>
-		       <td>
-		       	{{$funcion->gn_cuenta_contable_xproducto_xempresa_xanio(
-		       		$item->COD_PRODUCTO,
-		       		Session::get('empresas_meta')->COD_EMPR,
-		       		0,
-		       		$anio_documento)
-		       	}}
-		       </td>
+			    @if($tipo_asiento == 'TAS0000000000003')
+			       <td>
+			       	{{$funcion->gn_cuenta_contable_xproducto_xempresa_xanio(
+			       		$item->COD_PRODUCTO,
+			       		Session::get('empresas_meta')->COD_EMPR,
+			       		1,
+			       		$anio_documento,
+			       		$tipo_asiento)
+			       	}}
+			       </td>
+			       <td>
+			       	{{$funcion->gn_cuenta_contable_xproducto_xempresa_xanio(
+			       		$item->COD_PRODUCTO,
+			       		Session::get('empresas_meta')->COD_EMPR,
+			       		0,
+			       		$anio_documento,
+			       		$tipo_asiento)
+			       	}}
+			       </td>
+			    @else
+			       <td>
+			       	{{$funcion->gn_cuenta_contable_xproducto_xempresa_xanio(
+			       		$item->COD_PRODUCTO,
+			       		Session::get('empresas_meta')->COD_EMPR,
+			       		0,
+			       		$anio_documento,
+			       		$tipo_asiento)
+			       	}}
+			       </td>
+			    @endif
+
+
+
+
 	      	</tr>                  
 	    @endforeach
 	    </tbody>
