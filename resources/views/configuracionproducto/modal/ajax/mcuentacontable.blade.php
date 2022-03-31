@@ -70,7 +70,11 @@
 
                   </div>
                 </div>
+
+                
               </div>
+
+
 
                 <input type="hidden" name="ind_venta_compra" id ="ind_venta_compra" value="1">
 

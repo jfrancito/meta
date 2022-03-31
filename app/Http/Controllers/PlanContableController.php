@@ -72,9 +72,19 @@ class PlanContableController extends Controller
 		$anio 					=   $request['anio'];
 
 		$cuenta_contable 	    = 	WEBCuentaContable::where('id','=',$cuenta_contable_id)->first();
+
+
 		$combo_clase 	    	= 	$this->gn_generacion_combo_categoria('CONTABILIDAD_CLASE','Seleccione clase','');
 		$combo_tipo_saldo    	= 	$this->gn_generacion_combo_categoria('CONTABILIDAD_TIPO_SALDO','Seleccione tipo de saldo','');
 		$combo_tipo_cuenta    	= 	$this->gn_generacion_combo_categoria('CONTABILIDAD_TIPO_CUENTA','Seleccione tipo de cuenta','');
+
+		$array_cuenta_pc     	= 	$this->pc_array_nro_cuenta_nro_cuenta(Session::get('empresas_meta')->COD_EMPR,$anio);
+
+		$combo_cuenta_tran_debe01		= 	$this->gn_generacion_combo_array('Seleccione cuenta contable transferencia debe 01', '' , $array_cuenta_pc);
+		$combo_cuenta_tran_debe02		= 	$this->gn_generacion_combo_array('Seleccione cuenta contable transferencia debe 02', '' , $array_cuenta_pc);
+		$combo_cuenta_tran_haber		= 	$this->gn_generacion_combo_array('Seleccione cuenta contable transferencia haber', '' , $array_cuenta_pc);
+
+
 		$funcion 				= 	$this;
 
 		return View::make('plancontable/modal/ajax/maconfiguracionplancontable',
@@ -86,6 +96,9 @@ class PlanContableController extends Controller
 						 	'combo_clase' 			=> $combo_clase,
 						 	'combo_tipo_saldo' 		=> $combo_tipo_saldo,
 						 	'combo_tipo_cuenta' 	=> $combo_tipo_cuenta,
+						 	'combo_cuenta_tran_debe01' 	=> $combo_cuenta_tran_debe01,
+						 	'combo_cuenta_tran_debe02' 	=> $combo_cuenta_tran_debe02,
+						 	'combo_cuenta_tran_haber' 	=> $combo_cuenta_tran_haber,
 						 	'ajax' 					=> true,						 	
 						 ]);
 	}
@@ -118,6 +131,58 @@ class PlanContableController extends Controller
 
 
 	}
+
+	public function actionGuardarComprasPlanContable($idopcion,Request $request)
+	{
+
+
+		if($_POST)
+		{
+			$cuenta_contable_id = $request['cuenta_contable_id'];
+			$anio 				= $request['anio'];
+
+			$cuenta_contable_tran_debe01_id 	= $request['cuenta_contable_tran_debe01_id'];
+			$cuenta_contable_por_debe01_id 		= $request['cuenta_contable_por_debe01_id'];
+			$cuenta_contable_tran_debe02_id 	= $request['cuenta_contable_tran_debe02_id'];
+			$cuenta_contable_por_debe02_id 		= $request['cuenta_contable_por_debe02_id'];
+			$cuenta_contable_tran_haber_id 		= $request['cuenta_contable_tran_haber_id'];
+
+			if(is_null($cuenta_contable_tran_debe01_id)){
+				$cuenta_contable_tran_debe01_id ='';
+			}
+			if(is_null($cuenta_contable_tran_debe02_id)){
+				$cuenta_contable_tran_debe02_id ='';
+			}
+			if(is_null($cuenta_contable_tran_haber_id)){
+				$cuenta_contable_tran_haber_id ='';
+			}
+
+			if($cuenta_contable_por_debe01_id == ''){
+				$cuenta_contable_por_debe01_id = 0;
+			}
+			if($cuenta_contable_por_debe02_id == ''){
+				$cuenta_contable_por_debe01_id = 0;
+			}
+
+			$cuenta_contable 	= WEBCuentaContable::where('id','=',$cuenta_contable_id)->first();
+
+			$cuenta_contable->cuenta_contable_transferencia_debe  		 	=	$cuenta_contable_tran_debe01_id;
+			$cuenta_contable->transferencia_debe_porcentaje 				=	$cuenta_contable_por_debe01_id;
+			$cuenta_contable->cuenta_contable_transferencia_debe02 			=	$cuenta_contable_tran_debe02_id;
+			$cuenta_contable->transferencia_debe02_porcentaje 				=	$cuenta_contable_por_debe02_id;
+			$cuenta_contable->cuenta_contable_transferencia_haber 			=	$cuenta_contable_tran_haber_id;
+			$cuenta_contable->fecha_mod 	 				=   $this->fechaactual;
+			$cuenta_contable->usuario_mod 					=   Session::get('usuario_meta')->id;
+			$cuenta_contable->save();
+
+			Session::flash('anio_pc', $anio);
+			return Redirect::to('/gestion-plan-contable/'.$idopcion)->with('bienhecho', 'Cuenta Contable '.$cuenta_contable->nombre.' modificada con exito');
+
+		}
+
+
+	}
+
 
 	public function actionAjaxComboCuentaContableNivel(Request $request)
 	{

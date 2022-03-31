@@ -60,7 +60,7 @@
 
                       <tr>
                         <td>Compras</td>
-                        <td>Compras sin configurar</td>
+                        <td>Productos sin configurar</td>
                         <td class="actions">
                           <a href="{{ url('/gestion-configuracion-producto/1R/4') }}">
                           <span class="badge badge-success">{{count($lista_productos_sc_comp)}}</span>
