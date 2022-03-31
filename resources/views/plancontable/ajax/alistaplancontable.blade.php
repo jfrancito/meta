@@ -5,8 +5,9 @@
       <th>Nro Cuenta</th>
       <th>Nivel</th>
       <th>Nombre</th>
-      <th>Cuenta transferencia debe</th>
-      <th>Cuenta transferencia haber</th>
+      <th>Transferencia debe 01</th>
+      <th>Transferencia debe 02</th>
+      <th>Transferencia haber</th>
     </tr>
   </thead>
   <tbody>
@@ -18,8 +19,19 @@
         <td>{{$item->nro_cuenta}}</td>
         <td>{{$item->nivel}}</td>
         <td>{{$item->nombre}}</td>
-        <td>{{$item->cuenta_contable_transferencia_debe}}</td>
-        <td>{{$item->cuenta_contable_transferencia_haber}}</td>
+        <td>
+            @if($item->cuenta_contable_transferencia_debe <> '')  
+              {{$item->cuenta_contable_transferencia_debe}} - {{$item->transferencia_debe_porcentaje}}%
+            @endif
+        </td>
+        <td>
+            @if($item->cuenta_contable_transferencia_debe02 <> '')  
+              {{$item->cuenta_contable_transferencia_debe02}} - {{$item->transferencia_debe02_porcentaje}}%
+            @endif
+        </td>
+        <td>
+          {{$item->cuenta_contable_transferencia_haber}}
+        </td>
       </tr>                    
     @endforeach
   </tbody>

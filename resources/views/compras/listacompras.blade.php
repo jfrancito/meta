@@ -15,10 +15,28 @@
               <div class="panel panel-default panel-border-color panel-border-color-success">
                 <div class="panel-heading">Listado de compras
                   <div class="tools tooltiptop">
+
                     <a href="#" class="tooltipcss opciones buscarcompras">
                       <span class="tooltiptext">Buscar Compras</span>
                       <span class="icon mdi mdi-search"></span>
                     </a>
+
+                    <form method="POST" id='formgenerarasiento' action="{{ url('/asiento-contables-confirmado-xdocumentos') }}" style="display: inline-block;" >
+                      {{ csrf_field() }}
+                      <input type="hidden" id='documentos' name='documentos' >
+                      <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
+                      <input type="hidden" id='periodo_id_confirmar' name='periodo_id_confirmar' >
+                      <input type="hidden" id='nro_serie_confirmar' name='nro_serie_confirmar' >
+                      <input type="hidden" id='nro_doc_confirmar' name='nro_doc_confirmar' >
+                      <input type="hidden" id='anio_confirmar' name='anio_confirmar' >
+
+
+                      <a href="#" class="tooltipcss" id='confirmarasientos' >
+                        <span class="tooltiptext">Confirmar Asiento Contable</span>
+                        <span class="icon mdi mdi-mail-send"></span>
+                      </a>
+                    </form>
+
                   </div>
                   <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}}</span>
                 </div>
@@ -57,7 +75,7 @@
 
                             <input  type="text"
                                     id="serie" name='serie' 
-                                    value=""
+                                    value="{{$sel_serie}}"
                                     placeholder="Nro Serie"
                                     required = ""
                                     autocomplete="off" class="form-control input-sm" data-aw="1"/>
@@ -73,7 +91,7 @@
 
                             <input  type="text"
                                     id="documento" name='documento' 
-                                    value=""
+                                    value="{{$sel_nrodoc}}"
                                     placeholder="Nro Documento"
                                     required = ""
                                     autocomplete="off" class="form-control input-sm" data-aw="1"/>
@@ -84,13 +102,18 @@
 
 
 
-                      <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
+
                     </div>
 
                   </div>
 
 
-                      <div class="panel panel-default">
+
+                      <div class='listajax'>
+                        @include('compras.ajax.alistacompras')
+                      </div>
+
+<!--                       <div class="panel panel-default">
                         <div class="tab-container">
                           <ul class="nav nav-tabs">
                             <li class="active"><a href="#listacompras" class='clistacompras'  data-toggle="tab">Lista de compras</a></li>
@@ -109,7 +132,7 @@
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div> -->
  
 
 
@@ -119,7 +142,7 @@
             </div>
           </div>
     </div>
-
+    @include('registrodiario.modal.mregistrodiario')
   </div>
 
 @stop

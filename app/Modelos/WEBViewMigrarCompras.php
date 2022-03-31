@@ -8,8 +8,7 @@ class WEBViewMigrarCompras extends Model
 {
     protected $table = 'WEB.viewmigrarcompras';
     public $timestamps=false;
-
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'COD_DOCUMENTO_CTBLE';
     public $incrementing = false;
     public $keyType = 'string';
 
@@ -26,7 +25,10 @@ class WEBViewMigrarCompras extends Model
         }
     }
 
-
+    public function asiento()
+    {
+        return $this->hasMany('App\Modelos\WEBAsiento', 'TXT_REFERENCIA', 'COD_DOCUMENTO_CTBLE');
+    }
 
 
 

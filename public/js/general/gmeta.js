@@ -10,6 +10,9 @@ $(".be-content").on('click','.checkbox_asignar', function() {
     var check   = -1;
     var estado  = -1;
     
+
+    
+    
     console.log("check");
 
     if($(input).is(':checked')){

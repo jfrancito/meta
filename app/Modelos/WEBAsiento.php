@@ -23,4 +23,25 @@ class WEBAsiento extends Model
         return $this->belongsTo('App\Modelos\CMPCategoria', 'COD_CATEGORIA_MONEDA', 'COD_CATEGORIA');
     }
 
+    public function viewmigrarcompra()
+    {
+        return $this->belongsTo('App\Modelos\WEBViewMigrarCompras', 'TXT_REFERENCIA', 'COD_DOCUMENTO_CTBLE');
+    }
+
+
+
+
+    public function scopeNroSerie($query,$serie){
+        if(trim($serie) != ''){
+            $query->where('WEB.asientos.NRO_SERIE', 'like', '%'.$serie.'%');
+        }
+    }
+
+    public function scopeNroDocumento($query,$documento){
+        if(trim($documento) != ''){
+            $query->where('WEB.asientos.NRO_DOC', 'like', '%'.$documento.'%');
+        }
+    }
+
+
 }

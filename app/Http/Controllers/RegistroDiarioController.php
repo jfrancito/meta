@@ -98,6 +98,7 @@ class RegistroDiarioController extends Controller
 
 	    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
 	    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 	    							->get();
 

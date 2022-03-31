@@ -89,6 +89,8 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-combo-periodo-xanio-xempresa', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresa');
 	Route::any('/ajax-listado-compras', 'ComprasController@actionAjaxListarCompras');
 	Route::any('/ajax-buscar-compra-seleccionada', 'ComprasController@actionAjaxBuscarCompraseleccionada');
+	Route::any('/asiento-contables-confirmado-xdocumentos', 'ComprasController@actionGonfirmarAsientoContablesXDocumentos');
+
 
 
 
