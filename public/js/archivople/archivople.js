@@ -37,6 +37,7 @@ $(document).ready(function(){
         var tipo_asiento_id         =   $('#tipo_asiento_id').val();
         var periodo_id              =   $('#periodo_id').val();
         var documento               =   $('#documento').val();
+        var data_archivo            =   $(this).attr('data_archivo');
 
         var idopcion                =   $('#idopcion').val();
         var _token                  =   $('#token').val();
@@ -45,6 +46,8 @@ $(document).ready(function(){
         if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
         if(periodo_id ==''){ alerterrorajax("Seleccione un periodo."); return false;}
         if(tipo_asiento_id ==''){ alerterrorajax("Seleccione un tipo de asiento."); return false;}
+        $('#data_archivo').val(data_archivo);
+
         $('#formdescargar').submit();
 
     });

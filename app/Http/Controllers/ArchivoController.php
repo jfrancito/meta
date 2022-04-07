@@ -30,6 +30,7 @@ use Session;
 use Hashids;
 Use Nexmo;
 use Keygen;
+use ZipArchive;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -53,7 +54,7 @@ class ArchivoController extends Controller
 	    $sel_tipo_asiento 		=	'';
 	    $sel_periodo 			=	'';
 
-	    $array_id_tipo_asiento  =    ['TAS0000000000003'];
+	    $array_id_tipo_asiento  =    ['TAS0000000000003','TAS0000000000004'];
 
 	    $anio  					=   $this->anio;
         $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
@@ -87,16 +88,62 @@ class ArchivoController extends Controller
 		$anio 					=   $request['anio'];
 		$periodo_id 			=   $request['periodo_id'];
 		$tipo_asiento_id 		=   $request['tipo_asiento_id'];
+		$data_archivo 			=   $request['data_archivo'];
+
 		$documento 				=   $request['documento'];
-
-
 		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
 	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
+
+	    //COMPRAS 
+	    if($tipo_asiento_id == 'TAS0000000000004'){
+
+		    if($data_archivo == 'ple'){
+
+			    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+			    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+			    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+			    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+			    							->orderby('FEC_ASIENTO','asc')
+			    							->get();
+
+				$nombre = $this->ar_crear_nombre_compra($anio,$mes).'.txt';
+				$path = storage_path('compras/'.$nombre);
+		    	$this->archivo_ple_compras($anio,$mes,$listaasiento,$nombre,$path);
+			    if (file_exists($path)){
+			        return Response::download($path);
+			    }	 
+
+		    }else{
+
+			    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+			    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+			    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+			    							->whereRaw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <= 0")
+			    							//->where(DB::raw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <=0 "))
+			    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+			    							->orderby('FEC_ASIENTO','asc')
+			    							->get();
+
+		    	$aiento_nombre = "compras";
+		    	$count  = intval(ceil(count($listaasiento)/100));
+		    	$nombre_zip = $this->archivo_ple_ventas_validar($anio,$mes,$listaasiento,$count,$aiento_nombre);
+		    	$path = storage_path("compras/validar/".$nombre_zip);
+
+			    if (file_exists($path)){
+			        return Response::download($path);
+			    }
+
+		    }
+
+
+
+	    }
 
 	    //ventas 
 	    if($tipo_asiento_id == 'TAS0000000000003'){
 
-	    	//array de documentos
+
+	    	//ARCHIVO PLE
 		    $array_asientos 		= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
 		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
@@ -115,11 +162,27 @@ class ArchivoController extends Controller
 		    							->orderby('FEC_ASIENTO','asc')
 		    							->get();
 
-			$nombre = $this->ar_crear_nombre_venta($anio,$mes).'.txt';
-			$path = storage_path('ventas/'.$nombre);
-	    	$this->archivo_ple_ventas($anio,$mes,$listaasiento,$nombre,$path);
-		    if (file_exists($path)) {
-		        return Response::download($path);
+
+		    if($data_archivo == 'ple'){
+
+				$nombre = $this->ar_crear_nombre_venta($anio,$mes).'.txt';
+				$path = storage_path('ventas/ple/'.$nombre);
+		    	$this->archivo_ple_ventas($anio,$mes,$listaasiento,$nombre,$path);
+			    if (file_exists($path)) {
+			        return Response::download($path);
+			    }		 
+
+		    }else{
+
+		    	$asiento_nombre = "ventas";
+		    	$count  = intval(ceil(count($listaasiento)/100));
+		    	$nombre_zip = $this->archivo_ple_ventas_validar($anio,$mes,$listaasiento,$count,$asiento_nombre);
+		    	$path = storage_path("ventas/validar/".$nombre_zip);
+
+			    if (file_exists($path)){
+			        return Response::download($path);
+			    }
+
 		    }
 
 	    }
@@ -142,7 +205,36 @@ class ArchivoController extends Controller
 		$idopcion 				=   $request['idopcion'];
 
 		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
-	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
+	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT);
+
+	    //compras 
+	    if($tipo_asiento_id == 'TAS0000000000004'){
+
+		    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+		    							->orderby('FEC_ASIENTO','asc')
+		    							->get();
+
+			$nombre = $this->ar_crear_nombre_compra($anio,$mes).'.txt';
+			$path = storage_path('compras/'.$nombre);
+	    	$lista_asiento = $this->archivo_ple_compras($anio,$mes,$listaasiento,$nombre,$path);
+	    	$funcion 				= 	$this;
+
+			return View::make('archivople/ajax/alistaregistrodiariocompras',
+							 [
+							 	'lista_asiento'			=> $lista_asiento,					 	
+							 	'idopcion' 				=> $idopcion,
+							 	'funcion' 				=> $funcion,
+							 	'ajax' 					=> true,					 	
+							 ]);
+
+
+
+	    }
+
+
 	    //ventas 
 	    if($tipo_asiento_id == 'TAS0000000000003'){
 

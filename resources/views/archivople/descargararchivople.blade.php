@@ -24,14 +24,12 @@
                       </a>
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
                         <li>
-                          <a href="#" class='descargararchivo'><b>Descargar archivo txt</b> <span class="mdi mdi-check-circle"></span></a>
+                          <a href="#" class='descargararchivo' data_archivo = 'ple'><b>Descargar archivo txt</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
-<!--                         <li>
-                          <a  href="{{url('/archivo-ple-excel')}}"
-                              target="_blank"
-                              data-href="{{url('/archivo-ple-excel')}}"
-                              class='descargararchivoexcel'><b>Descargar archivo excel</b> <span class="mdi mdi-check-circle"></span></a>
-                        </li> -->
+                        <li>
+                          <a href="#" class='descargararchivo' data_archivo = 'validar'><b>Validar documentos txt</b> <span class="mdi mdi-check-circle"></span></a>
+                        </li>
+
                       </ul>
                     </div>
 
@@ -112,6 +110,7 @@
 
 
                         <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
+                        <input type="hidden" name="data_archivo" id='data_archivo' value=''>
 
                       </form>
 
