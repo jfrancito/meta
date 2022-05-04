@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Crypt;
 use App\Modelos\WEBViewMigrarCompras;
 use App\Modelos\WEBAsientoModelo;
 use App\Modelos\WEBAsiento;
-
+use App\Modelos\CMPReferecenciaAsoc;
+use App\Modelos\CMPOrden;
 
 
 use View;
@@ -22,6 +23,64 @@ use Keygen;
 
 trait ComprasTraits
 {
+
+	private function co_generacion_combo_detraccion($txt_grupo,$titulo,$todo) {
+		
+		$array 						= 	DB::table('CMP.CATEGORIA')
+        								->where('COD_ESTADO','=',1)
+        								->where('TXT_GRUPO','=',$txt_grupo)
+        								->where('COD_CATEGORIA','=','DCT0000000000002')
+		        						->pluck('NOM_CATEGORIA','COD_CATEGORIA')
+										->toArray();
+
+		if($todo=='TODO'){
+			$combo  				= 	array('' => $titulo , $todo => $todo) + $array;
+		}else{
+			$combo  				= 	array('' => $titulo) + $array;
+		}
+
+	 	return  $combo;					 			
+	}
+
+
+	private function co_orden_compra_tipo_descuento($orden)
+	{
+
+		$sel_tipo_descuento  =	'';
+		if(count($orden)>0){
+			if($orden->CAN_DETRACCION>0){
+				$sel_tipo_descuento  =	'DCT0000000000002';
+			}else{
+				if($orden->CAN_RETENCION>0){
+					$sel_tipo_descuento  =	'DCT0000000000001';
+				}else{
+					if($orden->CAN_PERCEPCION>0){
+						$sel_tipo_descuento  =	'DCT0000000000004';
+					}
+				}
+			}
+		}					
+		return $sel_tipo_descuento;
+	}
+
+
+	private function co_orden_xdocumento_contable($cod_documento_ctble)
+	{
+
+		$orden 			=	'';
+		$referencia		=	CMPReferecenciaAsoc::where('COD_TABLA','=',$cod_documento_ctble)
+							->where('COD_ESTADO','=',1)
+							->where('TXT_TABLA_ASOC','=','CMP.ORDEN')
+							->first();
+
+		if(count($referencia)>0){
+			$orden      = 	CMPOrden::where('COD_ORDEN','=',$referencia->COD_TABLA_ASOC)->first();
+		}					
+
+		return $orden;
+	}
+
+
 	private function co_lista_compras_migrar($anio,$periodo_id,$empresa_id,$serie,$documento)
 	{
 
@@ -65,6 +124,7 @@ trait ComprasTraits
 	    							->NroSerie($serie)
 	    							->NroDocumento($documento)
 	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000032')
 									->select(DB::raw('WEB.asientos.*'))
 									->orderby('CMP.DOCUMENTO_CTBLE.FEC_EMISION','asc')
 	    							->get();

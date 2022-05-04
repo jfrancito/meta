@@ -40,6 +40,102 @@ class ComprasController extends Controller
 
 
 
+	public function actionGonfirmarConfiguracionAsientoContablesXDocumentos($idopcion,$idasiento,Request $request)
+	{
+
+		if($_POST)
+		{
+
+
+			$anio_asiento 					= $request['anio_asiento'];
+			$periodo_asiento_id 			= $request['periodo_asiento_id'];
+			$tipo_descuento 				= $request['tipo_descuento'];
+			$porcentaje_detraccion 			= $request['porcentaje_detraccion'];
+			$total_detraccion 				= $request['total_detraccion'];
+
+			$anio_confirmar 				= $request['anio_configuracion'];
+			$periodo_id_confirmar 			= $request['periodo_id_configuracion'];
+			$nro_serie_confirmar 			= $request['serie_configuracion'];
+			$nro_doc_confirmar 				= $request['documento_configuracion'];
+
+			$asiento 								= 	WEBAsiento::where('COD_ASIENTO','=',$idasiento)->first();
+
+			$asiento->COD_CATEGORIA_ESTADO_ASIENTO 	=   'IACHTE0000000025';
+			$asiento->TXT_CATEGORIA_ESTADO_ASIENTO 	=   'CONFIRMADO';
+			$asiento->FEC_USUARIO_MODIF_AUD 		=   $this->fechaactual;
+			$asiento->COD_USUARIO_MODIF_AUD 		=   Session::get('usuario_meta')->id;
+			$asiento->COD_PERIODO 					=   $periodo_asiento_id;
+
+			$asiento->COD_CATEGORIA_TIPO_DETRACCION =   $tipo_descuento;
+			$asiento->CAN_DESCUENTO_DETRACCION 		=   $porcentaje_detraccion;
+			$asiento->CAN_TOTAL_DETRACCION 			=   $total_detraccion;
+			$asiento->save();
+
+			Session::flash('periodo_id_confirmar', $periodo_id_confirmar);
+			Session::flash('nro_serie_confirmar', $nro_serie_confirmar);
+			Session::flash('nro_doc_confirmar', $nro_doc_confirmar);
+			Session::flash('anio_confirmar', $anio_confirmar);
+
+ 		 	return Redirect::to('/gestion-listado-compras/'.$idopcion)->with('bienhecho', 'Asiento Modelo '.$asiento->NRO_SERIE.'-'.$asiento->NRO_DOC.' confirmado con exito');
+		
+		}
+
+
+	}
+
+
+	public function actionAjaxModalDetalleAsientoConfirmar(Request $request)
+	{
+
+
+		$asiento_id 			=   $request['asiento_id'];
+		$idopcion 				=   $request['idopcion'];
+
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+		$serie 					=   $request['serie'];
+		$documento 				=   $request['documento'];
+
+
+	    $asiento 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
+	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)->orderBy('NRO_LINEA', 'asc')->get();
+
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+	    $anio  					=   $this->anio;
+	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$sel_periodo 			=	'';
+
+		$orden					=	$this->co_orden_xdocumento_contable($asiento->TXT_REFERENCIA);
+		$sel_tipo_descuento		=	$this->co_orden_compra_tipo_descuento($orden);
+		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
+		$funcion 				= 	$this;
+		
+		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
+						 [
+						 	'asiento'					=> $asiento,
+						 	'listaasientomovimiento'	=> $listaasientomovimiento,
+						 	'combo_periodo'				=> $combo_periodo,
+						 	'combo_anio_pc'				=> $combo_anio_pc,
+						 	'anio'						=> $anio,
+						 	'sel_periodo'				=> $sel_periodo,
+
+						 	'sel_tipo_descuento'		=> $sel_tipo_descuento,
+						 	'combo_descuento'			=> $combo_descuento,
+						 	'orden'						=> $orden,
+						 	'idopcion'					=> $idopcion,
+
+						 	'anio'						=> $anio,
+						 	'periodo_id'				=> $periodo_id,
+						 	'serie'						=> $serie,
+						 	'documento'					=> $documento,
+
+
+						 	'ajax' 						=> true,						 	
+						 ]);
+	}
+
+
 	public function actionGonfirmarAsientoContablesXDocumentos(Request $request)
 	{
 

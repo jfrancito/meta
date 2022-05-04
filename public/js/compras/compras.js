@@ -51,20 +51,94 @@ $(document).ready(function(){
 
     });
 
+    $(".compras").on('change','#anio_asiento', function() {
+
+        event.preventDefault();
+        var anio        =   $('#anio_asiento').val();
+        var _token      =   $('#token').val();
+        //validacioones
+        if(anio ==''){ alerterrorajax("Seleccione un anio."); return false;}
+        data            =   {
+                                _token      : _token,
+                                anio        : anio
+                            };
+
+        ajax_normal_combo(data,"/ajax-combo-periodo-xanio-xempresa","ajax_anio_asiento")                    
+
+    });
+
+    $(".compras").on('change','#tipo_descuento', function() {
+
+        event.preventDefault();
+        var tipo_descuento   =   $(this).val();
+                    
+        if(tipo_descuento==''){
+            $('#porcentaje_detraccion').val("0.00");
+            $('#total_detraccion').val("0.00");
+        }else{
+            $('#porcentaje_detraccion').val($('#porcentaje_detraccion').attr('data_valor'));
+            $('#total_detraccion').val($('#total_detraccion').attr('data_valor'));
+        }
+
+    });
+
+
+    $(".compras").on('keypress keyup keydown','#porcentaje_detraccion', function(e) {
+
+        var total_documento             =   $('#total_documento').val();
+        var total                       =    parseFloat(total_documento) * $(this).val() / 100;
+        $('#total_detraccion').val(total);
+
+    });
+
+    $(".compras").on('click','.btn-modificar-asiento', function(e){
+
+        var anio_asiento                =   $('#anio_asiento').val();
+        var periodo_asiento_id          =   $('#periodo_asiento_id').val();
+
+        var tipo_descuento              =   $('#tipo_descuento').val();
+        var porcentaje_detraccion       =   $('#porcentaje_detraccion').val();
+        var total_detraccion            =   $('#total_detraccion').val();
+
+
+        if(anio_asiento ==''){ alerterrorajax("Seleccione un año."); return false;}
+        if(periodo_asiento_id ==''){ alerterrorajax("Seleccione un periodo."); return false;}
+        if(tipo_descuento =='DCT0000000000002'){ 
+                if(parseFloat(porcentaje_detraccion) <= 0){ alerterrorajax("Porcentaje de la detraccion debe ser mayor a 0."); return false;}
+                if(parseFloat(total_detraccion) <= 0){ alerterrorajax("Total de la detraccion debe ser mayor a 0."); return false;}
+        }
+
+        return true;
+
+    });
+
+
+
+
+
+
 
     $(".compras").on('dblclick','.dobleclickpc', function(e) {
 
         var _token                  =   $('#token').val();
         var asiento_id              =   $(this).attr('data_asiento_id');
         var idopcion                =   $('#idopcion').val();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();
+        var serie                   =   $('#serie').val();
+        var documento               =   $('#documento').val();
 
         data                        =   {
                                             _token                  : _token,
                                             asiento_id              : asiento_id,
                                             idopcion                : idopcion,
+                                            anio                    : anio,
+                                            periodo_id              : periodo_id,
+                                            serie                   : serie,
+                                            documento               : documento,
                                         };
-        ajax_modal(data,"/ajax-modal-detalle-asiento",
-                  "modal-detalle-asiento","modal-detalle-asiento-container");
+        ajax_modal(data,"/ajax-modal-detalle-asiento-confirmar",
+                  "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
 
     });
 

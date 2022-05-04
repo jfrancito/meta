@@ -234,14 +234,19 @@ trait ArchivoTraits
 		//llenado de datalle
 		$array_detalle_asiento 		=	array();
 
+
+
 	    foreach($listaasiento as $index => $item){
 
 	    	$documento 				= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$item->TXT_REFERENCIA)->first();
 	   		$empresa 				= 	STDEmpresa::where('COD_EMPR','=',$item->COD_EMPR_CLI)->first();
+	   		$categoria 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_TIPO_DOCUMENTO)->first();
+
+
 
 	    	//1->afecto ; 0->no afecto
-	    	$indicador_afecto 		=   $this->ar_ind_afecta_infecta($item);
-
+	    	//$indicador_afecto 		=   $this->ar_ind_afecta_infecta($item);
+	   		$indicador_afecto 		=   $item->IND_AFECTO;
 	    	$nro_asiento 			=   $item->NRO_ASIENTO;
 	    	$mes_01 				= 	str_pad($item->periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
 	    	$periodo_01  			= 	$item->periodo->COD_ANIO.$mes_01."00";
@@ -249,14 +254,15 @@ trait ArchivoTraits
 	    	$codigo_03  			= 	'M'.$correlativo_02;
 	    	$fecha_emision_04  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
 			$fecha_vencimiento_05  	= 	'01/01/0001';
-			$tipo_documento_06  	= 	$documento->tipo_documento->CODIGO_SUNAT;
-			$nro_serie_07  			= 	$documento->NRO_SERIE;
+			$tipo_documento_06  	= 	$categoria->CODIGO_SUNAT;
+			$nro_serie_07  			= 	$item->NRO_SERIE;
 			$anio_emision_dua_08  	= 	'0';
-			$nro_correlativo_09  	= 	$documento->NRO_DOC;
+			$nro_correlativo_09  	= 	$item->NRO_DOC;
 			$it_od_10  				= 	"";
 			$identidad_cliente_11  	= 	intval($empresa->tipo_documento->CODIGO_SUNAT);
 			$documento_cliente_12  	= 	$empresa->NRO_DOCUMENTO;
 			$nombre_cliente_13  	= 	$empresa->NOM_EMPR;
+
 
 			//suma de las 70
 			$suma_70_14  			= 	'0.00';//falta
@@ -301,14 +307,27 @@ trait ArchivoTraits
 			//NC Y ND
 			if($tipo_documento_06 == '07' or $tipo_documento_06 == '08'){
 
-				$fecha_asociada_27 		= 	date_format(date_create($this->ar_tabla_asociada($item,'FEC_EMISION')), 'd/m/Y');
-				$coddocumento_asociado 	= 	$this->ar_tabla_asociada($item,'COD_DOCUMENTO_CTBLE');
-				$documento_asociado 	= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$coddocumento_asociado)->first();
+				// $fecha_asociada_27 		= 	date_format(date_create($this->ar_tabla_asociada($item,'FEC_EMISION')), 'd/m/Y');
+				// $coddocumento_asociado 	= 	$this->ar_tabla_asociada($item,'COD_DOCUMENTO_CTBLE');
+				// $documento_asociado 	= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$coddocumento_asociado)->first();
+				// if(count($documento_asociado)>0){
+				// 	$tipo_asociado_28  	= 	$documento_asociado->tipo_documento->CODIGO_SUNAT;
+				// }
+				// $serie_asociada_29 		= 	$this->ar_tabla_asociada($item,'NRO_SERIE');
+				// $nro_asociada_31 		= 	$this->ar_tabla_asociada($item,'NRO_DOC');
+
+
+				$fecha_asociada_28 		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
+				$documento_asociado 	= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_TIPO_DOCUMENTO_REF)->first();
 				if(count($documento_asociado)>0){
-					$tipo_asociado_28  	= 	$documento_asociado->tipo_documento->CODIGO_SUNAT;
+					$tipo_asociado_29  	= 	$documento_asociado->CODIGO_SUNAT;
 				}
-				$serie_asociada_29 		= 	$this->ar_tabla_asociada($item,'NRO_SERIE');
-				$nro_asociada_31 		= 	$this->ar_tabla_asociada($item,'NRO_DOC');
+
+				$serie_asociada_30 		= 	$item->NRO_SERIE_REF;
+				$nro_asociada_31 		= 	$item->NRO_DOC_REF;
+
+
+
 			}
 
 
@@ -521,6 +540,8 @@ trait ArchivoTraits
 			//NC Y ND
 			if($tipo_documento_06 == '07' or $tipo_documento_06 == '08'){
 
+
+
 				$fecha_asociada_28 		= 	date_format(date_create($this->ar_tabla_asociada($item,'FEC_EMISION')), 'd/m/Y');
 				$coddocumento_asociado 	= 	$this->ar_tabla_asociada($item,'COD_DOCUMENTO_CTBLE');
 				$documento_asociado 	= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$coddocumento_asociado)->first();
@@ -529,6 +550,7 @@ trait ArchivoTraits
 				}
 				$serie_asociada_30 		= 	$this->ar_tabla_asociada($item,'NRO_SERIE');
 				$nro_asociada_31 		= 	$this->ar_tabla_asociada($item,'NRO_DOC');
+
 			}
 
 			$codigo_32  			= 	'';//falta
@@ -657,11 +679,12 @@ trait ArchivoTraits
 
 		    	if( ($index + 1) >= $inicio and ($index+1) <= $fin){
 
-			    	$documento 				= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$item->TXT_REFERENCIA)->first();
+			    	//$documento 				= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$item->TXT_REFERENCIA)->first();
+			    	$categoria 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_TIPO_DOCUMENTO)->first();
 			    	$ruc_01 				= 	Session::get('empresas_meta')->NRO_DOCUMENTO;
-					$tipo_documento_02  	= 	$documento->tipo_documento->CODIGO_SUNAT;
-					$nro_serie_03  			= 	$documento->NRO_SERIE;
-					$nro_correlativo_04  	= 	$documento->NRO_DOC;
+					$tipo_documento_02  	= 	$categoria->CODIGO_SUNAT;
+					$nro_serie_03  			= 	$item->NRO_SERIE;
+					$nro_correlativo_04  	= 	$item->NRO_DOC;
 					$fecha_emision_05  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
 					$importe_total_06 		= 	$this->ar_suma_total($item,'');
 					$importe_total_06       = 	number_format($importe_total_06, 2, '.', '');

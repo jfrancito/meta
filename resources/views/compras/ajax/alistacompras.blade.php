@@ -8,7 +8,7 @@
       <th>TOTAL HABER</th>
       <th>ESTADO</th>
 
-      <th>
+<!--       <th>
         <div class="text-center be-checkbox be-checkbox-sm has-primary">
           <input  type="checkbox"
                   class="todo_asignar input_asignar"
@@ -20,7 +20,7 @@
                   name="todo_asignar"
             ></label>
         </div>
-      </th>
+      </th> -->
 
     </tr>
   </thead>
@@ -46,7 +46,7 @@
                 <span class="badge badge-warning">{{$item->TXT_CATEGORIA_ESTADO_ASIENTO}}</span>
             @endif
         </td>        
-        <td>
+<!--         <td>
             <div class="text-center be-checkbox be-checkbox-sm has-primary">
               <input  type="checkbox"
                 class="{{$item->COD_REFERENCIA}}{{$index}} input_asignar"
@@ -59,7 +59,7 @@
               ></label>
             </div>
 
-        </td>
+        </td> -->
       </tr>                    
     @endforeach
   </tbody>

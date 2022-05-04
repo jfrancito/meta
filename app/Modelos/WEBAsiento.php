@@ -29,7 +29,10 @@ class WEBAsiento extends Model
     }
 
 
-
+    public function tipo_documento()
+    {
+        return $this->belongsTo('App\Modelos\CMPCategoria', 'COD_CATEGORIA_TIPO_DOCUMENTO', 'COD_CATEGORIA');
+    }
 
     public function scopeNroSerie($query,$serie){
         if(trim($serie) != ''){

@@ -85,6 +85,9 @@ class ArchivoController extends Controller
 	public function actionDescargarArchivoPle(Request $request)
 	{
 
+
+		set_time_limit(0);
+
 		$anio 					=   $request['anio'];
 		$periodo_id 			=   $request['periodo_id'];
 		$tipo_asiento_id 		=   $request['tipo_asiento_id'];

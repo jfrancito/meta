@@ -21,7 +21,7 @@
                       <span class="icon mdi mdi-search"></span>
                     </a>
 
-                    <form method="POST" id='formgenerarasiento' action="{{ url('/asiento-contables-confirmado-xdocumentos') }}" style="display: inline-block;" >
+<!--                     <form method="POST" id='formgenerarasiento' action="{{ url('/asiento-contables-confirmado-xdocumentos') }}" style="display: inline-block;" >
                       {{ csrf_field() }}
                       <input type="hidden" id='documentos' name='documentos' >
                       <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
@@ -36,7 +36,7 @@
                         <span class="icon mdi mdi-mail-send"></span>
                       </a>
                     </form>
-
+ -->
                   </div>
                   <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}}</span>
                 </div>
@@ -107,47 +107,27 @@
 
                   </div>
 
-
-
                       <div class='listajax'>
                         @include('compras.ajax.alistacompras')
                       </div>
-
-<!--                       <div class="panel panel-default">
-                        <div class="tab-container">
-                          <ul class="nav nav-tabs">
-                            <li class="active"><a href="#listacompras" class='clistacompras'  data-toggle="tab">Lista de compras</a></li>
-                            <li class=""><a href="#asiento" class='casiento' data-toggle="tab">Crear Asiento</a></li>
-                          </ul>
-                          <div class="tab-content">
-                            <div id="listacompras" class="tab-pane active cont">
-                              <div class='listajax'>
-                                @include('compras.ajax.alistacompras')
-                              </div>
-                            </div>
-                            <div id="asiento" class="tab-pane cont">
-                              <div class='crearasientoajax'>
-                                  Seleccione una compra
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div> -->
- 
-
-
                 </div>
 
               </div>
             </div>
           </div>
     </div>
-    @include('registrodiario.modal.mregistrodiario')
+    @include('compras.modal.mcompras')
   </div>
 
 @stop
 
 @section('script')
+
+  <script src="{{ asset('public/js/general/inputmask/inputmask.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.extensions.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.numeric.extensions.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.date.extensions.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/jquery.inputmask.js') }}" type="text/javascript"></script>
 
 
   <script src="{{ asset('public/lib/datatables/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
@@ -189,6 +169,12 @@
       App.dataTables();
       $('[data-toggle="tooltip"]').tooltip();
       $('form').parsley();
+
+      $('.dinero').inputmask({ 'alias': 'numeric', 
+      'groupSeparator': ',', 'autoGroup': true, 'digits': 4, 
+      'digitsOptional': false, 
+      'prefix': '', 
+      'placeholder': '0'});
 
     });
 

@@ -76,6 +76,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-registro-diario', 'RegistroDiarioController@actionAjaxRegistroDiario');
 	Route::any('/ajax-modal-detalle-asiento', 'RegistroDiarioController@actionAjaxModalDetalleAsiento');
 
+
+
+
 	Route::any('/gestion-observacion-documentos/{tipo_asiento_id}', 'MigrarVentaController@actionListarObservacionDocumentos');
 	Route::any('/ajax-modal-detalle-producto-migracion-ventas', 'MigrarVentaController@actionAjaxModalDetalleProductoMigracionVentas');
 	Route::any('/generar-asiento-contables-xdocumentos', 'MigrarVentaController@actionGenerarAsientoContablesXDocumentos');
@@ -93,10 +96,8 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-listado-compras', 'ComprasController@actionAjaxListarCompras');
 	Route::any('/ajax-buscar-compra-seleccionada', 'ComprasController@actionAjaxBuscarCompraseleccionada');
 	Route::any('/asiento-contables-confirmado-xdocumentos', 'ComprasController@actionGonfirmarAsientoContablesXDocumentos');
-
-
-
-
+	Route::any('/ajax-modal-detalle-asiento-confirmar', 'ComprasController@actionAjaxModalDetalleAsientoConfirmar');
+	Route::any('/asiento-contables-confirmado-configuracion-xdocumentos/{idopcion}/{idasiento}', 'ComprasController@actionGonfirmarConfiguracionAsientoContablesXDocumentos');
 
 	Route::any('/ajax-modal-detalle-documento-sin-enviar-sunat', 'AlertaCotroller@actionAjaxModalDetalleDocumentoSinEnviarSunat');
 	Route::any('/ajax-modal-detalle-documento-correlativos', 'AlertaCotroller@actionAjaxModalDetalleDocumentoCorrelativos');

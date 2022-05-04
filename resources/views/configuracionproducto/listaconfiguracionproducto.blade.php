@@ -92,6 +92,7 @@
 @section('script')
 
 
+
   <script src="{{ asset('public/lib/datatables/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
   <script src="{{ asset('public/lib/datatables/js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
   <script src="{{ asset('public/lib/datatables/plugins/buttons/js/dataTables.buttons.js') }}" type="text/javascript"></script>
@@ -156,6 +157,10 @@
               },
           }
       });
+
+
+
+
 
     });
 
