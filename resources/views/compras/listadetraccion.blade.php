@@ -8,138 +8,95 @@
 @stop
 @section('section')
 
-  <div class="be-content contenido archivople">
+  <div class="be-content contenido compras">
     <div class="main-content container-fluid">
           <div class="row">
             <div class="col-sm-12">
               <div class="panel panel-default panel-border-color panel-border-color-success">
-                <div class="panel-heading">Libros Electronicos - PLE
+                <div class="panel-heading">Listado de compras
                   <div class="tools tooltiptop">
 
                     <div class="dropdown">
                       <span class="icon mdi mdi-more-vert dropdown-toggle" id="menudespacho" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></span>
-                      <a href="#" class="tooltipcss opciones buscarple">
-                        <span class="tooltiptext">Buscar PLE</span>
+                      <a href="#" class="tooltipcss opciones buscardetracciones">
+                        <span class="tooltiptext">Buscar Detracciones</span>
                         <span class="icon mdi mdi-search"></span>
                       </a>
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
                         <li>
-                          <a href="#" class='descargararchivo' data_archivo = 'ple'><b>Descargar archivo txt</b> <span class="mdi mdi-check-circle"></span></a>
+                          <a href="#" class='generararchivo' data_archivo = 'gar'><b>Generar archivo</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
-
-
-                        <li>
-                          <a href="#" class='descargararchivo' data_archivo = 'validar'><b>Validar documentos txt</b> <span class="mdi mdi-check-circle"></span></a>
-                        </li>
-
                       </ul>
                     </div>
 
-
-
-
                   </div>
-                  <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}} </span>
-
+                  <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}}</span>
                 </div>
 
                 <div class="panel-body">
                   <div class='filtrotabla row'>
                     <div class="col-xs-12">
 
-
                       <form method="POST"
                       id="formdescargar"
                       target="_blank"
-                      action="{{ url('/descargar-archivo-ple') }}" 
+                      action="{{ url('/descargar-archivo-detraccion') }}" 
                       style="border-radius: 0px;" 
                       >
                         {{ csrf_field() }}
 
 
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
-                            <div class="form-group">
-                              <label class="col-sm-12 control-label labelleft" >Año :</label>
-                              <div class="col-sm-12 abajocaja" >
-                                {!! Form::select( 'anio', $combo_anio_pc, $anio,
-                                                  [
-                                                    'class'       => 'select2 form-control control input-xs' ,
-                                                    'id'          => 'anio',
-                                                    'required'    => '',
-                                                    'data-aw'     => '1',
-                                                  ]) !!}
-                              </div>
+
+                      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
+                          <div class="form-group">
+                            <label class="col-sm-12 control-label labelleft" >Año :</label>
+                            <div class="col-sm-12 abajocaja" >
+                              {!! Form::select( 'anio', $combo_anio_pc, $anio,
+                                                [
+                                                  'class'       => 'select2 form-control control input-xs' ,
+                                                  'id'          => 'anio',
+                                                  'required'    => '',
+                                                  'data-aw'     => '1',
+                                                ]) !!}
                             </div>
-                        </div>
+                          </div>
+                      </div>
 
+                      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte ajax_anio">
+                          @include('general.combo.cperiodo', ['sel_periodo' => $sel_periodo])
 
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte ajax_anio">
-                            @include('general.combo.cperiodo', ['sel_periodo' => $sel_periodo])
-
-                        </div>
-
-
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
-                            <div class="form-group">
-                              <label class="col-sm-12 control-label labelleft" >Tipo Asiento :</label>
-                              <div class="col-sm-12 abajocaja" >
-                                {!! Form::select( 'tipo_asiento_id', $combo_tipo_asiento, $sel_tipo_asiento,
-                                                  [
-                                                    'class'       => 'select2 form-control control input-xs' ,
-                                                    'id'          => 'tipo_asiento_id',
-                                                    'required'    => '',
-                                                    'data-aw'     => '1',
-                                                  ]) !!}
-                              </div>
-                            </div>
-                        </div>
-
-                        
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajadocuento cajareporte ocultar">
-                            <div class="form-group">
-                              <label class="col-sm-12 control-label labelleft" >DOCUMENTO :</label>
-                              <div class="col-sm-12 abajocaja" >
-                                {!! Form::select( 'documento', $combo_tran_gratuita, 'TODOS',
-                                                  [
-                                                    'class'       => 'select2 form-control control input-xs' ,
-                                                    'id'          => 'documento',
-                                                    'required'    => '',
-                                                    'data-aw'     => '1',
-                                                  ]) !!}
-                              </div>
-                            </div>
-                        </div>
-
+                      </div>
 
                         <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
                         <input type="hidden" name="data_archivo" id='data_archivo' value=''>
 
                       </form>
 
-
+                      
                     </div>
-
-
-
-
-
                   </div>
 
-                  <div class='listajax'>
-                    
-                  </div>
-
-
+                      <div class='listajax'>
+                        @include('compras.ajax.alistadetracciones')
+                      </div>
                 </div>
+
               </div>
             </div>
           </div>
     </div>
+    @include('compras.modal.mcompras')
   </div>
 
 @stop
 
 @section('script')
+
+  <script src="{{ asset('public/js/general/inputmask/inputmask.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.extensions.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.numeric.extensions.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.date.extensions.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/jquery.inputmask.js') }}" type="text/javascript"></script>
 
 
   <script src="{{ asset('public/lib/datatables/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
@@ -182,9 +139,15 @@
       $('[data-toggle="tooltip"]').tooltip();
       $('form').parsley();
 
+      $('.dinero').inputmask({ 'alias': 'numeric', 
+      'groupSeparator': ',', 'autoGroup': true, 'digits': 4, 
+      'digitsOptional': false, 
+      'prefix': '', 
+      'placeholder': '0'});
+
     });
 
   </script>
-  <script src="{{ asset('public/js/archivople/archivople.js?v='.$version) }}" type="text/javascript"></script>
+  <script src="{{ asset('public/js/compras/compras.js?v='.$version) }}" type="text/javascript"></script>
 
 @stop

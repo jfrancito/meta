@@ -7,12 +7,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Response;
+
 use App\Modelos\WEBCuentaContable;
 use App\Modelos\WEBAsientoModelo;
 use App\Modelos\WEBAsientoModeloDetalle;
 use App\Modelos\WEBAsientoModeloReferencia;
 use App\Modelos\WEBAsiento;
 use App\Modelos\WEBAsientoMovimiento;
+use App\Modelos\WEBCuentaDetraccion;
+use App\Modelos\CONPeriodo;
+
 
 
 use App\Traits\GeneralesTraits;
@@ -39,6 +44,181 @@ class ComprasController extends Controller
 	use ComprasTraits;
 
 
+	public function actionConfiguracionCuentaDetraccion($idopcion)
+	{
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Ver');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+	    View::share('titulo','Configuracion de cuenta detraccion');
+
+	   	$listacuentadetraccion   =   WEBCuentaDetraccion::where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	   								->where('COD_ESTADO','=',1)
+	   								->get();
+                 
+
+		return View::make('compras/listacuentadetraccion',
+						 [
+						 	'listacuentadetraccion' => $listacuentadetraccion,
+						 	'idopcion' => $idopcion,
+						 ]);
+	}
+
+
+	public function actionAgregarCuentaDetraccion($idopcion,Request $request)
+	{
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Anadir');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+		View::share('titulo','Agregar cuenta detraccion');
+		if($_POST)
+		{
+
+
+			$personal_id 	 		 	= 	$request['personal'];
+			$personal     				=   WEBListaPersonal::where('id', '=', $personal_id)->first();
+			$idusers 				 	=   $this->funciones->getCreateIdMaestra('users');
+			
+			$cabecera            	 	=	new User;
+			$cabecera->id 	     	 	=   $idusers;
+			$cabecera->nombre 	     	=   $personal->nombres;
+			$cabecera->name  		 	=	$request['name'];
+			$cabecera->passwordmobil  	=	$request['password'];
+			$cabecera->fecha_crea 	   	=  	$this->fechaactual;
+			$cabecera->password 	 	= 	Crypt::encrypt($request['password']);
+			$cabecera->rol_id 	 		= 	$request['rol_id'];
+			$cabecera->usuarioosiris_id	= 	$personal->id;
+			$cabecera->save();
+ 
+ 
+ 			return Redirect::to('/gestion-de-usuarios/'.$idopcion)->with('bienhecho', 'Usuario '.$personal->nombres.' registrado con exito');
+
+		}else{
+
+	    	$combo_empresa_xcuenta_detraccion  = 	$this->gn_generacion_combo_cuenta_detraccion('Seleccione empresa', '');
+	    	$defecto_empresa_xcuenta_detraccion= 	'';
+
+
+			return View::make('compras/agregarcuentadetraccion',
+						[
+							'combo_empresa_xcuenta_detraccion'  	=> $combo_empresa_xcuenta_detraccion,
+							'defecto_empresa_xcuenta_detraccion'  	=> $defecto_empresa_xcuenta_detraccion,				
+						  	'idopcion'  		=> $idopcion
+						]);
+		}
+	}
+
+
+
+	public function actionListarDepositoMasivoDetraccion($idopcion)
+	{
+
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Ver');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+	    View::share('titulo','Deposito masivo detraccion de compras');
+
+		$sel_periodo 			=	'';
+		$anio  					=   $this->anio;
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+		$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$funcion 				= 	$this;
+		$listadetracciones 		=   array();
+
+
+
+		return View::make('compras/listadetraccion',
+						 [
+						 	'combo_anio_pc'			=> $combo_anio_pc,
+						 	'listadetracciones'		=> $listadetracciones,
+						 	'combo_periodo'			=> $combo_periodo,
+						 	'anio'					=> $anio,
+						 	'sel_periodo'	 		=> $sel_periodo,			 	
+						 	'idopcion' 				=> $idopcion,
+						 	'ruc'					=> '',
+						 	'nombre_empresa'		=> '',
+						 	'sum_total_detraccion'	=> '',
+						 	'lote'					=> '',
+						 	'funcion' 				=> $funcion,						 	
+						 ]);
+	}
+
+
+	public function actionAjaxListarDepositoMasivoDetraccion(Request $request)
+	{
+
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+        $listadetracciones     	= 	$this->co_lista_compras_detracciones($anio,$periodo_id,Session::get('empresas_meta')->COD_EMPR);
+		$funcion 				= 	$this;
+		
+		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
+	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT);		
+
+
+		$ruc 					=   Session::get('empresas_meta')->NRO_DOCUMENTO;
+		$nombre_empresa			= 	Session::get('empresas_meta')->NOM_EMPR;
+	    $sum_total_detraccion 	= 	WEBAsiento::where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    										->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    										->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
+	    										->where('WEB.asientos.COD_ESTADO','=','1')
+	    										->where('WEB.asientos.CAN_TOTAL_DETRACCION','>',0)
+	    										->sum('CAN_TOTAL_DETRACCION');
+		$anio 					= 	substr($anio, -2);
+		$dd 					= 	'00';
+		$lote 					=	$anio.$dd.$mes;
+
+		return View::make('compras/ajax/alistadetracciones',
+						 [
+						 	'listadetracciones'		=> $listadetracciones,
+						 	'anio'					=> $anio,
+						 	'periodo_id'			=> $periodo_id,
+
+						 	'ruc'					=> $ruc,
+						 	'nombre_empresa'		=> $nombre_empresa,
+						 	'sum_total_detraccion'	=> $sum_total_detraccion,
+						 	'lote'					=> $lote,
+
+						 	'funcion'				=> $funcion,			 	
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
+
+
+
+	public function actionDescargarArchivoDetraccion(Request $request)
+	{
+
+
+		set_time_limit(0);
+
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+		$data_archivo 			=   $request['data_archivo'];
+		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
+	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
+
+        $listadetracciones     	= 	$this->co_lista_compras_detracciones($anio,$periodo_id,Session::get('empresas_meta')->COD_EMPR);
+
+	    if($data_archivo == 'gar'){
+
+	    	$listadetracciones   = 	$this->co_lista_compras_detracciones($anio,$periodo_id,Session::get('empresas_meta')->COD_EMPR);
+
+			$nombre = $this->co_crear_nombre_compra_detraccion($anio,$mes).'.txt';
+			$path = storage_path('compras/detraccion/'.$nombre);
+	    	$this->co_archivo_ple_compras($anio,$mes,$listadetracciones,$nombre,$path,$periodo_id,Session::get('empresas_meta')->COD_EMPR);
+		    if (file_exists($path)){
+		        return Response::download($path);
+		    }	 
+
+	    }
+
+
+	}
 
 	public function actionGonfirmarConfiguracionAsientoContablesXDocumentos($idopcion,$idasiento,Request $request)
 	{

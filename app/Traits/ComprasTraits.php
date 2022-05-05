@@ -12,6 +12,9 @@ use App\Modelos\WEBAsientoModelo;
 use App\Modelos\WEBAsiento;
 use App\Modelos\CMPReferecenciaAsoc;
 use App\Modelos\CMPOrden;
+use App\Modelos\STDEmpresa;
+use App\Modelos\WEBCuentaDetraccion;
+use App\Modelos\CMPCategoria;
 
 
 use View;
@@ -23,6 +26,180 @@ use Keygen;
 
 trait ComprasTraits
 {
+
+
+	public function co_crear_nombre_compra_detraccion($anio,$mes){
+		$identificador 					=       'D';
+		$ruc 							=       Session::get('empresas_meta')->NRO_DOCUMENTO;
+		$anio 							= 		substr($anio, -2);
+		$dd 							= 		'00';
+        $nombre_archivo  		    	= 		$identificador.$ruc.$anio.$dd.$mes;
+        return $nombre_archivo;
+    }
+
+
+	public function co_archivo_ple_compras($anio,$mes,$listadetracciones,$nombre,$path,$periodo_id,$empresa_id){
+
+	    if (file_exists($path)) {
+	        unlink("storage/compras/detraccion/".$nombre);
+	    } 
+		$datos = fopen("storage/compras/detraccion/".$nombre, "a");
+		//llenado de datalle
+
+	    $sum_total_detraccion 			= 		WEBAsiento::where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    										->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+	    										->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
+	    										->where('WEB.asientos.COD_ESTADO','=','1')
+	    										->where('WEB.asientos.CAN_TOTAL_DETRACCION','>',0)
+	    										->sum('CAN_TOTAL_DETRACCION');
+
+
+
+
+		$ruc 							=       Session::get('empresas_meta')->NRO_DOCUMENTO;
+		$nombre_empresa					= 		Session::get('empresas_meta')->NOM_EMPR;
+		$nombre_empresa 				=   	str_pad($nombre_empresa, 35, " ", STR_PAD_RIGHT);
+		$anio 							= 		substr($anio, -2);
+		$dd 							= 		'00';
+		$mes 							= 		str_pad($mes, 2, "0", STR_PAD_LEFT); 
+		$total 							= 		intval($sum_total_detraccion);
+		$total 							= 		str_pad($total, 15, "0", STR_PAD_LEFT);
+
+		fwrite($datos, '*');
+      	fwrite($datos, $ruc);
+      	fwrite($datos, $nombre_empresa);
+      	fwrite($datos, $anio.$dd.$mes);
+      	fwrite($datos, $total.PHP_EOL);
+
+
+	    foreach($listadetracciones as $index => $item){
+
+			$tipo_documento_pro = 	$item['tipo_documento_pro'];
+			$nro_documento  	= 	$item['nro_documento'];
+			$nombre_proveedor  	= 	$item['nombre_proveedor'];
+			$plataforma  		= 	$item['plataforma'];
+			$codigobienservicio = 	$item['codigobienservicio'];
+			$nro_cuenta 		= 	$item['nro_cuenta'];
+			$importe 			=   str_pad($item['importe'], 13, "0", STR_PAD_LEFT);
+			if($importe==''){
+	   			$importe 	    =   '0000000000000';
+	   		}
+	   		$tipo_operacion 	= 	$item['tipo_operacion'];
+
+	   		$periodo 			=   $anio.str_pad($mes, 2, "0", STR_PAD_LEFT);
+	   		$nro_serie 			= 	$item['nro_serie'];
+	   		$nro_correlativo 	= 	$item['nro_correlativo'];
+
+			fwrite($datos, $tipo_documento_pro);
+	      	fwrite($datos, $nro_documento);
+	      	fwrite($datos, $nombre_proveedor);
+	      	fwrite($datos, $plataforma);
+	      	fwrite($datos, $codigobienservicio);
+	      	fwrite($datos, $nro_cuenta);
+	      	fwrite($datos, $importe);
+	      	fwrite($datos, $tipo_operacion);
+	      	fwrite($datos, $periodo);
+	      	fwrite($datos, $nro_serie);
+	      	fwrite($datos, $nro_correlativo.PHP_EOL);
+
+	    }
+	    fclose($datos);
+
+
+	    return true;
+
+    }
+
+	private function co_lista_compras_detracciones($anio,$periodo_id,$empresa_id)
+	{
+
+	    $lista_asiento 			= 	WEBAsiento::where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    							->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
+	    							->where('WEB.asientos.COD_ESTADO','=','1')
+	    							->where('WEB.asientos.CAN_TOTAL_DETRACCION','>',0)
+									->orderby('WEB.asientos.FEC_ASIENTO','asc')
+	    							->get();
+
+		$array_detracciones 	=	array();
+
+
+
+
+	    foreach($lista_asiento as $index => $item){
+
+	   		$empresa 			= 	STDEmpresa::where('COD_EMPR','=',$item->COD_EMPR_CLI)->first();
+	   		$cuentadetraccion   =   WEBCuentaDetraccion::where('DOCUMENTO','=',$empresa->NRO_DOCUMENTO)->first();
+	   		$categoria 			= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_TIPO_DOCUMENTO)->first();
+
+
+	   		$nro_documento  	= 	$empresa->NRO_DOCUMENTO;
+	   		$plataforma 		= 	'';
+	   		$codigobienservicio =   '';
+	   		$nombre_proveedor 	= 	'';
+			$tipo_documento_pro = 	intval($empresa->tipo_documento->CODIGO_SUNAT);
+			$nro_cuenta 		= 	'';
+			$tipo_operacion 	= 	'';
+	    	$mes_01 			= 	str_pad($item->periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
+			$periodo 			= 	$item->periodo->COD_ANIO.$mes_01;
+			$tipo_documento  	= 	intval($categoria->CODIGO_SUNAT);
+			$nro_serie  		= 	$item->NRO_SERIE;
+			$nro_correlativo 	= 	$item->NRO_DOC;
+
+
+	   		if(count($cuentadetraccion)>0){
+
+	   			$codigobienservicio =   $cuentadetraccion->TIPO_BIEN_SERVICIO;
+	   			$nro_cuenta 		=   $cuentadetraccion->NRO_CUENTA;
+	  			$nro_cuenta 		=   str_pad($nro_cuenta, 11, "0", STR_PAD_LEFT);
+	  			$tipo_operacion 	=   $cuentadetraccion->TIPO_OPERACION;
+
+	   			if($codigobienservicio == '40' and $tipo_documento_pro <> '06'){
+	   				$nombre_proveedor 	= 	$empresa->NOM_EMPR;
+	   			}
+
+	   		}
+
+	   		$importe 			= 	intval($item->CAN_TOTAL_DETRACCION);
+	   		if($plataforma==''){
+	   			$plataforma 	=   '0000000000';
+	   		}
+	   		if($nombre_proveedor==''){
+	   			$nombre_proveedor 	=   str_pad($nombre_proveedor, 35, " ", STR_PAD_LEFT);
+	   		}
+	   		if($nro_cuenta==''){
+	   			$nro_cuenta 		=   str_pad($nro_cuenta, 11, "0", STR_PAD_LEFT);
+	   		}
+	   		$codigobienservicio =   str_pad($codigobienservicio, 2, "0", STR_PAD_LEFT);
+	   		$tipo_operacion 	=   str_pad($codigobienservicio, 4, "0", STR_PAD_LEFT);
+	   		$tipo_documento 	=   str_pad($tipo_documento, 2, "0", STR_PAD_LEFT);
+	   		$nro_correlativo 	=   str_pad($nro_correlativo, 8, "0", STR_PAD_LEFT);
+
+	    	$array_nuevo 		=	array();
+			$array_nuevo    	=	array(
+				"tipo_documento_pro" 				=> $tipo_documento_pro,
+				"nro_documento" 					=> $nro_documento,
+				"nombre_proveedor" 					=> $nombre_proveedor,
+				"plataforma" 						=> $plataforma,
+				"codigobienservicio" 				=> $codigobienservicio,
+				"nro_cuenta" 						=> $nro_cuenta,
+				"importe" 							=> $importe,
+				"tipo_operacion" 					=> $tipo_operacion,
+				"periodo" 							=> $periodo,
+				"tipo_documento" 					=> $tipo_documento,
+				"nro_serie" 						=> $nro_serie,
+				"nro_correlativo" 					=> $nro_correlativo,
+			);
+
+			array_push($array_detracciones,$array_nuevo);
+	    }	
+
+
+		return $array_detracciones;
+
+	}
+
+
 
 	private function co_generacion_combo_detraccion($txt_grupo,$titulo,$todo) {
 		

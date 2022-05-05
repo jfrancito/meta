@@ -118,23 +118,52 @@ class ArchivoController extends Controller
 
 		    }else{
 
-			    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
-			    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-			    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-			    							->whereRaw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <= 0")
-			    							//->where(DB::raw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <=0 "))
-			    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
-			    							->orderby('FEC_ASIENTO','asc')
-			    							->get();
+			    if($data_archivo == 'validar'){
 
-		    	$aiento_nombre = "compras";
-		    	$count  = intval(ceil(count($listaasiento)/100));
-		    	$nombre_zip = $this->archivo_ple_ventas_validar($anio,$mes,$listaasiento,$count,$aiento_nombre);
-		    	$path = storage_path("compras/validar/".$nombre_zip);
+				    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+				    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+				    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+				    							->whereRaw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <= 0")
+				    							//->where(DB::raw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <=0 "))
+				    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+				    							->orderby('FEC_ASIENTO','asc')
+				    							->get();
 
-			    if (file_exists($path)){
-			        return Response::download($path);
+			    	$aiento_nombre = "compras";
+			    	$count  = intval(ceil(count($listaasiento)/100));
+			    	$nombre_zip = $this->archivo_ple_ventas_validar($anio,$mes,$listaasiento,$count,$aiento_nombre);
+			    	$path = storage_path("compras/validar/".$nombre_zip);
+
+				    if (file_exists($path)){
+				        return Response::download($path);
+				    }
+
+
+			    }else{
+
+			    		//detraccion
+
+					    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+					    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+					    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+					    							->whereRaw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <= 0")
+					    							//->where(DB::raw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <=0 "))
+					    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+					    							->orderby('FEC_ASIENTO','asc')
+					    							->get();
+
+				    	$aiento_nombre = "compras";
+				    	$count  = intval(ceil(count($listaasiento)/100));
+				    	$nombre_zip = $this->archivo_ple_ventas_validar($anio,$mes,$listaasiento,$count,$aiento_nombre);
+				    	$path = storage_path("compras/validar/".$nombre_zip);
+
+					    if (file_exists($path)){
+					        return Response::download($path);
+					    }
+
 			    }
+
+
 
 		    }
 

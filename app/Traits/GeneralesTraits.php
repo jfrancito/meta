@@ -13,6 +13,9 @@ use App\Modelos\CONPeriodo;
 use App\Modelos\CMPDetalleProducto;
 use App\Modelos\STDEmpresa;
 use App\Modelos\WEBProductoEmpresa;
+use App\Modelos\WEBCuentaDetraccion;
+
+
 
 use View;
 use Session;
@@ -139,6 +142,26 @@ trait GeneralesTraits
 	{
 		$combo  	= 	array('TODOS' => 'TODOS' , '1' => 'Tranferencia gratuita');
 	    return $combo;
+	}
+
+
+
+	private function gn_generacion_combo_cuenta_detraccion($titulo,$todo)
+	{
+
+	   	$array   					=   STDEmpresa::where('COD_ESTADO','=',1)
+	   									->where('IND_PROVEEDOR','=',1)
+	   									->pluck('NOM_EMPR','COD_EMPR')
+		        						->take(10)
+										->toArray();
+
+		if($todo=='TODO'){
+			$combo  				= 	array('' => $titulo , $todo => $todo) + $array;
+		}else{
+			$combo  				= 	array('' => $titulo) + $array;
+		}
+
+	 	return  $combo;	
 	}
 
 

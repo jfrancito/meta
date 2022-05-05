@@ -99,6 +99,15 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-detalle-asiento-confirmar', 'ComprasController@actionAjaxModalDetalleAsientoConfirmar');
 	Route::any('/asiento-contables-confirmado-configuracion-xdocumentos/{idopcion}/{idasiento}', 'ComprasController@actionGonfirmarConfiguracionAsientoContablesXDocumentos');
 
+
+	Route::any('/gestion-deposito-masivo-detraccion/{idopcion}', 'ComprasController@actionListarDepositoMasivoDetraccion');
+	Route::any('/ajax-listado-deposito-masivo-detraccion', 'ComprasController@actionAjaxListarDepositoMasivoDetraccion');
+	Route::any('/descargar-archivo-detraccion', 'ComprasController@actionDescargarArchivoDetraccion');
+
+	Route::any('/gestion-configuracion-cuenta-detraccion/{idopcion}', 'ComprasController@actionConfiguracionCuentaDetraccion');
+	Route::any('/agregar-cuenta-detraccion/{idopcion}', 'ComprasController@actionAgregarCuentaDetraccion');
+
+
 	Route::any('/ajax-modal-detalle-documento-sin-enviar-sunat', 'AlertaCotroller@actionAjaxModalDetalleDocumentoSinEnviarSunat');
 	Route::any('/ajax-modal-detalle-documento-correlativos', 'AlertaCotroller@actionAjaxModalDetalleDocumentoCorrelativos');
 
@@ -116,6 +125,24 @@ Route::group(['middleware' => ['authaw']], function () {
         								->whereIn('IND_MATERIAL_SERVICIO', ['M','S'])
 										->take(100)
 										->pluck('NOM_PRODUCTO','COD_PRODUCTO');
+
+        $valid_tags = [];
+        foreach ($tags as $id => $tag) {
+            $valid_tags[] = ['id' => $id, 'text' => $tag];
+        }
+        return \Response::json($valid_tags);
+    });
+
+
+   	Route::get('buscarmpresadetraccion', function (Illuminate\Http\Request  $request) {
+        $term = $request->term ?: '';
+
+	   	$tags = App\Modelos\STDEmpresa::where('COD_ESTADO','=',1)
+	   									->where('NOM_EMPR', 'like', '%'.$term.'%')
+	   									->where('IND_PROVEEDOR','=',1)
+		        						->take(10)
+										->pluck('NOM_EMPR','COD_EMPR');
+
 
         $valid_tags = [];
         foreach ($tags as $id => $tag) {
