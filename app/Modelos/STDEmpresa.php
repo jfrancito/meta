@@ -27,4 +27,10 @@ class STDEmpresa extends Model
         return $this->belongsTo('App\Modelos\CMPCategoria', 'COD_TIPO_DOCUMENTO', 'COD_CATEGORIA');
     }
 
+    public function asiento()
+    {
+        return $this->hasMany('App\Modelos\WEBAsiento', 'COD_EMPR_CLI', 'COD_EMPR');
+    }
+
+
 }

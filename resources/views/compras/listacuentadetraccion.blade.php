@@ -46,7 +46,7 @@
                                 <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">Acción <span class="icon-dropdown mdi mdi-chevron-down"></span></button>
                                 <ul role="menu" class="dropdown-menu pull-right">
                                   <li>
-                                    <a href="{{ url('/modificar-usuario/'.$idopcion.'/'.Hashids::encode(substr($item->id, -8))) }}">
+                                    <a href="{{ url('/modificar-cuenta-detraccion/'.$idopcion.'/'.$item->DOCUMENTO) }}">
                                       Modificar
                                     </a>
                                   </li>

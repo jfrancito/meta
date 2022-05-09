@@ -151,7 +151,8 @@ trait GeneralesTraits
 
 	   	$array   					=   STDEmpresa::where('COD_ESTADO','=',1)
 	   									->where('IND_PROVEEDOR','=',1)
-	   									->pluck('NOM_EMPR','COD_EMPR')
+	   									->select(DB::raw(" (NRO_DOCUMENTO + ' - ' + NOM_EMPR) as NOM_EMPR , COD_EMPR"))
+	   									->pluck('NOM_EMPR','NRO_DOCUMENTO')
 		        						->take(10)
 										->toArray();
 

@@ -17,6 +17,7 @@ use App\Modelos\WEBAsiento;
 use App\Modelos\WEBAsientoMovimiento;
 use App\Modelos\WEBCuentaDetraccion;
 use App\Modelos\CONPeriodo;
+use App\Modelos\STDEmpresa;
 
 
 
@@ -76,39 +77,117 @@ class ComprasController extends Controller
 		{
 
 
-			$personal_id 	 		 	= 	$request['personal'];
-			$personal     				=   WEBListaPersonal::where('id', '=', $personal_id)->first();
-			$idusers 				 	=   $this->funciones->getCreateIdMaestra('users');
-			
-			$cabecera            	 	=	new User;
-			$cabecera->id 	     	 	=   $idusers;
-			$cabecera->nombre 	     	=   $personal->nombres;
-			$cabecera->name  		 	=	$request['name'];
-			$cabecera->passwordmobil  	=	$request['password'];
-			$cabecera->fecha_crea 	   	=  	$this->fechaactual;
-			$cabecera->password 	 	= 	Crypt::encrypt($request['password']);
-			$cabecera->rol_id 	 		= 	$request['rol_id'];
-			$cabecera->usuarioosiris_id	= 	$personal->id;
+			$NRO_CUENTA 	 		 	= 	$request['NRO_CUENTA'];
+			$PORCENTAJE_DETRACION 	 	= 	$request['PORCENTAJE_DETRACION'];
+			$TIPO_OPERACION 	 		= 	$request['TIPO_OPERACION'];
+			$TIPO_BIEN_SERVICIO 	 	= 	$request['TIPO_BIEN_SERVICIO'];
+			$DOCUMENTO 	 		 		= 	$request['DOCUMENTO'];
+
+			$cuentadetraccion 			=   WEBCuentaDetraccion::where('DOCUMENTO','=',$DOCUMENTO)
+													->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+													->first();
+
+			if(count($cuentadetraccion)>0){
+				return Redirect::back()->withInput()->with('errorbd', 'Proveedor ya registrado');
+			}
+
+
+			$empresa 					=   STDEmpresa::where('NRO_DOCUMENTO','=',$DOCUMENTO)->first();
+
+			$cabecera            	 	=	new WEBCuentaDetraccion;
+			$cabecera->DOCUMENTO 	    =   $DOCUMENTO;
+			$cabecera->PROVEEDOR 	    =   $empresa->NOM_EMPR;
+			$cabecera->NRO_CUENTA 	    =   $NRO_CUENTA;
+			$cabecera->PORCENTAJE_DETRACION =   $PORCENTAJE_DETRACION;
+			$cabecera->TIPO_OPERACION 	=   $TIPO_OPERACION;
+			$cabecera->TIPO_BIEN_SERVICIO 	=   $TIPO_BIEN_SERVICIO;
+			$cabecera->COD_EMPR 	 	=   Session::get('empresas_meta')->COD_EMPR;
+			$cabecera->FEC_USUARIO_CREA_AUD 	=   $this->fechaactual;
+			$cabecera->COD_USUARIO_CREA_AUD 	=   Session::get('usuario_meta')->id;
 			$cabecera->save();
  
- 
- 			return Redirect::to('/gestion-de-usuarios/'.$idopcion)->with('bienhecho', 'Usuario '.$personal->nombres.' registrado con exito');
+ 			return Redirect::to('/gestion-configuracion-cuenta-detraccion/'.$idopcion)->with('bienhecho', 'Proveedor '.$empresa->NRO_DOCUMENTO.' - '.$empresa->NOM_EMPR.' registrado con exito');
 
 		}else{
 
 	    	$combo_empresa_xcuenta_detraccion  = 	$this->gn_generacion_combo_cuenta_detraccion('Seleccione empresa', '');
 	    	$defecto_empresa_xcuenta_detraccion= 	'';
+	    	$sw_acccion = 	'1';
 
 
 			return View::make('compras/agregarcuentadetraccion',
 						[
 							'combo_empresa_xcuenta_detraccion'  	=> $combo_empresa_xcuenta_detraccion,
-							'defecto_empresa_xcuenta_detraccion'  	=> $defecto_empresa_xcuenta_detraccion,				
+							'defecto_empresa_xcuenta_detraccion'  	=> $defecto_empresa_xcuenta_detraccion,
+							'sw_acccion'  	=> $sw_acccion,			
 						  	'idopcion'  		=> $idopcion
 						]);
 		}
 	}
 
+
+
+	public function actionModificarCuentaDetraccion($idopcion,$documento,Request $request)
+	{
+
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Modificar');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+
+	    View::share('titulo','Modificar cuenta detraccion');
+
+		if($_POST)
+		{
+
+
+			$NRO_CUENTA 	 		 	= 	$request['NRO_CUENTA'];
+			$PORCENTAJE_DETRACION 	 	= 	$request['PORCENTAJE_DETRACION'];
+			$TIPO_OPERACION 	 		= 	$request['TIPO_OPERACION'];
+			$TIPO_BIEN_SERVICIO 	 	= 	$request['TIPO_BIEN_SERVICIO'];
+			$DOCUMENTO 	 		 		= 	$request['DOCUMENTO'];
+
+			$empresa 					=   STDEmpresa::where('NRO_DOCUMENTO','=',$documento)->first();
+			$cabecera 					=   WEBCuentaDetraccion::where('DOCUMENTO','=',$documento)
+											->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+											->first();
+
+			$cabecera->NRO_CUENTA 	    =   $NRO_CUENTA;
+			$cabecera->PORCENTAJE_DETRACION =   $PORCENTAJE_DETRACION;
+			$cabecera->TIPO_OPERACION 	=   $TIPO_OPERACION;
+			$cabecera->TIPO_BIEN_SERVICIO 	=   $TIPO_BIEN_SERVICIO;
+			$cabecera->FEC_USUARIO_MODIF_AUD 	=   $this->fechaactual;
+			$cabecera->COD_USUARIO_MODIF_AUD 	=   Session::get('usuario_meta')->id;
+			$cabecera->save();
+
+ 			return Redirect::to('/gestion-configuracion-cuenta-detraccion/'.$idopcion)->with('bienhecho', 'Proveedor '.$empresa->NRO_DOCUMENTO.' - '.$empresa->NOM_EMPR.' modificado con exito');
+		}else{
+
+
+			$empresa 							=   STDEmpresa::where('NRO_DOCUMENTO','=',$documento)->first();
+			$cuentadetraccion 					=   WEBCuentaDetraccion::where('DOCUMENTO','=',$documento)
+													->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+													->first();
+
+
+	    	$combo_empresa_xcuenta_detraccion   = 	$this->gn_generacion_combo_cuenta_detraccion('Seleccione empresa', '');
+	    	$defecto_empresa_xcuenta_detraccion = 	$documento;
+	    	$sw_acccion 						= 	'0';
+
+
+			return View::make('compras/modificarcuentadetraccion',
+						[
+							'combo_empresa_xcuenta_detraccion'  	=> $combo_empresa_xcuenta_detraccion,
+							'defecto_empresa_xcuenta_detraccion'  	=> $defecto_empresa_xcuenta_detraccion,
+							'sw_acccion'  							=> $sw_acccion,
+							'empresa'  								=> $empresa,
+							'cuentadetraccion'  					=> $cuentadetraccion,		
+						  	'idopcion'  							=> $idopcion
+						]);
+
+
+		}
+	}
 
 
 	public function actionListarDepositoMasivoDetraccion($idopcion)

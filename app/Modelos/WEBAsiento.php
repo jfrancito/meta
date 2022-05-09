@@ -34,6 +34,22 @@ class WEBAsiento extends Model
         return $this->belongsTo('App\Modelos\CMPCategoria', 'COD_CATEGORIA_TIPO_DOCUMENTO', 'COD_CATEGORIA');
     }
 
+    public function tipo_documento_ref()
+    {
+        return $this->belongsTo('App\Modelos\CMPCategoria', 'COD_CATEGORIA_TIPO_DOCUMENTO_REF', 'COD_CATEGORIA');
+    }
+
+    public function asientomovimiento()
+    {
+        return $this->hasMany('App\Modelos\WEBAsientoMovimiento', 'COD_ASIENTO', 'COD_ASIENTO');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo('App\Modelos\STDEmpresa', 'COD_EMPR_CLI', 'COD_EMPR');
+    }
+
+
     public function scopeNroSerie($query,$serie){
         if(trim($serie) != ''){
             $query->where('WEB.asientos.NRO_SERIE', 'like', '%'.$serie.'%');

@@ -110,7 +110,7 @@ class ArchivoController extends Controller
 			    							->get();
 
 				$nombre = $this->ar_crear_nombre_compra($anio,$mes).'.txt';
-				$path = storage_path('compras/'.$nombre);
+				$path = storage_path('compras/ple/'.$nombre);
 		    	$this->archivo_ple_compras($anio,$mes,$listaasiento,$nombre,$path);
 			    if (file_exists($path)){
 			        return Response::download($path);
@@ -141,25 +141,31 @@ class ArchivoController extends Controller
 
 			    }else{
 
-			    		//detraccion
+				    if($data_archivo == 'registrocompra'){
 
-					    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
-					    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-					    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-					    							->whereRaw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <= 0")
-					    							//->where(DB::raw("ISNUMERIC(SUBSTRING(NRO_SERIE, 1, 1)) <=0 "))
-					    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
-					    							->orderby('FEC_ASIENTO','asc')
+
+					    $listadetalleasiento 	= 	WEBAsientoMovimiento::join('WEB.asientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+					    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+					    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+					    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+					    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+					    							->where('WEB.asientos.COD_ESTADO','=','1')
+					    							->select('WEB.asientomovimientos.*')
+					    							->orderby('WEB.asientos.FEC_ASIENTO','asc')
+					    							->orderby('WEB.asientos.COD_ASIENTO','asc')
+					    							->orderby('WEB.asientomovimientos.NRO_LINEA','asc')
 					    							->get();
 
-				    	$aiento_nombre = "compras";
-				    	$count  = intval(ceil(count($listaasiento)/100));
-				    	$nombre_zip = $this->archivo_ple_ventas_validar($anio,$mes,$listaasiento,$count,$aiento_nombre);
-				    	$path = storage_path("compras/validar/".$nombre_zip);
+						$titulo 		=   'REGISTRO-COMPRA-'.Session::get('empresas_meta')->NOM_EMPR;
 
-					    if (file_exists($path)){
-					        return Response::download($path);
-					    }
+					    Excel::create($titulo, function($excel) use ($listadetalleasiento,$periodo) {
+					        $excel->sheet($periodo->TXT_CODIGO, function($sheet) use ($listadetalleasiento,$periodo) {
+					            $sheet->loadView('compras/excel/listaregistrocompras')->with('listadetalleasiento',$listadetalleasiento);         
+					        });
+					    })->export('xls');
+
+
+				    }
 
 			    }
 
@@ -250,8 +256,12 @@ class ArchivoController extends Controller
 		    							->get();
 
 			$nombre = $this->ar_crear_nombre_compra($anio,$mes).'.txt';
-			$path = storage_path('compras/'.$nombre);
+			$path = storage_path('compras/ple/'.$nombre);
+
 	    	$lista_asiento = $this->archivo_ple_compras($anio,$mes,$listaasiento,$nombre,$path);
+
+
+
 	    	$funcion 				= 	$this;
 
 			return View::make('archivople/ajax/alistaregistrodiariocompras',

@@ -22,21 +22,20 @@
                         <span class="tooltiptext">Buscar PLE</span>
                         <span class="icon mdi mdi-search"></span>
                       </a>
+
+
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
                         <li>
                           <a href="#" class='descargararchivo' data_archivo = 'ple'><b>Descargar archivo txt</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
-
-
                         <li>
                           <a href="#" class='descargararchivo' data_archivo = 'validar'><b>Validar documentos txt</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
-
+                        <li>
+                          <a href="#" class='descargararchivo' data_archivo = 'registrocompra'><b>Resumen compra excel</b> <span class="mdi mdi-check-circle"></span></a>
+                        </li>
                       </ul>
                     </div>
-
-
-
 
                   </div>
                   <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}} </span>

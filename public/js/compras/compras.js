@@ -3,6 +3,18 @@ $(document).ready(function(){
     var carpeta = $("#carpeta").val();
 
 
+    $(".compras").on('click','.guardarcuentadetraccion', function() {
+
+        var empresa_id              =   $('#empresa_select').val();
+        var sw_acccion              =   $('#sw_acccion').val();
+        if(sw_acccion =='1'){
+            if(empresa_id ==''){ alerterrorajax("Seleccione una empresa."); return false;}
+        }
+        $('#DOCUMENTO').val(empresa_id);
+        return true;
+
+    });
+
 
     $(".compras").on('click','.generararchivo', function() {
 

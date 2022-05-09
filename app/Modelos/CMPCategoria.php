@@ -39,9 +39,14 @@ class CMPCategoria extends Model
         return $this->hasMany('App\Modelos\WEBAsiento', 'COD_CATEGORIA_MONEDA', 'COD_CATEGORIA');
     }
 
-    public function asientos()
+    public function asiento()
     {
         return $this->hasMany('App\Modelos\WEBAsiento', 'COD_CATEGORIA_TIPO_DOCUMENTO', 'COD_CATEGORIA');
+    }
+
+    public function asiento_ref()
+    {
+        return $this->hasMany('App\Modelos\WEBAsiento', 'COD_CATEGORIA_TIPO_DOCUMENTO_REF', 'COD_CATEGORIA');
     }
 
 }

@@ -106,6 +106,7 @@ Route::group(['middleware' => ['authaw']], function () {
 
 	Route::any('/gestion-configuracion-cuenta-detraccion/{idopcion}', 'ComprasController@actionConfiguracionCuentaDetraccion');
 	Route::any('/agregar-cuenta-detraccion/{idopcion}', 'ComprasController@actionAgregarCuentaDetraccion');
+	Route::any('/modificar-cuenta-detraccion/{idopcion}/{documento}', 'ComprasController@actionModificarCuentaDetraccion');
 
 
 	Route::any('/ajax-modal-detalle-documento-sin-enviar-sunat', 'AlertaCotroller@actionAjaxModalDetalleDocumentoSinEnviarSunat');
@@ -134,16 +135,18 @@ Route::group(['middleware' => ['authaw']], function () {
     });
 
 
-   	Route::get('buscarmpresadetraccion', function (Illuminate\Http\Request  $request) {
+   	Route::get('buscardetraccion', function (Illuminate\Http\Request  $request) {
+
+
         $term = $request->term ?: '';
 
 	   	$tags = App\Modelos\STDEmpresa::where('COD_ESTADO','=',1)
-	   									->where('NOM_EMPR', 'like', '%'.$term.'%')
 	   									->where('IND_PROVEEDOR','=',1)
-		        						->take(10)
-										->pluck('NOM_EMPR','COD_EMPR');
-
-
+	   									->select(DB::raw(" (NRO_DOCUMENTO + ' - ' + NOM_EMPR) as NOM_EMPR , NRO_DOCUMENTO"))
+	   									->where('NOM_EMPR', 'like', '%'.$term.'%')
+	   									->orWhere('NRO_DOCUMENTO', 'like', '%'.$term.'%')
+		        						->take(100)
+										->pluck('NOM_EMPR','NRO_DOCUMENTO');
         $valid_tags = [];
         foreach ($tags as $id => $tag) {
             $valid_tags[] = ['id' => $id, 'text' => $tag];

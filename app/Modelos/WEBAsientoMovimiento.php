@@ -13,4 +13,9 @@ class WEBAsientoMovimiento extends Model
 	public $keyType = 'string';
 
 
+    public function asiento()
+    {
+        return $this->belongsTo('App\Modelos\WEBAsiento', 'COD_ASIENTO', 'COD_ASIENTO');
+    }
+
 }
