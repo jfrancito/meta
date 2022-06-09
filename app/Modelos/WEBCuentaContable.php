@@ -32,4 +32,9 @@ class WEBCuentaContable extends Model
         return $this->hasMany('App\Modelos\WEBProductoEmpresa', 'cuenta_contable_compra_id', 'id');
     }
 
+    public function cajabanco()
+    {
+        return $this->hasMany('App\Modelos\TESCajaBanco', 'TXT_TIPO_REFERENCIA', 'id');
+    }
+
 }

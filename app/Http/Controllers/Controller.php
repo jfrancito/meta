@@ -19,6 +19,7 @@ class Controller extends BaseController
 	public $inicio;
 	public $fin;
 	public $anio;
+	public $mes;	
 	public $prefijomaestro;
 	public $fechaActual;
 	public $array_empresas;
@@ -30,11 +31,13 @@ class Controller extends BaseController
 		$fecha = new DateTime();
 		$fecha->modify('first day of this month');
 		$anio = date("Y");
+		$mes = date("n");
 
 		$this->fechaactual 				= date('d-m-Y H:i:s');
 		$this->inicio 					= date_format(date_create($fecha->format('Y-m-d')), 'd-m-Y');
 		$this->fin 						= date_format(date_create(date('Y-m-d')), 'd-m-Y');
 		$this->anio 					= $anio;
+		$this->mes 						= $mes;		
 		$this->prefijomaestro			= $this->funciones->prefijomaestra();
 		$this->array_empresas			= ['IACHEM0000001339','EMP0000000000007'];
 		$this->anio_inicio				= 2022;

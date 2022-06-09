@@ -127,12 +127,19 @@ class MigrarVentaController extends Controller
 		$idopcion 				=   $request['idopcion'];
 	    $listadetalleproducto 	= 	$this->gn_detalle_producto_xcoddocumento($cod_documento_id);
 		$funcion 				= 	$this;
+
+
+
 		$historialmigrar 		=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$cod_documento_id)
 									->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
+
+
 
 		$indclienterelter 		= 	$this->gn_ind_relacionado_tercero_xempresa($historialmigrar->documento_ctble->COD_EMPR_RECEPTOR);
 
 		$anio_documento 		=   $historialmigrar->documento_ctble->periodo->COD_ANIO;
+
+		//dd($indclienterelter);
 
 		return View::make('migracion/modal/ajax/adetalleproducto',
 						 [

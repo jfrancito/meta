@@ -266,8 +266,11 @@ trait ArchivoTraits
 			//suma de las 70
 			$suma_70_14  			= 	'0.00';//falta
 			if($indicador_afecto==1){
-				$suma_70_14 		= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
+
+				$suma_70_14 		= 	$item->CAN_TOTAL_DEBE;
+				//$suma_70_14 		= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
 				$suma_70_14         = 	number_format($suma_70_14, 2, '.', '');
+
 			}
 
 
@@ -280,10 +283,10 @@ trait ArchivoTraits
 
 			$codigo_20  			= 	'0.00';//falta
 			if($indicador_afecto==0){
-				$codigo_20 				= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
+				$codigo_20 				= 	$item->CAN_TOTAL_DEBE;
+				//$codigo_20 				= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
 				$codigo_20              = 	number_format($codigo_20, 2, '.', '');
 			}
-
 
 			$isc_21  				= 	'0.00';//falta
 			$icbp_22  				= 	'0.00';//falta
@@ -455,9 +458,10 @@ trait ArchivoTraits
 
 	    foreach($listaasiento as $index => $item){
 
+	   		$empresa 				= 	STDEmpresa::where('COD_EMPR','=',$item->COD_EMPR_CLI)->first();
+	   		$categoria 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_TIPO_DOCUMENTO)->first();
+	   		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$item->COD_PERIODO)->first();
 
-
-	    	$documento 				= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$item->TXT_REFERENCIA)->first();
 	    	//1->afecto ; 0->no afecto
 	    	$indicador_afecto 		=   $this->ar_ind_afecta_infecta($item);
 
@@ -467,12 +471,12 @@ trait ArchivoTraits
 	    	$codigo_03  			= 	'M'.$correlativo_02;
 	    	$fecha_emision_04  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
 			$fecha_vencimiento_05  	= 	'01/01/0001';
-			$tipo_documento_06  	= 	$documento->tipo_documento->CODIGO_SUNAT;
-			$nro_serie_07  			= 	$documento->NRO_SERIE;
-			$nro_correlativo_08  	= 	$documento->NRO_DOC;
+			$tipo_documento_06  	= 	$categoria->CODIGO_SUNAT;
+			$nro_serie_07  			= 	$item->NRO_SERIE;
+			$nro_correlativo_08  	= 	$item->NRO_DOC;
 			$codigo_09  			= 	'';
-			$identidad_cliente_10  	= 	intval($documento->empresa->tipo_documento->CODIGO_SUNAT);
-			$documento_cliente_11  	= 	$documento->empresa->NRO_DOCUMENTO;
+			$identidad_cliente_10  	= 	intval($empresa->tipo_documento->CODIGO_SUNAT);
+			$documento_cliente_11  	= 	$empresa->NOM_EMPR;
 
 			$txt_anulado 			= 	'';
 
@@ -481,13 +485,14 @@ trait ArchivoTraits
 			}
 
 
-			$nombre_cliente_12  	= 	$txt_anulado.$documento->empresa->NOM_EMPR;
+			$nombre_cliente_12  	= 	$txt_anulado.$empresa->NOM_EMPR;
 			$v_f_e_13  				= 	'0.00';//falta
 
 			//suma de las 70
 			$suma_70_14  			= 	'0.00';//falta
 			if($indicador_afecto==1){
-				$suma_70_14 		= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
+				//$suma_70_14 		= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
+				$suma_70_14 		= 	$item->CAN_TOTAL_DEBE;
 				$suma_70_14         = 	number_format($suma_70_14, 2, '.', '');
 			}
 
@@ -498,7 +503,8 @@ trait ArchivoTraits
 			$codigo_18  			= 	'0.00';//falta
 			$codigo_19  			= 	'0.00';//falta
 			if($indicador_afecto==0){
-				$codigo_19 				= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
+				$codigo_19 				= 	$item->CAN_TOTAL_DEBE;
+				//$codigo_19 				= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
 				$codigo_19              = 	number_format($codigo_19, 2, '.', '');
 			}
 			$codigo_20  			= 	'0.00';//falta
@@ -526,15 +532,15 @@ trait ArchivoTraits
 			if($tipo_documento_06 == '07' or $tipo_documento_06 == '08'){
 
 
-
-				$fecha_asociada_28 		= 	date_format(date_create($this->ar_tabla_asociada($item,'FEC_EMISION')), 'd/m/Y');
-				$coddocumento_asociado 	= 	$this->ar_tabla_asociada($item,'COD_DOCUMENTO_CTBLE');
-				$documento_asociado 	= 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$coddocumento_asociado)->first();
+				$fecha_asociada_28 		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
+				$documento_asociado 	= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_TIPO_DOCUMENTO_REF)->first();
 				if(count($documento_asociado)>0){
-					$tipo_asociado_29  	= 	$documento_asociado->tipo_documento->CODIGO_SUNAT;
+					$tipo_asociado_29  	= 	$documento_asociado->CODIGO_SUNAT;
 				}
-				$serie_asociada_30 		= 	$this->ar_tabla_asociada($item,'NRO_SERIE');
-				$nro_asociada_31 		= 	$this->ar_tabla_asociada($item,'NRO_DOC');
+
+				$serie_asociada_30 		= 	$item->NRO_SERIE_REF;
+				$nro_asociada_31 		= 	$item->NRO_DOC_REF;
+
 
 			}
 

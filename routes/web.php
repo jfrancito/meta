@@ -56,7 +56,6 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/guardar-compras-cuenta-contable/{idopcion}', 'PlanContableController@actionGuardarComprasPlanContable');
 
 
-
 	Route::any('/gestion-asiento-modelo/{idopcion}', 'AsientoModeloController@actionListarAsientoModelo');
 	Route::any('/ajax-asiento-modelo', 'AsientoModeloController@actionAjaxListarAsientoModelo');
 	Route::any('/agregar-asiento-modelo/{idopcion}', 'AsientoModeloController@actionAgregarAsientoModelo');
@@ -69,6 +68,11 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-configuracion-producto', 'ConfiguracioProductoController@actionAjaxConfiguracionProducto');
 	Route::any('/ajax-modal-configuracion-producto-cuenta-contable', 'ConfiguracioProductoController@actionAjaxModalConfiguracionProductoCuentaContable');
 	Route::any('/ajax-guardar-cuenta-contable', 'ConfiguracioProductoController@actionAjaxGuardarCuentaContable');
+
+
+	Route::any('/gestion-configuracion-tipo-cambio/{idopcion}', 'ConfiguracioTipoCambioController@actionListarTipoCambio');
+	Route::any('/ajax-tipo-cambio', 'ConfiguracioTipoCambioController@actionAjaxListarTipoCambio');
+	Route::any('/ajax-guardar-configuracion-tipo-cambio', 'ConfiguracioTipoCambioController@actionAjaxGuardarTipoCambio');
 
 
 	Route::any('/gestion-registro-diario/{idopcion}', 'RegistroDiarioController@actionListarRegistroDiario');
@@ -111,6 +115,15 @@ Route::group(['middleware' => ['authaw']], function () {
 
 	Route::any('/ajax-modal-detalle-documento-sin-enviar-sunat', 'AlertaCotroller@actionAjaxModalDetalleDocumentoSinEnviarSunat');
 	Route::any('/ajax-modal-detalle-documento-correlativos', 'AlertaCotroller@actionAjaxModalDetalleDocumentoCorrelativos');
+
+
+	Route::any('/gestion-cancelar-documentos/{idopcion}', 'CajaBancoController@actionCancelarDocumentoClienteProveedor');
+	Route::any('/ajax-modal-lista-movimiento-caja-banco', 'CajaBancoController@actionAjaxModalListaMovimientoCajaBanco');
+	Route::any('/ajax-lista-movimiento-caja-banco', 'CajaBancoController@actionAjaxListaMovimientoCajaBanco');
+
+	Route::any('/gestion-asociar-banco-caja/{idopcion}', 'CajaBancoController@actionListarBancoCaja');
+	Route::any('/ajax-modal-asociar-banco-caja', 'CajaBancoController@actionAjaxModalAsociarBancoCaja');
+	Route::any('/guardar-asociacion-banco-caja/{idopcion}', 'CajaBancoController@actionGuardarAsociacionCajaBanco');
 
 
    	Route::any('/enviocorreos', 'CorreoController@enviocorreo');

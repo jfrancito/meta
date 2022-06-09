@@ -97,6 +97,7 @@ class AsientoModeloController extends Controller
 			$moneda_id 	 		 		= 	$request['moneda_id'];
 			$tipo_cliente 	 		 	= 	$request['tipo_cliente'];
 			$tipo_igv_id 	 		 	= 	$request['tipo_igv_id'];
+			$pago_cobro_id 	 		 	= 	$request['pago_cobro_id'];			
 			$idasientomodelo 			=   $this->funciones->getCreateIdMaestra('web.asientomodelos');
 			$anio  						=   $this->anio;
 			
@@ -107,6 +108,7 @@ class AsientoModeloController extends Controller
 			$cabecera->tipo_cliente 	=   $tipo_cliente;
 			$cabecera->moneda_id 	   	=   $moneda_id;
 			$cabecera->tipo_igv_id 	   	=   $tipo_igv_id;
+			$cabecera->pago_cobro_id 	=   $pago_cobro_id;
 			$cabecera->anio 	   		=   $anio;
 			$cabecera->empresa_id 	 	=   Session::get('empresas_meta')->COD_EMPR;
 			$cabecera->fecha_crea 	 	=   $this->fechaactual;
@@ -126,11 +128,13 @@ class AsientoModeloController extends Controller
 			$combo_tipo_cliente 	= 	$this->gn_combo_tipo_cliente();
 			$combo_tipo_documento	= 	$this->gn_generacion_combo_tabla_osiris('STD.TIPO_DOCUMENTO','COD_TIPO_DOCUMENTO','TXT_TIPO_DOCUMENTO','','');
 			$combo_tipo_igv 		= 	$this->gn_generacion_combo_categoria('CONTABILIDAD_IGV','Seleccione tipo igv','');
+			$combo_pago_cobro 		= 	$this->gn_generacion_combo_categoria('ENTIDAD_PAGO_COBRO','Seleccione pago o cobro','');
 			$defecto_tipo_asiento 	= 	'';
 			$defecto_moneda			= 	'';
 			$defecto_tipo_cliente	= 	'';
 			$defecto_tipo_igv		= 	'';
 			$defecto_tipo_documento	= 	'-1';
+			$defecto_pago_cobro		= 	'';
 
 
 			return View::make('asientomodelo/agregarasientomodelo',
@@ -140,11 +144,13 @@ class AsientoModeloController extends Controller
 							'combo_tipo_cliente'  	=> $combo_tipo_cliente,
 							'combo_tipo_documento'  => $combo_tipo_documento,
 							'combo_tipo_igv'  		=> $combo_tipo_igv,
+							'combo_pago_cobro'  	=> $combo_pago_cobro,
 							'defecto_tipo_asiento'  => $defecto_tipo_asiento,
 		        			'defecto_moneda'  		=> $defecto_moneda,
 		        			'defecto_tipo_cliente'  => $defecto_tipo_cliente,
 		        			'defecto_tipo_documento'=> $defecto_tipo_documento,	
-		        			'defecto_tipo_igv'		=> $defecto_tipo_igv,		
+		        			'defecto_tipo_igv'		=> $defecto_tipo_igv,
+		        			'defecto_pago_cobro'	=> $defecto_pago_cobro,	
 						  	'idopcion'  			=> $idopcion
 						]);
 		}
@@ -170,7 +176,7 @@ class AsientoModeloController extends Controller
 			$activo 	 		 	 	= 	$request['activo'];
 			$tipo_cliente 	 		 	= 	$request['tipo_cliente'];
 			$tipo_igv_id 	 		 	= 	$request['tipo_igv_id'];
-			
+			$pago_cobro_id 	 		 	= 	$request['pago_cobro_id'];
 
 			$cabecera            	 	=	WEBAsientoModelo::find($idasientomodelo);
 			$cabecera->nombre 	   		=   $nombre;
@@ -178,6 +184,7 @@ class AsientoModeloController extends Controller
 			$cabecera->moneda_id 	   	=   $moneda_id;
 			$cabecera->tipo_cliente 	=   $tipo_cliente;
 			$cabecera->tipo_igv_id 	   	=   $tipo_igv_id;
+			$cabecera->pago_cobro_id 	=   $pago_cobro_id;
 			$cabecera->activo 	 	 	=   $activo;
 			$cabecera->fecha_mod 	 	=   $this->fechaactual;
 			$cabecera->usuario_mod 		=   Session::get('usuario_meta')->id;
@@ -198,7 +205,7 @@ class AsientoModeloController extends Controller
 			$combo_tipo_cliente 		= 	$this->gn_combo_tipo_cliente();
 			$combo_tipo_documento		= 	$this->gn_generacion_combo_tabla_osiris('STD.TIPO_DOCUMENTO','COD_TIPO_DOCUMENTO','TXT_TIPO_DOCUMENTO','','');
 			$combo_tipo_igv 			= 	$this->gn_generacion_combo_categoria('CONTABILIDAD_IGV','Seleccione tipo igv','');
-			
+			$combo_pago_cobro 			= 	$this->gn_generacion_combo_categoria('ENTIDAD_PAGO_COBRO','Seleccione pago o cobro','');
 
 			$asientomodelo 				= 	WEBAsientoModelo::where('id', $idasientomodelo)->first();
 			$defecto_tipo_asiento 		= 	$asientomodelo->tipo_asiento_id;
@@ -207,6 +214,8 @@ class AsientoModeloController extends Controller
 			$array_tipo_documento 		=   $this->am_array_asiento_modelo_referencia_xreferencia('TIPO_DOCUMENTO',$idasientomodelo);
 			$defecto_tipo_documento		= 	$array_tipo_documento;
 			$defecto_tipo_igv			= 	$asientomodelo->tipo_igv_id;
+			$defecto_pago_cobro			= 	$asientomodelo->pago_cobro_id;
+
 
 	        return View::make('asientomodelo/modificarasientomodelo', 
 	        				[
@@ -215,12 +224,14 @@ class AsientoModeloController extends Controller
 	        					'combo_tipo_cliente'  	=> $combo_tipo_cliente,
 								'combo_tipo_documento'  => $combo_tipo_documento,
 								'combo_tipo_igv'  		=> $combo_tipo_igv,
+								'combo_pago_cobro'  	=> $combo_pago_cobro,
 	        					'asientomodelo'  		=> $asientomodelo,
 	        					'defecto_tipo_asiento'  => $defecto_tipo_asiento,
 	        					'defecto_moneda'  		=> $defecto_moneda,
 	        					'defecto_tipo_cliente'  => $defecto_tipo_cliente,
 		        				'defecto_tipo_documento'=> $defecto_tipo_documento,	
-		        				'defecto_tipo_igv' 		=> $defecto_tipo_igv,		
+		        				'defecto_tipo_igv' 		=> $defecto_tipo_igv,
+		        				'defecto_pago_cobro' 	=> $defecto_pago_cobro,		
 					  			'idopcion' 				=> $idopcion
 	        				]);
 		}

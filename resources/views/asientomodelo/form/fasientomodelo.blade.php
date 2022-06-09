@@ -1,5 +1,5 @@
 <div class="form-group">
-  <label class="col-sm-3 control-label">Nombres</label>
+  <label class="col-sm-3 control-label">Nombres (*)</label>
   <div class="col-sm-6">
 
       <input  type="text"
@@ -20,7 +20,7 @@
 
 <div class="form-group">
 
-  <label class="col-sm-3 control-label">Tipo de asiento</label>
+  <label class="col-sm-3 control-label">Tipo de asiento (*)</label>
   <div class="col-sm-6">
     {!! Form::select( 'tipo_asiento_id'
                       , $combo_tipo_asiento
@@ -42,7 +42,7 @@
 
 <div class="form-group">
 
-  <label class="col-sm-3 control-label">Moneda</label>
+  <label class="col-sm-3 control-label">Moneda (*)</label>
   <div class="col-sm-6">
     {!! Form::select( 'moneda_id', $combo_moneda, $defecto_moneda,
                       [
@@ -62,7 +62,7 @@
 
 <div class="form-group">
 
-  <label class="col-sm-3 control-label">Tipo cliente</label>
+  <label class="col-sm-3 control-label">Tipo cliente (*)</label>
   <div class="col-sm-6">
     {!! Form::select( 'tipo_cliente', $combo_tipo_cliente, $defecto_tipo_cliente,
                       [
@@ -88,7 +88,6 @@
                       [
                         'class'       => 'select2 form-control control input-xs' ,
                         'id'          => 'tipo_igv_id',
-                        'required'    => '',
                         'data-aw'     => '5'
                       ]) !!}
 
@@ -99,10 +98,28 @@
   </div>
 </div>
 
+<div class="form-group">
+
+  <label class="col-sm-3 control-label">Pago o cobro</label>
+  <div class="col-sm-6">
+    {!! Form::select( 'pago_cobro_id', $combo_pago_cobro, $defecto_pago_cobro,
+                      [
+                        'class'       => 'select2 form-control control input-xs' ,
+                        'id'          => 'pago_cobro_id',
+                        'data-aw'     => '6'
+                      ]) !!}
+
+      @include('error.erroresvalidate', [ 'id' => $errors->has('pago_cobro_id')  , 
+                                          'error' => $errors->first('pago_cobro_id', ':message') , 
+                                          'data' => '6'])
+
+  </div>
+</div>
+
 
 <div class="form-group">
 
-  <label class="col-sm-3 control-label">Tipo documento</label>
+  <label class="col-sm-3 control-label">Tipo documento (*)</label>
   <div class="col-sm-6">
     {!! Form::select( 'tipo_documento[]', $combo_tipo_documento, $defecto_tipo_documento,
                       [
@@ -110,12 +127,12 @@
                         'id'          => 'tipo_documento',
                         'required'    => '',
                         'multiple'    => '',
-                        'data-aw'     => '6'
+                        'data-aw'     => '7'
                       ]) !!}
 
       @include('error.erroresvalidate', [ 'id' => $errors->has('tipo_documento')  , 
                                           'error' => $errors->first('tipo_documento', ':message') , 
-                                          'data' => '6'])
+                                          'data' => '7'])
 
   </div>
 </div>

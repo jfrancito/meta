@@ -188,10 +188,15 @@ class ArchivoController extends Controller
 		    							->pluck('TXT_REFERENCIA')
                                         ->toArray();
 
+
+
+
 		    $array_documentos 		= 	CMPDocumentoCtble::whereIn('COD_DOCUMENTO_CTBLE',$array_asientos)
 		    							->TransGratuita($documento)
 		    							->pluck('COD_DOCUMENTO_CTBLE')
                                         ->toArray();
+
+
 
 		    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
 		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
@@ -201,25 +206,31 @@ class ArchivoController extends Controller
 		    							->get();
 
 
+
+
 		    if($data_archivo == 'ple'){
 
 				$nombre = $this->ar_crear_nombre_venta($anio,$mes).'.txt';
 				$path = storage_path('ventas/ple/'.$nombre);
 		    	$this->archivo_ple_ventas($anio,$mes,$listaasiento,$nombre,$path);
+		    	
 			    if (file_exists($path)) {
 			        return Response::download($path);
 			    }		 
 
 		    }else{
 
-		    	$asiento_nombre = "ventas";
-		    	$count  = intval(ceil(count($listaasiento)/100));
-		    	$nombre_zip = $this->archivo_ple_ventas_validar($anio,$mes,$listaasiento,$count,$asiento_nombre);
-		    	$path = storage_path("ventas/validar/".$nombre_zip);
+		    	if($data_archivo == 'validar'){
 
-			    if (file_exists($path)){
-			        return Response::download($path);
-			    }
+			    	$asiento_nombre = "ventas";
+			    	$count  = intval(ceil(count($listaasiento)/100));
+			    	$nombre_zip = $this->archivo_ple_ventas_validar($anio,$mes,$listaasiento,$count,$asiento_nombre);
+			    	$path = storage_path("ventas/validar/".$nombre_zip);
+
+				    if (file_exists($path)){
+				        return Response::download($path);
+				    }
+			   	}
 
 		    }
 

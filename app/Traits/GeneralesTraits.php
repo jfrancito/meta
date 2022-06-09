@@ -14,6 +14,7 @@ use App\Modelos\CMPDetalleProducto;
 use App\Modelos\STDEmpresa;
 use App\Modelos\WEBProductoEmpresa;
 use App\Modelos\WEBCuentaDetraccion;
+use App\Modelos\CMPTipoCambio;
 
 
 
@@ -25,6 +26,22 @@ use Keygen;
 
 trait GeneralesTraits
 {
+
+
+	public function gn_tipo_cambio($fecha)
+	{
+		$tipo_cambio   				=   CMPTipoCambio::where('FEC_CAMBIO','<=',$fecha)
+										->orderBy('FEC_CAMBIO', 'DESC')
+										->first();
+	    return $tipo_cambio;
+	}
+
+	public function gn_array_meses()
+	{
+		$meses 		= 	array('1' => 'ENERO','2' => 'FEBRERO','3' => 'MARZO','4' => 'ABRIL','5' => 'MAYO','6' => 'JUNIO','7' => 'JULIO','8' => 'AGOSTO','9' => 'SETIEMBRE','10' => 'OCTUBRE','11' => 'NOVIEMBRE','12' => 'DICIEMBRE');
+	 	return  $meses;
+	}
+
 
 	public function gn_data_empresa($cod_empresa_id)
 	{
@@ -40,6 +57,37 @@ trait GeneralesTraits
 			$combo_anio_pc  		= 	array('' => $titulo) + $array;
 		}
 	    return $combo_anio_pc;
+	}
+
+	private function gn_generacion_combo_meses_array($titulo, $todo)
+	{
+
+		$meses   					=   $this->gn_array_meses();
+		$combo_meses 				= 	array('' => $titulo) + $meses;
+	    return $combo_meses;
+	}
+
+
+	private function gn_genecombo_cuenta_contable_xnrocuentapadre($nro_cuenta,$anio)
+	{
+
+		$cuentacontable 			= 	WEBCuentaContable::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+										->where('nro_cuenta','=',$nro_cuenta)
+										->where('anio','=',$anio)
+										->where('activo','=',1)
+										->first();
+
+		$array 						= 	DB::table('WEB.cuentacontables')
+        								->where('activo','=',1)
+        								->where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+        								->where('cuenta_contable_superior_id','=',$cuentacontable->id)
+        								->select(DB::raw(" (nro_cuenta+'-'+nombre) as nro_cuenta,id "))
+		        						->pluck('nro_cuenta','id')
+										->toArray();
+
+		$combo  					= 	array('' => 'Seleccione una cuenta') + $array;
+
+	    return $combo;
 	}
 
 	private function gn_generacion_combo($tabla,$atributo1,$atributo2,$titulo,$todo) {
@@ -247,7 +295,7 @@ trait GeneralesTraits
 		$empresa 		= 	WEBProductoEmpresa::where('producto_id','=',$cod_producto)
 							->where('empresa_id','=',$cod_empresa)
 							->where('anio','=',$anio_documento)
-							->where('cod_categoria_tipo_asiento','=',$tipo_asiento)
+							//->where('cod_categoria_tipo_asiento','=',$tipo_asiento)
 		        			->first();
 
 		if(count($empresa)>0){
