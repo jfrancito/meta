@@ -67,7 +67,7 @@
 
                       </div>
 
-                      
+                                            <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
                       <div class="form-group">
                         <label class="col-sm-12 control-label labelleft" >Nro Serie</label>

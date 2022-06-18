@@ -184,6 +184,9 @@ $(document).ready(function(){
         var serie                   =   $('#serie').val();
         var documento               =   $('#documento').val();
 
+
+        //debugger;
+
         data                        =   {
                                             _token                  : _token,
                                             asiento_id              : asiento_id,
