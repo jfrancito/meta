@@ -86,7 +86,7 @@ trait ComprasTraits
 	   		}
 	   		$tipo_operacion 	= 	$item['tipo_operacion'];
 
-	   		$periodo 			=   $anio.str_pad($mes, 2, "0", STR_PAD_LEFT);
+	   		$periodo 			=   $item['periodo'];;
 	   		$nro_serie 			= 	$item['nro_serie'];
 	   		$nro_correlativo 	= 	$item['nro_correlativo'];
 
@@ -140,7 +140,8 @@ trait ComprasTraits
 			$tipo_documento_pro = 	intval($empresa->tipo_documento->CODIGO_SUNAT);
 			$nro_cuenta 		= 	'';
 			$tipo_operacion 	= 	'';
-	    	$mes_01 			= 	str_pad($item->periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
+			$mes 				= 	substr($item->FEC_ASIENTO, 5, 2);
+	    	$mes_01 			= 	str_pad($mes, 2, "0", STR_PAD_LEFT); 
 			$periodo 			= 	$item->periodo->COD_ANIO.$mes_01;
 			$tipo_documento  	= 	intval($categoria->CODIGO_SUNAT);
 			$nro_serie  		= 	$item->NRO_SERIE;

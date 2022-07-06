@@ -55,6 +55,8 @@ class ConfiguracioProductoController extends Controller
 		$lista_configuracion_producto 	= 	$this->cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa);
 		$defecto_producto				= 	'';
 
+		//dd($lista_configuracion_producto);
+
 		return View::make('configuracionproducto/listaconfiguracionproducto',
 						 [
 						 	'combo_producto' 					=> $combo_producto,						 	
