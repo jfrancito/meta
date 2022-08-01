@@ -81,8 +81,6 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-detalle-asiento', 'RegistroDiarioController@actionAjaxModalDetalleAsiento');
 
 
-
-
 	Route::any('/gestion-observacion-documentos/{tipo_asiento_id}', 'MigrarVentaController@actionListarObservacionDocumentos');
 	Route::any('/ajax-modal-detalle-producto-migracion-ventas', 'MigrarVentaController@actionAjaxModalDetalleProductoMigracionVentas');
 	Route::any('/generar-asiento-contables-xdocumentos', 'MigrarVentaController@actionGenerarAsientoContablesXDocumentos');
@@ -124,6 +122,16 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-asociar-banco-caja/{idopcion}', 'CajaBancoController@actionListarBancoCaja');
 	Route::any('/ajax-modal-asociar-banco-caja', 'CajaBancoController@actionAjaxModalAsociarBancoCaja');
 	Route::any('/guardar-asociacion-banco-caja/{idopcion}', 'CajaBancoController@actionGuardarAsociacionCajaBanco');
+
+	Route::any('/gestion-saldos-inicial/{idopcion}', 'KardexController@actionListarSaldoInicial');
+	Route::any('/ajax-saldo-inicial', 'KardexController@actionAjaxListarSaldoInicial');
+
+	Route::any('/gestion-movimiento-kardex/{idopcion}', 'KardexController@actionListarMovimientoKardex');
+	Route::any('/ajax-movimiento-kardex', 'KardexController@actionAjaxListarMovimientoKardex');
+	Route::any('/ajax-modal-detalle-producto-kardex', 'KardexController@actionAjaxModalDetalleKardex');
+	Route::any('/descargar-excel-kardex', 'KardexController@actionDescargarExcelKardex');
+
+
 
 
    	Route::any('/enviocorreos', 'CorreoController@enviocorreo');

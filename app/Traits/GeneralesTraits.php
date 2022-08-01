@@ -254,6 +254,19 @@ trait GeneralesTraits
 	}
 
 
+	public function gn_lista_periodo($anio,$cod_empresa)
+	{
+		
+		$listaperiodo 				= 	CONPeriodo::where('COD_ESTADO','=',1)
+										->where('COD_ANIO','=',$anio)
+										->where('COD_EMPR','=',$cod_empresa)
+										->get();
+
+	 	return  $listaperiodo;	
+
+
+	}
+
 
 	private function gn_detalle_producto_xcoddocumento($cod_documento)
 	{

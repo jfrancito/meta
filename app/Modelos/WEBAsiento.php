@@ -62,5 +62,12 @@ class WEBAsiento extends Model
         }
     }
 
+    public function scopeTipoAsiento($query,$tipo_asiento_id){
+        if(trim($tipo_asiento_id) != ''){
+            $query->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO', '=', $tipo_asiento_id);
+        }
+    }
+
+
 
 }
