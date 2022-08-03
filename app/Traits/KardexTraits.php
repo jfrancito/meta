@@ -13,7 +13,7 @@ use App\Modelos\TESOperacionCaja;
 use App\Modelos\TESCajaBanco;
 use App\Modelos\WEBKardexProducto;
 use App\Modelos\WEBAsiento;
-
+use App\Modelos\CONPeriodo;
 
 use View;
 use Session;
@@ -58,6 +58,20 @@ trait KardexTraits
 
 	}
 
+
+	private function kd_saldo_inicial_producto_id($empresa_id, $tipo_producto_id,$producto_id)
+	{
+
+	    $listasaldoincial 	= 	WEBKardexProducto::where('empresa_id','=',$empresa_id)
+	    							->where('tipo_producto_id','=',$tipo_producto_id)
+	    							->where('producto_id','=',$producto_id)
+	    							->where('activo','=',1)
+			    					->first();
+
+		return $listasaldoincial;
+
+	}
+
 	private function kd_lista_movimiento($empresa_id, $anio, $tipo_producto_id, $tipo_asiento_id)
 	{
 
@@ -97,19 +111,30 @@ trait KardexTraits
 
 	    $listaproducto 	= 	WEBAsiento::join('CMP.DETALLE_PRODUCTO', 'WEB.asientos.TXT_REFERENCIA', '=', 'CMP.DETALLE_PRODUCTO.COD_TABLA')
 	    						->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
-	    						->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+	    						->join('STD.EMPRESA', 'STD.EMPRESA.COD_EMPR', '=', 'WEB.asientos.COD_EMPR_CLI')
+	    						->TipoAsiento($tipo_asiento_id)
 	    						->where('WEB.asientos.COD_EMPR','=',$empresa_id)
 	    						->where('CON.PERIODO.COD_ANIO','=',$anio)
 	    						->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    						->where('CMP.DETALLE_PRODUCTO.COD_PRODUCTO','=',$producto_id)
-	    						->where('CON.PERIODO.COD_PERIODO','=',$periodo_id)
+	    						->Periodo($periodo_id)
 	    						->where('CMP.DETALLE_PRODUCTO.COD_ESTADO','=',1)
 	    						->select(DB::raw("
-	    										CON.PERIODO.TXT_NOMBRE AS NOMBRE_PERIODO
+	    										CON.PERIODO.COD_PERIODO
+	    										,CON.PERIODO.TXT_NOMBRE AS NOMBRE_PERIODO
 												,WEB.asientos.TXT_CATEGORIA_TIPO_DOCUMENTO
 												,WEB.asientos.FEC_ASIENTO
 												,WEB.asientos.NRO_SERIE
 												,WEB.asientos.NRO_DOC
+
+												,WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO
+												,WEB.asientos.TXT_CATEGORIA_TIPO_ASIENTO
+
+												,WEB.asientos.COD_EMPR_CLI
+												,WEB.asientos.TXT_EMPR_CLI
+												,STD.EMPRESA.NRO_DOCUMENTO
+
+												,CMP.DETALLE_PRODUCTO.COD_PRODUCTO
 												,CMP.DETALLE_PRODUCTO.TXT_NOMBRE_PRODUCTO
 												,CMP.DETALLE_PRODUCTO.CAN_PRODUCTO
 												"))->orderBy('WEB.asientos.FEC_ASIENTO', 'asc')->get();
@@ -154,6 +179,141 @@ trait KardexTraits
 		return $monto;
 
 	}
+
+
+	public function kd_lista_kardex_inventario_final($empresa_id, 
+	    											$saldoinicial,
+	    											$listadetalleproducto,
+	    											$producto,
+	    											$periodo_enero){
+
+		$array_detalle_asiento 		=	array();
+
+		$cantidad_antes    			= 	$saldoinicial->unidades;
+		$cu_antes    				= 	round($saldoinicial->cu_soles, 2);
+		$importe_antes    			= 	$saldoinicial->inicial_soles;
+
+    	$array_nuevo_asiento 		=	array();
+		$array_nuevo_asiento    	=	array(
+
+			"periodo_id" 				=> $periodo_enero->COD_PERIODO,
+			"nombre_periodo" 			=> $periodo_enero->TXT_NOMBRE,
+			"fecha" 					=> substr($periodo_enero->FEC_INICIO, 0, 10),
+
+			"servicio" 					=> 'Apertura',
+			"producto_id" 				=> $producto->id,
+			"nombre_producto" 			=> $producto->NOM_PRODUCTO,
+
+			"serie" 					=> '',
+			"correlativo" 				=> '',
+			"ruc" 						=> '',
+
+			"cliente_id" 				=> '',
+			"nombre_cliente" 			=> '',
+
+			"entrada_cantidad" 			=> 0,
+			"entrada_cu" 				=> 0,
+			"entrada_importe" 			=> 0,
+
+			"salida_cantidad" 			=> 0,
+			"salida_cu" 				=> 0,
+			"salida_importe" 			=> 0,
+
+			"saldo_cantidad" 			=> $saldoinicial->unidades,
+			"saldo_cu" 					=> $saldoinicial->cu_soles,
+			"saldo_importe" 			=> $saldoinicial->inicial_soles
+
+		);
+
+		array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+	    foreach($listadetalleproducto as $index => $item){
+
+
+			$periodo 					= 	CONPeriodo::where('COD_PERIODO','=',$item->COD_PERIODO)->first();
+
+			$entrada_cantidad           =   0;
+			$entrada_cu           		=   0;
+			$entrada_importe           	=   0;
+
+			$salida_cantidad           	=   0;
+			$salida_cu           		=   0;
+			$salida_importe           	=   0;
+
+			$saldo_cantidad           	=   0;
+			$saldo_cu           		=   0;
+			$saldo_importe           	=   0;
+
+			if($item->COD_CATEGORIA_TIPO_ASIENTO == 'TAS0000000000004'){
+				$entrada_cantidad       =   $item->CAN_PRODUCTO;
+				$entrada_cu           	=   $cu_antes;
+				$entrada_importe        =   $entrada_cantidad*$entrada_cu;
+
+				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
+				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;
+				$saldo_cu           	=   round($saldo_importe/$saldo_cantidad, 2);
+
+				$cantidad_antes    		= 	$saldo_cantidad;
+				$cu_antes    			= 	$saldo_cu;
+				$importe_antes    		= 	$saldo_importe;
+
+
+			}else{
+
+				$salida_cantidad        =   $item->CAN_PRODUCTO;
+				$salida_cu           	=   $cu_antes;
+				$salida_importe         =   $salida_cantidad*$salida_cu;
+
+				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
+				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;
+				$saldo_cu           	=   round($saldo_importe/$saldo_cantidad, 2);
+
+				$cantidad_antes    		= 	$saldo_cantidad;
+				$cu_antes    			= 	$saldo_cu;
+				$importe_antes    		= 	$saldo_importe;
+
+
+
+			}
+									
+	    	$array_nuevo_asiento 		=	array();
+			$array_nuevo_asiento    	=	array(
+				"periodo_id" 				=> $periodo->COD_PERIODO,
+				"nombre_periodo" 			=> $periodo->TXT_NOMBRE,
+				"fecha" 					=> substr($item->FEC_ASIENTO, 0, 10),
+				"servicio" 					=> $item->TXT_CATEGORIA_TIPO_ASIENTO,
+				"producto_id" 				=> $item->COD_PRODUCTO,
+				"nombre_producto" 			=> $item->TXT_NOMBRE_PRODUCTO,
+				"serie" 					=> $item->NRO_SERIE,
+				"correlativo" 				=> $item->NRO_DOC,
+				"ruc" 						=> $item->NRO_DOCUMENTO,
+				"cliente_id" 				=> $item->COD_EMPR_CLI,
+				"nombre_cliente" 			=> $item->TXT_EMPR_CLI,
+
+				"entrada_cantidad" 			=> $entrada_cantidad,
+				"entrada_cu" 				=> $entrada_cu,
+				"entrada_importe" 			=> $entrada_importe,
+
+				"salida_cantidad" 			=> $salida_cantidad,
+				"salida_cu" 				=> $salida_cu,
+				"salida_importe" 			=> $salida_importe,
+
+				"saldo_cantidad" 			=> $saldo_cantidad,
+				"saldo_cu" 					=> $saldo_cu,
+				"saldo_importe" 			=> $saldo_importe
+
+			);
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+				
+
+
+	    }
+
+
+	    return $array_detalle_asiento;
+
+    }
 
 
 }

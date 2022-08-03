@@ -67,7 +67,12 @@ class WEBAsiento extends Model
             $query->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO', '=', $tipo_asiento_id);
         }
     }
-
+    
+    public function scopePeriodo($query,$periodo_id){
+        if(trim($periodo_id) != ''){
+            $query->where('CON.PERIODO.COD_PERIODO', '=', $periodo_id);
+        }
+    }
 
 
 }

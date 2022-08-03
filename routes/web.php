@@ -128,9 +128,10 @@ Route::group(['middleware' => ['authaw']], function () {
 
 	Route::any('/gestion-movimiento-kardex/{idopcion}', 'KardexController@actionListarMovimientoKardex');
 	Route::any('/ajax-movimiento-kardex', 'KardexController@actionAjaxListarMovimientoKardex');
-	Route::any('/ajax-modal-detalle-producto-kardex', 'KardexController@actionAjaxModalDetalleKardex');
 	Route::any('/descargar-excel-kardex', 'KardexController@actionDescargarExcelKardex');
-
+	
+	Route::any('/ajax-modal-detalle-producto-kardex', 'KardexController@actionAjaxModalDetalleKardex');
+	Route::any('/ajax-modal-detalle-producto-total-kardex', 'KardexController@actionAjaxModalDetalleTotalKardex');
 
 
 

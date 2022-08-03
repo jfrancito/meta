@@ -155,6 +155,7 @@ class KardexController extends Controller
 						 	'idopcion' 				 => $idopcion,
 						 	'anio' 					 => $anio,
 						 	'tipo_asiento_id' 		 => $tipo_asiento_id,
+						 	'tipo_producto_id' 		 => $tipo_producto_id,
 						 	'funcion' 				 => $funcion,
 						 	'ajax' 					 => true,						 	
 						 ]);
@@ -187,6 +188,41 @@ class KardexController extends Controller
 						 ]);
 	}
 
+
+	public function actionAjaxModalDetalleTotalKardex(Request $request)
+	{
+
+		$data_producto_id 		=   $request['data_producto_id'];
+		$data_periodo_id 		=   $request['data_periodo_id'];
+		$data_anio 				=   $request['data_anio'];
+		$data_tipo_asiento_id 	=   $request['data_tipo_asiento_id'];
+		$tipo_producto_id 		=   $request['tipo_producto_id'];
+
+
+		$producto 				= 	ALMProducto::where('COD_PRODUCTO','=',$data_producto_id)->first();
+		$periodo_enero 			= 	CONPeriodo::where('COD_ANIO','=',$data_anio)
+									->where('COD_MES','=',1)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+									->first();
+
+		$idopcion 				=   $request['idopcion'];
+	    $saldoinicial 			= 	$this->kd_saldo_inicial_producto_id(Session::get('empresas_meta')->COD_EMPR,$tipo_producto_id,$data_producto_id);
+	    $listadetalleproducto 	= 	$this->kd_lista_producto_periodo(Session::get('empresas_meta')->COD_EMPR, 
+	    															$data_anio, $data_tipo_asiento_id,$data_producto_id,$data_periodo_id);
+	    $listakardexif 			= 	$this->kd_lista_kardex_inventario_final(Session::get('empresas_meta')->COD_EMPR, 
+	    																	$saldoinicial,
+	    																	$listadetalleproducto,
+	    																	$producto,
+	    																	$periodo_enero);
+		return View::make('kardex/modal/ajax/adetallekardexif',
+						 [
+						 	'listakardexif' 	=> $listakardexif,
+						 	'producto' 			=> $producto,
+						 	'periodo_enero' 	=> $periodo_enero,					 	
+						 	'idopcion' 			=> $idopcion,
+						 	'ajax' 				=> true,						 	
+						 ]);
+	}
 
 
 	public function actionDescargarExcelKardex(Request $request)

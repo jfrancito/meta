@@ -12,7 +12,15 @@
   <tbody>
     @foreach($listasaldoinicial as $index => $item)
       <tr>
-        <td>{{$item->producto->NOM_PRODUCTO}}</td>
+        <td class="dobleclickto seleccionar"
+            data_producto_id = "{{$item->producto_id}}"
+            data_tipo_producto_id = "{{$tipo_producto_id}}"
+            data_periodo_id = ""
+            data_mes = ""
+            data_anio = "{{$anio}}"
+            data_tipo_asiento_id = "">
+            {{$item->producto->NOM_PRODUCTO}}
+        </td>
         @foreach($listaperido as $indexp => $itemp)
           @php 
             $monto     =   $funcion->kd_cantidad_producto_if($listamovimientocommpra,
@@ -21,13 +29,7 @@
             $item->producto_id,
             $itemp->COD_MES);
            @endphp
-          <td class="seleccionar"
-              data_producto_id = "{{$item->producto_id}}"
-              data_periodo_id = "{{$itemp->COD_PERIODO}}"
-              data_mes = "{{$itemp->COD_MES}}"
-              data_anio = "{{$anio}}"
-              data_tipo_asiento_id = "TAS0000000000004"
-              >
+          <td>
             <b>{{number_format($monto, 2, '.', ',')}}</b>
           </td>
         @endforeach

@@ -93,4 +93,31 @@ $(document).ready(function(){
     });
 
 
+    $(".kardex").on('dblclick','.dobleclickto', function(e) {
+
+        var _token                  =   $('#token').val();
+        var data_producto_id        =   $(this).attr('data_producto_id');
+        var data_periodo_id         =   $(this).attr('data_periodo_id');
+        var data_anio               =   $(this).attr('data_anio');
+        var data_tipo_asiento_id    =   '';
+        var idopcion                =   $('#idopcion').val();
+        var tipo_producto_id        =   $(this).attr('data_tipo_producto_id');
+
+
+        data                        =   {
+                                            _token                  : _token,
+                                            data_producto_id        : data_producto_id,
+                                            data_periodo_id         : data_periodo_id,
+                                            data_tipo_asiento_id    : data_tipo_asiento_id,
+                                            data_anio               : data_anio,
+                                            tipo_producto_id        : tipo_producto_id,
+                                            idopcion                : idopcion
+                                        };
+
+        ajax_modal(data,"/ajax-modal-detalle-producto-total-kardex",
+                  "modal-detalle-producto-kardex","modal-detalle-producto-kardex-container");
+
+    });
+
+
 });

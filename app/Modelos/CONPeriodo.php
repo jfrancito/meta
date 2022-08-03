@@ -29,6 +29,12 @@ class CONPeriodo extends Model
     }
 
 
+    public function scopePeriodo($query,$periodo_id){
+        if(trim($periodo_id) != ''){
+            $query->where('CON.PERIODO.COD_PERIODO', '=', $periodo_id);
+        }
+    }
+
 }
 
 

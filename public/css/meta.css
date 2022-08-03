@@ -36,6 +36,7 @@
 }
 .scroll_text::-webkit-scrollbar {  
   width: 8px;  
+    height: 8px; 
 }  
 .scroll_text::-webkit-scrollbar-track {  
   background-color: #E7E7E7;
@@ -218,7 +219,7 @@ margin-bottom: 0px ;
   cursor: pointer;
 }
 .negrita{
-  font-weight: bold;
+  font-weight: bold !important;
 }
 .titulo-contenedor-modal{
   font-size: 1.1em;
