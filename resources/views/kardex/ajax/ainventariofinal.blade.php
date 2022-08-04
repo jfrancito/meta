@@ -30,7 +30,7 @@
             $itemp->COD_MES);
            @endphp
           <td>
-            <b>{{number_format($monto, 2, '.', ',')}}</b>
+            <b>{{number_format($monto, 2, '.', '')}}</b>
           </td>
         @endforeach
       </tr>                    

@@ -145,6 +145,7 @@ class KardexController extends Controller
 		$listamovimientocommpra = 	$this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
 
 
+
 		return View::make('kardex/ajax/alistamovimientokardex',
 						 [
 						 	'listasaldoinicial'      => $listasaldoinicial,
@@ -192,6 +193,8 @@ class KardexController extends Controller
 	public function actionAjaxModalDetalleTotalKardex(Request $request)
 	{
 
+
+		set_time_limit(0);
 		$data_producto_id 		=   $request['data_producto_id'];
 		$data_periodo_id 		=   $request['data_periodo_id'];
 		$data_anio 				=   $request['data_anio'];
@@ -206,14 +209,26 @@ class KardexController extends Controller
 									->first();
 
 		$idopcion 				=   $request['idopcion'];
-	    $saldoinicial 			= 	$this->kd_saldo_inicial_producto_id(Session::get('empresas_meta')->COD_EMPR,$tipo_producto_id,$data_producto_id);
-	    $listadetalleproducto 	= 	$this->kd_lista_producto_periodo(Session::get('empresas_meta')->COD_EMPR, 
-	    															$data_anio, $data_tipo_asiento_id,$data_producto_id,$data_periodo_id);
+
+
+
+	    $saldoinicial 			= 	$this->kd_saldo_inicial_producto_id(Session::get('empresas_meta')->COD_EMPR,
+	    																	$tipo_producto_id,
+	    																	$data_producto_id);
+
+	    $listadetalleproducto 	= 	$this->kd_lista_producto_periodo_view(Session::get('empresas_meta')->COD_EMPR, 
+			    															$data_anio, 
+			    															$data_tipo_asiento_id,
+			    															$data_producto_id,
+			    															$data_periodo_id);
+
 	    $listakardexif 			= 	$this->kd_lista_kardex_inventario_final(Session::get('empresas_meta')->COD_EMPR, 
 	    																	$saldoinicial,
 	    																	$listadetalleproducto,
 	    																	$producto,
 	    																	$periodo_enero);
+
+
 		return View::make('kardex/modal/ajax/adetallekardexif',
 						 [
 						 	'listakardexif' 	=> $listakardexif,
@@ -234,6 +249,8 @@ class KardexController extends Controller
 		$anio 					=   $request['anio'];
 		$tipo_producto_id 		=   $request['tipo_producto_id'];
 		$tipo_asiento_id        =   '';
+		$empresa_id 			=   Session::get('empresas_meta')->COD_EMPR;
+
 
 		$tipoproducto 			= 	CMPCategoria::where('COD_CATEGORIA','=',$tipo_producto_id)->first();
 
@@ -250,45 +267,116 @@ class KardexController extends Controller
 
 		$titulo 				=   'KARDEX-'.$tipoproducto->NOM_CATEGORIA.'-'.Session::get('empresas_meta')->NOM_EMPR;
 
-	    Excel::create($titulo, function($excel) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio) {
+		//dd($listasaldoinicial);
 
-	        $excel->sheet('Inventario Final', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio) {
+	    Excel::create($titulo, function($excel) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio,$empresa_id,$tipo_producto_id) {
+
+	        $excel->sheet('Inventario Final', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio,$tipo_producto_id) {
 	            $sheet->loadView('kardex/excel/einventariofinal')->with('listasaldoinicial',$listasaldoinicial)
 	            												 ->with('listamovimiento',$listamovimiento)
 	            												 ->with('listamovimientocommpra',$listamovimientocommpra)
 	            												 ->with('listaperido',$listaperido)
 	            												 ->with('anio',$anio)
+	            												 ->with('tipo_producto_id',$tipo_producto_id)
 	            												 ->with('funcion',$funcion);         
 	        });
 
-	        $excel->sheet('Saldo Inicial', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio) {
+	        $excel->sheet('Saldo Inicial', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio,$tipo_producto_id) {
 	            $sheet->loadView('kardex/excel/esaldoinicial')->with('listasaldoinicial',$listasaldoinicial)
 	            												 ->with('listamovimiento',$listamovimiento)
 	            												 ->with('listamovimientocommpra',$listamovimientocommpra)
 	            												 ->with('listaperido',$listaperido)
 	            												 ->with('anio',$anio)
+	            												 ->with('tipo_producto_id',$tipo_producto_id)
 	            												 ->with('funcion',$funcion);         
 	        });
 
-	        $excel->sheet('Ventas Consolidado', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio) {
+	        $excel->sheet('Ventas Consolidado', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio,$tipo_producto_id) {
 	            $sheet->loadView('kardex/excel/eventasconsolidado')->with('listasaldoinicial',$listasaldoinicial)
 	            												 ->with('listamovimiento',$listamovimiento)
 	            												 ->with('listamovimientocommpra',$listamovimientocommpra)
 	            												 ->with('listaperido',$listaperido)
 	            												 ->with('anio',$anio)
+	            												 ->with('tipo_producto_id',$tipo_producto_id)
 	            												 ->with('funcion',$funcion);         
 	        });
 
 
-	        $excel->sheet('Compras Consolidado', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio) {
+	        $excel->sheet('Compras Consolidado', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio,$tipo_producto_id) {
 	            $sheet->loadView('kardex/excel/ecomprasconsolidado')->with('listasaldoinicial',$listasaldoinicial)
 	            												 ->with('listamovimiento',$listamovimiento)
 	            												 ->with('listamovimientocommpra',$listamovimientocommpra)
 	            												 ->with('listaperido',$listaperido)
 	            												 ->with('anio',$anio)
+	            												 ->with('tipo_producto_id',$tipo_producto_id)
 	            												 ->with('funcion',$funcion);         
 	        });
 
+
+	        $excel->sheet('Costo Inventario Final', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio,$tipo_producto_id) {
+	            $sheet->loadView('kardex/excel/einventariofinalcosto')->with('listasaldoinicial',$listasaldoinicial)
+	            												 ->with('listamovimiento',$listamovimiento)
+	            												 ->with('listamovimientocommpra',$listamovimientocommpra)
+	            												 ->with('listaperido',$listaperido)
+	            												 ->with('anio',$anio)
+	            												 ->with('tipo_producto_id',$tipo_producto_id)
+	            												 ->with('funcion',$funcion);         
+	        });
+
+
+	        $excel->sheet('Costo Ventas Consolidado', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio,$tipo_producto_id) {
+	            $sheet->loadView('kardex/excel/eventasconsolidadocosto')->with('listasaldoinicial',$listasaldoinicial)
+	            												 ->with('listamovimiento',$listamovimiento)
+	            												 ->with('listamovimientocommpra',$listamovimientocommpra)
+	            												 ->with('listaperido',$listaperido)
+	            												 ->with('anio',$anio)
+	            												 ->with('tipo_producto_id',$tipo_producto_id)
+	            												 ->with('funcion',$funcion);         
+	        });
+
+	        $excel->sheet('Costo Compras Consolidado', function($sheet) use ($listasaldoinicial,$listamovimiento,$listamovimientocommpra,$listaperido,$funcion,$anio,$tipo_producto_id) {
+	            $sheet->loadView('kardex/excel/ecomprasconsolidadocosto')->with('listasaldoinicial',$listasaldoinicial)
+	            												 ->with('listamovimiento',$listamovimiento)
+	            												 ->with('listamovimientocommpra',$listamovimientocommpra)
+	            												 ->with('listaperido',$listaperido)
+	            												 ->with('anio',$anio)
+	            												 ->with('tipo_producto_id',$tipo_producto_id)
+	            												 ->with('funcion',$funcion);         
+	        });
+
+	        foreach($listasaldoinicial as $index => $item){
+
+
+
+		        $saldoinicial 			= 	$funcion->kd_saldo_inicial_producto_id($empresa_id,$tipo_producto_id,$item->producto_id);
+
+		    	$listadetalleproducto 	= 	$funcion->kd_lista_producto_periodo_view($empresa_id, 
+		    																 $anio, 
+		    																 '',
+		    																 $item->producto_id,
+		    																 '');
+				$producto 				= 	ALMProducto::where('COD_PRODUCTO','=',$item->producto_id)->first();
+				$periodo_enero 			= 	CONPeriodo::where('COD_ANIO','=',$anio)
+											->where('COD_MES','=',1)
+											->where('COD_EMPR','=',$empresa_id)
+											->first();
+
+			    $listakardexif 			= 	$funcion->kd_lista_kardex_inventario_final($empresa_id, 
+			    																		$saldoinicial,
+			    																		$listadetalleproducto,
+			    																		$producto,
+			    																		$periodo_enero);
+
+			    $nombreproducto 		= 	$producto->NOM_PRODUCTO;
+			    $titulo 				= 	str_replace("Ñ", "N", substr($nombreproducto, 0, 25));
+
+		        $excel->sheet($titulo, function($sheet) use ($listakardexif,$nombreproducto) {
+		            $sheet->loadView('kardex/excel/edetallekardexif')->with('listakardexif',$listakardexif)
+		            												 ->with('nombreproducto',$nombreproducto);         
+	        	});
+
+
+	        }
 
 	    })->export('xls');
 

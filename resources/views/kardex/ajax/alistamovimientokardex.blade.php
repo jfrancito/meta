@@ -5,6 +5,9 @@
       <li><a href="#saldoinicial" data-toggle="tab">Saldo Inicial</a></li>
       <li><a href="#ventas" data-toggle="tab">Ventas</a></li>
       <li><a href="#compras" data-toggle="tab">Compras</a></li>
+      <li><a href="#inventariofinalc" data-toggle="tab">Costo Inventario Final</a></li>
+      <li><a href="#ventasc" data-toggle="tab">Costos Ventas </a></li>
+      <li><a href="#comprasc" data-toggle="tab">Costos Compras </a></li>
     </ul>
     <div class="tab-content">
       <div id="inventariofinal" class="tab-pane active cont">
@@ -19,6 +22,19 @@
       <div id="compras" class="tab-pane">
         @include('kardex.ajax.acompras')
       </div>
+
+      <div id="inventariofinalc" class="tab-pane active cont">
+        @include('kardex.ajax.ainventariofinalcosto')
+      </div>
+
+      <div id="ventasc" class="tab-pane cont">
+        @include('kardex.ajax.aventascosto')
+      </div>
+
+      <div id="comprasc" class="tab-pane cont">
+        @include('kardex.ajax.acomprascosto')
+      </div>
+
     </div>
   </div>
 </div>

@@ -13,7 +13,13 @@
     @foreach($listasaldoinicial as $index => $item)
       <tr>
         <td>{{$index + 1 }}</td>
-        <td>{{$item->producto->NOM_PRODUCTO}}</td>
+        <td class="dobleclickto seleccionar"
+            data_producto_id = "{{$item->producto_id}}"
+            data_tipo_producto_id = "{{$tipo_producto_id}}"
+            data_periodo_id = ""
+            data_mes = ""
+            data_anio = "{{$anio}}"
+            data_tipo_asiento_id = "">{{$item->producto->NOM_PRODUCTO}}</td>
         <td><b>{{number_format($item->unidades, 2, '.', ',')}}</b></td>
         <td>{{number_format($item->cu_soles, 2, '.', ',')}}</td>
         <td>{{number_format($item->inicial_soles, 2, '.', ',')}}</td>

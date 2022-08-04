@@ -10,6 +10,7 @@
     </tr>
   </thead>
   <tbody>
+    @php $array_totales      =   array(0,0,0,0,0,0,0,0,0,0,0,0); @endphp
     @foreach($listasaldoinicial as $index => $item)
       <tr>
         <td class="dobleclickto seleccionar"
@@ -19,10 +20,15 @@
             data_mes = ""
             data_anio = "{{$anio}}"
             data_tipo_asiento_id = "">{{$item->producto->NOM_PRODUCTO}}</td>
+         @php 
+          $listakardexif     =   $funcion->kd_cantidad_producto_venta_costo($item->producto_id,$anio,$tipo_producto_id);
+         @endphp
+
         @foreach($listaperido as $indexp => $itemp)
-          @php 
-            $monto     =   $funcion->kd_cantidad_producto_venta($listamovimiento,$item->producto_id,$itemp->COD_PERIODO);
-           @endphp
+         @php 
+          $monto     =   $funcion->kd_monto_producto_venta_costo($listakardexif,'COMPRAS',$itemp->COD_PERIODO);
+         @endphp
+         @php $array_totales[$indexp] = $array_totales[$indexp] + (float) $monto @endphp
           <td class="dobleclickpc seleccionar"
               data_producto_id = "{{$item->producto_id}}"
               data_periodo_id = "{{$itemp->COD_PERIODO}}"
@@ -32,20 +38,19 @@
             <b>{{number_format($monto, 2, '.', '')}}</b>
           </td>
         @endforeach
+
       </tr>                    
     @endforeach
   </tbody>
   <tfoot>
       <tr>
         <td></td>
-        @foreach($listaperido as $indexp => $itemp)
-          @php 
-            $monto     =   $funcion->kd_cantidad_producto_venta_totales($listamovimiento,$itemp->COD_PERIODO);
-           @endphp
-          <td>
-            <b>{{number_format($monto, 2, '.', ',')}}</b>
-          </td>
-        @endforeach
+
+          @for ($i = 0; $i < count($listaperido); $i++)
+              <td>
+                <b>{{number_format($array_totales[$i], 2, '.', ',')}}</b>
+              </td>
+          @endfor
       </tr>                    
   </tfoot>
 </table>

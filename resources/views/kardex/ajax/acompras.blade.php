@@ -12,7 +12,13 @@
   <tbody>
     @foreach($listasaldoinicial as $index => $item)
       <tr>
-        <td>{{$item->producto->NOM_PRODUCTO}}</td>
+        <td class="dobleclickto seleccionar"
+            data_producto_id = "{{$item->producto_id}}"
+            data_tipo_producto_id = "{{$tipo_producto_id}}"
+            data_periodo_id = ""
+            data_mes = ""
+            data_anio = "{{$anio}}"
+            data_tipo_asiento_id = "">{{$item->producto->NOM_PRODUCTO}}</td>
         @foreach($listaperido as $indexp => $itemp)
           @php 
             $monto     =   $funcion->kd_cantidad_producto_venta($listamovimientocommpra,$item->producto_id,$itemp->COD_PERIODO);
@@ -23,7 +29,7 @@
               data_anio = "{{$anio}}"
               data_tipo_asiento_id = "TAS0000000000004"
               >
-            <b>{{number_format($monto, 2, '.', ',')}}</b>
+            <b>{{number_format($monto, 2, '.', '')}}</b>
           </td>
         @endforeach
       </tr>                    
