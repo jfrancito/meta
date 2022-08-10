@@ -69,6 +69,30 @@ $(document).ready(function(){
     });
 
 
+    $(".kardex").on('dblclick','.dobleclickac', function(e) {
+
+        var _token                  =   $('#token').val();
+        var data_tipo_producto_id   =   $(this).attr('data_tipo_producto_id');
+        var monto_total             =   $(this).attr('monto_total');
+        var periodo                 =   $(this).attr('periodo');
+        var data_anio               =   $(this).attr('data_anio');
+        var idopcion                =   $('#idopcion').val();
+
+        data                        =   {
+                                            _token                  : _token,
+                                            data_tipo_producto_id   : data_tipo_producto_id,
+                                            monto_total             : monto_total,
+                                            periodo                 : periodo,
+                                            data_anio               : data_anio,
+                                            idopcion                : idopcion
+                                        };
+
+        ajax_modal(data,"/ajax-modal-asiento-contable-kardex",
+                  "modal-detalle-producto-kardex","modal-detalle-producto-kardex-container");
+
+    });
+
+
     $(".kardex").on('dblclick','.dobleclickpc', function(e) {
 
         var _token                  =   $('#token').val();

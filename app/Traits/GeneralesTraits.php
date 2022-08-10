@@ -24,6 +24,8 @@ use Hashids;
 Use Nexmo;
 use Keygen;
 
+
+
 trait GeneralesTraits
 {
 

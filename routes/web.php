@@ -93,6 +93,11 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');
 
 
+	Route::any('/gestion-migracion-erp-navasoft/{idopcion}', 'MigracionNavasoftController@actionGestionMigracionNavasoft');
+	Route::any('/descargar-archivo-migrar-navasoft', 'MigracionNavasoftController@actionDescargarArchivoMigrarNavasoft');
+	Route::any('/ajax-buscar-lista-navasotf', 'MigracionNavasoftController@actionAjaxBuscarListaNavasoft');
+
+
 	Route::any('/gestion-listado-compras/{idopcion}', 'ComprasController@actionListarCompras');
 	Route::any('/ajax-combo-periodo-xanio-xempresa', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresa');
 	Route::any('/ajax-listado-compras', 'ComprasController@actionAjaxListarCompras');
@@ -132,6 +137,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	
 	Route::any('/ajax-modal-detalle-producto-kardex', 'KardexController@actionAjaxModalDetalleKardex');
 	Route::any('/ajax-modal-detalle-producto-total-kardex', 'KardexController@actionAjaxModalDetalleTotalKardex');
+	Route::any('/ajax-modal-asiento-contable-kardex', 'KardexController@actionAjaxModalAsientoContableKardex');
+
+
 
 
 

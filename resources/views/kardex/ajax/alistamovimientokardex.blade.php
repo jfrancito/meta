@@ -22,8 +22,7 @@
       <div id="compras" class="tab-pane">
         @include('kardex.ajax.acompras')
       </div>
-
-      <div id="inventariofinalc" class="tab-pane active cont">
+      <div id="inventariofinalc" >
         @include('kardex.ajax.ainventariofinalcosto')
       </div>
 

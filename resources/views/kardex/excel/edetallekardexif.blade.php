@@ -63,20 +63,17 @@
            <td>{{$item['correlativo']}}</td>
            <td>{{$item['ruc']}}</td>
            <td>{{$item['nombre_cliente']}}</td>
+           <td class="negrita">{{number_format($item['entrada_cantidad'], 2, '.','')}}</td>
+           <td class="negrita">{{number_format($item['entrada_cu'], 2, '.', '')}}</td>
+           <td class="negrita">{{number_format($item['entrada_importe'], 2, '.', '')}}</td>
 
+           <td class="negrita">{{number_format($item['salida_cantidad'], 2, '.', '')}}</td>
+           <td class="negrita">{{number_format($item['salida_cu'], 2, '.', '')}}</td>
+           <td class="negrita">{{number_format($item['salida_importe'], 2, '.', '')}}</td>
 
-           <td class="negrita"><b>{{number_format($item['entrada_cantidad'], 2, '.', '')}}</b></td>
-           <td class="negrita"><b>{{number_format($item['entrada_cu'], 2, '.', '')}}</b></td>
-           <td class="negrita"><b>{{number_format($item['entrada_importe'], 2, '.', '')}}</b></td>
-
-           <td class="negrita"><b>{{number_format($item['salida_cantidad'], 2, '.', '')}}</b></td>
-           <td class="negrita"><b>{{number_format($item['salida_cu'], 2, '.', '')}}</b></td>
-           <td class="negrita"><b>{{number_format($item['salida_importe'], 2, '.', '')}}</b></td>
-
-           <td class="negrita"><b>{{number_format($item['saldo_cantidad'], 2, '.', '')}}</b></td>
-           <td class="negrita"><b>{{number_format($item['saldo_cu'], 2, '.', '')}}</b></td>
-           <td class="negrita"><b>{{number_format($item['saldo_importe'], 2, '.', '')}}</b></td>
-
+           <td class="negrita">{{number_format($item['saldo_cantidad'], 2, '.', '')}}</td>
+           <td class="negrita">{{number_format($item['saldo_cu'], 2, '.', '')}}</td>
+           <td class="negrita">{{number_format($item['saldo_importe'], 2, '.', '')}}</td>
         </tr>                  
     @endforeach
     </tbody>

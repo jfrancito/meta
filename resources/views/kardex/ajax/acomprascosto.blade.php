@@ -35,7 +35,7 @@
               data_anio = "{{$anio}}"
               data_tipo_asiento_id = "TAS0000000000003"
               >
-            <b>{{number_format($monto, 2, '.', '')}}</b>
+            {{number_format($monto, 2, '.', '')}}
           </td>
         @endforeach
 

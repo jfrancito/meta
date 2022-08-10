@@ -35,7 +35,7 @@
               data_anio = "{{$anio}}"
               data_tipo_asiento_id = "TAS0000000000003"
               >
-            <b>{{number_format($monto, 2, '.', '')}}</b>
+            {{number_format($monto, 2, '.', '')}}
           </td>
         @endforeach
 
@@ -47,7 +47,13 @@
         <td></td>
 
           @for ($i = 0; $i < count($listaperido); $i++)
-              <td>
+              <td 
+                  class="dobleclickac seleccionar"
+                  data_tipo_producto_id = "{{$tipo_producto_id}}"
+                  monto_total = "{{$array_totales[$i]}}"
+                  periodo = "{{$i+1}}"
+                  data_anio = "{{$anio}}"
+                  >
                 <b>{{number_format($array_totales[$i], 2, '.', ',')}}</b>
               </td>
           @endfor

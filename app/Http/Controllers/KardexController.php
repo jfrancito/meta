@@ -162,6 +162,38 @@ class KardexController extends Controller
 						 ]);
 	}
 
+
+	public function actionAjaxModalAsientoContableKardex(Request $request)
+	{
+
+		$data_tipo_producto_id 	=   $request['data_tipo_producto_id'];
+		$monto_total 			=   $request['monto_total'];
+		$periodo 				=   $request['periodo'];
+		$data_anio 				=   $request['data_anio'];
+		$idopcion 				=   $request['idopcion'];
+
+		$periodo 				= 	CONPeriodo::where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+									->where('COD_ANIO','=',$data_anio)
+									->where('COD_MES','=',$periodo)
+									->first();
+		$tipoproducto 			= 	CMPCategoria::where('COD_CATEGORIA','=',$data_tipo_producto_id)->first();
+		$empresa_id 			=   Session::get('empresas_meta')->COD_EMPR;
+	    $cabecera_asiento 		= 	$this->kd_cabecera_asiento($periodo,$empresa_id,$monto_total,$tipoproducto);
+	    $detalle_asiento 		= 	$this->kd_detalle_asiento($periodo,$empresa_id,$monto_total,$data_anio,$tipoproducto);
+
+
+
+		return View::make('kardex/modal/ajax/adetalleasientocontable',
+						 [
+						 	'periodo' 	=> $periodo,
+						 	'tipoproducto' 	=> $tipoproducto,
+						 	'cabecera_asiento' 	=> $cabecera_asiento,	
+						 	'detalle_asiento' 	=> $detalle_asiento,					 	
+						 	'idopcion' 				=> $idopcion,
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
 	public function actionAjaxModalDetalleKardex(Request $request)
 	{
 
@@ -210,7 +242,7 @@ class KardexController extends Controller
 
 		$idopcion 				=   $request['idopcion'];
 
-
+		$funcion 				= 	$this;
 
 	    $saldoinicial 			= 	$this->kd_saldo_inicial_producto_id(Session::get('empresas_meta')->COD_EMPR,
 	    																	$tipo_producto_id,

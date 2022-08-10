@@ -15,8 +15,7 @@ use App\Modelos\WEBKardexProducto;
 use App\Modelos\WEBAsiento;
 use App\Modelos\CONPeriodo;
 use App\Modelos\WEBListaCVProductoKardex;
-
-
+use App\Modelos\CMPTipoCambio;
 use View;
 use Session;
 use Hashids;
@@ -24,8 +23,18 @@ Use Nexmo;
 use Keygen;
 use PDO;
 
+
+
 trait KardexTraits
 {
+
+	public function kd_tipo_cambio($fecha)
+	{
+		$tipo_cambio   				=   CMPTipoCambio::where('FEC_CAMBIO','<=',$fecha)
+										->orderBy('FEC_CAMBIO', 'DESC')
+										->first();
+	    return $tipo_cambio;
+	}
 
 
 	public function kd_monto_producto_venta_costo($listakardexif,$tioo_venta_compra,$periodo_id)
@@ -179,7 +188,7 @@ trait KardexTraits
 	    						->join('STD.EMPRESA', 'STD.EMPRESA.COD_EMPR', '=', 'WEB.asientos.COD_EMPR_CLI')
 	    						->where('WEB.asientos.COD_EMPR','=',$empresa_id)
 	    						->where('CON.PERIODO.COD_ANIO','=',$anio)
-	    						->where('WEB.asientosS.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    						->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    						->Periodo($periodo_id)
 	    						->TipoAsiento($tipo_asiento_id)
 	    						->where('CMP.DETALLE_PRODUCTO.COD_PRODUCTO','=',$producto_id)
@@ -278,7 +287,7 @@ trait KardexTraits
 		$array_detalle_asiento 		=	array();
 
 		$cantidad_antes    			= 	$saldoinicial->unidades;
-		$cu_antes    				= 	round($saldoinicial->cu_soles, 2);
+		$cu_antes    				= 	$saldoinicial->cu_soles;
 		$importe_antes    			= 	$saldoinicial->inicial_soles;
 
     	$array_nuevo_asiento 		=	array();
@@ -334,9 +343,12 @@ trait KardexTraits
 			$saldo_importe           	=   0;
 
 			if($row['COD_CATEGORIA_TIPO_ASIENTO'] == 'TAS0000000000004'){
+
+				$tipo_cambio_cp   		=   $this->kd_tipo_cambio(date_format(date_create(substr($row['FEC_ASIENTO'], 0, 10)), 'd-m-Y'));
+
 				$entrada_cantidad       =   $row['CAN_PRODUCTO'];
-				$entrada_cu           	=   $cu_antes;
-				$entrada_importe        =   $entrada_cantidad*$entrada_cu;
+				$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV']*$tipo_cambio_cp->CAN_VENTA_SBS;
+				$entrada_cu           	=   $entrada_importe/$entrada_cantidad;
 
 				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
 				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;
@@ -345,7 +357,7 @@ trait KardexTraits
 				if($saldo_cantidad==0){
 					$saldo_cu           	=   0;
 				}else{
-					$saldo_cu           	=   round($saldo_importe/$saldo_cantidad, 2);
+					$saldo_cu           	=   $saldo_importe/$saldo_cantidad;
 				}
 
 				$cantidad_antes    		= 	$saldo_cantidad;
@@ -365,7 +377,7 @@ trait KardexTraits
 				if($saldo_cantidad==0){
 					$saldo_cu           	=   0;
 				}else{
-					$saldo_cu           	=   round($saldo_importe/$saldo_cantidad, 2);
+					$saldo_cu           	=   $saldo_importe/$saldo_cantidad;
 				}
 				$cantidad_antes    		= 	$saldo_cantidad;
 				$cu_antes    			= 	$saldo_cu;
@@ -408,103 +420,202 @@ trait KardexTraits
 	    }
 
 
-/*
-	    foreach($listadetalleproducto as $index => $item){
+	    return $array_detalle_asiento;
 
-
-			$periodo 					= 	CONPeriodo::where('COD_PERIODO','=',$item->COD_PERIODO)->first();
-
-			$entrada_cantidad           =   0;
-			$entrada_cu           		=   0;
-			$entrada_importe           	=   0;
-
-			$salida_cantidad           	=   0;
-			$salida_cu           		=   0;
-			$salida_importe           	=   0;
-
-			$saldo_cantidad           	=   0;
-			$saldo_cu           		=   0;
-			$saldo_importe           	=   0;
-
-			if($item->COD_CATEGORIA_TIPO_ASIENTO == 'TAS0000000000004'){
-				$entrada_cantidad       =   $item->CAN_PRODUCTO;
-				$entrada_cu           	=   $cu_antes;
-				$entrada_importe        =   $entrada_cantidad*$entrada_cu;
-
-				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
-				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;
-
-
-				if($saldo_cantidad==0){
-					$saldo_cu           	=   0;
-				}else{
-					$saldo_cu           	=   round($saldo_importe/$saldo_cantidad, 2);
-				}
-
-				$cantidad_antes    		= 	$saldo_cantidad;
-				$cu_antes    			= 	$saldo_cu;
-				$importe_antes    		= 	$saldo_importe;
-
-
-			}else{
-
-				$salida_cantidad        =   $item->CAN_PRODUCTO;
-				$salida_cu           	=   $cu_antes;
-				$salida_importe         =   $salida_cantidad*$salida_cu;
-
-				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
-				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;
-
-				if($saldo_cantidad==0){
-					$saldo_cu           	=   0;
-				}else{
-					$saldo_cu           	=   round($saldo_importe/$saldo_cantidad, 2);
-				}
-				$cantidad_antes    		= 	$saldo_cantidad;
-				$cu_antes    			= 	$saldo_cu;
-				$importe_antes    		= 	$saldo_importe;
+    }
 
 
 
-			}
-									
-	    	$array_nuevo_asiento 		=	array();
-			$array_nuevo_asiento    	=	array(
-				"periodo_id" 				=> $periodo->COD_PERIODO,
-				"nombre_periodo" 			=> $periodo->TXT_NOMBRE,
-				"fecha" 					=> substr($item->FEC_ASIENTO, 0, 10),
-				"servicio" 					=> $item->TXT_CATEGORIA_TIPO_ASIENTO,
-				"producto_id" 				=> $item->COD_PRODUCTO,
-				"nombre_producto" 			=> $item->TXT_NOMBRE_PRODUCTO,
-				"serie" 					=> $item->NRO_SERIE,
-				"correlativo" 				=> $item->NRO_DOC,
-				"ruc" 						=> $item->NRO_DOCUMENTO,
-				"cliente_id" 				=> $item->COD_EMPR_CLI,
-				"nombre_cliente" 			=> $item->TXT_EMPR_CLI,
+	public function kd_cabecera_asiento($periodo,$empresa_id,$monto_total,$tipoproducto){
 
-				"entrada_cantidad" 			=> $entrada_cantidad,
-				"entrada_cu" 				=> $entrada_cu,
-				"entrada_importe" 			=> $entrada_importe,
+		$array_detalle_asiento 		=	array();
 
-				"salida_cantidad" 			=> $salida_cantidad,
-				"salida_cu" 				=> $salida_cu,
-				"salida_importe" 			=> $salida_importe,
+		$glosa 						= 	"";
+		if($tipoproducto->COD_CATEGORIA =='TPK0000000000001'){
+			$glosa 						= 	"COSTO DE ENVASES";
+		}
 
-				"saldo_cantidad" 			=> $saldo_cantidad,
-				"saldo_cu" 					=> $saldo_cu,
-				"saldo_importe" 			=> $saldo_importe
+		if($tipoproducto->COD_CATEGORIA =='TPK0000000000002'){
+			$glosa 						= 	"CONSUMO MATERIALES AUXILIARES";
+		}
 
-			);
-			array_push($array_detalle_asiento,$array_nuevo_asiento);
-				
+    	$array_nuevo_asiento 		=	array();
+		$array_nuevo_asiento    	=	array(
 
+			"periodo_id" 				=> $periodo->COD_PERIODO,
+			"nombre_periodo" 			=> $periodo->TXT_NOMBRE,
+			"fecha" 					=> substr($periodo->FEC_FIN, 0, 10),
+			"empresa_id" 				=> $empresa_id,
+			"glosa" 					=> $glosa,
+			"moneda_id" 				=> "MON0000000000001",
+			"moneda" 					=> "SOLES",
+			"total_debe" 				=> $monto_total,
+			"total_haber" 				=> $monto_total,
 
-	    }*/
+		);
 
+		array_push($array_detalle_asiento,$array_nuevo_asiento);
 
 	    return $array_detalle_asiento;
 
     }
 
+
+	public function kd_detalle_asiento($periodo,$empresa_id,$monto_total,$data_anio,$tipoproducto){
+
+		$array_detalle_asiento 		=	array();
+
+		//ENVASES
+		if($tipoproducto->COD_CATEGORIA =='TPK0000000000001'){
+		    $cuentacontable 			= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
+											->where('anio','=',$data_anio)
+											->where('nro_cuenta','=','691111')
+											->where('activo','=',1)
+					    					->first();
+	    	$array_nuevo_asiento 		=	array();
+			$array_nuevo_asiento    	=	array(
+				"linea" 					=> 1,
+				"cuenta_id" 				=> $cuentacontable->id,
+				"cuenta_nrocuenta" 			=> $cuentacontable->nro_cuenta,
+				"glosa" 					=> $cuentacontable->nombre,
+				"fecha" 					=> substr($periodo->FEC_FIN, 0, 10),
+				"empresa_id" 				=> $empresa_id,
+				"moneda_id" 				=> "MON0000000000001",
+				"moneda" 					=> "SOLES",
+				"total_debe" 				=> $monto_total,
+				"total_haber" 				=> 0,
+
+			);
+
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+		    $cuentacontable 			= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
+											->where('anio','=',$data_anio)
+											->where('nro_cuenta','=','201111')
+											->where('activo','=',1)
+					    					->first();
+	    	$array_nuevo_asiento 		=	array();
+			$array_nuevo_asiento    	=	array(
+				"linea" 					=> 2,
+				"cuenta_id" 				=> $cuentacontable->id,
+				"cuenta_nrocuenta" 			=> $cuentacontable->nro_cuenta,
+				"glosa" 					=> $cuentacontable->nombre,
+				"fecha" 					=> substr($periodo->FEC_FIN, 0, 10),
+				"empresa_id" 				=> $empresa_id,
+				"moneda_id" 				=> "MON0000000000001",
+				"moneda" 					=> "SOLES",
+				"total_debe" 				=> 0,
+				"total_haber" 				=> $monto_total,
+
+			);
+
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+		}
+
+		//BOBINAS
+		if($tipoproducto->COD_CATEGORIA =='TPK0000000000002'){
+		    $cuentacontable 			= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
+											->where('anio','=',$data_anio)
+											->where('nro_cuenta','=','613102')
+											->where('activo','=',1)
+					    					->first();
+	    	$array_nuevo_asiento 		=	array();
+			$array_nuevo_asiento    	=	array(
+				"linea" 					=> 1,
+				"cuenta_id" 				=> $cuentacontable->id,
+				"cuenta_nrocuenta" 			=> $cuentacontable->nro_cuenta,
+				"glosa" 					=> $cuentacontable->nombre,
+				"fecha" 					=> substr($periodo->FEC_FIN, 0, 10),
+				"empresa_id" 				=> $empresa_id,
+				"moneda_id" 				=> "MON0000000000001",
+				"moneda" 					=> "SOLES",
+				"total_debe" 				=> $monto_total,
+				"total_haber" 				=> 0,
+
+			);
+
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+		    $cuentacontable 			= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
+											->where('anio','=',$data_anio)
+											->where('nro_cuenta','=','251102')
+											->where('activo','=',1)
+					    					->first();
+	    	$array_nuevo_asiento 		=	array();
+			$array_nuevo_asiento    	=	array(
+				"linea" 					=> 2,
+				"cuenta_id" 				=> $cuentacontable->id,
+				"cuenta_nrocuenta" 			=> $cuentacontable->nro_cuenta,
+				"glosa" 					=> $cuentacontable->nombre,
+				"fecha" 					=> substr($periodo->FEC_FIN, 0, 10),
+				"empresa_id" 				=> $empresa_id,
+				"moneda_id" 				=> "MON0000000000001",
+				"moneda" 					=> "SOLES",
+				"total_debe" 				=> 0,
+				"total_haber" 				=> $monto_total,
+
+			);
+
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+		    $cuentacontable 			= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
+											->where('anio','=',$data_anio)
+											->where('nro_cuenta','=','911213')
+											->where('activo','=',1)
+					    					->first();
+	    	$array_nuevo_asiento 		=	array();
+			$array_nuevo_asiento    	=	array(
+				"linea" 					=> 1,
+				"cuenta_id" 				=> $cuentacontable->id,
+				"cuenta_nrocuenta" 			=> $cuentacontable->nro_cuenta,
+				"glosa" 					=> $cuentacontable->nombre,
+				"fecha" 					=> substr($periodo->FEC_FIN, 0, 10),
+				"empresa_id" 				=> $empresa_id,
+				"moneda_id" 				=> "MON0000000000001",
+				"moneda" 					=> "SOLES",
+				"total_debe" 				=> $monto_total,
+				"total_haber" 				=> 0,
+
+			);
+
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+		    $cuentacontable 			= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
+											->where('anio','=',$data_anio)
+											->where('nro_cuenta','=','791101')
+											->where('activo','=',1)
+					    					->first();
+	    	$array_nuevo_asiento 		=	array();
+			$array_nuevo_asiento    	=	array(
+				"linea" 					=> 2,
+				"cuenta_id" 				=> $cuentacontable->id,
+				"cuenta_nrocuenta" 			=> $cuentacontable->nro_cuenta,
+				"glosa" 					=> $cuentacontable->nombre,
+				"fecha" 					=> substr($periodo->FEC_FIN, 0, 10),
+				"empresa_id" 				=> $empresa_id,
+				"moneda_id" 				=> "MON0000000000001",
+				"moneda" 					=> "SOLES",
+				"total_debe" 				=> 0,
+				"total_haber" 				=> $monto_total,
+
+			);
+
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+		}
+
+
+
+
+
+
+	    return $array_detalle_asiento;
+
+    }
 
 }
