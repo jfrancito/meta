@@ -98,7 +98,7 @@ class MigracionNavasoftController extends Controller
 	    							->orderby('FEC_ASIENTO','asc')
 	    							->get();
 
-		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento);
+		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);
 
 
     	$funcion 				= 	$this;
@@ -136,7 +136,7 @@ class MigracionNavasoftController extends Controller
 	    							->orderby('FEC_ASIENTO','asc')
 	    							->get();
 
-		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento);
+		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);
 
 		$titulo 				=   'MstImp-'.Session::get('empresas_meta')->NOM_EMPR.'-'.$tipoasiento->NOM_CATEGORIA.'-'.$periodo->TXT_CODIGO;
 

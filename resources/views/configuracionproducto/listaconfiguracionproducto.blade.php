@@ -26,7 +26,23 @@
 
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
                         <li>
-                          <a href="#" class='agregarcuentacontable'><b>Agregar cuenta contable</b> <span class="mdi mdi-check-circle"></span></a>
+                          <a href="#" class='agregarcuentacontable'>
+                            <b>Agregar cuenta contable</b> <span class="mdi mdi-check-circle"></span>
+                          </a>
+
+                          <a href="#" class='agregarcodigomigracion'>
+                            <b>Agregar codigo mimgración</b> <span class="mdi mdi-check-circle"></span>
+                          </a>
+
+
+                          <a href="{{ url('/gestion-configuracion-producto/'.$idopcion.'/4') }}">
+                            <b>Productos de Compras por configurar</b>
+                          </a>
+
+                          <a href="{{ url('/gestion-configuracion-producto/'.$idopcion.'/3') }}">
+                            <b>Productos de Ventas por configurar</b>
+                          </a>
+
                         </li>
                       </ul>
 
@@ -55,8 +71,27 @@
                           </div>
                       </div>
 
+                      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
+                          <div class="form-group">
+                            <label class="col-sm-12 control-label labelleft" >Categoria Producto :</label>
+                            <div class="col-sm-12 abajocaja" >
+                              {!! Form::select( 'categoria_producto_id', $combo_categoria_producto, $sel_categoria_producto,
+                                                [
+                                                  'class'       => 'select2 form-control control input-xs' ,
+                                                  'id'          => 'categoria_producto_id',
+                                                  'required'    => '',
+                                                  'data-aw'     => '1',
+                                                ]) !!}
+                            </div>
+                          </div>
+                      </div>
 
-                      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 cajareporte">
+
+                      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte ajax_categoria">
+                          @include('general.combo.ccategoriams')
+                      </div>
+
+                      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
                           <div class="form-group">
                             <label class="col-sm-12 control-label labelleft" >Producto :</label>
                             <div class="col-sm-12 abajocaja" >

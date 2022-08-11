@@ -2,21 +2,48 @@ $(document).ready(function(){
 
     var carpeta = $("#carpeta").val();
 
+
+    $(".configuracionproducto").on('change','#categoria_producto_id', function() {
+
+        event.preventDefault();
+        var categoria_producto_id       =   $('#categoria_producto_id').val();
+        var _token                      =   $('#token').val();
+
+
+        data            =   {
+                                _token      : _token,
+                                categoria_producto_id        : categoria_producto_id
+                            };
+
+
+        ajax_normal_combo(data,"/ajax-combo-servicio-material-xcategoria-producto","ajax_categoria")                    
+
+    });
+
+
+
     $(".configuracionproducto").on('click','.buscarproducto', function() {
 
         event.preventDefault();
         var producto_id     =   $('#producto_select').val();
+        var sub_categoria_id     =   $('#sub_categoria_id').val();
+        var categoria_producto_id     =   $('#categoria_producto_id').val();
+
         var idopcion        =   $('#idopcion').val();
         var _token          =   $('#token').val();
         var anio            =   $('#anio').val();
 
         //validacioones
-        if(producto_id ==''){ alerterrorajax("Seleccione un producto."); return false;}
+
         if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
+        if(producto_id =='' && (sub_categoria_id == '' || sub_categoria_id == null)){ alerterrorajax("Seleccione un por lo menos una sub categoria o un producto."); return false;}
+
 
         data            =   {
                                 _token      : _token,
                                 producto_id : producto_id,
+                                sub_categoria_id : sub_categoria_id,
+                                categoria_producto_id : categoria_producto_id,
                                 anio        : anio,
                                 idopcion    : idopcion,
                             };
@@ -42,6 +69,26 @@ $(document).ready(function(){
                   "modal-configuracion-producto-cuenta-contable","modal-configuracion-producto-cuenta-contable-container");
 
     });
+
+
+    $(".configuracionproducto").on('click','.agregarcodigomigracion', function() {
+
+        var _token                  =   $('#token').val();
+        var array_productos         =   dataenviar();
+        var idopcion                =   $('#idopcion').val();
+        if(array_productos.length<=0){alerterrorajax('Seleccione por lo menos una fila'); return false;}
+
+        data                        =   {
+                                            _token                  : _token,
+                                            array_productos         : array_productos,
+                                            idopcion                : idopcion
+                                        };
+
+        ajax_modal(data,"/ajax-modal-configuracion-producto-codigo-migracion",
+                  "modal-configuracion-producto-cuenta-contable","modal-configuracion-producto-cuenta-contable-container");
+
+    });
+
 
 
     $(".configuracionproducto").on('change','#nivel', function() {
@@ -92,6 +139,30 @@ $(document).ready(function(){
         ajax_normal_guardar_lista(data,"/ajax-guardar-cuenta-contable","buscarproducto");                 
 
     });
+
+
+    $(".configuracionproducto").on('click','.btn-guardar-configuracion-cm', function() {
+
+        var array_productos           =   $('#array_productos').val();
+        var codigo_migracion          =   $('#codigo_migracion').val();
+        var _token                    =   $('#token').val();
+        //validacioones
+        if(codigo_migracion  ==''){ alerterrorajax("Ingrese un codigo de migracion."); return false;} 
+
+        //cerrar modal
+        $('#modal-configuracion-producto-cuenta-contable').niftyModal('hide');
+
+        data            =   {
+                                _token                   : _token,
+                                codigo_migracion         : codigo_migracion,
+                                array_productos          : array_productos,
+                            };
+
+        ajax_normal_guardar_lista(data,"/ajax-guardar-codigo-migracion","buscarproducto");                 
+
+    });
+
+
 
 
 

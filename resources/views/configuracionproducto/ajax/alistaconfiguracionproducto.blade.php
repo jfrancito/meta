@@ -1,3 +1,5 @@
+<h3 style="font-size: 1.2em;
+    font-weight: bold;">{{$nombre_asiento}}</h3>
 <table id="nso" class="table table-striped table-borderless table-hover td-color-borde td-padding-7 listatabla">
   <thead>
     <tr>
@@ -35,7 +37,14 @@
       <tr data_producto_id = "{{$item->producto_id}}"
         >
         <td>{{$item->anio}}</td>
-        <td>{{$item->producto_nombre}}</td>
+
+        <td class="user-avatar cell-detail user-info" style="text-align: left;">
+          <span>{{$item->producto_nombre}}</span>
+          <span class="cell-detail-description negrita" style="color: #000000;">{{$item->nom_servicio}}</span>
+          <span class="cell-detail-description negrita" style="color: #000000;">{{$item->nom_material}}</span>
+          <span class="cell-detail-description negrita" style="color: #000000;">{{$item->codigo_migracion}}</span>
+        </td>
+
         <td>
             @if($item->material_servicio == 'M')  
               MATERIAL

@@ -29,6 +29,11 @@ trait ConfiguracionProductoTraits
 											->leftJoin('WEB.cuentacontables as relacionada', 'relacionada.id', '=', 'WEB.productoempresas.cuenta_contable_venta_relacionada_id')
 											->leftJoin('WEB.cuentacontables as tercero', 'tercero.id', '=', 'WEB.productoempresas.cuenta_contable_venta_tercero_id')
 											->leftJoin('WEB.cuentacontables as cuentacompra', 'cuentacompra.id', '=', 'WEB.productoempresas.cuenta_contable_compra_id')
+
+											->leftJoin('CMP.CATEGORIA as servicio', 'servicio.COD_CATEGORIA', '=', 'ALM.PRODUCTO.COD_CATEGORIA_SERVICIO')
+
+											->leftJoin('CMP.CATEGORIA as material', 'material.COD_CATEGORIA', '=', 'ALM.PRODUCTO.COD_CATEGORIA_SUB_FAMILIA')
+
 											->whereIn('ALM.PRODUCTO.COD_PRODUCTO',$array_productos_empresa)
 											->select(DB::raw("ALM.PRODUCTO.COD_PRODUCTO as producto_id,
 																ALM.PRODUCTO.NOM_PRODUCTO as producto_nombre,
@@ -36,7 +41,10 @@ trait ConfiguracionProductoTraits
 																relacionada.nro_cuenta +' '+relacionada.nombre as nombre_nro_cuenta_r,
 																tercero.nro_cuenta +' '+tercero.nombre as nombre_nro_cuenta_t,
 																cuentacompra.nro_cuenta +' '+cuentacompra.nombre as nombre_nro_cuenta_compra,
-																WEB.productoempresas.anio"))
+																WEB.productoempresas.anio,
+																servicio.NOM_CATEGORIA as  nom_servicio,
+																material.NOM_CATEGORIA as  nom_material,
+																WEB.productoempresas.codigo_migracion"))
 											->get();
 
 		return $lista_configuracion_producto;

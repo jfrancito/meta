@@ -43,7 +43,7 @@ trait MigracionNavasoftTraits
 {
 	
 
-	public function ms_lista_migracion_navasoft($listaasiento){
+	public function ms_lista_migracion_navasoft($listaasiento,$anio){
 
 
 		//llenado de datalle
@@ -83,7 +83,16 @@ trait MigracionNavasoftTraits
 
 	    	foreach($lista_producto as $indexp => $itemp){
 
-	    		$codi  					= 	'';//falta
+	    		$productoempresa    = 	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+	    								->where('producto_id','=',$itemp->COD_PRODUCTO)
+	    								->where('anio','=',$anio)
+	    								->first();
+
+	    		if(count($productoempresa)>0){
+	    				$codi  					= 	$productoempresa->codigo_migracion;
+	    		}else{
+	    				$codi  					= 	'';	    			
+	    		}
 
 
 	    		$CANT 					=	$itemp->CAN_PRODUCTO;
