@@ -147,6 +147,13 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-asiento-contable-kardex', 'KardexController@actionAjaxModalAsientoContableKardex');
 
 
+	Route::any('/gestion-planilla-movilidad/{idopcion}', 'MovilidadController@actionListarMovilidad');
+
+	Route::any('/ajax-registro-movilidad', 'MovilidadController@actionAjaxRegistroMovilidad');
+	/*Route::any('/ajax-modal-detalle-asiento', 'RegistroDiarioController@actionAjaxModalDetalleAsiento');*/
+
+
+
 
 
 

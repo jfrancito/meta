@@ -21,13 +21,8 @@
 			        <th rowspan="2" class="color-ich">CORRELATIVO</th>
 			        <th rowspan="2" class="color-ich">RUC</th>
 			        <th rowspan="2" class="color-ich">CLIENTE</th>
-
 			        <th colspan="3" class="center color-ich">ENTRADAS</th>
-
-
 			        <th colspan="3" class="center color-ich">SALIDAS</th>
-	   
-
 			        <th colspan="3" class="center color-ich">SALDO</th>
 
 

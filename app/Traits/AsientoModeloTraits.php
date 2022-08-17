@@ -205,13 +205,16 @@ trait AsientoModeloTraits
 			            	}
 			            }
 					}else{
+						                  		    
 			            if($nro_referencia == '42'){
 			            	if($movimiento->TXT_CATEGORIA_MONEDA == 'DOLARES'){
 				            	$HABER_MN=$movimiento->CAN_HABER_ME*$tipo_cambio_cp->CAN_VENTA_SBS;
 								$HABER_ME=$movimiento->CAN_HABER_ME;
 			            	}else{
+
 			            		$HABER_MN=$movimiento->CAN_HABER_MN;
 								$HABER_ME=$movimiento->CAN_HABER_MN/$tipo_cambio_cp->CAN_VENTA_SBS;
+
 			            	}
 			            }else{
 			            	if($movimiento->TXT_CATEGORIA_MONEDA == 'DOLARES'){

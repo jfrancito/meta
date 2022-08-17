@@ -16,6 +16,8 @@ use App\Modelos\WEBAsiento;
 use App\Modelos\CONPeriodo;
 use App\Modelos\WEBListaCVProductoKardex;
 use App\Modelos\CMPTipoCambio;
+use App\Modelos\STDEmpresa;
+
 use View;
 use Session;
 use Hashids;
@@ -177,6 +179,60 @@ trait KardexTraits
 		return $listamovimiento;
 
 	}
+
+
+	private function kd_lista_materialesauxiliares($empresa_id, $anio, $tipo_producto_id, $tipo_asiento_id,$cod_almacen)
+	{
+
+
+        $stmt 		= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.listamaproductokardex 
+							@empresa_id = ?,
+							@anio = ?,
+							@tipo_asiento_id = ?,
+							@cod_almacen = ?');
+
+        $stmt->bindParam(1, $empresa_id ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $anio  ,PDO::PARAM_STR);
+        $stmt->bindParam(3, $tipo_asiento_id  ,PDO::PARAM_STR);
+        $stmt->bindParam(4, $cod_almacen  ,PDO::PARAM_STR);
+        $stmt->execute();
+
+
+		return $stmt;
+
+	}
+
+
+	public function kd_array_materialesauxiliares($empresa_id, $anio, $tipo_producto_id, $tipo_asiento_id,$cod_almacen,$listamovimientocommpra){
+
+		$array_detalle_asiento 		=	array();
+
+	    while ($row = $listamovimientocommpra->fetch()){
+
+	    	$empresa 					= 	STDEmpresa::where('COD_EMPR','=', $row['COD_EMPR_CLI'])->first();
+
+	    	$array_nuevo_asiento 		=	array();
+			$array_nuevo_asiento    	=	array(
+
+				"FECHA" 					=> $row['FEC_ASIENTO'],
+				"TIPODOCUMENTO" 			=> $row['TXT_CATEGORIA_TIPO_DOCUMENTO'],
+				"NRODOCUMENTO" 				=> $row['NRO_SERIE'].'-'.$row['NRO_DOC'],
+				"NOMREF" 					=> $empresa->TXT_EMPR_CLI,
+				"RUC" 						=> $empresa->NRO_DOCUMENTO,
+				"DESCRIPCION" 				=> $row['TXT_NOMBRE_PRODUCTO'],
+				"CANTIDAD" 					=> $row['CAN_PRODUCTO'],
+				"COSTOUNITARIO" 			=> 0,
+				"ENTRADA" 					=> 0,
+
+			);
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+	    }
+
+
+	    return $array_detalle_asiento;
+
+    }
+
 
 	private function kd_lista_producto_periodo($empresa_id, $anio, $tipo_asiento_id,$producto_id,$periodo_id)
 	{
@@ -423,6 +479,10 @@ trait KardexTraits
 	    return $array_detalle_asiento;
 
     }
+
+
+
+
 
 
 

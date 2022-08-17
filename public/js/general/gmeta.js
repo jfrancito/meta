@@ -11,9 +11,6 @@ $(".be-content").on('click','.checkbox_asignar', function() {
     var estado  = -1;
     
 
-    
-    
-    console.log("check");
 
     if($(input).is(':checked')){
 

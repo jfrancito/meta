@@ -132,14 +132,42 @@ class KardexController extends Controller
 		$tipo_movimiento_id 	=   $request['tipo_movimiento_id'];
 		$tipo_producto_id 		=   $request['tipo_producto_id'];
 		$tipo_asiento_id        =   '';
+		$idopcion 				=   $request['idopcion'];
+		$funcion 				= 	$this;
+		$cod_almacen 			= 	'ITCHAL0000000026';
+
+		if(Session::get('empresas_meta')->COD_EMPR == 'IACHEM0000001339'){
+			$cod_almacen 			= 	'ICCHAL0000000109';
+		}
+
+		//materiales auxiliares
+		if($tipo_producto_id=='TPK0000000000003'){
+			$tipo_asiento_id    	=   'TAS0000000000004';
+			$listamovimientocommpra = 	$this->kd_lista_materialesauxiliares(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id,$cod_almacen);
+
+			$arraymovimientocommpra = 	$this->kd_array_materialesauxiliares(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id,$cod_almacen,$listamovimientocommpra);
+
+
+			return View::make('kardex/ajax/alistamovimientokardexmaux',
+							 [
+							 	'listamovimientocommpra' => $listamovimientocommpra,
+							 	'arraymovimientocommpra' => $arraymovimientocommpra,				 	
+							 	'idopcion' 				 => $idopcion,
+							 	'anio' 					 => $anio,
+							 	'tipo_asiento_id' 		 => $tipo_asiento_id,
+							 	'tipo_producto_id' 		 => $tipo_producto_id,
+							 	'funcion' 				 => $funcion,
+							 	'ajax' 					 => true,						 	
+							 ]);
+		}
 
 
 		$tipo_asiento_id    	=   'TAS0000000000003';
-		$idopcion 				=   $request['idopcion'];
+
 	    $listasaldoinicial 		= 	$this->kd_lista_saldo_inicial(Session::get('empresas_meta')->COD_EMPR,$tipo_producto_id);
 	    $listaperido 			= 	$this->gn_lista_periodo($anio,Session::get('empresas_meta')->COD_EMPR);	
 		$listamovimiento 		= 	$this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
-		$funcion 				= 	$this;
+
 
 		$tipo_asiento_id    	=   'TAS0000000000004';
 		$listamovimientocommpra = 	$this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
