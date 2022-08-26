@@ -15,7 +15,7 @@ use App\Modelos\STDEmpresa;
 use App\Modelos\WEBProductoEmpresa;
 use App\Modelos\WEBCuentaDetraccion;
 use App\Modelos\CMPTipoCambio;
-
+use App\Modelos\WEBAsiento;
 
 
 use View;
@@ -23,11 +23,33 @@ use Session;
 use Hashids;
 Use Nexmo;
 use Keygen;
+use PDO;
 
 
 
 trait GeneralesTraits
 {
+
+
+	private function gn_encontrar_cod_asiento($empresa_id, $centro_id, $periodo_id, $tipo_asiento_id,$tipo_referencia)
+	{
+		$cod_asiento 	= 	'';
+
+		$asiento   		=   WEBAsiento::where('COD_EMPR','=',$empresa_id)
+							->where('COD_CENTRO','=',$centro_id)
+							->where('COD_PERIODO','=',$periodo_id)
+							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+							->where('TXT_TIPO_REFERENCIA','=',$tipo_referencia)
+							->where('COD_ESTADO','=',1)
+							->orderBy('FEC_USUARIO_CREA_AUD', 'DESC')
+							->first();
+
+		if(count($asiento)>0){
+			$cod_asiento 	= 	$asiento->COD_ASIENTO;
+		}
+
+	    return $cod_asiento;
+	}
 
 
 	public function gn_tipo_cambio($fecha)
@@ -337,5 +359,249 @@ trait GeneralesTraits
 		}
 	 	return  $cuenta_contable;	
 	}
+
+
+
+	public function gn_crear_asiento_contable(  $IND_TIPO_OPERACION,
+												$COD_ASIENTO,
+												$COD_EMPR,
+												$COD_CENTRO,
+												$COD_PERIODO,
+												$COD_CATEGORIA_TIPO_ASIENTO,
+												$TXT_CATEGORIA_TIPO_ASIENTO,
+												$NRO_ASIENTO,
+												$FEC_ASIENTO,
+												$TXT_GLOSA,
+
+												$COD_CATEGORIA_ESTADO_ASIENTO,
+												$TXT_CATEGORIA_ESTADO_ASIENTO,
+												$COD_CATEGORIA_MONEDA,
+												$TXT_CATEGORIA_MONEDA,
+												$CAN_TIPO_CAMBIO,
+												$CAN_TOTAL_DEBE,
+												$CAN_TOTAL_HABER,
+												$COD_ASIENTO_EXTORNO,
+												$COD_ASIENTO_EXTORNADO,
+												$IND_EXTORNO,
+
+												$COD_ASIENTO_MODELO,
+												$TXT_TIPO_REFERENCIA,
+												$TXT_REFERENCIA,
+												$COD_ESTADO,
+												$COD_USUARIO_REGISTRO,
+												$COD_MOTIVO_EXTORNO,
+												$GLOSA_EXTORNO,
+												$COD_EMPR_CLI,
+												$TXT_EMPR_CLI,
+												$COD_CATEGORIA_TIPO_DOCUMENTO,
+
+												$TXT_CATEGORIA_TIPO_DOCUMENTO,
+												$NRO_SERIE,
+												$NRO_DOC,
+												$FEC_DETRACCION,
+												$NRO_DETRACCION,
+												$CAN_DESCUENTO_DETRACCION,
+												$CAN_TOTAL_DETRACCION,
+												$COD_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$TXT_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$NRO_SERIE_REF,
+
+												$NRO_DOC_REF,
+												$FEC_VENCIMIENTO,
+												$IND_AFECTO)
+	{
+
+        $stmt 		= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.asientos_IUD
+							@IND_TIPO_OPERACION = ?,
+							@COD_ASIENTO = ?,
+							@COD_EMPR = ?,
+							@COD_CENTRO = ?,
+							@COD_PERIODO = ?,
+							@COD_CATEGORIA_TIPO_ASIENTO = ?,
+							@TXT_CATEGORIA_TIPO_ASIENTO = ?,
+							@NRO_ASIENTO = ?,
+							@FEC_ASIENTO = ?,
+							@TXT_GLOSA = ?,
+
+							@COD_CATEGORIA_ESTADO_ASIENTO = ?,
+							@TXT_CATEGORIA_ESTADO_ASIENTO = ?,
+							@COD_CATEGORIA_MONEDA = ?,
+							@TXT_CATEGORIA_MONEDA = ?,
+							@CAN_TIPO_CAMBIO = ?,
+							@CAN_TOTAL_DEBE = ?,
+							@CAN_TOTAL_HABER = ?,
+							@COD_ASIENTO_EXTORNO = ?,
+							@COD_ASIENTO_EXTORNADO = ?,
+							@IND_EXTORNO = ?,
+
+							@COD_ASIENTO_MODELO = ?,
+							@TXT_TIPO_REFERENCIA = ?,
+							@TXT_REFERENCIA = ?,
+							@COD_ESTADO = ?,
+							@COD_USUARIO_REGISTRO = ?,
+							@COD_MOTIVO_EXTORNO = ?,
+							@GLOSA_EXTORNO = ?,
+							@COD_EMPR_CLI = ?,
+							@TXT_EMPR_CLI = ?,
+							@COD_CATEGORIA_TIPO_DOCUMENTO = ?,
+
+							@TXT_CATEGORIA_TIPO_DOCUMENTO = ?,
+							@NRO_SERIE = ?,
+							@NRO_DOC = ?,
+							@FEC_DETRACCION = ?,
+							@NRO_DETRACCION = ?,
+							@CAN_DESCUENTO_DETRACCION = ?,
+							@CAN_TOTAL_DETRACCION = ?,
+							@COD_CATEGORIA_TIPO_DOCUMENTO_REF = ?,
+							@TXT_CATEGORIA_TIPO_DOCUMENTO_REF = ?,
+							@NRO_SERIE_REF = ?,
+
+							@NRO_DOC_REF = ?,
+							@FEC_VENCIMIENTO = ?,
+							@IND_AFECTO = ?
+
+							');
+
+        $stmt->bindParam(1, $IND_TIPO_OPERACION ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $COD_ASIENTO  ,PDO::PARAM_STR|PDO::PARAM_INPUT_OUTPUT, 16);
+        $stmt->bindParam(3, $COD_EMPR  ,PDO::PARAM_STR);
+        $stmt->bindParam(4, $COD_CENTRO  ,PDO::PARAM_STR);
+        $stmt->bindParam(5, $COD_PERIODO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(6, $COD_CATEGORIA_TIPO_ASIENTO  ,PDO::PARAM_STR);
+        $stmt->bindParam(7, $TXT_CATEGORIA_TIPO_ASIENTO  ,PDO::PARAM_STR);
+        $stmt->bindParam(8, $NRO_ASIENTO  ,PDO::PARAM_STR);
+        $stmt->bindParam(9, $FEC_ASIENTO  ,PDO::PARAM_STR);
+        $stmt->bindParam(10, $TXT_GLOSA  ,PDO::PARAM_STR);
+
+        $stmt->bindParam(11, $COD_CATEGORIA_ESTADO_ASIENTO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(12, $TXT_CATEGORIA_ESTADO_ASIENTO  ,PDO::PARAM_STR);
+        $stmt->bindParam(13, $COD_CATEGORIA_MONEDA  ,PDO::PARAM_STR);
+        $stmt->bindParam(14, $TXT_CATEGORIA_MONEDA  ,PDO::PARAM_STR);
+        $stmt->bindParam(15, $CAN_TIPO_CAMBIO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(16, $CAN_TOTAL_DEBE  ,PDO::PARAM_STR);
+        $stmt->bindParam(17, $CAN_TOTAL_HABER  ,PDO::PARAM_STR);
+        $stmt->bindParam(18, $COD_ASIENTO_EXTORNO  ,PDO::PARAM_STR);
+        $stmt->bindParam(19, $COD_ASIENTO_EXTORNADO  ,PDO::PARAM_STR);
+        $stmt->bindParam(20, $IND_EXTORNO  ,PDO::PARAM_STR);
+
+        $stmt->bindParam(21, $COD_ASIENTO_MODELO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(22, $TXT_TIPO_REFERENCIA  ,PDO::PARAM_STR);
+        $stmt->bindParam(23, $TXT_REFERENCIA  ,PDO::PARAM_STR);
+        $stmt->bindParam(24, $COD_ESTADO  ,PDO::PARAM_STR);
+        $stmt->bindParam(25, $COD_USUARIO_REGISTRO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(26, $COD_MOTIVO_EXTORNO  ,PDO::PARAM_STR);
+        $stmt->bindParam(27, $GLOSA_EXTORNO  ,PDO::PARAM_STR);
+        $stmt->bindParam(28, $COD_EMPR_CLI  ,PDO::PARAM_STR);
+        $stmt->bindParam(29, $TXT_EMPR_CLI  ,PDO::PARAM_STR);
+        $stmt->bindParam(30, $COD_CATEGORIA_TIPO_DOCUMENTO  ,PDO::PARAM_STR);
+
+        $stmt->bindParam(31, $TXT_CATEGORIA_TIPO_DOCUMENTO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(32, $NRO_SERIE  ,PDO::PARAM_STR);
+        $stmt->bindParam(33, $NRO_DOC  ,PDO::PARAM_STR);
+        $stmt->bindParam(34, $FEC_DETRACCION  ,PDO::PARAM_STR);
+        $stmt->bindParam(35, $NRO_DETRACCION ,PDO::PARAM_STR);                   
+        $stmt->bindParam(36, $CAN_DESCUENTO_DETRACCION  ,PDO::PARAM_STR);
+        $stmt->bindParam(37, $CAN_TOTAL_DETRACCION  ,PDO::PARAM_STR);
+        $stmt->bindParam(38, $COD_CATEGORIA_TIPO_DOCUMENTO_REF  ,PDO::PARAM_STR);
+        $stmt->bindParam(39, $TXT_CATEGORIA_TIPO_DOCUMENTO_REF  ,PDO::PARAM_STR);
+        $stmt->bindParam(40, $NRO_SERIE_REF  ,PDO::PARAM_STR);
+
+        $stmt->bindParam(41, $NRO_DOC_REF  ,PDO::PARAM_STR);
+        $stmt->bindParam(42, $FEC_VENCIMIENTO  ,PDO::PARAM_STR);
+        $stmt->bindParam(43, $IND_AFECTO  ,PDO::PARAM_STR);
+        $stmt->execute();
+        $cod = $stmt->fetch();
+        $codorden = $cod[0];
+
+		return $codorden;
+		
+	}
+
+
+
+
+	public function gn_crear_detalle_asiento_contable(	$IND_TIPO_OPERACION,
+														$COD_ASIENTO_MOVIMIENTO,
+														$COD_EMPR,
+														$COD_CENTRO,
+														$COD_ASIENTO,
+														$COD_CUENTA_CONTABLE,
+														$TXT_CUENTA_CONTABLE,
+														$TXT_GLOSA,
+														$CAN_DEBE_MN,
+														$CAN_HABER_MN,
+
+														$CAN_DEBE_ME,
+														$CAN_HABER_ME,
+														$NRO_LINEA,
+														$COD_CUO,
+														$IND_EXTORNO,
+														$TXT_TIPO_REFERENCIA,
+														$TXT_REFERENCIA,
+														$COD_ESTADO,
+														$COD_USUARIO_REGISTRO,
+														$COD_DOC_CTBLE_REF,
+
+														$COD_ORDEN_REF)
+	{
+
+
+        $stmt 		= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.ASIENTO_MOVIMIENTOS_IUD
+							@IND_TIPO_OPERACION = ?,
+							@COD_ASIENTO_MOVIMIENTO = ?,
+							@COD_EMPR = ?,
+							@COD_CENTRO = ?,
+							@COD_ASIENTO = ?,
+							@COD_CUENTA_CONTABLE = ?,
+							@TXT_CUENTA_CONTABLE = ?,
+							@TXT_GLOSA = ?,
+							@CAN_DEBE_MN = ?,
+							@CAN_HABER_MN = ?,
+
+							@CAN_DEBE_ME = ?,
+							@CAN_HABER_ME = ?,
+							@NRO_LINEA = ?,
+							@COD_CUO = ?,
+							@IND_EXTORNO = ?,
+							@TXT_TIPO_REFERENCIA = ?,
+							@TXT_REFERENCIA = ?,
+							@COD_ESTADO = ?,
+							@COD_USUARIO_REGISTRO = ?,
+							@COD_DOC_CTBLE_REF = ?,
+
+							@COD_ORDEN_REF = ?
+
+							');
+
+        $stmt->bindParam(1, $IND_TIPO_OPERACION ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $COD_ASIENTO_MOVIMIENTO  ,PDO::PARAM_STR|PDO::PARAM_INPUT_OUTPUT, 16);
+        $stmt->bindParam(3, $COD_EMPR  ,PDO::PARAM_STR);
+        $stmt->bindParam(4, $COD_CENTRO  ,PDO::PARAM_STR);
+        $stmt->bindParam(5, $COD_ASIENTO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(6, $COD_CUENTA_CONTABLE  ,PDO::PARAM_STR);
+        $stmt->bindParam(7, $TXT_CUENTA_CONTABLE  ,PDO::PARAM_STR);
+        $stmt->bindParam(8, $TXT_GLOSA  ,PDO::PARAM_STR);
+        $stmt->bindParam(9, $CAN_DEBE_MN  ,PDO::PARAM_STR);
+        $stmt->bindParam(10, $CAN_HABER_MN  ,PDO::PARAM_STR);
+
+        $stmt->bindParam(11, $CAN_DEBE_ME ,PDO::PARAM_STR);                   
+        $stmt->bindParam(12, $CAN_HABER_ME  ,PDO::PARAM_STR);
+        $stmt->bindParam(13, $NRO_LINEA  ,PDO::PARAM_STR);
+        $stmt->bindParam(14, $COD_CUO  ,PDO::PARAM_STR);
+        $stmt->bindParam(15, $IND_EXTORNO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(16, $TXT_TIPO_REFERENCIA  ,PDO::PARAM_STR);
+        $stmt->bindParam(17, $TXT_REFERENCIA  ,PDO::PARAM_STR);
+        $stmt->bindParam(18, $COD_ESTADO  ,PDO::PARAM_STR);
+        $stmt->bindParam(19, $COD_USUARIO_REGISTRO  ,PDO::PARAM_STR);
+        $stmt->bindParam(20, $COD_DOC_CTBLE_REF  ,PDO::PARAM_STR);
+
+        $stmt->bindParam(21, $COD_ORDEN_REF ,PDO::PARAM_STR);                   
+        $stmt->execute();
+
+
+		return true;
+		
+	}
+
 
 }

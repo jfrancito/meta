@@ -23,6 +23,46 @@ var App = (function () {
         }]
     });
 
+
+
+    $("#item1").dataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf'
+        ],
+        "lengthMenu": [[500, 1000, -1], [500, 1000, "All"]],
+        columnDefs:[{
+            targets: "_all",
+            sortable: false
+        }]
+    });
+
+
+    $("#item2").dataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf'
+        ],
+        "lengthMenu": [[500, 1000, -1], [500, 1000, "All"]],
+        columnDefs:[{
+            targets: "_all",
+            sortable: false
+        }]
+    });
+
+    $("#item3").dataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf'
+        ],
+        "lengthMenu": [[500, 1000, -1], [500, 1000, "All"]],
+        columnDefs:[{
+            targets: "_all",
+            sortable: false
+        }]
+    });
+
+
     $("#ple").dataTable({
         dom: 'Bfrtip',
         "scrollX": true,
@@ -37,7 +77,18 @@ var App = (function () {
     });
 
 
-
+    $("#maux").dataTable({
+        dom: 'Bfrtip',
+        "scrollX": true,
+        buttons: [
+            'csv', 'excel', 'pdf'
+        ],
+        "lengthMenu": [[250, 500, -1], [250, 500, "All"]],
+        columnDefs:[{
+            targets: "_all",
+            sortable: false
+        }]
+    });
 
     $("#table1").dataTable({
         dom: 'Bfrtip',

@@ -13,4 +13,11 @@ class CMPReferecenciaAsoc extends Model
 	public $incrementing = false;
     public $keyType = 'string';
     
+
+    public function scopeReferencia($query,$referencia_id){
+        if(trim($referencia_id) != ''){
+            $query->where('TXT_REFERENCIA', '=', $referencia_id);
+        }
+    }
+
 }

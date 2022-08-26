@@ -1,60 +1,26 @@
-<table id="nso" class="table table-striped table-borderless table-hover td-color-borde td-padding-7 listatabla">
-  <thead>
-    <tr>
-      <th>TRABAJADOR</th>
-      <th>PERIODO</th>
-      <th>FECHA LIQUIDACION</th>      
-      <th>NRO LIQUIDACION</th>
-      <th>TIPO DOCUMENTO</th>
-      <th>FECHA DOCUMENTO</th>
-      <th>NRO DOCUMENTO</th>
-      <th>IMPORTE</th>
-      <th>
-        <div class="text-center be-checkbox be-checkbox-sm has-primary">
-          <input  type="checkbox"
-                  class="todo_asignar input_asignar"
-                  id="todo_asignar"
-          >
-          <label  for="todo_asignar"
-                  data-atr = "todas_asignar"
-                  class = "checkbox_asignar"                    
-                  name="todo_asignar"
-            ></label>
-        </div>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach($listamovilidad as $index => $item)
-      <tr>
-          <td>{{$item['TXT_EMPR_RECEPTOR']}}</td>
-          <td>{{$item['TXT_NOMBRE']}}</td>
-          <td>{{date_format(date_create($item["FEC_EMISION"]), 'd-m-Y')}}</td>
-          <td>{{$item['NUMERO']}}</td>
-          <td>{{$item['TIPO_DOC']}}</td>
-          <td>{{date_format(date_create($item["FEC_EMISION_DOC"]), 'd-m-Y')}}</td>
-          <td>{{$item['NUMERO_DOC']}}</td>
-          <td>{{number_format($item['IMPORTE'], 2, '.', ',')}}</td>
-          <td>
+<div class="panel panel-default">
+  <div class="tab-container">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#mobilidad" data-toggle="tab">Lista registro mobilidad</a></li>
+      <li><a href="#cc1" data-toggle="tab">Lista Mobilidad <b>(GENERAL)</b></a></li>
+      <li><a href="#cc2" data-toggle="tab">Lista Mobilidad <b>(REPARACION)</b></a></li>
+    </ul>
 
-              <div class="text-center be-checkbox be-checkbox-sm has-primary">
-                <input  type="checkbox"
-                  class="{{$item['COD_DOCUMENTO_CTBLE_MOVILIDAD']}}{{$index}} input_asignar"
-                  id="{{$item['COD_DOCUMENTO_CTBLE_MOVILIDAD']}}{{$index}}" >
-
-                <label  for="{{$item['COD_DOCUMENTO_CTBLE_MOVILIDAD']}}{{$index}}"
-                      data-atr = "ver"
-                      class = "checkbox checkbox_asignar"                    
-                      name="{{$item['COD_DOCUMENTO_CTBLE_MOVILIDAD']}}{{$index}}"
-                ></label>
-              </div>
-
-          </td>
-        
-      </tr>                    
-    @endforeach
-  </tbody>
-</table>
+    <div class="tab-content">
+      <div id="mobilidad" class="tab-pane active cont">
+        @include('movilidad.ajax.amobiliddad')
+      </div>
+      <div id="cc1" class="tab-pane cont">
+        @include('movilidad.ajax.acc1')
+      </div> 
+      <div id="cc2" class="tab-pane cont">
+        @include('movilidad.ajax.acc2')
+      </div>
+    </div>
+    
+  </div>
+</div>
+<input type="hidden" name="periodo_registrado" id="periodo_registrado" value='{{$periodo_id}}'>
 
 @if(isset($ajax))
   <script type="text/javascript">
@@ -63,3 +29,9 @@
     });
   </script> 
 @endif
+
+
+
+
+
+

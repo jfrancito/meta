@@ -150,6 +150,9 @@ class UserController extends Controller
 		$lista_compras 					= 	$this->mv_lista_ventas_observadas($tipo_asiento_compra,Session::get('empresas_meta')->COD_EMPR);
 		$lista_productos_sc_comp 		= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento_compra,Session::get('empresas_meta')->COD_EMPR,$anio);
 
+
+
+
 		return View::make('bienvenido',
 						 [
 						 	'lista_ventas' 		 => $lista_ventas,

@@ -29,6 +29,14 @@
                     <div class="col-xs-12">
 
 
+                      <form method="POST"
+                      id="formguardar"
+                      action="{{ url('/mobilidad-guardar-data') }}" 
+                      style="border-radius: 0px;" 
+                      >
+                        {{ csrf_field() }}
+
+
                       <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
                           <div class="form-group">
                             <label class="col-sm-12 control-label labelleft" >Año :</label>
@@ -51,7 +59,12 @@
                       </div>
 
                       
-                      <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
+                        <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
+                        <input type="hidden" name="data_archivo" id='data_archivo' value=''>
+                        <input type="hidden" name="opcion_val" id='opcion_val' value=''>
+                      </form>
+
+
                     </div>
 
 
@@ -68,7 +81,7 @@
             </div>
           </div>
     </div>
-    @include('registrodiario.modal.mregistrodiario')
+    @include('movilidad.modal.mmovilidadcc')
   </div>
 
 @stop

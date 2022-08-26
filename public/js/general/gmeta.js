@@ -26,6 +26,41 @@ $(".be-content").on('click','.checkbox_asignar', function() {
     validarrelleno(accion,name,estado,check);
 });
 
+
+$(".be-content").on('click','.checkbox_asignar_otro', function() {
+
+    var input   = $(this).siblings('.input_asignar');
+    var accion  = $(this).attr('data-atr');
+    var tabla   = $(this).attr('data_tabla');
+
+    var name    = $(this).attr('name');
+    var check   = -1;
+    var estado  = -1;
+    
+
+
+    if($(input).is(':checked')){
+
+        check   = 0;
+        estado  = false;
+
+    }else{
+
+        check   = 1;
+        estado  = true;
+
+    }
+    validarrelleno_otro(accion,name,estado,check,token,tabla);
+});
+
+
+
+
+
+
+
+
+
 });
 
 
@@ -141,6 +176,43 @@ function errorvacio(atributo,texto) {
 }
 
 
+
+
+function validarrelleno_otro(accion,name,estado,check,token,tabla){
+
+
+    if (accion=='todas_asignar') {
+
+        var table = $('.listatabla'+tabla).DataTable();
+        $(".listatabla"+tabla+" tr").each(function(){
+            nombre = $(this).find('.input_asignar').attr('id');
+            if(nombre != 'todo_asignar'+tabla){
+                $(this).find('.input_asignar').prop("checked", estado);
+            }
+        });
+    }else{
+
+        sw = 0;
+        if(estado){
+            $(".listatabla"+tabla+" tr").each(function(){
+                nombre = $(this).find('.input_asignar').attr('id');
+
+                console.log($(this).find('.input_asignar').length);
+
+                if(nombre != 'todo_asignar' && $(this).find('.input_asignar').length > 0){
+                    if(!($(this).find('.input_asignar').is(':checked'))){
+                        sw = sw + 1;
+                    }
+                }
+            });
+            if(sw==1){
+                $("#todo_asignar").prop("checked", estado);
+            }
+        }else{
+            $("#todo_asignar").prop("checked", estado);
+        }           
+    }
+}
 
 
 function validarrelleno(accion,name,estado,check,token){

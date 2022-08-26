@@ -214,6 +214,9 @@ trait MigrarVentaTraits
 		
 
 		$array_empresas  		    = 		$this->mv_array_empresa_venta();
+
+
+
 		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
 											->where('IND_ASIENTO_MODELO','=',-1)
 											->where('IND_ERROR','=',1)
@@ -221,6 +224,8 @@ trait MigrarVentaTraits
 											->where('COD_EMPR','=',$empresa_id)
 											->orderby('COD_REFERENCIA','asc')
 											->get();
+
+
 		return $lista_ventas;
 
 	}
@@ -255,24 +260,41 @@ trait MigrarVentaTraits
 											->pluck('COD_REFERENCIA')
 											->toArray();
 
-
 		if($tipo_asiento=='TAS0000000000003'){
+
+			$array_total_producos		=		CMPDetalleProducto::whereIn('COD_TABLA',$array_ventas_con_error)
+												->groupBy('COD_PRODUCTO')
+												->pluck('COD_PRODUCTO')
+												->toArray();
 
 			$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
 												->where('activo','=',1)
 												->where('anio','=',$anio)
+												->whereIn('producto_id',$array_total_producos)
 												->where('cuenta_contable_venta_relacionada_id','<>','')
 												->where('cuenta_contable_venta_tercero_id','<>','')
 												->pluck('producto_id')
 												->toArray();
 
+
+
 		}else{
+
+			$array_total_producos		=		CMPDetalleProducto::whereIn('COD_TABLA',$array_ventas_con_error)
+												->groupBy('COD_PRODUCTO')
+												->pluck('COD_PRODUCTO')
+												->toArray();
+
+
 			$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
 												->where('activo','=',1)
 												->where('anio','=',$anio)
+												->whereIn('producto_id',$array_total_producos)
 												->where('cuenta_contable_compra_id','<>','')
 												->pluck('producto_id')
 												->toArray();
+
+
 		}
 
 

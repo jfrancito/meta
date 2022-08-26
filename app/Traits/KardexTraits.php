@@ -17,6 +17,9 @@ use App\Modelos\CONPeriodo;
 use App\Modelos\WEBListaCVProductoKardex;
 use App\Modelos\CMPTipoCambio;
 use App\Modelos\STDEmpresa;
+use App\Modelos\CMPOrden;
+
+
 
 use View;
 use Session;
@@ -29,6 +32,48 @@ use PDO;
 
 trait KardexTraits
 {
+
+
+
+	public function kd_monto_producto_material_auxiliar($listarequerimiento,$periodo,$producto_id)
+	{
+		$monto 				= 	0;
+
+
+		$fecha_inicio			= 	date_format(date_create(substr($periodo->FEC_INICIO, 0, 10)), 'Y-m-d');
+		$fecha_fin				= 	date_format(date_create(substr($periodo->FEC_FIN, 0, 10)), 'Y-m-d');
+		$fecha_inicio 			= 	date($fecha_inicio);
+		$fecha_fin 				= 	date($fecha_fin);
+
+		$monto 					=	$listarequerimiento->where('COD_PRODUCTO','=',$producto_id)
+	    							->where('FEC_ORDEN','>=',$fecha_inicio)
+	    							->where('FEC_ORDEN','<=',$fecha_fin)
+									->sum('CAN_PRODUCTO');
+
+		return $monto;
+	}
+
+
+	public function kd_lista_requerimiento($empresa_id,$fecha_inicio,$fecha_fin)
+	{
+
+
+	    $listarequerimiento = 	CMPOrden::join('CMP.DETALLE_PRODUCTO', 'CMP.ORDEN.COD_ORDEN', '=', 'CMP.DETALLE_PRODUCTO.COD_TABLA')
+	    						->where('CMP.ORDEN.COD_EMPR','=',$empresa_id)
+	    						->where('CMP.ORDEN.COD_CATEGORIA_TIPO_ORDEN','=','TOR0000000000003')
+	    						->where('CMP.ORDEN.COD_CATEGORIA_MOVIMIENTO_INVENTARIO','=','MIN0000000000024')
+	    						->where('CMP.ORDEN.COD_CATEGORIA_ESTADO_ORDEN','=','EOR0000000000003')
+	    						->where('CMP.ORDEN.COD_ESTADO','=',1)
+	    						->where('CMP.DETALLE_PRODUCTO.COD_ESTADO','=',1)
+	    						->where('CMP.ORDEN.FEC_ORDEN','>=',$fecha_inicio)
+	    						->where('CMP.ORDEN.FEC_ORDEN','<=',$fecha_fin)
+	    						->select('COD_PRODUCTO','CAN_PRODUCTO','COD_ORDEN','FEC_ORDEN')
+	    						->get()->toArray();
+
+		return $listarequerimiento;
+
+	}
+
 
 	public function kd_tipo_cambio($fecha)
 	{
@@ -203,28 +248,45 @@ trait KardexTraits
 	}
 
 
+
+
 	public function kd_array_materialesauxiliares($empresa_id, $anio, $tipo_producto_id, $tipo_asiento_id,$cod_almacen,$listamovimientocommpra){
 
 		$array_detalle_asiento 		=	array();
 
 	    while ($row = $listamovimientocommpra->fetch()){
 
-	    	$empresa 					= 	STDEmpresa::where('COD_EMPR','=', $row['COD_EMPR_CLI'])->first();
+	    	$empresa 				= 	STDEmpresa::where('COD_EMPR','=', $row['COD_EMPR_CLI'])->first();
+	    	$tipo_cambio_cp   		=   $this->kd_tipo_cambio(date_format(date_create(substr($row['FEC_ASIENTO'], 0, 10)), 'd-m-Y'));
+
+
+	    	if($row['COD_CATEGORIA_MONEDA'] == 'MON0000000000002'){
+	    		$entrada                = 	$row['CAN_PRODUCTO']*$row['PRECIO_SIGV']*$tipo_cambio_cp->CAN_VENTA_SBS;
+	    	}else{
+	    		$entrada                = 	$row['CAN_PRODUCTO']*$row['PRECIO_SIGV'];
+	    	}
+
+	    	$costounitario 				= 	$entrada/$row['CAN_PRODUCTO'];
+	    	$costounitario 				=	number_format($costounitario, 4, '.', '');
+	    	$entrada 					=	number_format($entrada, 4, '.', '');
 
 	    	$array_nuevo_asiento 		=	array();
 			$array_nuevo_asiento    	=	array(
 
 				"FECHA" 					=> $row['FEC_ASIENTO'],
+				"COD_PRODUCTO" 				=> $row['COD_PRODUCTO'],
 				"TIPODOCUMENTO" 			=> $row['TXT_CATEGORIA_TIPO_DOCUMENTO'],
 				"NRODOCUMENTO" 				=> $row['NRO_SERIE'].'-'.$row['NRO_DOC'],
 				"NOMREF" 					=> $empresa->TXT_EMPR_CLI,
 				"RUC" 						=> $empresa->NRO_DOCUMENTO,
 				"DESCRIPCION" 				=> $row['TXT_NOMBRE_PRODUCTO'],
 				"CANTIDAD" 					=> $row['CAN_PRODUCTO'],
-				"COSTOUNITARIO" 			=> 0,
-				"ENTRADA" 					=> 0,
+				"COSTOUNITARIO" 			=> $costounitario,
+				"ENTRADA" 					=> $entrada,
 
 			);
+
+
 			array_push($array_detalle_asiento,$array_nuevo_asiento);
 	    }
 
@@ -513,9 +575,7 @@ trait KardexTraits
 			"total_haber" 				=> $monto_total,
 
 		);
-
 		array_push($array_detalle_asiento,$array_nuevo_asiento);
-
 	    return $array_detalle_asiento;
 
     }
