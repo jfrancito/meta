@@ -324,11 +324,15 @@ class ComprasController extends Controller
 			$asiento->FEC_USUARIO_MODIF_AUD 		=   $this->fechaactual;
 			$asiento->COD_USUARIO_MODIF_AUD 		=   Session::get('usuario_meta')->id;
 			$asiento->COD_PERIODO 					=   $periodo_asiento_id;
-
 			$asiento->COD_CATEGORIA_TIPO_DETRACCION =   $tipo_descuento;
 			$asiento->CAN_DESCUENTO_DETRACCION 		=   $porcentaje_detraccion;
 			$asiento->CAN_TOTAL_DETRACCION 			=   $total_detraccion;
 			$asiento->save();
+
+			sleep(1);
+			$reversion = $this->co_reversion_compra($idasiento);
+			sleep(4);
+
 
 			Session::flash('periodo_id_confirmar', $periodo_id_confirmar);
 			Session::flash('nro_serie_confirmar', $nro_serie_confirmar);
@@ -370,6 +374,7 @@ class ComprasController extends Controller
 		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
 		$funcion 				= 	$this;
 		
+
 		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
 						 [
 						 	'asiento'					=> $asiento,

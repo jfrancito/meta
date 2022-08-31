@@ -49,6 +49,7 @@ class ConfiguracioProductoController extends Controller
 	    View::share('titulo','Configuración Producto');
 
 
+	    $nro_asiento 	 =  $tipo_asiento;
 	    $nombre_asiento  =  '';
 	    if($tipo_asiento == '3'){$tipo_asiento = 'TAS0000000000003'; $nombre_asiento  =  'Productos de Ventas por configurar';}
 	    if($tipo_asiento == '4'){$tipo_asiento = 'TAS0000000000004'; $nombre_asiento  =  'Productos de Compras por configurar';}
@@ -87,7 +88,7 @@ class ConfiguracioProductoController extends Controller
 						 	'combo_sub_categoria' 				=> $combo_sub_categoria,
 						 	'lista_configuracion_producto' 		=> $lista_configuracion_producto,	
 						 	'nombre_asiento' 					=> $nombre_asiento,
-
+						 	'nro_asiento' 						=> $nro_asiento,
 						 ]);
 	}
 
@@ -194,6 +195,9 @@ class ConfiguracioProductoController extends Controller
 	{
 		
 		$array_productos 		=   json_encode($request['array_productos'],false);
+		$nro_asiento 			=   $request['nro_asiento'];
+
+
 		$anio  					=   $this->anio;
 
 		$array_cuenta_pc     	= 	$this->pc_array_nro_cuentas_nombre(Session::get('empresas_meta')->COD_EMPR,$anio);
@@ -217,6 +221,7 @@ class ConfiguracioProductoController extends Controller
 						 	'defecto_cuenta_ter' 	=> $defecto_cuenta_ter,
 						 	'defecto_cuenta_com' 	=> $defecto_cuenta_com,
 						 	'array_productos' 		=> $array_productos,
+						 	'nro_asiento' 			=> $nro_asiento,
 						 	'funcion' 				=> $funcion,
 						 	'ajax' 					=> true,						 	
 						 ]);
@@ -265,6 +270,7 @@ class ConfiguracioProductoController extends Controller
 				$idproductoempresa 								=   $this->funciones->getCreateIdMaestra('web.productoempresas');
 				$cabecera            	 						=	new WEBProductoEmpresa;
 				$cabecera->id 	     	 						=   $idproductoempresa;
+
 				if($ind_venta_compra == '1'){
 					$cabecera->cuenta_contable_venta_relacionada_id 	=   $cuenta_contable_rel_id;
 					$cabecera->cuenta_contable_venta_tercero_id 		=   $cuenta_contable_ter_id;
@@ -274,6 +280,7 @@ class ConfiguracioProductoController extends Controller
 					$cabecera->cuenta_contable_venta_tercero_id 		=   '';
 					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
 				}
+
 				$cabecera->anio 								=  	$anio;
 				$cabecera->producto_id 							=   $item['producto_id'];
 				$cabecera->empresa_id 	 						=   Session::get('empresas_meta')->COD_EMPR;
@@ -289,7 +296,7 @@ class ConfiguracioProductoController extends Controller
 				}else{
 					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
 				}
-				$cabecera->activo 								=  1;
+				$cabecera->activo 								=   1;
 				$cabecera->empresa_id 	 						=   Session::get('empresas_meta')->COD_EMPR;
 				$cabecera->fecha_mod 	 						=   $this->fechaactual;
 				$cabecera->usuario_mod 							=   Session::get('usuario_meta')->id;

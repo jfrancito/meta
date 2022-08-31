@@ -108,7 +108,7 @@
 
                        
                       <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
-
+                      <input type="hidden" name="nro_asiento" id='nro_asiento' value='{{$nro_asiento}}'>
                     </div>
                   </div>
                   <div class='listajax'>

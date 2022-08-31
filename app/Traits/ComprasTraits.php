@@ -22,11 +22,25 @@ use Session;
 use Hashids;
 Use Nexmo;
 use Keygen;
-
+use PDO;
 
 trait ComprasTraits
 {
 
+
+	private function co_reversion_compra($asiento_id)
+	{
+
+        $stmt 		= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_REVERSION_ASIENTO_MODELO 
+							@cod_asiento = ?');
+
+        $stmt->bindParam(1, $asiento_id ,PDO::PARAM_STR);             
+        $stmt->execute();
+
+
+        return $stmt;
+
+	}
 
 	public function co_crear_nombre_compra_detraccion($anio,$mes){
 		$identificador 					=       'D';
@@ -225,7 +239,9 @@ trait ComprasTraits
 	{
 
 		$sel_tipo_descuento  =	'';
-		if(count($orden)>0){
+
+		//dd(count(trim($orden)));	
+		if(isset($orden->CAN_DETRACCION)){
 			if($orden->CAN_DETRACCION>0){
 				$sel_tipo_descuento  =	'DCT0000000000002';
 			}else{

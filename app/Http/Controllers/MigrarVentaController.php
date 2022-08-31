@@ -215,6 +215,8 @@ class MigrarVentaController extends Controller
 		//buscar asiento 
 		$lista_ventas_migrar_emitido 		= 	$this->mv_lista_ventas_migrar_agrupado_emitido();
 		$lista_ventas_migrar_anulado 		= 	$this->mv_lista_ventas_migrar_agrupado_anulado();
+
+		//dd($lista_ventas_migrar_anulado);
 		$this->mv_agregar_historial_ventas($lista_ventas_migrar_emitido,$lista_ventas_migrar_anulado,$tipo_asiento);
 
 

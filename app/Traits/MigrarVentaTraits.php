@@ -83,7 +83,6 @@ trait MigrarVentaTraits
 											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
 											->get();
 
-
 		return $lista_migrar_ventas;
 
 	}
@@ -318,7 +317,14 @@ trait MigrarVentaTraits
 		$empresa 					= 		$documento_ctble->COD_EMPR;
 		$cod_contable 				= 		$documento_ctble->COD_DOCUMENTO_CTBLE;
 		$asiento_modelo_id 			= 		trim($historialmigrar->COD_ASIENTO_MODELO);
-		$anulado 					= 		$historialmigrar->IND_ANULADO;
+
+		if($documento_ctble->ESTADO_ELEC == 'R'){
+		    $anulado 				= 		0;
+		}else{
+			$anulado 				= 		$historialmigrar->IND_ANULADO;	
+		}
+
+
 
 
         $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO 

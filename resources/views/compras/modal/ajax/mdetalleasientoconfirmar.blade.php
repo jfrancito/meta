@@ -140,9 +140,9 @@
 
 								      <input  type="text"
 								              id="porcentaje_detraccion" 
-								              data_valor="{{$orden->CAN_DSCTO}}"
+								              data_valor="@if(isset($orden->CAN_DSCTO)){{$orden->CAN_DSCTO}}@endif"
 								              name='porcentaje_detraccion' 
-								              value="@if(count($orden)>0){{$orden->CAN_DSCTO}}@endif"
+								              value="@if(isset($orden->CAN_DSCTO)){{$orden->CAN_DSCTO}}@endif"
 								              placeholder="0.00"
 								              autocomplete="off" 
 								              class="form-control input-sm dinero" 
@@ -158,9 +158,9 @@
 
 								      <input  type="text"
 								              id="total_detraccion"
-								              data_valor="{{$orden->CAN_DETRACCION}}"
+								              data_valor="@if(isset($orden->CAN_DETRACCION)){{$orden->CAN_DETRACCION}}@endif"
 								              name='total_detraccion'
-								              value="@if(count($orden)>0){{$orden->CAN_DETRACCION}}@endif"
+								              value="@if(isset($orden->CAN_DETRACCION)){{$orden->CAN_DETRACCION}}@endif"
 								              placeholder="0.00"
 								              autocomplete="off" 
 								              class="form-control input-sm dinero" 

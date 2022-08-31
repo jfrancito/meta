@@ -164,6 +164,8 @@ $(document).ready(function(){
                 if(parseFloat(total_detraccion) <= 0){ alerterrorajax("Total de la detraccion debe ser mayor a 0."); return false;}
         }
 
+        abrircargando();
+
         return true;
 
     });

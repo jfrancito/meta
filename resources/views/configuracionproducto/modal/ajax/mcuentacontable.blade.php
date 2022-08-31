@@ -93,7 +93,17 @@
 @if(isset($ajax))
   <script type="text/javascript">
     $(document).ready(function(){
-      App.formElements();
+      	App.formElements();
+
+      	 var nro_asiento  =   $('#nro_asiento').val();
+
+      	 var tab = 'ventas';
+      	 if(nro_asiento == '4'){
+      	 	tab = 'compras';
+      	 	$('#ind_venta_compra').val("2");
+      	 }
+		$('.nav-tabs a[href="#' + tab + '"]').tab('show');
+
     });
   </script>
 @endif

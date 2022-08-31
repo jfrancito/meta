@@ -57,12 +57,16 @@ $(document).ready(function(){
         var _token                  =   $('#token').val();
         var array_productos         =   dataenviar();
         var idopcion                =   $('#idopcion').val();
+        var nro_asiento             =   $('#nro_asiento').val();
+
+
         if(array_productos.length<=0){alerterrorajax('Seleccione por lo menos una fila'); return false;}
 
         data                        =   {
                                             _token                  : _token,
                                             array_productos         : array_productos,
-                                            idopcion                : idopcion
+                                            idopcion                : idopcion,
+                                            nro_asiento             : nro_asiento,
                                         };
 
         ajax_modal(data,"/ajax-modal-configuracion-producto-cuenta-contable",
@@ -118,10 +122,8 @@ $(document).ready(function(){
         var _token                    =   $('#token').val();
         //validacioones
         if(ind_venta_compra=='1'){
-            if(cuenta_contable_rel_id  ==''){ alerterrorajax("Seleccione una cuenta contable relacionadas."); return false;}
-            if(cuenta_contable_ter_id  ==''){ alerterrorajax("Seleccione una cuenta contable tercero."); return false;} 
-        }else{
-            if(cuenta_contable_compra_id  ==''){ alerterrorajax("Seleccione una cuenta contable de compra."); return false;} 
+            if(cuenta_contable_rel_id  != '' && cuenta_contable_ter_id == ''){ alerterrorajax("Seleccione una cuenta contable tercero."); return false;}
+            if(cuenta_contable_ter_id  != '' && cuenta_contable_rel_id == ''){ alerterrorajax("Seleccione una cuenta contable relacionada."); return false;}
         }
 
         //cerrar modal
