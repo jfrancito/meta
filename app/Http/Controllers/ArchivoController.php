@@ -305,6 +305,7 @@ class ArchivoController extends Controller
 
 		    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
 		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('COD_ASIENTO','=','ICCHAC0000005534')
 		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 		    							->whereIn('TXT_REFERENCIA',$array_documentos)
 		    							->orderby('FEC_ASIENTO','asc')

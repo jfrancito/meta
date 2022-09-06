@@ -28,6 +28,8 @@ $(document).ready(function(){
         var producto_id     =   $('#producto_select').val();
         var sub_categoria_id     =   $('#sub_categoria_id').val();
         var categoria_producto_id     =   $('#categoria_producto_id').val();
+        var nro_asiento     =   $('#nro_asiento').val();
+
 
         var idopcion        =   $('#idopcion').val();
         var _token          =   $('#token').val();
@@ -46,6 +48,7 @@ $(document).ready(function(){
                                 categoria_producto_id : categoria_producto_id,
                                 anio        : anio,
                                 idopcion    : idopcion,
+                                nro_asiento    : nro_asiento,
                             };
         ajax_normal(data,"/ajax-configuracion-producto");
 

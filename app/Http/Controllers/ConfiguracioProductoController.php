@@ -65,6 +65,9 @@ class ConfiguracioProductoController extends Controller
 											->pluck('COD_PRODUCTO')
 											->toArray();
 		$lista_configuracion_producto 	= 	$this->cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa);
+
+
+
 		$defecto_producto				= 	'';
 
 		$sel_categoria_producto 		=	'';
@@ -100,6 +103,8 @@ class ConfiguracioProductoController extends Controller
 		$idopcion 						=   $request['idopcion'];
 		$categoria_producto_id 			=   $request['categoria_producto_id'];
 		$sub_categoria_id 				=   $request['sub_categoria_id'];
+		$nro_asiento 					=   $request['nro_asiento'];
+
 
 		$material_id					=	'';
 		$servicio_id					=	'';
@@ -135,6 +140,7 @@ class ConfiguracioProductoController extends Controller
 						 	'idopcion' 						=> $idopcion,
 						 	'funcion' 						=> $funcion,
 						 	'nombre_asiento' 				=> $nombre_asiento,
+						 	'nro_asiento' 					=> $nro_asiento,
 						 	'ajax' 							=> true,						 	
 						 ]);
 	}
@@ -210,6 +216,13 @@ class ConfiguracioProductoController extends Controller
 		$defecto_cuenta_ter		= 	'';
 		$defecto_cuenta_com		= 	'';
 
+
+		$ocultar_venta 			=	'';
+		$ocultar_compra 		=	'';
+		if($nro_asiento=='4'){$ocultar_venta = 'ocultar';}
+		if($nro_asiento=='3'){$ocultar_compra = 'ocultar';}
+
+
 		$funcion 				= 	$this;
 
 		return View::make('configuracionproducto/modal/ajax/mcuentacontable',
@@ -222,6 +235,8 @@ class ConfiguracioProductoController extends Controller
 						 	'defecto_cuenta_com' 	=> $defecto_cuenta_com,
 						 	'array_productos' 		=> $array_productos,
 						 	'nro_asiento' 			=> $nro_asiento,
+						 	'ocultar_venta' 		=> $ocultar_venta,
+						 	'ocultar_compra' 		=> $ocultar_compra,
 						 	'funcion' 				=> $funcion,
 						 	'ajax' 					=> true,						 	
 						 ]);

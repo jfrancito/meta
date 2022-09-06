@@ -12,7 +12,7 @@
 }
 
 .ocultar{
-  display: none;
+  display: none !important;
 }
 
 .background-th{

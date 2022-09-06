@@ -5,8 +5,14 @@
     <tr>
       <th colspan="3" class='center background-th-celeste'>Información </th>
 
-      <th colspan="2" class='center background-th-verde'>Venta</th>
-      <th class='center background-th-celeste'>Compra</th>
+      @if($nro_asiento != '4')
+        <th colspan="2" class='center background-th-verde'>Venta</th>
+      @endif
+
+      @if($nro_asiento != '3')
+        <th class='center background-th-verde'>Compra</th>
+      @endif
+
       <th class='center background-th-verde'>Sel</th>
     </tr>
 
@@ -14,9 +20,17 @@
       <th class='background-th-celeste'>Año</th>
       <th class='background-th-celeste'>Producto</th>
       <th class='background-th-celeste'>Tipo</th>
-      <th class='background-th-verde'>CC Relacionada</th>
-      <th class='background-th-verde'>CC Tercero</th>
-      <th class='background-th-celeste'>Cuenta contable</th>
+
+      @if($nro_asiento != '4')
+        <th class='background-th-verde'>CC Relacionada</th>
+        <th class='background-th-verde'>CC Tercero</th>
+      @endif
+
+      @if($nro_asiento != '3')
+        <th class='background-th-verde'>Cuenta contable</th>
+      @endif
+
+
       <th class='background-th-verde'>
         <div class="text-center be-checkbox be-checkbox-sm has-primary">
           <input  type="checkbox"
@@ -52,9 +66,18 @@
               SERVICIO 
             @endif
         </td>
-        <td>{{$item->nombre_nro_cuenta_r}}</td>
-        <td>{{$item->nombre_nro_cuenta_t}}</td>
-        <td>{{$item->nombre_nro_cuenta_compra}}</td>
+
+        @if($nro_asiento != '4')
+          <td>{{$item->nombre_nro_cuenta_r}}</td>
+          <td>{{$item->nombre_nro_cuenta_t}}</td>
+        @endif
+
+        @if($nro_asiento != '3')
+          <td>{{$item->nombre_nro_cuenta_compra}}</td>
+        @endif
+        
+
+
         <td>
 
             <div class="text-center be-checkbox be-checkbox-sm has-primary">

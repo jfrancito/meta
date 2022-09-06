@@ -327,6 +327,26 @@ trait ComprasTraits
 
 	}
 
+	private function co_lista_compras_terminado_asiento($anio,$periodo_id,$empresa_id,$serie,$documento)
+	{
+
+	    $lista_compras 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', function ($join) use ($periodo_id,$empresa_id){
+							            $join->on('WEB.asientos.TXT_REFERENCIA', '=', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE');
+							        })
+	    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    							->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+	    							->NroSerie($serie)
+	    							->NroDocumento($documento)
+	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+									->select(DB::raw('WEB.asientos.*'))
+									->orderby('CMP.DOCUMENTO_CTBLE.FEC_EMISION','asc')
+	    							->get();
+
+		return $lista_compras;
+
+	}
+
 
 	public function co_data_view_compras($cod_documento_ctble)
 	{

@@ -171,6 +171,8 @@
 
       // buscar productos 
       $('#producto_select').select2({
+
+          
           // Activamos la opcion "Tags" del plugin
           placeholder: 'Seleccione un producto',
           language: "es",

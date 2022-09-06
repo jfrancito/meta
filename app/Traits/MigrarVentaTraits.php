@@ -284,7 +284,6 @@ trait MigrarVentaTraits
 												->pluck('COD_PRODUCTO')
 												->toArray();
 
-
 			$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
 												->where('activo','=',1)
 												->where('anio','=',$anio)

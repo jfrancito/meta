@@ -491,8 +491,8 @@ trait ArchivoTraits
 			//suma de las 70
 			$suma_70_14  			= 	'0.00';//falta
 			if($indicador_afecto==1){
-				//$suma_70_14 		= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
-				$suma_70_14 		= 	$item->CAN_TOTAL_DEBE;
+				$suma_70_14 		= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
+				//$suma_70_14 		= 	$item->CAN_TOTAL_DEBE;
 				$suma_70_14         = 	number_format($suma_70_14, 2, '.', '');
 			}
 

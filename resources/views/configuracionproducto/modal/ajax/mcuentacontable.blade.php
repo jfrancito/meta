@@ -13,11 +13,15 @@
               <div class="panel panel-default">
                 <div class="tab-container">
                   <ul class="nav nav-tabs">
-                    <li class="active"><a href="#ventas" id="ventastab" data-toggle="tab">Ventas</a></li>
-                    <li><a href="#compras" id="comprastab" data-toggle="tab">Compras</a></li>
+
+                    <li class="active {{$ocultar_venta}}"><a href="#ventas" id="ventastab" data-toggle="tab">Ventas</a></li>
+
+                    <li class="{{$ocultar_compra}}"><a href="#compras" id="comprastab" data-toggle="tab">Compras</a></li>
+
+
                   </ul>
                   <div class="tab-content">
-                    <div id="ventas" class="tab-pane active cont">
+                    <div id="ventas" class="tab-pane active cont ">
 
 				        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				            <div class="form-group">
@@ -46,10 +50,8 @@
 								</div>
 							</div>
 				        </div>
-
-
                     </div>
-                    <div id="compras" class="tab-pane cont">
+                    <div id="compras" class="tab-pane cont ">
   				        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				            <div class="form-group">
 								<label class="col-sm-12 control-label labelleft negrita" >Cuenta contable compras: </label>
@@ -64,10 +66,6 @@
 							</div>
 				        </div>
                     </div>
-
-
-
-
                   </div>
                 </div>
 

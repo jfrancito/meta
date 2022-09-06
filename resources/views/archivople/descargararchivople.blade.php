@@ -94,7 +94,7 @@
                         </div>
 
                         
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajadocuento cajareporte ocultar">
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajadocuento cajareporte" style="display: none;">
                             <div class="form-group">
                               <label class="col-sm-12 control-label labelleft" >DOCUMENTO :</label>
                               <div class="col-sm-12 abajocaja" >

@@ -507,12 +507,17 @@ class ComprasController extends Controller
 			$anio 					=	Session::get('anio_confirmar');
         	$listacompras     		= 	$this->co_lista_compras_asiento($anio,$sel_periodo,Session::get('empresas_meta')->COD_EMPR,$sel_serie,$sel_nrodoc);
 
+        	$listacomprasterminado  = 	$this->co_lista_compras_terminado_asiento($anio,$sel_periodo,Session::get('empresas_meta')->COD_EMPR,$sel_serie,$sel_nrodoc);
+
 		}else{
 			$sel_periodo 			=	'';
 			$sel_serie 				=	'';
 			$sel_nrodoc 			=	'';
 			$anio  					=   $this->anio;
 	    	$listacompras 			= 	array();
+	    	$listacomprasterminado 	= 	array();
+
+
 		}
 
         $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
@@ -524,6 +529,7 @@ class ComprasController extends Controller
 		return View::make('compras/listacompras',
 						 [
 						 	'listacompras' 			=> $listacompras,
+						 	'listacomprasterminado' => $listacomprasterminado,
 						 	'combo_anio_pc'			=> $combo_anio_pc,
 						 	'combo_periodo'			=> $combo_periodo,
 						 	'anio'					=> $anio,
@@ -545,12 +551,14 @@ class ComprasController extends Controller
 		$documento 				=   $request['documento'];
         $listacompras     		= 	$this->co_lista_compras_asiento($anio,$periodo_id,Session::get('empresas_meta')->COD_EMPR,$serie,$documento);
 
+        $listacomprasterminado  = 	$this->co_lista_compras_terminado_asiento($anio,$periodo_id,Session::get('empresas_meta')->COD_EMPR,$serie,$documento);
+
 		$funcion 				= 	$this;
 		
 		return View::make('compras/ajax/alistacompras',
 						 [
-
 						 	'listacompras'			=> $listacompras,
+						 	'listacomprasterminado'	=> $listacomprasterminado,
 						 	'funcion'				=> $funcion,			 	
 						 	'ajax' 					=> true,						 	
 						 ]);
