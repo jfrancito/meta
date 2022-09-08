@@ -172,11 +172,7 @@ $(document).ready(function(){
 
 
 
-
-
-
-
-    $(".compras").on('dblclick','.dobleclickpc', function(e) {
+    $(".compras").on('click','.clickasientodiario', function(e) {
 
         var _token                  =   $('#token').val();
         var asiento_id              =   $(this).attr('data_asiento_id');
@@ -186,8 +182,30 @@ $(document).ready(function(){
         var serie                   =   $('#serie').val();
         var documento               =   $('#documento').val();
 
+        data                        =   {
+                                            _token                  : _token,
+                                            asiento_id              : asiento_id,
+                                            idopcion                : idopcion,
+                                            anio                    : anio,
+                                            periodo_id              : periodo_id,
+                                            serie                   : serie,
+                                            documento               : documento,
+                                        };
+        ajax_modal(data,"/ajax-modal-detalle-asiento-diario",
+                  "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
 
-        //debugger;
+    });
+
+
+    $(".compras").on('click','.clickasientocompra', function(e) {
+
+        var _token                  =   $('#token').val();
+        var asiento_id              =   $(this).attr('data_asiento_id');
+        var idopcion                =   $('#idopcion').val();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();
+        var serie                   =   $('#serie').val();
+        var documento               =   $('#documento').val();
 
         data                        =   {
                                             _token                  : _token,
@@ -202,6 +220,34 @@ $(document).ready(function(){
                   "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
 
     });
+
+
+    $(".compras").on('dblclick','.dobleclickpcreversion', function(e) {
+
+        var _token                  =   $('#token').val();
+        var asiento_id              =   $(this).attr('data_asiento_id');
+        var idopcion                =   $('#idopcion').val();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();
+        var serie                   =   $('#serie').val();
+        var documento               =   $('#documento').val();
+
+        data                        =   {
+                                            _token                  : _token,
+                                            asiento_id              : asiento_id,
+                                            idopcion                : idopcion,
+                                            anio                    : anio,
+                                            periodo_id              : periodo_id,
+                                            serie                   : serie,
+                                            documento               : documento,
+                                        };
+        ajax_modal(data,"/ajax-modal-detalle-asiento-transicion",
+                  "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
+
+    });
+
+
+
 
 
     $(".compras").on('click','#confirmarasientos', function(e) {

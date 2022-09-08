@@ -324,8 +324,6 @@ trait MigrarVentaTraits
 		}
 
 
-
-
         $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO 
 											@anio = ?,
 											@empresa = ?,

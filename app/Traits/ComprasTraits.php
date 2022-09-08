@@ -27,6 +27,85 @@ use PDO;
 trait ComprasTraits
 {
 
+	private function co_existe_asiento_diario_compra($cod_contable,$tipo_asiento)
+	{
+
+		$asiento		=	WEBAsiento::where('TXT_REFERENCIA','=',$cod_contable)
+							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
+							->where('COD_CATEGORIA_ESTADO_ASIENTO','<>','IACHTE0000000024')
+							->first();
+				
+
+		return $asiento;
+	}
+
+	private function co_asignar_asiento_diario_compra($anio,$empresa,$cod_contable,$tipo_asiento,$documento_anulado,$asiento_modelo_id)
+	{
+
+		$existe 					=		'1';
+
+        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO 
+											@anio = ?,
+											@empresa = ?,
+											@cod_contable = ?,
+											@cod_tipo_asiento = ?,
+											@asiento_modelo_id = ?,
+											@ind_anulado = ?');
+
+        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
+        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
+        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
+        $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
+        $stmt->bindParam(6, $documento_anulado  ,PDO::PARAM_STR);
+        $stmt->execute();	
+
+
+
+		return $existe;
+	}
+
+
+
+	private function co_buscar_asiento_diario_compra($anio,$empresa,$cod_contable,$tipo_asiento,$documento_anulado)
+	{
+
+        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.BUSCAR_ASIENTO_MODELO 
+											@anio = ?,
+											@empresa = ?,
+											@cod_contable = ?,
+											@cod_tipo_asiento = ?,
+											@ind_anulado = ?');
+
+        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
+        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
+        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
+        $stmt->bindParam(5, $documento_anulado  ,PDO::PARAM_STR);
+        $stmt->execute();
+
+		$array_respuesta 		=	array();
+      	while ($row = $stmt->fetch()){
+      		$codigo = $row['codigo'];
+      		$mensaje = $row['mensaje'];
+      		$asiento_modelo_id = $row['asiento_modelo_id'];
+
+	    	$array 	=	array();
+			$array    =	array(
+				"codigo" 					=> $codigo,
+				"mensaje" 					=> $mensaje,
+				"asiento_modelo_id" 		=> $asiento_modelo_id
+			);
+			array_push($array_respuesta,$array);
+
+      	}
+
+
+        return $array_respuesta;
+
+	}
+
+
 
 	private function co_reversion_compra($asiento_id)
 	{
@@ -307,7 +386,8 @@ trait ComprasTraits
 
 	}
 
-	private function co_lista_compras_asiento($anio,$periodo_id,$empresa_id,$serie,$documento)
+
+	private function co_lista_compras_asiento($anio,$periodo_id,$empresa_id,$serie,$documento,$array_terminado_diario)
 	{
 
 	    $lista_compras 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', function ($join) use ($periodo_id,$empresa_id){
@@ -319,6 +399,7 @@ trait ComprasTraits
 	    							->NroDocumento($documento)
 	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000032')
+	    							->whereNotIn('WEB.asientos.TXT_REFERENCIA',$array_terminado_diario)
 									->select(DB::raw('WEB.asientos.*'))
 									->orderby('CMP.DOCUMENTO_CTBLE.FEC_EMISION','asc')
 	    							->get();
@@ -327,10 +408,34 @@ trait ComprasTraits
 
 	}
 
-	private function co_lista_compras_terminado_asiento($anio,$periodo_id,$empresa_id,$serie,$documento)
+
+	private function co_array_terminado_diario($periodo_id,$empresa_id)
 	{
 
-	    $lista_compras 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', function ($join) use ($periodo_id,$empresa_id){
+	    $lista_compras 			= 	WEBAsiento::where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    							->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
+	    							->pluck('TXT_REFERENCIA')
+									->toArray();
+
+	    $lista_diario 			= 	WEBAsiento::where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    							->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000007')
+	    							->whereIn('TXT_REFERENCIA',$lista_compras)
+	    							->where('COD_CATEGORIA_ESTADO_ASIENTO','<>','IACHTE0000000024')
+	    							->where('COD_CATEGORIA_ESTADO_ASIENTO','<>','IACHTE0000000032')
+	    							->pluck('TXT_REFERENCIA')
+									->toArray();
+
+
+		return $lista_diario;
+
+	}
+
+	private function co_lista_compras_terminado_asiento($anio,$periodo_id,$empresa_id,$serie,$documento,$array_terminado_diario)
+	{
+
+	    $lista_compras1 		= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', function ($join) use ($periodo_id,$empresa_id){
 							            $join->on('WEB.asientos.TXT_REFERENCIA', '=', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE');
 							        })
 	    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
@@ -339,8 +444,24 @@ trait ComprasTraits
 	    							->NroDocumento($documento)
 	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+									->select(DB::raw('WEB.asientos.*'));
+									//->orderby('CMP.DOCUMENTO_CTBLE.FEC_EMISION','asc')
+	    							//->get();
+
+	    		
+	    $lista_compras 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', function ($join) use ($periodo_id,$empresa_id){
+							            $join->on('WEB.asientos.TXT_REFERENCIA', '=', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE');
+							        })
+	    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    							->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+	    							->NroSerie($serie)
+	    							->NroDocumento($documento)
+	    							->whereIn('WEB.asientos.TXT_REFERENCIA',$array_terminado_diario)
+	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000007')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 									->select(DB::raw('WEB.asientos.*'))
-									->orderby('CMP.DOCUMENTO_CTBLE.FEC_EMISION','asc')
+									->union($lista_compras1)
+									//->orderby('CMP.DOCUMENTO_CTBLE.FEC_EMISION','asc')
 	    							->get();
 
 		return $lista_compras;

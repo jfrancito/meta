@@ -4,16 +4,16 @@
       <th>NRO SERIE</th>
       <th>NRO DOCUMENTO</th>
       <th>PROVEEDOR</th>
+
       <th>TOTAL DEBE</th>
       <th>TOTAL HABER</th>
       <th>ESTADO</th>
+      <th>ASIENTO</th>
     </tr>
   </thead>
   <tbody>
     @foreach($listacompras as $index => $item)
-      <tr data_asiento_id = "{{$item->COD_ASIENTO}}" 
-        class='dobleclickpc seleccionar'
-        style="cursor: pointer;">
+      <tr>
         <td>{{$item->NRO_SERIE}}</td>
         <td>{{$item->NRO_DOC}}</td>
         <td class="cell-detail">
@@ -22,6 +22,7 @@
           <span class="cell-detail-description"><b>TIPO DOCUMENTO : </b> {{$item->TXT_CATEGORIA_TIPO_DOCUMENTO}}</span>
           <span class="cell-detail-description"><b>MONEDA : </b> {{$item->TXT_CATEGORIA_MONEDA}}</span>
         </td>
+
         <td>{{number_format($item->CAN_TOTAL_DEBE, $redondeo, '.', ',')}}</td>
         <td>{{number_format($item->CAN_TOTAL_HABER, $redondeo, '.', ',')}}</td>
         <td>            
@@ -31,6 +32,26 @@
                 <span class="badge badge-warning">{{$item->TXT_CATEGORIA_ESTADO_ASIENTO}}</span>
             @endif
         </td>        
+
+        <td class="rigth">
+          <div class="btn-group btn-hspace">
+            <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">Acción <span class="icon-dropdown mdi mdi-chevron-down"></span></button>
+            <ul role="menu" class="dropdown-menu pull-right">
+              <li>
+                <a href="#" class='clickasientocompra' data_asiento_id = "{{$item->COD_ASIENTO}}">
+                  Asiento compra
+                </a>
+              </li>
+              <li>
+                <a href="#" class='clickasientodiario' data_asiento_id = "{{$item->COD_ASIENTO}}">
+                  Asiento diario
+                </a>
+              </li>
+
+            </ul>
+          </div>
+        </td>
+
 
       </tr>                    
     @endforeach

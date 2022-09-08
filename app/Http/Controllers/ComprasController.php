@@ -299,6 +299,46 @@ class ComprasController extends Controller
 
 	}
 
+
+
+	public function actionTransicionConfiguracionAsientoContablesXDocumentos($idopcion,$idasiento,Request $request)
+	{
+
+		if($_POST)
+		{
+
+
+			$anio_asiento 					= $request['anio_asiento'];
+
+
+			$anio_confirmar 				= $request['anio_configuracion'];
+			$periodo_id_confirmar 			= $request['periodo_id_configuracion'];
+			$nro_serie_confirmar 			= $request['serie_configuracion'];
+			$nro_doc_confirmar 				= $request['documento_configuracion'];
+
+			$asiento 								= 	WEBAsiento::where('COD_ASIENTO','=',$idasiento)->first();
+
+			$asiento->COD_CATEGORIA_ESTADO_ASIENTO 	=   'IACHTE0000000032';
+			$asiento->TXT_CATEGORIA_ESTADO_ASIENTO 	=   'TRANSICION';
+			$asiento->FEC_USUARIO_MODIF_AUD 		=   $this->fechaactual;
+			$asiento->COD_USUARIO_MODIF_AUD 		=   Session::get('usuario_meta')->id;
+			$asiento->save();
+
+
+			Session::flash('periodo_id_confirmar', $periodo_id_confirmar);
+			Session::flash('nro_serie_confirmar', $nro_serie_confirmar);
+			Session::flash('nro_doc_confirmar', $nro_doc_confirmar);
+			Session::flash('anio_confirmar', $anio_confirmar);
+
+ 		 	return Redirect::to('/gestion-listado-compras/'.$idopcion)->with('bienhecho', 'Asiento Modelo '.$asiento->NRO_SERIE.'-'.$asiento->NRO_DOC.' transicion con exito');
+		
+		}
+
+
+	}
+
+
+
 	public function actionGonfirmarConfiguracionAsientoContablesXDocumentos($idopcion,$idasiento,Request $request)
 	{
 
@@ -345,6 +385,55 @@ class ComprasController extends Controller
 
 
 	}
+
+	public function actionAjaxModalDetalleAsientoTransicion(Request $request)
+	{
+
+
+		$asiento_id 			=   $request['asiento_id'];
+		$idopcion 				=   $request['idopcion'];
+
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+		$serie 					=   $request['serie'];
+		$documento 				=   $request['documento'];
+
+
+	    $asiento 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
+	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)->orderBy('NRO_LINEA', 'asc')->get();
+
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+	    $anio  					=   $this->anio;
+	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$sel_periodo 			=	'';
+
+		$orden					=	$this->co_orden_xdocumento_contable($asiento->TXT_REFERENCIA);
+		$sel_tipo_descuento		=	$this->co_orden_compra_tipo_descuento($orden);
+		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
+		$funcion 				= 	$this;
+		
+
+		return View::make('compras/modal/ajax/mdetalleasientotransicion',
+						 [
+						 	'asiento'					=> $asiento,
+						 	'listaasientomovimiento'	=> $listaasientomovimiento,
+						 	'combo_periodo'				=> $combo_periodo,
+						 	'combo_anio_pc'				=> $combo_anio_pc,
+						 	'anio'						=> $anio,
+						 	'sel_periodo'				=> $sel_periodo,
+						 	'sel_tipo_descuento'		=> $sel_tipo_descuento,
+						 	'combo_descuento'			=> $combo_descuento,
+						 	'orden'						=> $orden,
+						 	'idopcion'					=> $idopcion,
+						 	'anio'						=> $anio,
+						 	'periodo_id'				=> $periodo_id,
+						 	'serie'						=> $serie,
+						 	'documento'					=> $documento,
+						 	'ajax' 						=> true,						 	
+						 ]);
+	}
+
 
 
 	public function actionAjaxModalDetalleAsientoConfirmar(Request $request)
@@ -399,7 +488,83 @@ class ComprasController extends Controller
 						 ]);
 	}
 
+	public function actionAjaxModalDetalleAsientoDiario(Request $request)
+	{
 
+		$asiento_compra_id 		=   $request['asiento_id'];
+		$idopcion 				=   $request['idopcion'];
+
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+		$serie 					=   $request['serie'];
+		$documento 				=   $request['documento'];
+		$empresa 				=   Session::get('empresas_meta')->COD_EMPR;
+
+	    $asiento_compra 		= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_compra_id)->first();
+	    $cod_contable           =	$asiento_compra->TXT_REFERENCIA;
+	    $tipo_asiento 			=   'TAS0000000000007';
+	    $documento_anulado		=   1;
+
+		//generar_asiemto  DIARIO
+		$respuesta              =	$this->co_buscar_asiento_diario_compra($anio,$empresa,$cod_contable,$tipo_asiento,$documento_anulado);
+		$encontro_asiento       =   $respuesta[0]['codigo'];
+		$mensaje_asiento        =   $respuesta[0]['mensaje'];
+		$asiento_modelo_id      =   $respuesta[0]['asiento_modelo_id'];
+		$existe_asiento_diario  =	$this->co_existe_asiento_diario_compra($cod_contable,$tipo_asiento);
+
+		$asiento_id 		    =   '';
+
+		if($encontro_asiento=='1'){
+			if(count($existe_asiento_diario) <=0){
+
+				$respuesta          =	$this->co_asignar_asiento_diario_compra($anio,$empresa,$cod_contable,$tipo_asiento,$documento_anulado,$asiento_modelo_id);
+				$existe_asiento_diario  =	$this->co_existe_asiento_diario_compra($cod_contable,$tipo_asiento);		
+			}
+		}
+
+		if(count($existe_asiento_diario) >0){
+			$asiento_id 		    =   $existe_asiento_diario->COD_ASIENTO;		
+		}
+
+
+		$asiento 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
+	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)->orderBy('NRO_LINEA', 'asc')->get();
+
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+	    $anio  					=   $this->anio;
+	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$sel_periodo 			=	'';
+
+		$orden					=	$this->co_orden_xdocumento_contable($asiento_compra->TXT_REFERENCIA);
+		$sel_tipo_descuento		=	$this->co_orden_compra_tipo_descuento($orden);
+		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
+		$funcion 				= 	$this;
+		
+		return View::make('compras/modal/ajax/mdetalleasientodiario',
+						 [
+						 	'asiento'					=> $asiento,
+						 	'listaasientomovimiento'	=> $listaasientomovimiento,
+						 	'combo_periodo'				=> $combo_periodo,
+						 	'combo_anio_pc'				=> $combo_anio_pc,
+						 	'anio'						=> $anio,
+						 	'sel_periodo'				=> $sel_periodo,
+						 	'mensaje_asiento'			=> $mensaje_asiento,
+
+						 	'sel_tipo_descuento'		=> $sel_tipo_descuento,
+						 	'combo_descuento'			=> $combo_descuento,
+						 	'orden'						=> $orden,
+						 	'idopcion'					=> $idopcion,
+
+						 	'anio'						=> $anio,
+						 	'periodo_id'				=> $periodo_id,
+						 	'serie'						=> $serie,
+						 	'documento'					=> $documento,
+
+
+						 	'ajax' 						=> true,						 	
+						 ]);
+	}
 	public function actionGonfirmarAsientoContablesXDocumentos(Request $request)
 	{
 
@@ -498,16 +663,19 @@ class ComprasController extends Controller
 	    if($validarurl <> 'true'){return $validarurl;}
 	    /******************************************************/
 	    View::share('titulo','Gestionar asiento de compras');
-
+	    $empresa_id = Session::get('empresas_meta')->COD_EMPR;
 
 		if(Session::has('periodo_id_confirmar')){
 			$sel_periodo 			=	Session::get('periodo_id_confirmar');
 			$sel_serie 				=	Session::get('nro_serie_confirmar');
 			$sel_nrodoc 			=	Session::get('nro_doc_confirmar');
 			$anio 					=	Session::get('anio_confirmar');
-        	$listacompras     		= 	$this->co_lista_compras_asiento($anio,$sel_periodo,Session::get('empresas_meta')->COD_EMPR,$sel_serie,$sel_nrodoc);
 
-        	$listacomprasterminado  = 	$this->co_lista_compras_terminado_asiento($anio,$sel_periodo,Session::get('empresas_meta')->COD_EMPR,$sel_serie,$sel_nrodoc);
+			$array_terminado_diario =   $this->co_array_terminado_diario($sel_periodo,$empresa_id);
+
+        	$listacompras     		= 	$this->co_lista_compras_asiento($anio,$sel_periodo,Session::get('empresas_meta')->COD_EMPR,$sel_serie,$sel_nrodoc,$array_terminado_diario);
+
+        	$listacomprasterminado  = 	$this->co_lista_compras_terminado_asiento($anio,$sel_periodo,Session::get('empresas_meta')->COD_EMPR,$sel_serie,$sel_nrodoc,$array_terminado_diario);
 
 		}else{
 			$sel_periodo 			=	'';
@@ -549,9 +717,12 @@ class ComprasController extends Controller
 		$periodo_id 			=   $request['periodo_id'];
 		$serie 					=   $request['serie'];
 		$documento 				=   $request['documento'];
-        $listacompras     		= 	$this->co_lista_compras_asiento($anio,$periodo_id,Session::get('empresas_meta')->COD_EMPR,$serie,$documento);
+		$empresa_id 			= 	Session::get('empresas_meta')->COD_EMPR;
 
-        $listacomprasterminado  = 	$this->co_lista_compras_terminado_asiento($anio,$periodo_id,Session::get('empresas_meta')->COD_EMPR,$serie,$documento);
+		$array_terminado_diario =   $this->co_array_terminado_diario($periodo_id,$empresa_id);
+        $listacompras     		= 	$this->co_lista_compras_asiento($anio,$periodo_id,Session::get('empresas_meta')->COD_EMPR,$serie,$documento,$array_terminado_diario);
+
+        $listacomprasterminado  = 	$this->co_lista_compras_terminado_asiento($anio,$periodo_id,Session::get('empresas_meta')->COD_EMPR,$serie,$documento,$array_terminado_diario);
 
 		$funcion 				= 	$this;
 		

@@ -26,6 +26,9 @@
 	</div>
 </div>
 <div class="modal-body">
+
+	<div class="scroll_text scroll_text_heigth_aler" style = "padding: 0px !important;"> 
+
 	<table class="table table-condensed table-striped">
 	    <thead>
 	      <tr>
@@ -63,11 +66,12 @@
 	    </tfoot>
 
 	</table>
+	</div>
 </div>
 
 <div class="modal-footer">
-	<button type="button" data-dismiss="modal" class="btn btn-default btn-space">Cerrar</button>
 
+	<button type="button" data-dismiss="modal" class="btn btn-default btn-space modal-close">Cerrar</button>
 </div>
 
 
