@@ -58,10 +58,15 @@ trait MigracionNavasoftTraits
 	   		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$item->COD_PERIODO)->first();
 	   		$moneda 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_MONEDA)->first();
 
-
     		$fecha_emision  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
     		$tipo_documento  		= 	$categoria->CODIGO_SUNAT;
-    		$ndoc  					= 	$item->NRO_SERIE.'-'.$item->NRO_DOC;
+
+    		if($item->COD_CATEGORIA_TIPO_ASIENTO == 'TAS0000000000004'){
+    			$ndoc  				= 	$item->NRO_SERIE.'-'.substr($item->NRO_DOC, -7);
+    		}else{
+    			$ndoc  				= 	$item->NRO_SERIE.'-'.$item->NRO_DOC;
+    		}
+
     		$nombre_cliente  		= 	$empresa->NOM_EMPR;
     		$ruc  					= 	$empresa->NRO_DOCUMENTO;
 
@@ -104,9 +109,9 @@ trait MigracionNavasoftTraits
 	    		$TOTIVA 				= 	'-';
 
 	    		if($itemp->IND_IGV == 1){
-	    			$aigv 					= 	'S';
+	    			$aigv 					= 	"'S";
 	    		}else{
-	    			$aigv 					= 	'N';
+	    			$aigv 					= 	"'N";
 	    		}
 	      		
 	    		if($itemp->IND_MATERIAL_SERVICIO == 'M'){
@@ -117,7 +122,7 @@ trait MigracionNavasoftTraits
 
 
 	      		$codalm 				= 	'01';      		
-	      		$CODSCC 				= 	'';
+	      		$CODSCC 				= 	"'";
 
 		    	$array_nuevo_asiento 	=	array();
 				$array_nuevo_asiento    =	array(

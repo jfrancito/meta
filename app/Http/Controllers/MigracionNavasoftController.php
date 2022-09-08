@@ -138,8 +138,14 @@ class MigracionNavasoftController extends Controller
 
 		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);
 
-		$titulo 				=   'MstImp-'.Session::get('empresas_meta')->NOM_EMPR.'-'.$tipoasiento->NOM_CATEGORIA.'-'.$periodo->TXT_CODIGO;
+		if($tipo_asiento_id=='TAS0000000000004'){
+			$nombre_excel = 'Compras';
+		}else{
+			$nombre_excel = 'Ventas';
+		}
 
+		$titulo 				=   'MstImp_'.$nombre_excel;
+		
 	    Excel::create($titulo, function($excel) use ($lista_migracion) {
 	        $excel->sheet('Hoja1', function($sheet) use ($lista_migracion) {
 	            $sheet->loadView('navasoft/excel/elistamigracionnavasoft')->with('lista_migracion',$lista_migracion);         
