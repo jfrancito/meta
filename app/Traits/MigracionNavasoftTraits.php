@@ -86,18 +86,45 @@ trait MigracionNavasoftTraits
       		$codvta 				= 	'';
       		$CODSCC 				= 	'';
 
+
+      		$can_valor 				=	0;
 	    	foreach($lista_producto as $indexp => $itemp){
 
-	    		$productoempresa    = 	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
-	    								->where('producto_id','=',$itemp->COD_PRODUCTO)
-	    								->where('anio','=',$anio)
-	    								->first();
+	    		$can_valor 			=	$itemp->CAN_VALOR_VTA;
 
-	    		if(count($productoempresa)>0){
-	    				$codi  					= 	$productoempresa->codigo_migracion;
+
+	    		if($moneda->TXT_REFERENCIA == 's'){
+
+	    			$asientomovimientos		=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)
+	    										->whereRaw('(CAN_DEBE_MN + CAN_HABER_MN) = ?', [$can_valor])
+	    										->where('IND_PRODUCTO','=',1)
+	    										->first();
 	    		}else{
-	    				$codi  					= 	'';	    			
+	    			$asientomovimientos		=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)
+	    										->where('IND_PRODUCTO','=',1)
+	    										->whereRaw('(CAN_DEBE_ME + CAN_HABER_ME) = ?', [$can_valor])
+	    										->first();
 	    		}
+
+	    		$codi  						= 	'';	
+	    		if(count($asientomovimientos)>0){
+	    			$cc 					= 	WEBCuentaContable::where('id','=',$asientomovimientos->COD_CUENTA_CONTABLE)
+	    										->first();
+							
+	    			$codi  					= 	$cc->codigo_migracion;							
+	    		}
+
+
+	    		// $productoempresa    = 	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+	    		// 						->where('producto_id','=',$itemp->COD_PRODUCTO)
+	    		// 						->where('anio','=',$anio)
+	    		// 						->first();
+
+	    		// if(count($productoempresa)>0){
+	    		// 		$codi  					= 	$productoempresa->codigo_migracion;
+	    		// }else{
+	    		// 		$codi  					= 	'';	    			
+	    		// }
 
 
 	    		$CANT 					=	$itemp->CAN_PRODUCTO;
