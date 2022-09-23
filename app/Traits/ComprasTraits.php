@@ -461,8 +461,11 @@ trait ComprasTraits
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 									->select(DB::raw('WEB.asientos.*'))
 									->union($lista_compras1)
-									//->orderby('CMP.DOCUMENTO_CTBLE.FEC_EMISION','asc')
+									->orderby('FEC_USUARIO_MODIF_AUD','asc')
 	    							->get();
+
+	    
+
 
 		return $lista_compras;
 

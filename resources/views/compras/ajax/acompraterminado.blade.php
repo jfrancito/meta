@@ -1,6 +1,7 @@
 <table id="item1" class="table table-striped table-borderless table-hover td-color-borde td-padding-7 listatabla">
   <thead>
     <tr>
+      <th>ITEM</th>
       <th>NRO SERIE</th>
       <th>NRO DOCUMENTO</th>
       <th>PROVEEDOR</th>
@@ -14,6 +15,7 @@
       <tr data_asiento_id = "{{$item->COD_ASIENTO}}" 
         class='dobleclickpcreversion seleccionar'
         style="cursor: pointer;">
+        <td>{{$index + 1}}</td>
         <td>{{$item->NRO_SERIE}}</td>
         <td>{{$item->NRO_DOC}}</td>
         <td class="cell-detail">
