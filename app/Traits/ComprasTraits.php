@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Crypt;
 use App\Modelos\WEBViewMigrarCompras;
 use App\Modelos\WEBAsientoModelo;
 use App\Modelos\WEBAsiento;
+use App\Modelos\WEBAsientoMovimiento;
+
 use App\Modelos\CMPReferecenciaAsoc;
 use App\Modelos\CMPOrden;
 use App\Modelos\STDEmpresa;
 use App\Modelos\WEBCuentaDetraccion;
 use App\Modelos\CMPCategoria;
-
+use App\Modelos\WEBCuentaContable;
 
 use View;
 use Session;
@@ -26,6 +28,203 @@ use PDO;
 
 trait ComprasTraits
 {
+
+    public function co_existe_asiento_reversion($empresa_id,$asiento){
+
+        $ind_existe      =   0;
+
+		$asiento		=	WEBAsiento::where('TXT_REFERENCIA','=',$asiento->COD_ASIENTO)
+							->where('COD_ESTADO','=',1)
+							->first();
+
+
+		if(count($asiento)>0){
+			 $ind_existe      =   1;
+		}
+
+
+        return $ind_existe;
+
+    }
+
+
+
+
+    public function co_cabecera_asiento($periodo,$empresa_id,$monto_total,$glosa,$moneda_id,$moneda,$tipo_cambio,$tipo_referencia,$referencia){
+
+        $array_detalle_asiento      =   array();
+
+        $array_nuevo_asiento        =   array();
+        $array_nuevo_asiento        =   array(
+            "periodo_id"                => $periodo->COD_PERIODO,
+            "nombre_periodo"            => $periodo->TXT_NOMBRE,
+            "fecha"                     => substr($periodo->FEC_FIN, 0, 10),
+            "empresa_id"                => $empresa_id,
+            "glosa"                     => $glosa,
+            "tipo_referencia"           => $tipo_referencia,
+            "referencia"           		=> $referencia,
+            "tipo_cambio"               => $tipo_cambio,
+            "moneda_id"                 => $moneda_id,
+            "moneda"                    => $moneda,
+            "total_debe"                => $monto_total,
+            "total_haber"               => $monto_total,
+        );
+
+        array_push($array_detalle_asiento,$array_nuevo_asiento);
+        return $array_detalle_asiento;
+
+    }
+
+
+    public function co_detalle_asiento($asiento_id,$periodo,$empresa_id,$moneda_id,$moneda,$tipo_cambio,$asiento){
+
+        $array_detalle_asiento      =   array();
+
+
+        ///////////////////////////////// (4) //////////////////////////////////////
+	    $detalle_4 					= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)
+	    								->where('TXT_CUENTA_CONTABLE','like','4%')
+	    								->first();
+
+	    $detalle_6 					= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)
+	    								->where('TXT_CUENTA_CONTABLE','like','6%')
+	    								->first();
+
+        $array_nuevo_asiento        =   array();
+        $array_nuevo_asiento        =   array(
+            "linea"                     => 1,
+            "cuenta_id"                 => $detalle_4->COD_CUENTA_CONTABLE,
+            "cuenta_nrocuenta"          => $detalle_4->TXT_CUENTA_CONTABLE,
+            "glosa"                     => $detalle_4->TXT_GLOSA,
+            "empresa_id"                => $empresa_id,
+            "moneda_id"                 => $moneda_id,
+            "moneda"                    => $moneda,
+            "total_debe"                => $detalle_6->CAN_DEBE_MN,
+            "total_haber"               => $detalle_6->CAN_HABER_MN,
+            "total_debe_dolar"          => $detalle_6->CAN_DEBE_ME,
+            "total_haber_dolar"         => $detalle_6->CAN_HABER_ME
+        );
+
+        array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+        ///////////////////////////////// (401111 IGV) //////////////////////////////////////
+
+	    $detalle_16 				= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)
+	    								->where('TXT_CUENTA_CONTABLE','like','16%')
+	    								->first();
+
+	   	$cuenta 					=	WEBCuentaContable::where('anio','=',$periodo->COD_ANIO)
+	   									->where('empresa_id','=',$empresa_id)
+	   									->where('nro_cuenta','=','401111')
+	   									->first();
+
+        $array_nuevo_asiento        =   array();
+        $array_nuevo_asiento        =   array(
+            "linea"                     => 2,
+            "cuenta_id"                 => $cuenta->id,
+            "cuenta_nrocuenta"          => $cuenta->nro_cuenta,
+            "glosa"                     => $cuenta->nombre,
+            "empresa_id"                => $empresa_id,
+            "moneda_id"                 => $moneda_id,
+            "moneda"                    => $moneda,
+            "total_debe"                => $detalle_16->CAN_DEBE_MN,
+            "total_haber"               => $detalle_16->CAN_HABER_MN,
+            "total_debe_dolar"          => $detalle_16->CAN_DEBE_ME,
+            "total_haber_dolar"         => $detalle_16->CAN_HABER_ME
+        );
+
+        array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+        ///////////////////////////////// (401111 IGV) //////////////////////////////////////
+
+        $nro_cuenta_construido 		=	substr($detalle_4->TXT_CUENTA_CONTABLE, 0, 2).'12'.substr($detalle_4->TXT_CUENTA_CONTABLE, -2);
+
+	   	$cuenta 					=	WEBCuentaContable::where('anio','=',$periodo->COD_ANIO)
+	   									->where('empresa_id','=',$empresa_id)
+	   									->where('nro_cuenta','=',$nro_cuenta_construido)
+	   									->first();
+
+        $array_nuevo_asiento        =   array();
+        $array_nuevo_asiento        =   array(
+            "linea"                     => 3,
+            "cuenta_id"                 => $cuenta->id,
+            "cuenta_nrocuenta"          => $cuenta->nro_cuenta,
+            "glosa"                     => $cuenta->nombre,
+            "empresa_id"                => $empresa_id,
+            "moneda_id"                 => $moneda_id,
+            "moneda"                    => $moneda,
+            "total_debe"                => $detalle_4->CAN_DEBE_MN,
+            "total_haber"               => $detalle_4->CAN_HABER_MN,
+            "total_debe_dolar"          => $detalle_4->CAN_DEBE_ME,
+            "total_haber_dolar"         => $detalle_4->CAN_HABER_ME
+        );
+
+        array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+        return $array_detalle_asiento;
+
+    }
+
+
+    public function co_detalle_asiento_compra($asiento_id,$periodo,$empresa_id,$moneda_id,$moneda,$tipo_cambio,$asiento){
+
+        $array_detalle_asiento      =   array();
+
+
+        ///////////////////////////////// (4) //////////////////////////////////////
+	    $detalle_4 					= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)
+	    								->where('TXT_CUENTA_CONTABLE','like','4%')
+	    								->first();
+
+	    $detalle_16 				= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)
+	    								->where('TXT_CUENTA_CONTABLE','like','16%')
+	    								->first();
+
+        $array_nuevo_asiento        =   array();
+        $array_nuevo_asiento        =   array(
+            "linea"                     => 1,
+            "cuenta_id"                 => $detalle_4->COD_CUENTA_CONTABLE,
+            "cuenta_nrocuenta"          => $detalle_4->TXT_CUENTA_CONTABLE,
+            "glosa"                     => $detalle_4->TXT_GLOSA,
+            "empresa_id"                => $empresa_id,
+            "moneda_id"                 => $moneda_id,
+            "moneda"                    => $moneda,
+            "total_debe"                => $detalle_16->CAN_DEBE_MN,
+            "total_haber"               => $detalle_16->CAN_HABER_MN,
+            "total_debe_dolar"          => $detalle_16->CAN_DEBE_ME,
+            "total_haber_dolar"         => $detalle_16->CAN_HABER_ME
+        );
+
+        array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+        ///////////////////////////////// (4) //////////////////////////////////////
+
+	    $detalle_16 				= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)
+	    								->where('TXT_CUENTA_CONTABLE','like','16%')
+	    								->first();
+
+        $array_nuevo_asiento        =   array();
+        $array_nuevo_asiento        =   array(
+            "linea"                     => 2,
+            "cuenta_id"                 => $detalle_16->COD_CUENTA_CONTABLE,
+            "cuenta_nrocuenta"          => $detalle_16->TXT_CUENTA_CONTABLE,
+            "glosa"                     => $detalle_16->TXT_GLOSA,
+            "empresa_id"                => $empresa_id,
+            "moneda_id"                 => $moneda_id,
+            "moneda"                    => $moneda,
+            "total_debe"                => $detalle_16->CAN_HABER_MN,
+            "total_haber"               => $detalle_16->CAN_DEBE_MN,
+            "total_debe_dolar"          => $detalle_16->CAN_HABER_ME,
+            "total_haber_dolar"         => $detalle_16->CAN_DEBE_ME
+        );
+
+        array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+        return $array_detalle_asiento;
+
+    }
+
 
 	private function co_existe_asiento_diario_compra($cod_contable,$tipo_asiento)
 	{
@@ -435,7 +634,7 @@ trait ComprasTraits
 	private function co_lista_compras_terminado_asiento($anio,$periodo_id,$empresa_id,$serie,$documento,$array_terminado_diario)
 	{
 
-	    $lista_compras1 		= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', function ($join) use ($periodo_id,$empresa_id){
+	    $lista_compras 		= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', function ($join) use ($periodo_id,$empresa_id){
 							            $join->on('WEB.asientos.TXT_REFERENCIA', '=', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE');
 							        })
 	    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
@@ -444,11 +643,38 @@ trait ComprasTraits
 	    							->NroDocumento($documento)
 	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
-									->select(DB::raw('WEB.asientos.*'));
-									//->orderby('CMP.DOCUMENTO_CTBLE.FEC_EMISION','asc')
-	    							//->get();
+									->select(DB::raw('WEB.asientos.*'))
+									->orderby('FEC_USUARIO_MODIF_AUD','asc')
+	    							->get();
 
 	    		
+	    // $lista_compras 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', function ($join) use ($periodo_id,$empresa_id){
+					// 		            $join->on('WEB.asientos.TXT_REFERENCIA', '=', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE');
+					// 		        })
+	    // 							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    // 							->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+	    // 							->NroSerie($serie)
+	    // 							->NroDocumento($documento)
+	    // 							->whereIn('WEB.asientos.TXT_REFERENCIA',$array_terminado_diario)
+	    // 							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000007')
+	    // 							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+					// 				->select(DB::raw('WEB.asientos.*'))
+					// 				->union($lista_compras1)
+					// 				->orderby('FEC_USUARIO_MODIF_AUD','asc')
+	    // 							->get();
+
+	    
+
+
+		return $lista_compras;
+
+	}
+
+
+	private function co_lista_diarios_terminado_asiento($anio,$periodo_id,$empresa_id,$serie,$documento,$array_terminado_diario)
+	{
+
+
 	    $lista_compras 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', function ($join) use ($periodo_id,$empresa_id){
 							            $join->on('WEB.asientos.TXT_REFERENCIA', '=', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE');
 							        })
@@ -460,7 +686,7 @@ trait ComprasTraits
 	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000007')
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 									->select(DB::raw('WEB.asientos.*'))
-									->union($lista_compras1)
+									//->union($lista_compras1)
 									->orderby('FEC_USUARIO_MODIF_AUD','asc')
 	    							->get();
 

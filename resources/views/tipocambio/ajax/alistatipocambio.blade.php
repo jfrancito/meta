@@ -28,7 +28,7 @@
     @foreach($listatipocambio as $item)
       <tr 
           class='fila_tipo_cambio'
-          data_fecha_tipo_cambio = "{{$item->FEC_CAMBIO}}"
+          data_fecha_tipo_cambio = "{{str_replace('-','',$item->FEC_CAMBIO)}}"
           data_edit_tipo_cambio = "0"
         >
         <td>{{date_format(date_create($item->FEC_CAMBIO), 'd-m-Y')}}</td>

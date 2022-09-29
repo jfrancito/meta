@@ -3,15 +3,23 @@
     <ul class="nav nav-tabs">
       <li class="active"><a href="#ctransicion" data-toggle="tab">Lista compra transicion</a></li>
       <li><a href="#cterminado" data-toggle="tab">Lista compra terminado</a></li>
+      <li><a href="#cdiario" data-toggle="tab">Lista diario terminado</a></li>
     </ul>
 
     <div class="tab-content">
       <div id="ctransicion" class="tab-pane active cont">
         @include('compras.ajax.acompratransision')
       </div>
+
+
       <div id="cterminado" class="tab-pane cont">
         @include('compras.ajax.acompraterminado')
       </div>
+
+      <div id="cdiario" class="tab-pane cont">
+        @include('compras.ajax.adiarioterminado')
+      </div>
+
     </div>
     
   </div>

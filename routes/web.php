@@ -117,6 +117,8 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/asiento-contables-transicion-configuracion-xdocumentos/{idopcion}/{idasiento}', 'ComprasController@actionTransicionConfiguracionAsientoContablesXDocumentos');
 
 	Route::any('/ajax-modal-detalle-asiento-diario', 'ComprasController@actionAjaxModalDetalleAsientoDiario');
+	Route::any('/ajax-modal-detalle-asiento-diario-reversion', 'ComprasController@actionAjaxModalDetalleAsientoDiarioReversion');
+
 
 	Route::any('/gestion-deposito-masivo-detraccion/{idopcion}', 'ComprasController@actionListarDepositoMasivoDetraccion');
 	Route::any('/ajax-listado-deposito-masivo-detraccion', 'ComprasController@actionAjaxListarDepositoMasivoDetraccion');
@@ -125,6 +127,8 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-configuracion-cuenta-detraccion/{idopcion}', 'ComprasController@actionConfiguracionCuentaDetraccion');
 	Route::any('/agregar-cuenta-detraccion/{idopcion}', 'ComprasController@actionAgregarCuentaDetraccion');
 	Route::any('/modificar-cuenta-detraccion/{idopcion}/{documento}', 'ComprasController@actionModificarCuentaDetraccion');
+	Route::any('/diario-reversion-guardar-data/{idopcion}', 'ComprasController@actionGuardarDiarioReversionCuentaContable');
+
 
 
 	Route::any('/ajax-modal-detalle-documento-sin-enviar-sunat', 'AlertaCotroller@actionAjaxModalDetalleDocumentoSinEnviarSunat');

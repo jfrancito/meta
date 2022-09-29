@@ -43,14 +43,32 @@ class ConfiguracioTipoCambioController extends Controller
 
 		foreach($data_tipo_cambio as $key => $row) {
 
-			$data_fecha_tipo_cambio 	=  	$row['fecha_tipo_cambio'];
+			$data_fecha_tipo_cambio 	=  	date_format(date_create($row['fecha_tipo_cambio']), 'Y-m-d');
+			$fechaComoEntero = strtotime($data_fecha_tipo_cambio);
+			//$data_fecha_tipo_cambio 	=  	str_replace("-","",$data_fecha_tipo_cambio);
 			$can_compra_sbs 			=  	(float)$row['can_compra_sbs'];
 			$can_venta_sbs 				=  	(float)$row['can_venta_sbs'];
 
-			$tipocambio 				=   CMPTipoCambio::where('FEC_CAMBIO','=',$data_fecha_tipo_cambio)->first();
-			$tipocambio->CAN_COMPRA_SBS = 	$can_compra_sbs;
-			$tipocambio->CAN_VENTA_SBS 	= 	$can_venta_sbs;
-			$tipocambio->save();
+
+			$dia 						=  	str_replace('0', '', date("d", $fechaComoEntero));
+			$mes 						=  	str_replace('0', '', date("m", $fechaComoEntero));
+			$anio 						=  	date("Y", $fechaComoEntero);
+
+            DB::connection('sqlsrv')->table('CMP.TIPO_CAMBIO')->whereRaw('day(FEC_CAMBIO) = ?', [$dia])
+											->whereRaw('MONTH(FEC_CAMBIO) = ?', [$mes])
+											->whereRaw('YEAR(FEC_CAMBIO) = ?', [$anio])
+            ->update(['CAN_COMPRA_SBS' => $can_compra_sbs,'CAN_VENTA_SBS' => $can_venta_sbs]);
+
+			// $tipocambio 				=   CMPTipoCambio::whereRaw('day(FEC_CAMBIO) = ?', [$dia])
+			// 								->whereRaw('MONTH(FEC_CAMBIO) = ?', [$mes])
+			// 								->whereRaw('YEAR(FEC_CAMBIO) = ?', [$anio])
+			// 								->first();
+
+			// $tipocambio->CAN_COMPRA_SBS = 	$can_compra_sbs;
+			// $tipocambio->CAN_VENTA_SBS 	= 	$can_venta_sbs;
+			// $tipocambio->save();
+			// dd($tipocambio);
+
 
 	    } 
 

@@ -171,6 +171,22 @@ $(document).ready(function(){
     });
 
 
+    $(".compras").on('click','.btn-guardar-configuracion-reversion', function(e){
+
+        var anio_asiento                =   $('#anio_asiento').val();
+        var periodo_asiento_id          =   $('#periodo_asiento_id').val();
+
+        if(anio_asiento ==''){ alerterrorajax("Seleccione un año."); return false;}
+        if(periodo_asiento_id ==''){ alerterrorajax("Seleccione un periodo."); return false;}
+
+        abrircargando();
+
+        return true;
+
+    });
+
+
+
 
     $(".compras").on('click','.clickasientodiario', function(e) {
 
@@ -192,6 +208,32 @@ $(document).ready(function(){
                                             documento               : documento,
                                         };
         ajax_modal(data,"/ajax-modal-detalle-asiento-diario",
+                  "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
+
+    });
+
+
+    $(".compras").on('click','.clickcrearasiento', function(e) {
+
+        var _token                  =   $('#token').val();
+        var asiento_id              =   $(this).attr('data_asiento_id');
+        var idopcion                =   $('#idopcion').val();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();
+        var serie                   =   $('#serie').val();
+        var documento               =   $('#documento').val();
+
+
+        data                        =   {
+                                            _token                  : _token,
+                                            asiento_id              : asiento_id,
+                                            idopcion                : idopcion,
+                                            anio                    : anio,
+                                            periodo_id              : periodo_id,
+                                            serie                   : serie,
+                                            documento               : documento,
+                                        };
+        ajax_modal(data,"/ajax-modal-detalle-asiento-diario-reversion",
                   "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
 
     });
