@@ -116,8 +116,12 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-detalle-asiento-transicion', 'ComprasController@actionAjaxModalDetalleAsientoTransicion');	
 	Route::any('/asiento-contables-transicion-configuracion-xdocumentos/{idopcion}/{idasiento}', 'ComprasController@actionTransicionConfiguracionAsientoContablesXDocumentos');
 
-	Route::any('/ajax-modal-detalle-asiento-diario', 'ComprasController@actionAjaxModalDetalleAsientoDiario');
+	Route::any('/ajax-modal-detalle-asiento-diario-compra', 'ComprasController@actionAjaxModalDetalleAsientoDiarioCompra');
 	Route::any('/ajax-modal-detalle-asiento-diario-reversion', 'ComprasController@actionAjaxModalDetalleAsientoDiarioReversion');
+	Route::any('/ajax-modal-crear-detalle-asiento-diario', 'ComprasController@actionAjaxModalCrearDetalleAsientoDiario');
+
+	Route::any('/popup-detalle-asiento-diario-compra/{anio}/{asiento_compra_id}', 'ComprasController@actionPopUpDetalleAsientoDiarioCompra');
+
 
 
 	Route::any('/gestion-deposito-masivo-detraccion/{idopcion}', 'ComprasController@actionListarDepositoMasivoDetraccion');

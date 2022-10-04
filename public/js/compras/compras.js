@@ -188,6 +188,32 @@ $(document).ready(function(){
 
 
 
+    $(".compras").on('click','.clickasientodiariocompra', function(e) {
+
+        var _token                  =   $('#token').val();
+        var asiento_id              =   $(this).attr('data_asiento_id');
+        var idopcion                =   $('#idopcion').val();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();
+        var serie                   =   $('#serie').val();
+        var documento               =   $('#documento').val();
+
+
+        data                        =   {
+                                            _token                  : _token,
+                                            asiento_id              : asiento_id,
+                                            idopcion                : idopcion,
+                                            anio                    : anio,
+                                            periodo_id              : periodo_id,
+                                            serie                   : serie,
+                                            documento               : documento,
+                                        };
+        ajax_modal(data,"/ajax-modal-detalle-asiento-diario-compra",
+                  "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
+
+    });
+
+
     $(".compras").on('click','.clickasientodiario', function(e) {
 
         var _token                  =   $('#token').val();
@@ -207,10 +233,11 @@ $(document).ready(function(){
                                             serie                   : serie,
                                             documento               : documento,
                                         };
-        ajax_modal(data,"/ajax-modal-detalle-asiento-diario",
+        ajax_modal(data,"/ajax-modal-crear-detalle-asiento-diario",
                   "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
 
     });
+
 
 
     $(".compras").on('click','.clickcrearasiento', function(e) {

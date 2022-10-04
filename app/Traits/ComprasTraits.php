@@ -226,11 +226,12 @@ trait ComprasTraits
     }
 
 
-	private function co_existe_asiento_diario_compra($cod_contable,$tipo_asiento)
+	private function co_existe_asiento_diario_compra($cod_contable,$tipo_asiento,$objeto)
 	{
 
 		$asiento		=	WEBAsiento::where('TXT_REFERENCIA','=',$cod_contable)
 							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
+							->where('COD_OBJETO_ORIGEN','=',$objeto)
 							->where('COD_CATEGORIA_ESTADO_ASIENTO','<>','IACHTE0000000024')
 							->first();
 				
@@ -243,7 +244,7 @@ trait ComprasTraits
 
 		$existe 					=		'1';
 
-        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO 
+        $stmt2 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO 
 											@anio = ?,
 											@empresa = ?,
 											@cod_contable = ?,
@@ -251,15 +252,42 @@ trait ComprasTraits
 											@asiento_modelo_id = ?,
 											@ind_anulado = ?');
 
+        $stmt2->bindParam(1, $anio ,PDO::PARAM_STR);                   
+        $stmt2->bindParam(2, $empresa  ,PDO::PARAM_STR);
+        $stmt2->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
+        $stmt2->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
+        $stmt2->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
+        $stmt2->bindParam(6, $documento_anulado  ,PDO::PARAM_STR);
+        $stmt2->execute();	
+
+
+	    $asiento 					= 		WEBAsiento::where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000007')
+	    									->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000032')
+	    									->where('WEB.asientos.COD_OBJETO_ORIGEN','=','COMPRA-DIARIOCOMPRA')
+	    									->where('WEB.asientos.TXT_REFERENCIA','=',$cod_contable)
+	    									->where('WEB.asientos.COD_ESTADO','=',1)
+	    									->first();
+
+	    $COD_ASIENTO 				=		$asiento->COD_ASIENTO;
+
+
+        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO_DIARIO 
+											@anio = ?,
+											@empresa = ?,
+											@cod_contable = ?,
+											@cod_tipo_asiento = ?,
+											@asiento_modelo_id = ?,
+											@ind_anulado = ?,
+											@COD_ASIENTO = ?');
+
         $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
-        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
+        $stmt->bindParam(2, $empresa ,PDO::PARAM_STR);
         $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
         $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
         $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
         $stmt->bindParam(6, $documento_anulado  ,PDO::PARAM_STR);
+        $stmt->bindParam(7, $COD_ASIENTO  ,PDO::PARAM_STR);
         $stmt->execute();	
-
-
 
 		return $existe;
 	}

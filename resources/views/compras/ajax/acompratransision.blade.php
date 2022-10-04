@@ -43,10 +43,17 @@
                 </a>
               </li>
               <li>
+                <a href="#" class='clickasientodiariocompra' data_asiento_id = "{{$item->COD_ASIENTO}}">
+                  Asiento diario compra
+                </a>
+              </li>
+
+              <li>
                 <a href="#" class='clickasientodiario' data_asiento_id = "{{$item->COD_ASIENTO}}">
                   Asiento diario
                 </a>
               </li>
+
 
             </ul>
           </div>

@@ -31,7 +31,7 @@ use Session;
 use Hashids;
 Use Nexmo;
 use Keygen;
-
+use PDO;
 
 
 use Illuminate\Support\Facades\Storage;
@@ -43,6 +43,228 @@ class ComprasController extends Controller
 	use AsientoModeloTraits;
 	use PlanContableTraits;
 	use ComprasTraits;
+
+
+
+
+	public function actionAjaxModalCrearDetalleAsientoDiario(Request $request)
+	{
+
+		$asiento_compra_id 		=   $request['asiento_id'];
+		$idopcion 				=   $request['idopcion'];
+
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+		$serie 					=   $request['serie'];
+		$documento 				=   $request['documento'];
+		$empresa 				=   Session::get('empresas_meta')->COD_EMPR;
+
+	    $asiento_compra 		= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_compra_id)->first();
+
+	    $existe_asiento_diario  =	$this->co_existe_asiento_diario_compra($asiento_compra->TXT_REFERENCIA,'TAS0000000000007','COMPRA-DIARIO');
+
+	    if(count($existe_asiento_diario)<=0){
+
+	  
+		    //ASIENTO
+			$IND_TIPO_OPERACION = 'I';
+			$COD_ASIENTO = '';
+			$COD_EMPR = $asiento_compra->COD_EMPR;
+			$COD_CENTRO = $asiento_compra->COD_CENTRO;
+			$COD_PERIODO = $asiento_compra->COD_PERIODO;
+			$COD_CATEGORIA_TIPO_ASIENTO = 'TAS0000000000007';
+			$TXT_CATEGORIA_TIPO_ASIENTO = 'DIARIO';
+			$NRO_ASIENTO = $asiento_compra->NRO_ASIENTO;
+			$FEC_ASIENTO = $asiento_compra->FEC_ASIENTO;
+			$TXT_GLOSA = str_replace("COMPRA", "DIARIO", $asiento_compra->TXT_GLOSA);
+
+			$COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000032';
+			$TXT_CATEGORIA_ESTADO_ASIENTO = 'TRANSICION';
+			$COD_CATEGORIA_MONEDA = $asiento_compra->COD_CATEGORIA_MONEDA;
+			$TXT_CATEGORIA_MONEDA = $asiento_compra->TXT_CATEGORIA_MONEDA;
+			$CAN_TIPO_CAMBIO = $asiento_compra->CAN_TIPO_CAMBIO;
+			$CAN_TOTAL_DEBE = $asiento_compra->CAN_TOTAL_DEBE;
+			$CAN_TOTAL_HABER = $asiento_compra->CAN_TOTAL_HABER;
+			$COD_ASIENTO_EXTORNO = $asiento_compra->COD_ASIENTO_EXTORNO;
+			$COD_ASIENTO_EXTORNADO = $asiento_compra->COD_ASIENTO_EXTORNADO;
+			$IND_EXTORNO = $asiento_compra->IND_EXTORNO;
+
+			$COD_ASIENTO_MODELO = $asiento_compra->COD_ASIENTO_MODELO;
+			$TXT_TIPO_REFERENCIA = $asiento_compra->TXT_TIPO_REFERENCIA;
+			$TXT_REFERENCIA = $asiento_compra->TXT_REFERENCIA;
+			$COD_ESTADO = $asiento_compra->COD_ESTADO;
+			$COD_USUARIO_REGISTRO = $asiento_compra->COD_USUARIO_REGISTRO;
+			$COD_MOTIVO_EXTORNO = $asiento_compra->COD_MOTIVO_EXTORNO;
+			$GLOSA_EXTORNO = $asiento_compra->GLOSA_EXTORNO;
+			$COD_EMPR_CLI = $asiento_compra->COD_EMPR_CLI;
+			$TXT_EMPR_CLI = $asiento_compra->TXT_EMPR_CLI;
+			$COD_CATEGORIA_TIPO_DOCUMENTO = $asiento_compra->COD_CATEGORIA_TIPO_DOCUMENTO;
+
+			$TXT_CATEGORIA_TIPO_DOCUMENTO = $asiento_compra->TXT_CATEGORIA_TIPO_DOCUMENTO;
+			$NRO_SERIE = $asiento_compra->NRO_SERIE;
+			$NRO_DOC = $asiento_compra->NRO_DOC;
+			$FEC_DETRACCION = $asiento_compra->FEC_DETRACCION;
+			$NRO_DETRACCION = $asiento_compra->NRO_DETRACCION;
+			$CAN_DESCUENTO_DETRACCION = $asiento_compra->CAN_DESCUENTO_DETRACCION;
+			$CAN_TOTAL_DETRACCION = $asiento_compra->CAN_TOTAL_DETRACCION;
+			$COD_CATEGORIA_TIPO_DOCUMENTO_REF = $asiento_compra->COD_CATEGORIA_TIPO_DOCUMENTO_REF;
+			$TXT_CATEGORIA_TIPO_DOCUMENTO_REF = $asiento_compra->TXT_CATEGORIA_TIPO_DOCUMENTO_REF;
+			$NRO_SERIE_REF = $asiento_compra->NRO_SERIE_REF;
+			$NRO_DOC_REF = $asiento_compra->NRO_DOC_REF;
+			$FEC_VENCIMIENTO = $asiento_compra->FEC_VENCIMIENTO;
+			$IND_AFECTO = $asiento_compra->IND_AFECTO;
+
+			$asientocontable     	= 	$this->gn_crear_asiento_contable($IND_TIPO_OPERACION,
+												$COD_ASIENTO,
+												$COD_EMPR,
+												$COD_CENTRO,
+												$COD_PERIODO,
+												$COD_CATEGORIA_TIPO_ASIENTO,
+												$TXT_CATEGORIA_TIPO_ASIENTO,
+												$NRO_ASIENTO,
+												$FEC_ASIENTO,
+												$TXT_GLOSA,
+												
+												$COD_CATEGORIA_ESTADO_ASIENTO,
+												$TXT_CATEGORIA_ESTADO_ASIENTO,
+												$COD_CATEGORIA_MONEDA,
+												$TXT_CATEGORIA_MONEDA,
+												$CAN_TIPO_CAMBIO,
+												$CAN_TOTAL_DEBE,
+												$CAN_TOTAL_HABER,
+												$COD_ASIENTO_EXTORNO,
+												$COD_ASIENTO_EXTORNADO,
+												$IND_EXTORNO,
+
+												$COD_ASIENTO_MODELO,
+												$TXT_TIPO_REFERENCIA,
+												$TXT_REFERENCIA,
+												$COD_ESTADO,
+												$COD_USUARIO_REGISTRO,
+												$COD_MOTIVO_EXTORNO,
+												$GLOSA_EXTORNO,
+												$COD_EMPR_CLI,
+												$TXT_EMPR_CLI,
+												$COD_CATEGORIA_TIPO_DOCUMENTO,
+
+												$TXT_CATEGORIA_TIPO_DOCUMENTO,
+												$NRO_SERIE,
+												$NRO_DOC,
+												$FEC_DETRACCION,
+												$NRO_DETRACCION,
+												$CAN_DESCUENTO_DETRACCION,
+												$CAN_TOTAL_DETRACCION,
+												$COD_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$TXT_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$NRO_SERIE_REF,
+
+												$NRO_DOC_REF,
+												$FEC_VENCIMIENTO,
+												$IND_AFECTO);
+
+			$asientomodificado 				= 	WEBAsiento::where('COD_ASIENTO','=',$asientocontable)->first();
+			$asientomodificado->COD_OBJETO_ORIGEN = 'COMPRA-DIARIO';
+			$asientomodificado->save();
+			//DETALLE ASIENTO
+
+		    $detalle_asiento_compra 		= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_compra_id)->get();
+
+
+
+		    foreach($detalle_asiento_compra as $index => $item){
+
+				$IND_TIPO_OPERACION = 'I';
+				$COD_ASIENTO_MOVIMIENTO = '';
+				$COD_EMPR = $item->COD_EMPR;
+				$COD_CENTRO = $item->COD_CENTRO;
+				$COD_ASIENTO = $asientocontable;
+				$COD_CUENTA_CONTABLE = $item->COD_CUENTA_CONTABLE;
+				$TXT_CUENTA_CONTABLE = $item->TXT_CUENTA_CONTABLE;
+				$TXT_GLOSA = $item->TXT_GLOSA;
+				$CAN_DEBE_MN = $item->CAN_DEBE_MN;
+				$CAN_HABER_MN = $item->CAN_HABER_MN;
+
+				$CAN_DEBE_ME = $item->CAN_DEBE_ME;
+				$CAN_HABER_ME = $item->CAN_HABER_ME;
+				$NRO_LINEA = $item->NRO_LINEA;
+				$COD_CUO = $item->COD_CUO;
+				$IND_EXTORNO = $item->IND_EXTORNO;
+				$TXT_TIPO_REFERENCIA = $item->TXT_TIPO_REFERENCIA;
+				$TXT_REFERENCIA = $item->TXT_REFERENCIA;
+				$COD_ESTADO = $item->COD_ESTADO;
+				$COD_USUARIO_REGISTRO = $item->COD_USUARIO_REGISTRO;
+				$COD_DOC_CTBLE_REF = $item->COD_DOC_CTBLE_REF;
+
+				$COD_ORDEN_REF = $item->COD_ORDEN_REF;
+
+				$detalle     	= 	$this->gn_crear_detalle_asiento_contable(	$IND_TIPO_OPERACION,
+															$COD_ASIENTO_MOVIMIENTO,
+															$COD_EMPR,
+															$COD_CENTRO,
+															$COD_ASIENTO,
+															$COD_CUENTA_CONTABLE,
+															$TXT_CUENTA_CONTABLE,
+															$TXT_GLOSA,
+															$CAN_DEBE_MN,
+															$CAN_HABER_MN,
+
+															$CAN_DEBE_ME,
+															$CAN_HABER_ME,
+															$NRO_LINEA,
+															$COD_CUO,
+															$IND_EXTORNO,
+															$TXT_TIPO_REFERENCIA,
+															$TXT_REFERENCIA,
+															$COD_ESTADO,
+															$COD_USUARIO_REGISTRO,
+															$COD_DOC_CTBLE_REF,
+
+															$COD_ORDEN_REF);
+
+			}
+
+		}else{
+			$asientocontable 	=	$existe_asiento_diario->COD_ASIENTO;
+		}
+
+		$asiento 				= 	WEBAsiento::where('COD_ASIENTO','=',$asientocontable)->first();
+	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asientocontable)->orderBy('NRO_LINEA', 'asc')->get();
+
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+	    $anio  					=   $this->anio;
+	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$sel_periodo 			=	'';
+
+		$orden					=	$this->co_orden_xdocumento_contable($asiento_compra->TXT_REFERENCIA);
+		$sel_tipo_descuento		=	$this->co_orden_compra_tipo_descuento($orden);
+		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
+		$funcion 				= 	$this;
+		
+		return View::make('compras/modal/ajax/mdetalleasientodiario',
+						 [
+						 	'asiento'					=> $asiento,
+						 	'listaasientomovimiento'	=> $listaasientomovimiento,
+						 	'combo_periodo'				=> $combo_periodo,
+						 	'combo_anio_pc'				=> $combo_anio_pc,
+						 	'anio'						=> $anio,
+						 	'sel_periodo'				=> $sel_periodo,
+
+						 	'sel_tipo_descuento'		=> $sel_tipo_descuento,
+						 	'combo_descuento'			=> $combo_descuento,
+						 	'orden'						=> $orden,
+						 	'idopcion'					=> $idopcion,
+
+						 	'anio'						=> $anio,
+						 	'periodo_id'				=> $periodo_id,
+						 	'serie'						=> $serie,
+						 	'documento'					=> $documento,
+
+
+						 	'ajax' 						=> true,						 	
+						 ]);
+	}
+
 
 
 
@@ -839,7 +1061,7 @@ class ComprasController extends Controller
 						 ]);
 	}
 
-	public function actionAjaxModalDetalleAsientoDiario(Request $request)
+	public function actionAjaxModalDetalleAsientoDiarioCompra(Request $request)
 	{
 
 		$asiento_compra_id 		=   $request['asiento_id'];
@@ -862,19 +1084,17 @@ class ComprasController extends Controller
 		$encontro_asiento       =   $respuesta[0]['codigo'];
 		$mensaje_asiento        =   $respuesta[0]['mensaje'];
 		$asiento_modelo_id      =   $respuesta[0]['asiento_modelo_id'];
-		$existe_asiento_diario  =	$this->co_existe_asiento_diario_compra($cod_contable,$tipo_asiento);
+		$existe_asiento_diario  =	$this->co_existe_asiento_diario_compra($cod_contable,$tipo_asiento,'COMPRA-DIARIOCOMPRA');
 
 		$asiento_id 		    =   '';
 
 		if($encontro_asiento=='1'){
 			if(count($existe_asiento_diario) <=0){
 
-
-
 				$respuesta          =	$this->co_asignar_asiento_diario_compra($anio,$empresa,$cod_contable,$tipo_asiento,$documento_anulado,$asiento_modelo_id);
 
 
-				$existe_asiento_diario  =	$this->co_existe_asiento_diario_compra($cod_contable,$tipo_asiento);		
+				$existe_asiento_diario  =	$this->co_existe_asiento_diario_compra($cod_contable,$tipo_asiento,'COMPRA-DIARIOCOMPRA');		
 			}
 		}
 
@@ -897,7 +1117,7 @@ class ComprasController extends Controller
 		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
 		$funcion 				= 	$this;
 		
-		return View::make('compras/modal/ajax/mdetalleasientodiario',
+		return View::make('compras/modal/ajax/mdetalleasientodiariocompra',
 						 [
 						 	'asiento'					=> $asiento,
 						 	'listaasientomovimiento'	=> $listaasientomovimiento,
@@ -906,18 +1126,14 @@ class ComprasController extends Controller
 						 	'anio'						=> $anio,
 						 	'sel_periodo'				=> $sel_periodo,
 						 	'mensaje_asiento'			=> $mensaje_asiento,
-
 						 	'sel_tipo_descuento'		=> $sel_tipo_descuento,
 						 	'combo_descuento'			=> $combo_descuento,
 						 	'orden'						=> $orden,
 						 	'idopcion'					=> $idopcion,
-
 						 	'anio'						=> $anio,
 						 	'periodo_id'				=> $periodo_id,
 						 	'serie'						=> $serie,
 						 	'documento'					=> $documento,
-
-
 						 	'ajax' 						=> true,						 	
 						 ]);
 	}
