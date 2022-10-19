@@ -64,7 +64,13 @@ class ConfiguracioProductoController extends Controller
 		$array_productos_empresa    	=	ALMProducto::whereIn('COD_PRODUCTO',$lista_productos_sc)
 											->pluck('COD_PRODUCTO')
 											->toArray();
-		$lista_configuracion_producto 	= 	$this->cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa);
+		$producto_id 					=	'';									
+		$servicio_id 					=	'';
+		$material_id 					=	'';	
+		$serviciomaterial 				=	'';	
+
+
+		$lista_configuracion_producto 	= 	$this->cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa,$producto_id,$servicio_id,$material_id,$serviciomaterial);
 
 
 
@@ -109,26 +115,34 @@ class ConfiguracioProductoController extends Controller
 		$material_id					=	'';
 		$servicio_id					=	'';
 
+		$serviciomaterial				=	'';
+
 		if($categoria_producto_id=='CTP0000000000001'){
 			$servicio_id				=	$sub_categoria_id;
+			$serviciomaterial			=	'S';
 		}
 		if($categoria_producto_id=='CTP0000000000002'){
 			$material_id				=	$sub_categoria_id;
+			$serviciomaterial			=	'M';
+
 		}
 
 		$productoempresa 				= 	WEBProductoEmpresa::where('producto_id','=',$producto_id)->first();
 
-		$array_productos_empresa    	=	ALMProducto::CodProducto($producto_id)
-											->CodServicio($servicio_id)
-											->CodMaterial($material_id)
-											->where('COD_ESTADO','=',1)
-											->pluck('COD_PRODUCTO')
-											->toArray();
+		// $array_productos_empresa    	=	ALMProducto::CodProducto($producto_id)
+		// 									->CodServicio($servicio_id)
+		// 									->CodMaterial($material_id)
+		// 									->where('IND_MATERIAL_SERVICIO','=',$serviciomaterial)
+		// 									->where('COD_ESTADO','=',1)
+		// 									->pluck('COD_PRODUCTO')
+		// 									->toArray();
+
+		$array_productos_empresa  		=	array();
 
 		//dd($array_productos_empresa);
 		$empresa_id 					=   Session::get('empresas_meta')->COD_EMPR;
 
-		$lista_configuracion_producto 	= 	$this->cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa);
+		$lista_configuracion_producto 	= 	$this->cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa,$producto_id,$servicio_id,$material_id,$serviciomaterial);
 
 		$funcion 						= 	$this;
 	    $nombre_asiento  =  '';

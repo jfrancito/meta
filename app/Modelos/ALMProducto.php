@@ -33,5 +33,16 @@ class ALMProducto extends Model
         }
     }
 
+    public function scopeIndMaterialServicio($query,$serviciomaterial){
+        if(trim($serviciomaterial) != ''){
+            $query->where('ALM.PRODUCTO.IND_MATERIAL_SERVICIO', '=', $serviciomaterial);
+        }
+    }
+
+    public function scopeArrayProducto($query,$array_productos_empresa){
+        if(count($array_productos_empresa) > 0){
+            $query->whereIn('ALM.PRODUCTO.COD_PRODUCTO', $array_productos_empresa);
+        }
+    }
 
 }

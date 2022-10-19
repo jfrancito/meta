@@ -38,7 +38,8 @@ $(document).ready(function(){
         //validacioones
 
         if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
-        if(producto_id =='' && (sub_categoria_id == '' || sub_categoria_id == null)){ alerterrorajax("Seleccione un por lo menos una sub categoria o un producto."); return false;}
+        if(categoria_producto_id ==''){ alerterrorajax("Seleccione un categoria producto."); return false;}
+        //if(producto_id =='' && (sub_categoria_id == '' || sub_categoria_id == null)){ alerterrorajax("Seleccione un por lo menos una sub categoria o un producto."); return false;}
 
 
         data            =   {

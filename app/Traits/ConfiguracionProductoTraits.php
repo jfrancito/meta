@@ -19,7 +19,7 @@ use Keygen;
 trait ConfiguracionProductoTraits
 {
 
-	private function cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa)
+	private function cp_lista_productos_configuracion($empresa_id, $anio,$array_productos_empresa,$producto_id,$servicio_id,$material_id,$serviciomaterial)
 	{
 		$lista_configuracion_producto 	= 	ALMProducto::leftJoin('WEB.productoempresas', function ($join) use ($anio,$empresa_id){
 									            $join->on('WEB.productoempresas.producto_id', '=', 'ALM.PRODUCTO.COD_PRODUCTO')
@@ -34,7 +34,14 @@ trait ConfiguracionProductoTraits
 
 											->leftJoin('CMP.CATEGORIA as material', 'material.COD_CATEGORIA', '=', 'ALM.PRODUCTO.COD_CATEGORIA_SUB_FAMILIA')
 
-											->whereIn('ALM.PRODUCTO.COD_PRODUCTO',$array_productos_empresa)
+											->ArrayProducto($array_productos_empresa)
+
+											->CodProducto($producto_id)
+											->CodServicio($servicio_id)
+											->CodMaterial($material_id)
+											->IndMaterialServicio($serviciomaterial)
+											->where('ALM.PRODUCTO.COD_ESTADO','=',1)
+
 											->select(DB::raw("ALM.PRODUCTO.COD_PRODUCTO as producto_id,
 																ALM.PRODUCTO.NOM_PRODUCTO as producto_nombre,
 																ALM.PRODUCTO.IND_MATERIAL_SERVICIO as material_servicio,
