@@ -228,6 +228,7 @@ trait MigrarCompraTraits
 			$documento_anulado 		=   	0;
 		}
 
+
         $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.BUSCAR_ASIENTO_MODELO 
 											@anio = ?,
 											@empresa = ?,
@@ -337,6 +338,46 @@ trait MigrarCompraTraits
 
 	}
 
+	private function mv_asignar_asiento_modelo_x_fechaemision($historialmigrar,$tipo_asiento,$fechaemision)
+	{
+	
+		$documento_ctble 			= 		CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$historialmigrar->COD_REFERENCIA)->first();
+		$periodo 					= 		CONPeriodo::where('COD_PERIODO','=',$documento_ctble->COD_PERIODO)->first();
+		$anio 						= 		$periodo->COD_ANIO;
+		$empresa 					= 		$documento_ctble->COD_EMPR;
+		$cod_contable 				= 		$documento_ctble->COD_DOCUMENTO_CTBLE;
+		$asiento_modelo_id 			= 		trim($historialmigrar->COD_ASIENTO_MODELO);
 
+		if($documento_ctble->ESTADO_ELEC == 'R'){
+		    $anulado 				= 		0;
+		}else{
+			$anulado 				= 		$historialmigrar->IND_ANULADO;	
+		}
+
+
+        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO 
+											@anio = ?,
+											@empresa = ?,
+											@cod_contable = ?,
+											@cod_tipo_asiento = ?,
+											@asiento_modelo_id = ?,
+											@ind_anulado = ?,
+											@fechaemision = ?');
+
+        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
+        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
+        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
+        $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
+        $stmt->bindParam(6, $anulado  ,PDO::PARAM_STR);
+        $stmt->bindParam(7, $fechaemision  ,PDO::PARAM_STR);
+        $stmt->execute();
+
+		$historialmigrar->IND_ASIENTO_MODELO 	=   1;
+		$historialmigrar->IND_CORREO 			=   -1;
+		$historialmigrar->save();
+
+
+	}
 
 }

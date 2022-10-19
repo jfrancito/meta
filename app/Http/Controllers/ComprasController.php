@@ -1021,36 +1021,37 @@ class ComprasController extends Controller
 		$periodo_id 			=   $request['periodo_id'];
 		$serie 					=   $request['serie'];
 		$documento 				=   $request['documento'];
+		$fechaemision 			=   date_format(date_create($request['fechaemision']), 'Ymd');
+
 
 	    $asiento2 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
 	    $tipo_asiento 			= 	'TAS0000000000004';
 
-		// $anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
-		// 															Session::get('usuario_meta')->name,
-		// 															$this->fechaactual);
+		$anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
+																	Session::get('usuario_meta')->name,
+																	$this->fechaactual);
 
-		// WEBHistorialMigrar::where('COD_REFERENCIA','=', $asiento2->TXT_REFERENCIA)->delete();
+		WEBHistorialMigrar::where('COD_REFERENCIA','=', $asiento2->TXT_REFERENCIA)->delete();
 
 
 		$lista_compras_migrar_emitido = $this->mv_lista_compras_migrar_agrupado_emitidoxdocumento($this->array_empresas,
 																								  $this->anio_inicio,
 																								  $asiento2->TXT_REFERENCIA);
 
+		$lista_compras_migrar_anulado = array();
+
+		$this->mv_agregar_historial_compras($lista_compras_migrar_emitido,$lista_compras_migrar_anulado,$tipo_asiento);
 
 
 		foreach($lista_compras_migrar_emitido as $index => $item){
 			$respuesta = $this->mv_update_historial_compras($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
 		}
 
-
-		dd($lista_compras_migrar_emitido);
-		
-		//dd("hola");
 		//asignar asiento
 		$lista_compras 				= 	$this->mv_lista_compras_asignarxdocumento($this->array_empresas,$tipo_asiento,$asiento2->TXT_REFERENCIA);
 
 		foreach($lista_compras as $index => $item){
-			$respuesta2 = $this->mv_asignar_asiento_modelo($item,$tipo_asiento);
+			$respuesta2 = $this->mv_asignar_asiento_modelo_x_fechaemision($item,$tipo_asiento,$fechaemision);
 		}
 
 	    $asiento 				= 	WEBAsiento::where('TXT_REFERENCIA','=',$asiento2->TXT_REFERENCIA)

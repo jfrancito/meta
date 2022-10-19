@@ -55,7 +55,7 @@
 
 					      </div>
 					</div>
-<!-- 					<button type="button" data-dismiss="modal" class="btn btn-primary btn-space generarasiento">Generar asientos</button> -->
+					<button type="button" data-dismiss="modal" class="btn btn-primary btn-space generarasiento">Generar asientos</button>
 
 					<table class="table table-condensed table-striped">
 					    <thead>
