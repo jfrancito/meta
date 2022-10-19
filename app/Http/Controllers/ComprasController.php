@@ -18,13 +18,15 @@ use App\Modelos\WEBAsientoMovimiento;
 use App\Modelos\WEBCuentaDetraccion;
 use App\Modelos\CONPeriodo;
 use App\Modelos\STDEmpresa;
-
+use App\Modelos\WEBHistorialMigrar;
 
 
 use App\Traits\GeneralesTraits;
 use App\Traits\AsientoModeloTraits;
 use App\Traits\PlanContableTraits;
 use App\Traits\ComprasTraits;
+use App\Traits\MovilidadTraits;
+use App\Traits\MigrarCompraTraits;
 
 use View;
 use Session;
@@ -43,8 +45,8 @@ class ComprasController extends Controller
 	use AsientoModeloTraits;
 	use PlanContableTraits;
 	use ComprasTraits;
-
-
+	use MovilidadTraits;
+	use MigrarCompraTraits;
 
 
 	public function actionAjaxModalCrearDetalleAsientoDiario(Request $request)
@@ -1003,6 +1005,94 @@ class ComprasController extends Controller
 						 	'periodo_id'				=> $periodo_id,
 						 	'serie'						=> $serie,
 						 	'documento'					=> $documento,
+						 	'ajax' 						=> true,						 	
+						 ]);
+	}
+
+
+	public function actionAjaxModalCambiarAsientoFechaEmision(Request $request)
+	{
+
+
+		$asiento_id 			=   $request['asiento_id'];
+		$idopcion 				=   $request['idopcion'];
+
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+		$serie 					=   $request['serie'];
+		$documento 				=   $request['documento'];
+
+	    $asiento2 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
+	    $tipo_asiento 			= 	'TAS0000000000004';
+
+		// $anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
+		// 															Session::get('usuario_meta')->name,
+		// 															$this->fechaactual);
+
+		// WEBHistorialMigrar::where('COD_REFERENCIA','=', $asiento2->TXT_REFERENCIA)->delete();
+
+
+		$lista_compras_migrar_emitido = $this->mv_lista_compras_migrar_agrupado_emitidoxdocumento($this->array_empresas,
+																								  $this->anio_inicio,
+																								  $asiento2->TXT_REFERENCIA);
+
+
+
+		foreach($lista_compras_migrar_emitido as $index => $item){
+			$respuesta = $this->mv_update_historial_compras($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
+		}
+
+
+		dd($lista_compras_migrar_emitido);
+		
+		//dd("hola");
+		//asignar asiento
+		$lista_compras 				= 	$this->mv_lista_compras_asignarxdocumento($this->array_empresas,$tipo_asiento,$asiento2->TXT_REFERENCIA);
+
+		foreach($lista_compras as $index => $item){
+			$respuesta2 = $this->mv_asignar_asiento_modelo($item,$tipo_asiento);
+		}
+
+	    $asiento 				= 	WEBAsiento::where('TXT_REFERENCIA','=',$asiento2->TXT_REFERENCIA)
+	    							->where('COD_CATEGORIA_ESTADO_ASIENTO','<>','IACHTE0000000024')
+	    							->first();
+
+	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento->COD_ASIENTO)->orderBy('NRO_LINEA', 'asc')->get();
+
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+	    $anio  					=   $this->anio;
+	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$sel_periodo 			=	'';
+
+		$orden					=	$this->co_orden_xdocumento_contable($asiento->TXT_REFERENCIA);
+		$sel_tipo_descuento		=	$this->co_orden_compra_tipo_descuento($orden);
+		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
+
+
+		$funcion 				= 	$this;
+		
+
+		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
+						 [
+						 	'asiento'					=> $asiento,
+						 	'listaasientomovimiento'	=> $listaasientomovimiento,
+						 	'combo_periodo'				=> $combo_periodo,
+						 	'combo_anio_pc'				=> $combo_anio_pc,
+						 	'anio'						=> $anio,
+						 	'sel_periodo'				=> $sel_periodo,
+
+						 	'sel_tipo_descuento'		=> $sel_tipo_descuento,
+						 	'combo_descuento'			=> $combo_descuento,
+						 	'orden'						=> $orden,
+						 	'idopcion'					=> $idopcion,
+
+						 	'anio'						=> $anio,
+						 	'periodo_id'				=> $periodo_id,
+						 	'serie'						=> $serie,
+						 	'documento'					=> $documento,
+
+
 						 	'ajax' 						=> true,						 	
 						 ]);
 	}

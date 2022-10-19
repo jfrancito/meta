@@ -89,9 +89,6 @@
 					</div> 
 				</div>
 
-
-
-
 		    </div>
 		    <div class="col-md-6">
 
@@ -106,19 +103,16 @@
 </form>
 @if(isset($ajax))
   <script type="text/javascript">
-
     $(document).ready(function(){
-      App.formElements();
 
+      App.formElements();
       $('.importe').inputmask({ 'alias': 'numeric', 
       'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 
       'digitsOptional': false, 
       'prefix': '', 
       'placeholder': '0'});
 
-
     });
-
   </script>
 @endif
 

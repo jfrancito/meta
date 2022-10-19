@@ -17,6 +17,8 @@ use App\Modelos\CMPDetalleProducto;
 use App\Modelos\WEBProductoEmpresa;
 use App\Modelos\WEBViewMigrarCompras;
 
+
+
 use View;
 use Session;
 use Hashids;
@@ -57,6 +59,39 @@ trait MigrarCompraTraits
 		return $lista_migrar_compras;
 
 	}
+
+
+	private function mv_lista_compras_migrar_agrupado_emitidoxdocumento($array_empresas,$anio,$cod_documento)
+	{
+
+		$array_empresas  		    = 		$array_empresas;
+		$anio  		    			= 		$anio;		
+
+		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',$anio)
+											->whereIn('COD_EMPR',$array_empresas)
+											->where('COD_ESTADO','=','1')
+											->pluck('COD_PERIODO')
+											->toArray();
+
+		$lista_migrar_compras		=		WEBViewMigrarCompras::leftJoin('WEB.historialmigrar', function ($join) {
+									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
+									                 ->where('WEB.historialmigrar.IND_ASIENTO_MODELO', '=', 1);
+									        })
+											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
+											->whereIn('WEB.viewmigrarcompras.COD_PERIODO',$array_periodo)
+											->whereIn('WEB.viewmigrarcompras.COD_EMPR',$array_empresas)
+											->where('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE','=',$cod_documento)
+											->where('WEB.viewmigrarcompras.NOM_ESTADO','=','ENVIADO')
+											->select(DB::raw('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE'))
+											->groupBy('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
+											->get();
+
+
+
+		return $lista_migrar_compras;
+
+	}
+
 
 
 	private function mv_lista_compras_migrar_agrupado_anulado($array_empresas,$anio)
@@ -246,6 +281,19 @@ trait MigrarCompraTraits
 		
 		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
 											->where('IND_ASIENTO_MODELO','=',0)
+											->where('IND_ERROR','<>',1)
+											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
+											->get();
+		return $lista_ventas;
+
+	}
+
+	private function mv_lista_compras_asignarxdocumento($array_empresas,$tipo_asiento,$documento)
+	{
+		
+		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
+											->where('IND_ASIENTO_MODELO','=',0)
+											->where('COD_REFERENCIA','=',$documento)
 											->where('IND_ERROR','<>',1)
 											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
 											->get();

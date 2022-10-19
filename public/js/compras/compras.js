@@ -3,6 +3,36 @@ $(document).ready(function(){
     var carpeta = $("#carpeta").val();
 
 
+    $(".compras").on('click','.generarasiento', function() {
+        var fechaemision                =   $('#fechaemision').val();
+        if(fechaemision ==''){ alerterrorajax("Seleccione una fecha de emision."); return false;}
+        var asiento_id                  =   $('#asiento_id_configuracion').val();
+        var idopcion                    =   $('#opcion_configuracion').val();
+        var anio                        =   $('#anio_configuracion').val();
+        var periodo_id                  =   $('#periodo_id_configuracion').val();
+        var serie                       =   $('#serie_configuracion').val();
+        var documento                   =   $('#documento_configuracion').val();
+        var _token                      =   $('#token').val();
+        $('#modal-detalle-asiento-confirmar').niftyModal('hide');
+
+        data                            =   {
+                                                _token                  : _token,
+                                                asiento_id              : asiento_id,
+                                                idopcion                : idopcion,
+                                                fechaemision            : fechaemision,
+                                                anio                    : anio,
+                                                periodo_id              : periodo_id,
+                                                serie                   : serie,
+                                                documento               : documento,
+                                            };
+
+        ajax_modal(data,"/ajax-modal-cambiar-asiento-fechaemision",
+                  "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
+
+    });
+
+
+
     $(".compras").on('click','.guardarcuentadetraccion', function() {
 
         var empresa_id              =   $('#empresa_select').val();

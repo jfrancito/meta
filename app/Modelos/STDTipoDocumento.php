@@ -4,7 +4,7 @@ namespace App\Modelos;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ALMCentro extends Model
+class STDTipoDocumento extends Model
 {
     protected $table = 'STD.TIPO_DOCUMENTO';
     public $timestamps=false;

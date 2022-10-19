@@ -41,6 +41,7 @@ class ConfiguracioTipoCambioController extends Controller
 		$anio 					= 	$request['anio'];
 		$mes 					= 	$request['mes'];
 
+
 		foreach($data_tipo_cambio as $key => $row) {
 
 			$data_fecha_tipo_cambio 	=  	date_format(date_create($row['fecha_tipo_cambio']), 'Y-m-d');
@@ -49,10 +50,19 @@ class ConfiguracioTipoCambioController extends Controller
 			$can_compra_sbs 			=  	(float)$row['can_compra_sbs'];
 			$can_venta_sbs 				=  	(float)$row['can_venta_sbs'];
 
+			if(date("d", $fechaComoEntero)  == '10' || date("d", $fechaComoEntero)  == '20' || date("d", $fechaComoEntero)  == '30'){
+				$dia 						=  	date("d", $fechaComoEntero);
+			}else{
+				$dia 						=  	str_replace('0', '', date("d", $fechaComoEntero));
+			}
+			if(date("m", $fechaComoEntero)=='10'){
+				$mes 						=  	date("m", $fechaComoEntero);
+			}else{
+				$mes 						=  	str_replace('0', '', date("m", $fechaComoEntero));
+			}
 
-			$dia 						=  	str_replace('0', '', date("d", $fechaComoEntero));
-			$mes 						=  	str_replace('0', '', date("m", $fechaComoEntero));
 			$anio 						=  	date("Y", $fechaComoEntero);
+
 
             DB::connection('sqlsrv')->table('CMP.TIPO_CAMBIO')->whereRaw('day(FEC_CAMBIO) = ?', [$dia])
 											->whereRaw('MONTH(FEC_CAMBIO) = ?', [$mes])

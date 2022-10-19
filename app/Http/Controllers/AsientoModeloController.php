@@ -315,7 +315,6 @@ class AsientoModeloController extends Controller
 		$idopcion 				=   $request['idopcion'];
 		$anio  					=   $this->anio;
 
-
 		$asientomodelo 			= 	WEBAsientoModelo::where('id', $asiento_contable_id)->first();
         $array_nivel_pc     	= 	$this->pc_array_nivel_cuentas_contable(Session::get('empresas_meta')->COD_EMPR,$anio);
 		$combo_nivel_pc  		= 	$this->gn_generacion_combo_array('Seleccione nivel', '' , $array_nivel_pc);
@@ -330,7 +329,6 @@ class AsientoModeloController extends Controller
 		$defecto_cuenta			= 	'';
 		$defecto_partida		= 	'';
 		$asiento_modelo_detalle_id = '';
-
 
 		return View::make('asientomodelo/modal/ajax/mconfiguracionasientomodelo',
 						 [		 	

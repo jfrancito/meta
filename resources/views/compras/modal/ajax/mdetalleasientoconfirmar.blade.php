@@ -37,6 +37,26 @@
 	          </ul>
 	          <div class="tab-content" style="margin-bottom: 0px;">
 	            <div id="asientocontable" class="tab-pane active cont">
+
+					<div class="form-group quitar-tb">
+					      <label class="col-sm-1 control-label izquierda">Fecha Emision</label>
+					      <div class="col-sm-3">
+					          <div data-min-view="2" 
+					                 data-date-format="dd-mm-yyyy"  
+					                 class="input-group date datetimepicker2" style = 'padding: 0px 0;margin-top: -3px;'>
+					                 <input size="16" type="text"  
+					                        placeholder="Fecha emision"
+					                        id='fechaemision' 
+					                        name='fechaemision' 
+					                        value = "{{date_format(date_create($asiento->FEC_ASIENTO), 'd-m-Y')}}"
+					                        class="form-control input-sm"/>
+					                  <span class="input-group-addon btn btn-primary"><i class="icon-th mdi mdi-calendar"></i></span>
+					            </div>
+
+					      </div>
+					</div>
+<!-- 					<button type="button" data-dismiss="modal" class="btn btn-primary btn-space generarasiento">Generar asientos</button> -->
+
 					<table class="table table-condensed table-striped">
 					    <thead>
 					      <tr>
@@ -72,6 +92,9 @@
 					      </tr>
 					    </tfoot>
 					</table>
+
+
+
 	            </div>
 	            <div id="configuracion" class="tab-pane cont">
 
@@ -169,12 +192,17 @@
 		                            </div>
 		                          </div>
 						        </div>
-						        <input type="hidden" name="total_documento" id = 'total_documento' value='{{$asiento->CAN_TOTAL_DEBE}}'>
 
-						        <input type="hidden" name="anio_configuracion" id = 'anio_configuracion' value='{{$anio}}'>
-						        <input type="hidden" name="periodo_id_configuracion" id = 'periodo_id_configuracion' value='{{$periodo_id}}'>
-						        <input type="hidden" name="serie_configuracion" id = 'serie_configuracion' value='{{$serie}}'>
-						        <input type="hidden" name="documento_configuracion" id = 'documento_configuracion' value='{{$documento}}'>
+
+				        <input type="hidden" name="total_documento" id = 'total_documento' value='{{$asiento->CAN_TOTAL_DEBE}}'>
+				        <input type="hidden" name="anio_configuracion" id = 'anio_configuracion' value='{{$anio}}'>
+				        <input type="hidden" name="periodo_id_configuracion" id = 'periodo_id_configuracion' value='{{$periodo_id}}'>
+				        <input type="hidden" name="serie_configuracion" id = 'serie_configuracion' value='{{$serie}}'>
+				        <input type="hidden" name="documento_configuracion" id = 'documento_configuracion' value='{{$documento}}'>
+				        <input type="text" name="asiento_id_configuracion" id = 'asiento_id_configuracion' value='{{$asiento->COD_ASIENTO}}'>
+				        <input type="hidden" name="opcion_configuracion" id = 'opcion_configuracion' value='{{$idopcion}}'>
+
+
 
 			                </div>
 
@@ -200,9 +228,23 @@
 
 @if(isset($ajax))
 <script type="text/javascript">
+
 	$(".select2").select2({
       width: '100%'
     });
+
+    $(".datetimepicker2").datetimepicker({
+    	autoclose: true,
+      	pickerPosition: "bottom-left",
+    	componentIcon: '.mdi.mdi-calendar',
+    	navIcons:{
+    		rightIcon: 'mdi mdi-chevron-right',
+    		leftIcon: 'mdi mdi-chevron-left'
+    	}
+    });
+
+
+
     $('.dinero').inputmask({ 'alias': 'numeric', 
     'groupSeparator': ',', 'autoGroup': true, 'digits': 4, 
     'digitsOptional': false, 

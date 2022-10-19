@@ -111,6 +111,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-buscar-compra-seleccionada', 'ComprasController@actionAjaxBuscarCompraseleccionada');
 	Route::any('/asiento-contables-confirmado-xdocumentos', 'ComprasController@actionGonfirmarAsientoContablesXDocumentos');
 	Route::any('/ajax-modal-detalle-asiento-confirmar', 'ComprasController@actionAjaxModalDetalleAsientoConfirmar');
+	Route::any('/ajax-modal-cambiar-asiento-fechaemision', 'ComprasController@actionAjaxModalCambiarAsientoFechaEmision');
+
+
 	Route::any('/asiento-contables-confirmado-configuracion-xdocumentos/{idopcion}/{idasiento}', 'ComprasController@actionGonfirmarConfiguracionAsientoContablesXDocumentos');
 
 	Route::any('/ajax-modal-detalle-asiento-transicion', 'ComprasController@actionAjaxModalDetalleAsientoTransicion');	
@@ -163,6 +166,15 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/mobilidad-guardar-data', 'MovilidadController@actionMobilidadGuardarData');
 	Route::any('/ajax-modal-configuracion-movilidad-cuenta-contable', 'MovilidadController@actionAjaxModalConfiguracionMovilidadCuentaContable');
 	Route::any('/mobilidad-guardar-data/{idopcion}', 'MovilidadController@actionGuardarMovilidadCuentaContable');
+
+
+	Route::any('/gestion-asiento/{idopcion}', 'AsientoController@actionGestionarAsiento');
+	Route::any('/ajax-modal-detalle-asiento-configuracion', 'AsientoController@actionAjaxModalDetalleAsiento');
+	Route::any('/ajax-agregar-detalle-asiento', 'AsientoController@actionAjaxAgregarDetalleAsiento');
+	Route::any('/ajax-eliminar-detalle-asiento', 'AsientoController@actionAjaxEliminarDetalleAsiento');
+	Route::any('/ajax-input-tipo-cambio', 'AsientoController@actionAjaxInputTipoCambio');
+
+
 
 
 
