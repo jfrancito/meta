@@ -1021,9 +1021,8 @@ class ComprasController extends Controller
 		$periodo_id 			=   $request['periodo_id'];
 		$serie 					=   $request['serie'];
 		$documento 				=   $request['documento'];
+		$igv 					=   $request['igv'];
 		$fechaemision 			=   date_format(date_create($request['fechaemision']), 'Ymd');
-
-
 	    $asiento2 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
 	    $tipo_asiento 			= 	'TAS0000000000004';
 
@@ -1050,8 +1049,9 @@ class ComprasController extends Controller
 		//asignar asiento
 		$lista_compras 				= 	$this->mv_lista_compras_asignarxdocumento($this->array_empresas,$tipo_asiento,$asiento2->TXT_REFERENCIA);
 
+		$igv  = (1+($igv/100));
 		foreach($lista_compras as $index => $item){
-			$respuesta2 = $this->mv_asignar_asiento_modelo_x_fechaemision($item,$tipo_asiento,$fechaemision);
+			$respuesta2 = $this->mv_asignar_asiento_modelo_x_fechaemision($item,$tipo_asiento,$fechaemision,$igv);
 		}
 
 	    $asiento 				= 	WEBAsiento::where('TXT_REFERENCIA','=',$asiento2->TXT_REFERENCIA)

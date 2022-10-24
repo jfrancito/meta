@@ -29,7 +29,7 @@ Route::get('/cerrarsession', 'UserController@actionCerrarSesion');
 Route::get('/cambiarperfil', 'UserController@actionCambiarPerfil');
 Route::get('/migrar-ventas', 'MigrarVentaController@actionMigrarVentas');
 Route::get('/migrar-compras', 'MigrarCompraController@actionMigrarCompras');
-
+Route::get('/migrar-recibo-honorario', 'MigrarReciboHonorarioController@actionMigrarReciboHonorario');
 
 Route::group(['middleware' => ['authaw']], function () {
 
@@ -104,6 +104,14 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/descargar-archivo-migrar-navasoft', 'MigracionNavasoftController@actionDescargarArchivoMigrarNavasoft');
 	Route::any('/ajax-buscar-lista-navasotf', 'MigracionNavasoftController@actionAjaxBuscarListaNavasoft');
 
+	Route::any('/gestion-recibo-honorario/{idopcion}', 'ReciboHonorarioController@actionListarReciboHonorario');
+	Route::any('/ajax-listado-recibo-honorario', 'ReciboHonorarioController@actionAjaxListarReciboHonorario');
+	Route::any('/ajax-modal-detalle-asiento-rh-confirmar', 'ReciboHonorarioController@actionAjaxModalDetalleAsientoRHConfirmar');
+	Route::any('/asiento-contables-confirmado-rh-configuracion-xdocumentos/{idopcion}/{idasiento}', 'ReciboHonorarioController@actionGonfirmarConfiguracionAsientoRHContablesXDocumentos');
+	Route::any('/ajax-modal-detalle-rh-asiento-transicion', 'ReciboHonorarioController@actionAjaxModalDetalleAsientoRHTransicion');
+	Route::any('/asiento-contables-transicion-configuracion-rh-xdocumentos/{idopcion}/{idasiento}', 'ReciboHonorarioController@actionTransicionConfiguracionAsientoContablesRHXDocumentos');
+
+
 
 	Route::any('/gestion-listado-compras/{idopcion}', 'ComprasController@actionListarCompras');
 	Route::any('/ajax-combo-periodo-xanio-xempresa', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresa');
@@ -112,8 +120,6 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/asiento-contables-confirmado-xdocumentos', 'ComprasController@actionGonfirmarAsientoContablesXDocumentos');
 	Route::any('/ajax-modal-detalle-asiento-confirmar', 'ComprasController@actionAjaxModalDetalleAsientoConfirmar');
 	Route::any('/ajax-modal-cambiar-asiento-fechaemision', 'ComprasController@actionAjaxModalCambiarAsientoFechaEmision');
-
-
 	Route::any('/asiento-contables-confirmado-configuracion-xdocumentos/{idopcion}/{idasiento}', 'ComprasController@actionGonfirmarConfiguracionAsientoContablesXDocumentos');
 
 	Route::any('/ajax-modal-detalle-asiento-transicion', 'ComprasController@actionAjaxModalDetalleAsientoTransicion');	

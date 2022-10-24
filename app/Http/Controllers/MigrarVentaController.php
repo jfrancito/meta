@@ -236,7 +236,7 @@ class MigrarVentaController extends Controller
 			$respuesta2 = $this->mv_asignar_asiento_modelo($item,$tipo_asiento);
 		}
 		print_r("se realizo con exito");
-
+		return Redirect::to('/bienvenido');
 
 	}
 

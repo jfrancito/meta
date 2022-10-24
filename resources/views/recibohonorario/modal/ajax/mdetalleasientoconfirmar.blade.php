@@ -1,5 +1,5 @@
 
-<form method="POST" action="{{ url('/asiento-contables-confirmado-configuracion-xdocumentos/'.$idopcion.'/'.$asiento->COD_ASIENTO) }}">
+<form method="POST" action="{{ url('/asiento-contables-confirmado-rh-configuracion-xdocumentos/'.$idopcion.'/'.$asiento->COD_ASIENTO) }}">
       {{ csrf_field() }}
 
 <div class="modal-header" style="padding: 12px 20px;">
@@ -33,12 +33,29 @@
 	        <div class="tab-container">
 	          <ul class="nav nav-tabs">
 	            <li class="active"><a href="#asientocontable" data-toggle="tab">Asiento Contable</a></li>
-	            <li><a href="#actualizarasiento" data-toggle="tab">Actualizar asiento</a></li>
 	            <li><a href="#configuracion" data-toggle="tab">Configuración</a></li>
 	          </ul>
 	          <div class="tab-content" style="margin-bottom: 0px;">
-
 	            <div id="asientocontable" class="tab-pane active cont">
+
+<!-- 					<div class="form-group quitar-tb">
+					      <label class="col-sm-1 control-label izquierda">Fecha Emision</label>
+					      <div class="col-sm-3">
+					          <div data-min-view="2" 
+					                 data-date-format="dd-mm-yyyy"  
+					                 class="input-group date datetimepicker2" style = 'padding: 0px 0;margin-top: -3px;'>
+					                 <input size="16" type="text"  
+					                        placeholder="Fecha emision"
+					                        id='fechaemision' 
+					                        name='fechaemision' 
+					                        value = "{{date_format(date_create($asiento->FEC_ASIENTO), 'd-m-Y')}}"
+					                        class="form-control input-sm"/>
+					                  <span class="input-group-addon btn btn-primary"><i class="icon-th mdi mdi-calendar"></i></span>
+					            </div>
+
+					      </div>
+					</div>
+					<button type="button" data-dismiss="modal" class="btn btn-primary btn-space generarasiento">Generar asientos</button> -->
 
 					<table class="table table-condensed table-striped">
 					    <thead>
@@ -75,67 +92,10 @@
 					      </tr>
 					    </tfoot>
 					</table>
+
+
+
 	            </div>
-
-	            <div id="actualizarasiento" class="tab-pane cont">
-
-			        <div class="row">
-			            <div class="col-md-4">
-			              <div class="panel panel-flat">
-			                <div class="panel-heading">Actualizar asiento</div>
-			                <div class="panel-body">
-
-						        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-									<div class="form-group">
-									      <label class="col-sm-12 control-label izquierda">Fecha Emision</label>
-									      <div class="col-sm-12">
-									          <div data-min-view="2" 
-									                 data-date-format="dd-mm-yyyy"  
-									                 class="input-group date datetimepicker2" style = 'padding: 0px 0;margin-top: -3px;'>
-									                 <input size="16" type="text"  
-									                        placeholder="Fecha emision"
-									                        id='fechaemision' 
-									                        name='fechaemision' 
-									                        value = "{{date_format(date_create($asiento->FEC_ASIENTO), 'd-m-Y')}}"
-									                        class="form-control input-sm"/>
-									                  <span class="input-group-addon btn btn-primary"><i class="icon-th mdi mdi-calendar"></i></span>
-									            </div>
-
-									      </div>
-									</div>
-
-
-
-						        </div>
-
-			                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-						                <div class="form-group">
-						                    <label class="col-sm-12 control-label labelleft" >IGV :</label>
-						                    <div class="col-sm-12 abajocaja" >
-
-										      <input  type="text"
-										              id="igv" 
-										              name='igv' 
-										              value="0.00"
-										              placeholder="0.00"
-										              autocomplete="off" 
-										              class="form-control input-sm dineroint" 
-										              data-aw="1"/>
-						                    </div>
-						                </div>
-			                    </div>
-
-			                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align: right;margin-top: 20px;">
-									<button type="button" data-dismiss="modal" class="btn btn-primary btn-space generarasiento">Generar asientos</button>
-								</div>
-
-			                </div>
-			              </div>
-			            </div>
-			        </div>
-	            </div>
-
-
 	            <div id="configuracion" class="tab-pane cont">
 
 			        <div class="row">
@@ -176,7 +136,7 @@
 			                </div>
 			              </div>
 			            </div>
-			            <div class="col-md-4">
+			            <div class="col-md-4 ocultar">
 			              <div class="panel panel-default">
 			                <div class="panel-heading"> 
 			                  <div class="tools"><span class="icon s7-upload"></span><span class="icon s7-edit"></span><span class="icon s7-close"></span></div><span class="title">Detracción</span>
@@ -250,6 +210,8 @@
 			              </div>
 			            </div>
 			        </div>
+
+
 	            </div>
 
 	          </div>
@@ -288,14 +250,5 @@
     'digitsOptional': false, 
     'prefix': '', 
     'placeholder': '0'});
-
-
-
-    $('.dineroint').inputmask({ 'alias': 'numeric', 
-    'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 
-    'digitsOptional': false, 
-    'prefix': '', 
-    'placeholder': '0'});
-
 </script> 
 @endif

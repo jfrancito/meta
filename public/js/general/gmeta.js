@@ -1,6 +1,15 @@
 
 $(document).ready(function(){
 
+
+$(".bienvenido").on('click','.cargando', function() {
+    abrircargando();
+});
+
+
+
+
+
 $(".be-content").on('click','.checkbox_asignar', function() {
 
     var input   = $(this).siblings('.input_asignar');

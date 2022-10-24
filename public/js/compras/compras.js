@@ -4,8 +4,13 @@ $(document).ready(function(){
 
 
     $(".compras").on('click','.generarasiento', function() {
+
         var fechaemision                =   $('#fechaemision').val();
+        var igv                         = $('#igv').val();
+
+        if(igv == '' || igv == '0.0000'){alerterrorajax("Ingrese un igv");return false;}
         if(fechaemision ==''){ alerterrorajax("Seleccione una fecha de emision."); return false;}
+
         var asiento_id                  =   $('#asiento_id_configuracion').val();
         var idopcion                    =   $('#opcion_configuracion').val();
         var anio                        =   $('#anio_configuracion').val();
@@ -13,6 +18,8 @@ $(document).ready(function(){
         var serie                       =   $('#serie_configuracion').val();
         var documento                   =   $('#documento_configuracion').val();
         var _token                      =   $('#token').val();
+
+
         $('#modal-detalle-asiento-confirmar').niftyModal('hide');
 
         data                            =   {
@@ -24,6 +31,7 @@ $(document).ready(function(){
                                                 periodo_id              : periodo_id,
                                                 serie                   : serie,
                                                 documento               : documento,
+                                                igv                     : igv,
                                             };
 
         ajax_modal(data,"/ajax-modal-cambiar-asiento-fechaemision",
