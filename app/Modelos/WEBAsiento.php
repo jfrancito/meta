@@ -74,5 +74,14 @@ class WEBAsiento extends Model
         }
     }
 
+    public function scopeOrdFecha($query,$tipoasiento){
+        if($tipoasiento == 'TAS0000000000004'){
+            $query->orderBy('FEC_USUARIO_MODIF_AUD','ASC');
+        }else{
+            $query->orderBy('FEC_ASIENTO','ASC');
+        }
+    }
+
+
 
 }
