@@ -411,6 +411,7 @@ trait GeneralesTraits
 												$IND_AFECTO)
 	{
 
+
         $stmt 		= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.asientos_IUD
 							@IND_TIPO_OPERACION = ?,
 							@COD_ASIENTO = ?,

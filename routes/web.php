@@ -152,6 +152,10 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-lista-movimiento-caja-banco', 'CajaBancoController@actionAjaxModalListaMovimientoCajaBanco');
 	Route::any('/ajax-lista-movimiento-caja-banco', 'CajaBancoController@actionAjaxListaMovimientoCajaBanco');
 
+
+	Route::any('/gestion-guardar-asiento-caja-banco/{idopcion}', 'CajaBancoController@actionGuardarAsientoCajaBanco');
+
+
 	Route::any('/gestion-asociar-banco-caja/{idopcion}', 'CajaBancoController@actionListarBancoCaja');
 	Route::any('/ajax-modal-asociar-banco-caja', 'CajaBancoController@actionAjaxModalAsociarBancoCaja');
 	Route::any('/guardar-asociacion-banco-caja/{idopcion}', 'CajaBancoController@actionGuardarAsociacionCajaBanco');

@@ -49,9 +49,35 @@
                           <tr>
 
                             @php 
+                              $total_doc_tcv    =   0;
                               $tipo_cambio_doc  =   $funcion->gn_tipo_cambio(date_format(date_create($item->FEC_EMISION), 'd-m-Y'));
+
+                              $total_cp_tcv     =   0;
+                              $total_cp_tcv_h   =   0;
                               $tipo_cambio_cp   =   $funcion->gn_tipo_cambio(date_format(date_create($item->FEC_OPERACION), 'd-m-Y'));
                             @endphp
+
+                            @if($tipo_cambio_doc->CAN_VENTA_SBS == 0)
+                              @php $total_doc_tcv    =   0; @endphp
+                            @else 
+                              @php $total_doc_tcv    =   $item->CAN_TOTAL/$tipo_cambio_doc->CAN_VENTA_SBS; @endphp
+                            @endif
+
+
+                            @if($tipo_cambio_cp->CAN_VENTA_SBS == 0)
+                              @php
+                                $total_cp_tcv     =   0;
+                                $total_cp_tcv_h   =   0;
+                              @endphp
+                            @else
+                              @php
+                                $total_cp_tcv     =   $item->CAN_DEBE_MN/$tipo_cambio_cp->CAN_VENTA_SBS;
+                                $total_cp_tcv_h   =   $item->CAN_HABER_MN/$tipo_cambio_cp->CAN_VENTA_SBS;
+                              @endphp
+                            @endif
+
+
+
                             <td class="user-avatar cell-detail user-info" >
                               <span style="padding-left: 0px;">
                                 <b>{{str_limit($item->TXT_EMPR_AFECTA, 40, "...")}}</b>
@@ -85,11 +111,11 @@
                                 <span style="padding-left: 0px;"><b>FECHA EMISION :</b> {{date_format(date_create($item->FEC_EMISION), 'd-m-Y')}}</span>
                                 <span style="padding-left: 0px;"><b>TIPO CAMBIO SBS :</b> {{number_format($tipo_cambio_doc->CAN_VENTA_SBS, $redondeo, '.', ',')}}</span>
                                 <span style="padding-left: 0px;"><b>MONTO SOLES :</b> {{number_format($item->CAN_TOTAL, $redondeo, '.', ',')}}</span>
-                                <span style="padding-left: 0px;"><b>MONTO DOLARES :</b> {{number_format(($item->CAN_TOTAL/$tipo_cambio_doc->CAN_VENTA_SBS), $redondeo, '.', ',')}}</span>
+                                <span style="padding-left: 0px;"><b>MONTO DOLARES :</b> {{number_format(($total_doc_tcv), $redondeo, '.', ',')}}</span>
 
                                 @php 
                                   $total_doc_mn     =   $total_doc_mn + $item->CAN_TOTAL;
-                                  $total_doc_me     =   $total_doc_me + ($item->CAN_TOTAL/$tipo_cambio_doc->CAN_VENTA_SBS);
+                                  $total_doc_me     =   $total_doc_me + ($total_doc_tcv);
                                 @endphp
 
                               @endif
@@ -110,11 +136,11 @@
                                     {{number_format($item->CAN_DEBE_MN, $redondeo, '.', ',')}}
                                   </span>
                                   <span style="padding-left: 0px;"><b>MONTO DOLARES :</b> 
-                                    {{number_format(($item->CAN_DEBE_MN/$tipo_cambio_cp->CAN_VENTA_SBS), $redondeo, '.', ',')}}
+                                    {{number_format(($total_cp_tcv), $redondeo, '.', ',')}}
                                   </span>
                                   @php 
                                     $total_pac_mn     =   $total_pac_mn + ($item->CAN_DEBE_MN);
-                                    $total_pac_me     =   $total_pac_me + ($item->CAN_DEBE_MN/$tipo_cambio_cp->CAN_VENTA_SBS);
+                                    $total_pac_me     =   $total_pac_me + ($total_cp_tcv);
                                   @endphp
                                 @endif
                               </td>
@@ -134,11 +160,11 @@
                                 @else
 
                                   <span style="padding-left: 0px;"><b>MONTO SOLES :</b> {{number_format($item->CAN_HABER_MN, $redondeo, '.', ',')}}</span>
-                                  <span style="padding-left: 0px;"><b>MONTO DOLARES :</b> {{number_format($item->CAN_HABER_MN/$tipo_cambio_cp->CAN_VENTA_SBS, $redondeo, '.', ',')}}</span>
+                                  <span style="padding-left: 0px;"><b>MONTO DOLARES :</b> {{number_format($total_cp_tcv_h, $redondeo, '.', ',')}}</span>
 
                                   @php 
                                     $total_pac_mn     =   $total_pac_mn + ($item->CAN_HABER_MN);
-                                    $total_pac_me     =   $total_pac_me + ($item->CAN_HABER_MN/$tipo_cambio_cp->CAN_VENTA_SBS);
+                                    $total_pac_me     =   $total_pac_me + ($total_cp_tcv_h);
                                   @endphp
 
                                 @endif
@@ -189,6 +215,11 @@
                       @if($buscar_modelo_asiento['encontro'] == '0') 
                           <b>{{$buscar_modelo_asiento['msg']}}</b>
                       @else
+
+
+                        <form method="POST" action="{{url('/gestion-guardar-asiento-caja-banco/'.$idopcion) }}">
+                              {{ csrf_field() }}
+
                           <table class="table table-condensed table-striped" style="font-size: 0.9em;">
                           <thead>
                             <tr>
@@ -252,6 +283,22 @@
                             </tr>
                           </tfoot>
                         </table>
+
+
+                        <input type="hidden" name="cabecera" id='cabecera' value='{{json_encode($asiento_array)}}'>
+                        <input type="hidden" name="detalle" id='detalle' value='{{json_encode($detalle_asiento_array)}}'>
+
+
+                        <input type="hidden" name="nro_operacion" id='nro_operacion' value='{{$nro_operacion}}'>
+                        <input type="hidden" name="cod_caja_banco" id='cod_caja_banco' value='{{$cod_caja_banco}}'>
+                        <input type="hidden" name="nro_referencia" id='nro_referencia' value='{{$cuenta_referencia}}'>
+                        <input type="hidden" name="fec_movimiento_caja" id='fec_movimiento_caja' value='{{$fec_movimiento_caja}}'>
+
+
+                        <div class="col-sm-12" style="text-align: right;">
+                          <button type="submit"  class="btn btn-success btn-modificar-asiento">Guardar</button>
+                        </div>
+                        </form>
 
 
                       @endif

@@ -705,7 +705,7 @@ trait AsientoModeloTraits
 
 
 
-	private function am_asiento_array($movimiento,$tipo_asiento,$anio,$pago_cobro,$empresa_rel_ter,$buscar_modelo_asiento,$nro_operacion,$nro_referencia)
+	private function am_asiento_array($movimiento,$tipo_asiento,$anio,$pago_cobro,$empresa_rel_ter,$buscar_modelo_asiento,$nro_operacion,$nro_referencia,$glosa,$text_pago_cobro)
 	{
 
 		$array_asiento  		= 	array();
@@ -741,8 +741,9 @@ trait AsientoModeloTraits
 			$TXT_CATEGORIA_TIPO_ASIENTO=$tipoasiento->NOM_CATEGORIA;
 			$NRO_ASIENTO='';
 			$FEC_ASIENTO=$movimiento->FEC_MOVIMIENTO_CAJABANCO;
-			$TXT_GLOSA='PREGUNTAR';
+			$TXT_GLOSA=$tipoasiento->NOM_CATEGORIA.' ('.$text_pago_cobro.' OP '.$nro_operacion.') : '.$glosa;
 			$COD_CATEGORIA_ESTADO_ASIENTO='IACHTE0000000025';
+
 
 			$TXT_CATEGORIA_ESTADO_ASIENTO='CONFIRMADO';
 			$COD_CATEGORIA_MONEDA=$movimiento->COD_CATEGORIA_MONEDA;
@@ -756,7 +757,7 @@ trait AsientoModeloTraits
 			$COD_ASIENTO_MODELO=$buscar_modelo_asiento['msg'];
 
 			$TXT_TIPO_REFERENCIA='TES.OPERACION_CAJA';
-			$TXT_REFERENCIA='';
+			$TXT_REFERENCIA=$nro_operacion;
 			$COD_ESTADO=1;
 			$COD_USUARIO_REGISTRO=Session::get('usuario_meta')->name;
 			$COD_MOTIVO_EXTORNO='';
@@ -770,8 +771,8 @@ trait AsientoModeloTraits
 			$NRO_DOC='';
 			$FEC_DETRACCION='';
 			$NRO_DETRACCION='';
-			$CAN_DESCUENTO_DETRACCION='';
-			$CAN_TOTAL_DETRACCION='';
+			$CAN_DESCUENTO_DETRACCION=0;
+			$CAN_TOTAL_DETRACCION=0;
 			$COD_CATEGORIA_TIPO_DOCUMENTO_REF='';
 			$TXT_CATEGORIA_TIPO_DOCUMENTO_REF='';
 			$NRO_SERIE_REF='';

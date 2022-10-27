@@ -126,6 +126,20 @@ trait CajaBancoTraits
 	}
 
 
+	private function cb_glosa_de_asiento($listadetallemovimientos)
+	{
+		$glosa 						=	'';
+
+		foreach($listadetallemovimientos as $index => $item){
+			$glosa 					=	$glosa.$item->TXT_CATEGORIA_TIPO_DOC.' '.$item->NRO_SERIE.'-'.$item->NRO_DOC.'/ ';
+		}
+
+	    return $glosa;
+
+	}
+
+
+
 
 	private function cb_detalle_operacion_caja_movimientos($cod_caja_banco,$nrooperacion,$nro_referencia,$fec_movimiento_caja)
 	{
@@ -153,6 +167,7 @@ trait CajaBancoTraits
 															TES.OPERACION_CAJA.COD_CONTRATO_AFECTA,
 															TES.OPERACION_CAJA.TXT_FLUJO_CAJA,
 															TES.OPERACION_CAJA.NRO_VOUCHER,
+															CON.ASIENTO_MOVIMIENTO.COD_ASIENTO_MOVIMIENTO,
 															CON.ASIENTO_MOVIMIENTO.TXT_TIPO_REFERENCIA,
 															CON.ASIENTO_MOVIMIENTO.TXT_REFERENCIA,
 															CON.ASIENTO_MOVIMIENTO.TXT_GLOSA,
@@ -205,5 +220,19 @@ trait CajaBancoTraits
 		}
 	    return $cod_pago_cobro;
 	}
+
+	private function cb_txt_pago_cobro($pago_cobro)
+	{
+		$text_pago_cobro = '';
+
+		if($pago_cobro=='EPC0000000000001'){
+			$text_pago_cobro 		= 		'PAGO';
+		}else{
+			$text_pago_cobro 		= 		'COBRO';
+		}
+
+	    return $text_pago_cobro;
+	}
+
 
 }
