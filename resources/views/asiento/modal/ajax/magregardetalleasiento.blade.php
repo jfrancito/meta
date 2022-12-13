@@ -78,8 +78,6 @@
 	      width: '100%'
 	    });
 
-
-
 	    $('.dinero').inputmask({ 'alias': 'numeric', 
 	      'groupSeparator': ',', 'autoGroup': true, 'digits': 4, 
 	      'digitsOptional': false, 

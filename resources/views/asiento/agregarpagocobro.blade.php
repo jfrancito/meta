@@ -16,24 +16,25 @@
     <div class="row">
       <div class="col-md-12">
         <div class="panel panel-default panel-border-color panel-border-color-primary">
-          <div class="panel-heading panel-heading-divider">Asiento
+          <div class="panel-heading panel-heading-divider">Pago y Cobro
 
             <div class="tools tooltiptop">
               <a href="#" class="tooltipcss opciones agregardetalleasiento">
-                <span class="tooltiptext">Agregar detalle</span>
+                <span class="tooltiptext">Agregar pago y cobro</span>
                 <span class="icon glyphicon glyphicon-plus-sign"></span>
               </a>
             </div>
 
-            <span class="panel-subtitle">Crear un nuevo Asiento</span></div>
+            <span class="panel-subtitle">Crear un nuevo Asiento</span>
+          </div>
           <div class="panel-body">
             <form method="POST" 
             id='formasiento'
-            action="{{ url('/gestion-asiento/'.$idopcion) }}" 
+            action="{{ url('/gestion-pago-cobro/'.$idopcion) }}" 
             style="border-radius: 0px;" 
             class="form-horizontal group-border-dashed">
                   {{ csrf_field() }}
-              @include('asiento.form.fasiento')
+              @include('asiento.form.fpagocobro')
             </form>
           </div>
           @include('asiento.modal.mdetalleasiento')
@@ -81,6 +82,8 @@
       $('form').parsley();
 
 
+
+
       $('.dinero').inputmask({ 'alias': 'numeric', 
       'groupSeparator': ',', 'autoGroup': true, 'digits': 4, 
       'digitsOptional': false, 
@@ -106,13 +109,18 @@
                                         _token               : _token,
                                         fechadocumento       : fechadocumento
                                     };
-
         ajax_normal_combo(data,"/ajax-input-tipo-cambio","ajax_tipocambio");
       });
 
 
 
     });
+
+
+      $(".select3").select2({
+        width: '100%'
+      });
+    
   </script> 
 
   <script src="{{ asset('public/js/asiento/asiento.js?v='.$version) }}" type="text/javascript"></script>

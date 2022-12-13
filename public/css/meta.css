@@ -1,3 +1,23 @@
+.editarcuentas{
+      display: none;
+}
+.agregar-cuenta{
+  font-size: 16px;
+    color: #5f99f5;
+    padding: 5px 5px;
+    border-radius: 5px;
+    border: 1px solid;
+
+}
+
+.editar-cuenta{
+  font-size: 16px;
+    color: #5f99f5;
+    padding: 5px 5px;
+    border-radius: 5px;
+    border: 1px solid;
+
+}
 .cursor{
   cursor: pointer;
 }

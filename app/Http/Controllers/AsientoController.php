@@ -14,20 +14,24 @@ use App\Modelos\WEBAsientoModeloReferencia;
 use App\Modelos\CMPCategoria;
 use App\Modelos\CONPeriodo;
 use App\Modelos\STDTipoDocumento;
+use App\Modelos\WEBAsiento;
+use App\Modelos\WEBAsientoMovimiento;
+use App\Modelos\STDEmpresa;
+
 
 
 use App\Traits\GeneralesTraits;
 use App\Traits\AsientoModeloTraits;
 use App\Traits\PlanContableTraits;
 use App\Traits\AsientoTraits;
-
+use App\Traits\CajaBancoTraits;
 
 use View;
 use Session;
 use Hashids;
 Use Nexmo;
 use Keygen;
-
+use PDO;
 
 class AsientoController extends Controller
 {
@@ -37,6 +41,433 @@ class AsientoController extends Controller
 	use PlanContableTraits;
 	use AsientoTraits;
 	use PlanContableTraits;
+	use CajaBancoTraits;
+
+
+	public function actionAjaxComboDocumentoReferencia(Request $request)
+	{
+
+
+		$tipo_documento 		=   $request['tipo_documento'];
+
+
+		if($tipo_documento=='TDO0000000000007' or $tipo_documento=='TDO0000000000008'){
+			$combo_tipo_documento_re= 	$this->gn_generacion_combo_tabla_osiris_referencial('STD.TIPO_DOCUMENTO','COD_TIPO_DOCUMENTO','TXT_TIPO_DOCUMENTO','Seleccione tipo documento','');	
+		}else{
+			
+			$combo_tipo_documento_re	= 	array('' => 'Seleccione tipo documento');
+		}
+
+
+
+		$funcion 				= 	$this;
+		$defecto_tipo_documento = '';
+		return View::make('general/combo/ctipodocumentoreferencial',
+						 [
+
+						 	'combo_tipo_documento_re'			=> $combo_tipo_documento_re,
+						 	'defecto_tipo_documento'	 		=> $defecto_tipo_documento,					 	
+						 	'ajax' 								=> true,						 	
+						 ]);
+	}
+
+
+
+
+	public function actionGestionarPagoCobro($idopcion,Request $request)
+	{
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Anadir');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+		View::share('titulo','Gestion Pago y Cobro');
+		if($_POST)
+		{
+
+			$fechadocumento 	 		= 	$request['fechadocumento'];
+			$moneda_id 	 				= 	$request['moneda_id'];
+			$tipocambio 	 		 	= 	$request['tipocambio'];
+			$cuenta_referencia 	 		= 	$request['cuenta_referencia'];
+			$tipo_documento 	 		= 	$request['tipo_documento'];
+			$serie 	 		 			= 	$request['serie'];
+			$nrocomprobante 	 		= 	$request['nrocomprobante'];
+			$cod_asiento 	 			= 	$request['cod_asiento'];
+			$anio 	 					= 	$request['anio'];
+			$tipo_asiento_id 	 		= 	$request['tipo_asiento_id'];
+			$cuenta_id 	 		 		= 	$request['cuenta_id'];
+			$documento 	 				= 	$request['documento'];
+			$glosa 	 					= 	$request['glosa'];
+
+			$asiento					=	WEBAsiento::where('COD_ASIENTO','=',$cod_asiento)
+											->first();	
+	    	$detalle_asiento 			= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$cod_asiento)
+	    									->get();
+
+	    	$mes 						=	date_format(date_create($fechadocumento), 'm');
+	    	$periodo 					=   $this->gn_periodo_xanio_xmes($anio,$mes,$asiento->COD_EMPR);
+	    	$tipo_asiento 				= 	CMPCategoria::where('COD_CATEGORIA','=',$tipo_asiento_id)->first();
+	    	$moneda 					= 	CMPCategoria::where('COD_CATEGORIA','=',$asiento->COD_CATEGORIA_MONEDA)->first();
+
+			$tipodocumento 				= 	STDTipoDocumento::where('COD_TIPO_DOCUMENTO','=',$tipo_documento)->first();
+
+			$IND_TIPO_OPERACION = 'I';
+			$COD_ASIENTO = '';
+			$COD_EMPR = $asiento->COD_EMPR;
+			$COD_CENTRO = $asiento->COD_CENTRO;
+			$COD_PERIODO = $periodo->COD_PERIODO;
+			$COD_CATEGORIA_TIPO_ASIENTO = $tipo_asiento->COD_CATEGORIA;
+			$TXT_CATEGORIA_TIPO_ASIENTO = $tipo_asiento->NOM_CATEGORIA;
+			$NRO_ASIENTO = '';
+			$FEC_ASIENTO = $fechadocumento;
+
+			$TXT_GLOSA = $tipo_asiento->NOM_CATEGORIA.' ('.$documento.') '.' : '.$glosa;
+			$COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000025';
+			$TXT_CATEGORIA_ESTADO_ASIENTO = 'CONFIRMADO';
+			$COD_CATEGORIA_MONEDA = $moneda->COD_CATEGORIA;
+			$TXT_CATEGORIA_MONEDA = $moneda->NOM_CATEGORIA;
+			$CAN_TIPO_CAMBIO = $tipocambio;
+
+			$CAN_TOTAL_DEBE = $asiento->CAN_TOTAL_DEBE;
+			$CAN_TOTAL_HABER = $asiento->CAN_TOTAL_HABER;
+
+			$COD_ASIENTO_EXTORNO = '';
+			$COD_ASIENTO_EXTORNADO = '';
+			$IND_EXTORNO = '0';
+			$COD_ASIENTO_MODELO = '';
+			$TXT_TIPO_REFERENCIA = 'WEB.asientos';
+			$TXT_REFERENCIA = $cod_asiento;
+
+			$COD_ESTADO = '1';
+			$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
+			$COD_MOTIVO_EXTORNO = '';
+			$GLOSA_EXTORNO = '';
+			$COD_EMPR_CLI = $asiento->COD_EMPR_CLI;
+			$TXT_EMPR_CLI = $asiento->TXT_EMPR_CLI;
+
+			$COD_CATEGORIA_TIPO_DOCUMENTO = $tipodocumento->COD_TIPO_DOCUMENTO;
+			$TXT_CATEGORIA_TIPO_DOCUMENTO = $tipodocumento->TXT_TIPO_DOCUMENTO;
+
+			$NRO_SERIE = $serie;
+			$NRO_DOC = $nrocomprobante;
+
+
+			$FEC_DETRACCION = '';
+			$NRO_DETRACCION = '';
+			$CAN_DESCUENTO_DETRACCION = '0';
+			$CAN_TOTAL_DETRACCION = '0';
+
+
+			$COD_CATEGORIA_TIPO_DOCUMENTO_REF = $asiento->COD_CATEGORIA_TIPO_DOCUMENTO;
+			$TXT_CATEGORIA_TIPO_DOCUMENTO_REF = $asiento->TXT_CATEGORIA_TIPO_DOCUMENTO;
+
+
+			$NRO_SERIE_REF = $asiento->NRO_SERIE;
+			$NRO_DOC_REF = $asiento->NRO_DOC;
+			$FEC_VENCIMIENTO = $asiento->FEC_ASIENTO;
+			$IND_AFECTO = '0';
+
+
+
+    		$asientocontable     	= 	$this->gn_crear_asiento_contable($IND_TIPO_OPERACION,
+												$COD_ASIENTO,
+												$COD_EMPR,
+												$COD_CENTRO,
+												$COD_PERIODO,
+												$COD_CATEGORIA_TIPO_ASIENTO,
+												$TXT_CATEGORIA_TIPO_ASIENTO,
+												$NRO_ASIENTO,
+												$FEC_ASIENTO,
+												$TXT_GLOSA,
+												
+												$COD_CATEGORIA_ESTADO_ASIENTO,
+												$TXT_CATEGORIA_ESTADO_ASIENTO,
+												$COD_CATEGORIA_MONEDA,
+												$TXT_CATEGORIA_MONEDA,
+												$CAN_TIPO_CAMBIO,
+												$CAN_TOTAL_DEBE,
+												$CAN_TOTAL_HABER,
+												$COD_ASIENTO_EXTORNO,
+												$COD_ASIENTO_EXTORNADO,
+												$IND_EXTORNO,
+
+												$COD_ASIENTO_MODELO,
+												$TXT_TIPO_REFERENCIA,
+												$TXT_REFERENCIA,
+												$COD_ESTADO,
+												$COD_USUARIO_REGISTRO,
+												$COD_MOTIVO_EXTORNO,
+												$GLOSA_EXTORNO,
+												$COD_EMPR_CLI,
+												$TXT_EMPR_CLI,
+												$COD_CATEGORIA_TIPO_DOCUMENTO,
+
+												$TXT_CATEGORIA_TIPO_DOCUMENTO,
+												$NRO_SERIE,
+												$NRO_DOC,
+												$FEC_DETRACCION,
+												$NRO_DETRACCION,
+												$CAN_DESCUENTO_DETRACCION,
+												$CAN_TOTAL_DETRACCION,
+												$COD_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$TXT_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$NRO_SERIE_REF,
+
+												$NRO_DOC_REF,
+												$FEC_VENCIMIENTO,
+												$IND_AFECTO);
+
+
+	    	$lista_asiento 						= 	$this->as_lista_asiento_pago_cobro($cod_asiento);
+
+	    	$montomn							=	0;
+		    $montome							=	0;    	
+
+			foreach ($lista_asiento as $key => $item) {
+
+
+				$CAN_DEBE_MN = $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
+				$CAN_HABER_MN = 0.0000;
+				$CAN_DEBE_ME = $item->CAN_DEBE_ME+$item->CAN_HABER_ME;
+				$CAN_HABER_ME = 0.0000;
+
+		    	$montomn							=	$CAN_DEBE_MN;
+			    $montome							=	$CAN_DEBE_ME; 
+
+				$IND_TIPO_OPERACION = 'I';
+				$COD_ASIENTO_MOVIMIENTO = '';
+				$COD_EMPR = $asiento->COD_EMPR;
+				$COD_CENTRO = $asiento->COD_CENTRO;
+				$COD_ASIENTO = $asientocontable;
+
+				$COD_CUENTA_CONTABLE = $item->id;
+				$TXT_CUENTA_CONTABLE = $item->nro_cuenta;
+
+				$TXT_GLOSA = 'ABONO DOC : '. $item->TXT_CATEGORIA_TIPO_DOCUMENTO.' '.$item->NRO_SERIE.' '.$item->NRO_DOC.' // '.$item->TXT_EMPR_CLI;
+				$NRO_LINEA = $key+1;
+				$COD_CUO = '';
+				$IND_EXTORNO = '0';
+				$TXT_TIPO_REFERENCIA = '';
+				$TXT_REFERENCIA = '';
+				$COD_ESTADO = '1';
+				$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
+				$COD_DOC_CTBLE_REF = '';
+
+				$COD_ORDEN_REF = '';
+
+	    		$detalle     	= 	$this->gn_crear_detalle_asiento_contable(	$IND_TIPO_OPERACION,
+															$COD_ASIENTO_MOVIMIENTO,
+															$COD_EMPR,
+															$COD_CENTRO,
+															$COD_ASIENTO,
+															$COD_CUENTA_CONTABLE,
+															$TXT_CUENTA_CONTABLE,
+															$TXT_GLOSA,
+															$CAN_DEBE_MN,
+															$CAN_HABER_MN,
+
+															$CAN_DEBE_ME,
+															$CAN_HABER_ME,
+															$NRO_LINEA,
+															$COD_CUO,
+															$IND_EXTORNO,
+															$TXT_TIPO_REFERENCIA,
+															$TXT_REFERENCIA,
+															$COD_ESTADO,
+															$COD_USUARIO_REGISTRO,
+															$COD_DOC_CTBLE_REF,
+
+															$COD_ORDEN_REF);
+
+			}
+
+
+		    $cuentacontable 	= 	WEBCuentaContable::where('id','=',$cuenta_id)
+									->first();
+
+			$CAN_DEBE_MN = 0.0000;
+			$CAN_HABER_MN = $montomn;
+			$CAN_DEBE_ME = 0.0000;
+			$CAN_HABER_ME = $montome;
+
+			$IND_TIPO_OPERACION = 'I';
+			$COD_ASIENTO_MOVIMIENTO = '';
+			$COD_EMPR = $asiento->COD_EMPR;
+			$COD_CENTRO = $asiento->COD_CENTRO;
+			$COD_ASIENTO = $asientocontable;
+
+			$COD_CUENTA_CONTABLE = $cuentacontable->id;
+			$TXT_CUENTA_CONTABLE = $cuentacontable->nro_cuenta;
+			$TXT_GLOSA = 'CANCELADO : '. $glosa;
+			$NRO_LINEA = 2;
+			$COD_CUO = '';
+			$IND_EXTORNO = '0';
+			$TXT_TIPO_REFERENCIA = '';
+			$TXT_REFERENCIA = '';
+			$COD_ESTADO = '1';
+			$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
+			$COD_DOC_CTBLE_REF = '';
+
+			$COD_ORDEN_REF = '';
+
+    		$detalle     	= 	$this->gn_crear_detalle_asiento_contable(	$IND_TIPO_OPERACION,
+														$COD_ASIENTO_MOVIMIENTO,
+														$COD_EMPR,
+														$COD_CENTRO,
+														$COD_ASIENTO,
+														$COD_CUENTA_CONTABLE,
+														$TXT_CUENTA_CONTABLE,
+														$TXT_GLOSA,
+														$CAN_DEBE_MN,
+														$CAN_HABER_MN,
+
+														$CAN_DEBE_ME,
+														$CAN_HABER_ME,
+														$NRO_LINEA,
+														$COD_CUO,
+														$IND_EXTORNO,
+														$TXT_TIPO_REFERENCIA,
+														$TXT_REFERENCIA,
+														$COD_ESTADO,
+														$COD_USUARIO_REGISTRO,
+														$COD_DOC_CTBLE_REF,
+
+														$COD_ORDEN_REF);
+
+
+			return Redirect::to('/gestion-pago-cobro/'.$idopcion)->with('bienhecho', 'Asiento '.$glosa.' registrado con exito');
+
+
+		}else{
+
+
+			if(Session::has('asiento_id_session')){
+				$asiento_id 			=	Session::get('asiento_id_session');
+			}else{
+				$asiento_id 			=	'';
+			}
+
+			$asiento				=	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)
+										->first();	
+	    	$detalle_asiento 		= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)
+	    								->get();
+
+	    	$combo_cuenta_referencia = $this->cb_combo_cuenta_referencia();
+			$combo_moneda 			= 	$this->gn_generacion_combo_categoria('MONEDA','Seleccione moneda','');
+			$combo_tipo_documento	= 	$this->gn_generacion_combo_tabla_osiris('STD.TIPO_DOCUMENTO','COD_TIPO_DOCUMENTO','TXT_TIPO_DOCUMENTO','Seleccione tipo documento','');
+
+	    	$combo_tipo_asiento 	= 	$this->gn_generacion_combo_pago_cobro('TIPO_ASIENTO','Seleccione tipo asiento','');
+		
+	    	if(count($asiento)>0){
+				$defecto_moneda			= 	$asiento->COD_CATEGORIA_MONEDA;
+				$tipo_cambio 			=	$this->gn_tipo_cambio(date_format(date_create($asiento->FEC_ASIENTO), 'd-m-Y'));
+				$fecha 					=	date_format(date_create($asiento->FEC_ASIENTO), 'd-m-Y');
+				$defecto_tipo_documento	= 	$asiento->COD_CATEGORIA_TIPO_DOCUMENTO;
+
+				$serie 					=	$asiento->NRO_SERIE;
+				$nrocomprobante 		=	$asiento->NRO_DOC;
+
+	    	}else{
+				$defecto_moneda			= 	'';
+				$tipo_cambio 			=	$this->gn_tipo_cambio($this->fin);
+				$fecha 					=	$this->fin;
+				$defecto_tipo_documento	= 	'-1';
+				$serie 					=	'';
+				$nrocomprobante 		=	'';
+
+	    	}
+	    	$sel_tipo_asiento 			=	'';
+	    	$lista_asiento              =  	array();
+	    	$combo_cuenta_corriente 	= 	array(''=>'Seleccione cuenta corriente');
+	    	$sel_cuenta_corriente 		=	'';
+
+		    $anio  					=   $this->anio;
+	        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+			$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+
+
+			return View::make('asiento/agregarpagocobro',
+						[
+							'combo_tipo_documento'  	=> $combo_tipo_documento,
+							'combo_cuenta_referencia'  	=> $combo_cuenta_referencia,
+							'combo_moneda'  			=> $combo_moneda,
+							'combo_tipo_asiento'  		=> $combo_tipo_asiento,
+							'combo_cuenta_corriente'  	=> $combo_cuenta_corriente,
+							'sel_cuenta_corriente'  	=> $sel_cuenta_corriente,
+							'defecto_moneda'  			=> $defecto_moneda,
+							'defecto_tipo_documento'  	=> $defecto_tipo_documento,
+							'sel_tipo_asiento'  		=> $sel_tipo_asiento,
+							'tipo_cambio'  				=> $tipo_cambio,
+							'serie'  					=> $serie,
+							'nrocomprobante'  			=> $nrocomprobante,
+							'fecha'						=> $fecha,
+							'asiento_id'				=> $asiento_id,
+							'lista_asiento'				=> $lista_asiento,
+							'anio'						=> $anio,
+							'combo_anio_pc'				=> $combo_anio_pc,
+						  	'idopcion'  				=> $idopcion
+						]);
+		}
+	}
+
+	public function actionAjaxComboCuentaPagoCobro(Request $request)
+	{
+
+
+		$tipo_asiento_id 	    	=   $request['tipo_asiento_id'];
+		$anio 	    				=   $request['anio'];
+
+
+    	$sel_cuenta_corriente 		=	'';
+    	if($tipo_asiento_id=='TAS0000000000007'){
+    		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel(Session::get('empresas_meta')->COD_EMPR,6,$anio);
+			$combo_cuenta_corriente = 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
+    	}else{
+
+	    	if($tipo_asiento_id=='TAS0000000000001'){
+	    		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel_caja(Session::get('empresas_meta')->COD_EMPR,6,$anio);
+				$combo_cuenta_corriente = 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
+	    	}else{
+
+
+		    	if($tipo_asiento_id=='TAS0000000000002'){
+		    		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel_banco(Session::get('empresas_meta')->COD_EMPR,6,$anio);
+					$combo_cuenta_corriente = 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
+		    	}else{
+
+
+		    		$combo_cuenta_corriente 	= 	array(''=>'Seleccione cuenta corriente');
+
+	    		}
+
+    		}
+    	}
+
+
+		return View::make('asiento/ajax/acuentapagocobro',
+						 [
+
+						 	'combo_cuenta_corriente'=> $combo_cuenta_corriente,
+						 	'sel_cuenta_corriente'	 => $sel_cuenta_corriente,					 	
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
+
+	public function actionAjaxBuscarAsientoPagoCobro(Request $request)
+	{
+
+		$tipo_documento 					= 	$request['tipo_documento'];
+		$serie 								= 	$request['serie'];
+		$asiento_id 						= 	$request['asiento_id'];
+		$nrocomprobante 					= 	$request['nrocomprobante'];
+
+	    $lista_asiento 						= 	$this->as_lista_asiento_pago_cobro($asiento_id);
+
+		return View::make('asiento/ajax/aasientopagocobro',
+					[
+						'lista_asiento'  	=> $lista_asiento,
+					]);
+	}
 
 	public function actionAjaxEliminarDetalleAsiento(Request $request)
 	{
@@ -144,23 +575,40 @@ class AsientoController extends Controller
 		if($_POST)
 		{
 
+
+				$nrocomprobante = '';
+				if($request['nrocomprobante'] !=''){
+					$nrocomprobante = str_pad($request['nrocomprobante'], 7, "0", STR_PAD_LEFT);
+				}
+				$nrocomprobantereferencia = '';
+				if($request['nrocomprobantereferencia'] !=''){
+					$nrocomprobantereferencia = str_pad($request['nrocomprobantereferencia'], 7, "0", STR_PAD_LEFT);
+				}
+
 				$anio 	 		 			= 	$request['anio'];
 				$periodo_id 	 		 	= 	$request['periodo_id'];
 				$tipo_asiento_id 	 		= 	$request['tipo_asiento_id'];
 				$moneda_id 	 		 		= 	$request['moneda_id'];
 				$tipocambio 	 		 	= 	$request['tipocambio'];
+				$pagocobro 	 		 		= 	$request['pagocobro'];
+
 
 				$tipo_documento 	 		= 	$request['tipo_documento'];
 				$serie 	 		 			= 	$request['serie'];
-				$nrocomprobante 	 		= 	$request['nrocomprobante'];
+
+				$nrocomprobante 	 		= 	$nrocomprobante;
+
 
 				$fechavencimiento 	 		= 	$request['fechavencimiento'];
 				$fechadocumento 	 		= 	$request['fechadocumento'];
+				$cliente_id 	 			= 	$request['cliente_id'];
 
 
 				$tipo_documento_referencia 	= 	$request['tipo_documento_referencia'];
 				$seriereferencia 	 		= 	$request['seriereferencia'];
-				$nrocomprobantereferencia 	= 	$request['nrocomprobantereferencia'];
+
+				$nrocomprobantereferencia 	= 	$nrocomprobantereferencia;
+
 				$fechareferencia 	 		= 	$request['fechareferencia'];
 				$glosa 	 		 			= 	$request['glosa'];
 				$empresa_id 				=	Session::get('empresas_meta')->COD_EMPR;
@@ -170,6 +618,18 @@ class AsientoController extends Controller
 				$moneda 					= 	CMPCategoria::where('COD_CATEGORIA','=',$moneda_id)->first();
 				$tipodocumento 				= 	STDTipoDocumento::where('COD_TIPO_DOCUMENTO','=',$tipo_documento)->first();
 				$tipodocumentoreferencia 	= 	STDTipoDocumento::where('COD_TIPO_DOCUMENTO','=',$tipo_documento_referencia)->first();
+				$cliente 					= 	STDEmpresa::where('COD_EMPR','=',$cliente_id)->first();
+
+
+				$cod_cliente 				=	'';
+				$nom_cliente 				=	'';
+				if(count($cliente)>0){
+					$cod_cliente 				=	$cliente->COD_EMPR;
+					$nom_cliente 				=	$cliente->NOM_EMPR;
+				}else{
+					$cod_cliente 				=	'';
+					$nom_cliente 				=	'';
+				}
 
 
 				if(count($tipodocumento)>0){
@@ -177,7 +637,7 @@ class AsientoController extends Controller
 				}else{
 					$TXT_CATEGORIA_TIPO_DOCUMENTO = '';
 				}
-				$glosa  =	$tipo_asiento->NOM_CATEGORIA.' : '.$TXT_CATEGORIA_TIPO_DOCUMENTO.' '.$serie.' '.$nrocomprobante.' // '.$glosa;
+				$glosa  =	$tipo_asiento->NOM_CATEGORIA.' : '.trim($TXT_CATEGORIA_TIPO_DOCUMENTO).' '.$serie.' '.$nrocomprobante.' // '.$nom_cliente.' // '.$glosa;
 
 
 				$array_detalle_asiento_request 		= 	json_decode($request['array_detalle_asiento'],true);
@@ -199,7 +659,7 @@ class AsientoController extends Controller
 				$TXT_CATEGORIA_TIPO_ASIENTO = $tipo_asiento->NOM_CATEGORIA;
 				$NRO_ASIENTO = '';
 				$FEC_ASIENTO = $fechadocumento;
-				$TXT_GLOSA = $tipo_asiento->NOM_CATEGORIA.' : '.$glosa;
+				$TXT_GLOSA = $glosa;
 				$COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000025';
 				$TXT_CATEGORIA_ESTADO_ASIENTO = 'CONFIRMADO';
 				$COD_CATEGORIA_MONEDA = $moneda->COD_CATEGORIA;
@@ -220,8 +680,8 @@ class AsientoController extends Controller
 				$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
 				$COD_MOTIVO_EXTORNO = '';
 				$GLOSA_EXTORNO = '';
-				$COD_EMPR_CLI = '';
-				$TXT_EMPR_CLI = '';
+				$COD_EMPR_CLI = $cod_cliente;
+				$TXT_EMPR_CLI = $nom_cliente;
 
 				if(count($tipodocumento)>0){
 					$COD_CATEGORIA_TIPO_DOCUMENTO = $tipodocumento->COD_TIPO_DOCUMENTO;
@@ -314,8 +774,8 @@ class AsientoController extends Controller
 				if($moneda_id=='MON0000000000001'){
 					$CAN_DEBE_MN = $item['montod'];
 					$CAN_HABER_MN = $item['montoh'];
-					$CAN_DEBE_ME = $item['montod']*$tipocambio;
-					$CAN_HABER_ME = $item['montoh']*$tipocambio;
+					$CAN_DEBE_ME = $item['montod']/$tipocambio;
+					$CAN_HABER_ME = $item['montoh']/$tipocambio;
 				}else{
 					$CAN_DEBE_MN = $item['montod']*$tipocambio;
 					$CAN_HABER_MN = $item['montoh']*$tipocambio;
@@ -371,7 +831,25 @@ class AsientoController extends Controller
 
 			}
 
- 			return Redirect::to('/gestion-asiento/'.$idopcion)->with('bienhecho', 'Asiento '.$glosa.' registrado con exito');
+
+
+	        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_DESTINO 
+												@COD_ASIENTO = ?,
+												@anio = ?');
+
+	        $stmt->bindParam(1, $COD_ASIENTO ,PDO::PARAM_STR);                   
+	        $stmt->bindParam(2, $anio ,PDO::PARAM_STR);
+	        $stmt->execute();
+
+	        if($pagocobro=='1'){
+
+	        	Session::flash('asiento_id_session', $COD_ASIENTO);
+	        	return Redirect::to('/gestion-pago-cobro/'.$idopcion)->with('bienhecho', 'Asiento '.$glosa.' registrado con exito');
+
+	        }else{
+	        	return Redirect::to('/gestion-asiento/'.$idopcion)->with('bienhecho', 'Asiento '.$glosa.' registrado con exito');
+	        }
+
 
 		}else{
 
@@ -379,14 +857,21 @@ class AsientoController extends Controller
 			$combo_moneda 			= 	$this->gn_generacion_combo_categoria('MONEDA','Seleccione moneda','');
 			$combo_tipo_documento	= 	$this->gn_generacion_combo_tabla_osiris('STD.TIPO_DOCUMENTO','COD_TIPO_DOCUMENTO','TXT_TIPO_DOCUMENTO','Seleccione tipo documento','');
 
+			$combo_tipo_documento_re	= 	array('' => 'Seleccione tipo documento');
+
+
 		    $sel_periodo 			=	'';
 		    $anio  					=   $this->anio;
 	        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 			$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 	    	$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
 
+	    	$combo_empresa 			= 	$this->gn_combo_empresa('Seleccione periodo','');
+
 			$defecto_tipo_asiento 	= 	'';
 			$defecto_moneda			= 	'';
+			$defecto_empresa		= 	'';			
+
 			$defecto_tipo_documento	= 	'-1';
 
 			$tipo_cambio 			=	$this->gn_tipo_cambio($this->fin);
@@ -397,6 +882,8 @@ class AsientoController extends Controller
 							'combo_tipo_asiento'  		=> $combo_tipo_asiento,
 							'combo_moneda'  			=> $combo_moneda,
 							'combo_tipo_documento'  	=> $combo_tipo_documento,
+							'combo_tipo_documento_re'  	=> $combo_tipo_documento_re,
+							'combo_empresa'  			=> $combo_empresa,
 
 							'sel_periodo'  				=> $sel_periodo,
 							'anio'  					=> $anio,
@@ -407,6 +894,7 @@ class AsientoController extends Controller
 							'defecto_tipo_documento'  	=> $defecto_tipo_documento,
 							'defecto_tipo_asiento'  	=> $defecto_tipo_asiento,
 							'defecto_moneda'  			=> $defecto_moneda,
+							'defecto_empresa'  			=> $defecto_empresa,
 							'array_detalle_asiento'  	=> $array_detalle_asiento,
 						  	'idopcion'  				=> $idopcion
 						]);
@@ -450,6 +938,19 @@ class AsientoController extends Controller
 						 ]);
 	}
 
+
+	public function actionAjaxModalConfirmacionGuardar(Request $request)
+	{
+		
+		$funcion 				= 	$this;
+
+
+		return View::make('asiento/modal/ajax/mconfirmacionguardar',
+						 [		 	
+						 	'funcion' 				=> $funcion,
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
 
 
 

@@ -16,6 +16,7 @@ use App\Modelos\CMPCategoria;
 use App\Modelos\TESCajaBanco;
 use App\Modelos\CONPeriodo;
 
+use App\Modelos\WEBAsiento;
 
 use View;
 use Session;
@@ -44,6 +45,24 @@ trait AsientoTraits
 								        );
 
 
+
+	}
+
+
+	public function as_lista_asiento_pago_cobro($asiento_id){
+
+
+		$lista_asiento 						=	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientos.COD_ASIENTO', '=', 'WEB.asientomovimientos.COD_ASIENTO')
+												->join('WEB.cuentacontables', 'WEB.asientomovimientos.COD_CUENTA_CONTABLE', '=', 'WEB.cuentacontables.id')
+												->where('WEB.asientos.COD_ASIENTO','=',$asiento_id)
+												->where(function ($query){
+										            $query->where('WEB.cuentacontables.nro_cuenta','Like','42%')
+										            ->orWhere('WEB.cuentacontables.nro_cuenta','Like','43%');
+												})
+												->where('WEB.cuentacontables.nro_cuenta','Like','42%')
+	    										->get();
+
+	    return $lista_asiento;
 
 	}
 

@@ -149,6 +149,28 @@ trait GeneralesTraits
 	 	return  $combo;					 			
 	}
 
+
+	private function gn_generacion_combo_tabla_osiris_referencial($tabla,$atributo1,$atributo2,$titulo,$todo) {
+		
+		$array 							= 	DB::table($tabla)
+        									->where('COD_ESTADO','=',1)
+        									->whereIn('COD_TIPO_DOCUMENTO', array('TDO0000000000001','TDO0000000000003'))
+		        							->pluck($atributo2,$atributo1)
+											->toArray();
+		if($titulo==''){
+			$combo  					= 	$array;
+		}else{
+			if($todo=='TODO'){
+				$combo  				= 	array('' => $titulo , $todo => $todo) + $array;
+			}else{
+				$combo  				= 	array('' => $titulo) + $array;
+			}
+		}
+
+	 	return  $combo;					 			
+	}
+
+
 	private function gn_generacion_combo_categoria($txt_grupo,$titulo,$todo) {
 		
 		$array 						= 	DB::table('CMP.CATEGORIA')
@@ -165,6 +187,25 @@ trait GeneralesTraits
 
 	 	return  $combo;					 			
 	}
+
+	private function gn_generacion_combo_pago_cobro($txt_grupo,$titulo,$todo) {
+		
+		$array 						= 	DB::table('CMP.CATEGORIA')
+        								->where('COD_ESTADO','=',1)
+        								->whereIn('COD_CATEGORIA', array('TAS0000000000001','TAS0000000000007','TAS0000000000002'))
+        								->where('TXT_GRUPO','=',$txt_grupo)
+		        						->pluck('NOM_CATEGORIA','COD_CATEGORIA')
+										->toArray();
+
+		if($todo=='TODO'){
+			$combo  				= 	array('' => $titulo , $todo => $todo) + $array;
+		}else{
+			$combo  				= 	array('' => $titulo) + $array;
+		}
+
+	 	return  $combo;					 			
+	}
+
 
 	private function gn_generacion_combo_categoria_xarrayid($txt_grupo,$titulo,$todo,$array_ids) {
 		
@@ -278,6 +319,27 @@ trait GeneralesTraits
 	}
 
 
+	public function gn_combo_empresa($titulo,$todo)
+	{
+
+		$array 						= 	STDEmpresa::where('COD_ESTADO','=',1)
+										->where('IND_CLIENTE','=',1)
+										->where('IND_PROVEEDOR','=',1)
+										->select(DB::raw("NRO_DOCUMENTO + ' ' + NOM_EMPR as NOM_EMPR, COD_EMPR"))
+		        						->pluck('NOM_EMPR','COD_EMPR')
+										->toArray();
+
+		if($todo=='TODO'){
+			$combo  				= 	array('' => $titulo , $todo => $todo) + $array;
+		}else{
+			$combo  				= 	array('' => $titulo) + $array;
+		}
+
+	 	return  $combo;	
+
+	}
+
+
 	public function gn_lista_periodo($anio,$cod_empresa)
 	{
 		
@@ -287,6 +349,20 @@ trait GeneralesTraits
 										->get();
 
 	 	return  $listaperiodo;	
+
+
+	}
+
+	public function gn_periodo_xanio_xmes($anio,$mes,$cod_empresa)
+	{
+		
+		$periodo 					= 	CONPeriodo::where('COD_ESTADO','=',1)
+										->where('COD_ANIO','=',$anio)
+										->where('COD_MES','=',$mes)
+										->where('COD_EMPR','=',$cod_empresa)
+										->first();
+
+	 	return  $periodo;	
 
 
 	}
@@ -603,6 +679,97 @@ trait GeneralesTraits
 		return true;
 		
 	}
+
+
+
+
+
+	public function gn_crear_detalle_asiento_contable_movimiento(	$IND_TIPO_OPERACION,
+														$COD_ASIENTO_MOVIMIENTO,
+														$COD_EMPR,
+														$COD_CENTRO,
+														$COD_ASIENTO,
+														$COD_CUENTA_CONTABLE,
+														$TXT_CUENTA_CONTABLE,
+														$TXT_GLOSA,
+														$CAN_DEBE_MN,
+														$CAN_HABER_MN,
+
+														$CAN_DEBE_ME,
+														$CAN_HABER_ME,
+														$NRO_LINEA,
+														$COD_CUO,
+														$IND_EXTORNO,
+														$TXT_TIPO_REFERENCIA,
+														$TXT_REFERENCIA,
+														$COD_ESTADO,
+														$COD_USUARIO_REGISTRO,
+														$COD_DOC_CTBLE_REF,
+
+														$COD_ORDEN_REF,
+														$IND_PRODUCTO)
+	{
+
+
+        $stmt 		= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.ASIENTO_MOVIMIENTOS_IUD
+							@IND_TIPO_OPERACION = ?,
+							@COD_ASIENTO_MOVIMIENTO = ?,
+							@COD_EMPR = ?,
+							@COD_CENTRO = ?,
+							@COD_ASIENTO = ?,
+							@COD_CUENTA_CONTABLE = ?,
+							@TXT_CUENTA_CONTABLE = ?,
+							@TXT_GLOSA = ?,
+							@CAN_DEBE_MN = ?,
+							@CAN_HABER_MN = ?,
+
+							@CAN_DEBE_ME = ?,
+							@CAN_HABER_ME = ?,
+							@NRO_LINEA = ?,
+							@COD_CUO = ?,
+							@IND_EXTORNO = ?,
+							@TXT_TIPO_REFERENCIA = ?,
+							@TXT_REFERENCIA = ?,
+							@COD_ESTADO = ?,
+							@COD_USUARIO_REGISTRO = ?,
+							@COD_DOC_CTBLE_REF = ?,
+
+							@COD_ORDEN_REF = ?,
+							@IND_PRODUCTO = ?
+
+							');
+
+        $stmt->bindParam(1, $IND_TIPO_OPERACION ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $COD_ASIENTO_MOVIMIENTO  ,PDO::PARAM_STR|PDO::PARAM_INPUT_OUTPUT, 16);
+        $stmt->bindParam(3, $COD_EMPR  ,PDO::PARAM_STR);
+        $stmt->bindParam(4, $COD_CENTRO  ,PDO::PARAM_STR);
+        $stmt->bindParam(5, $COD_ASIENTO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(6, $COD_CUENTA_CONTABLE  ,PDO::PARAM_STR);
+        $stmt->bindParam(7, $TXT_CUENTA_CONTABLE  ,PDO::PARAM_STR);
+        $stmt->bindParam(8, $TXT_GLOSA  ,PDO::PARAM_STR);
+        $stmt->bindParam(9, $CAN_DEBE_MN  ,PDO::PARAM_STR);
+        $stmt->bindParam(10, $CAN_HABER_MN  ,PDO::PARAM_STR);
+
+        $stmt->bindParam(11, $CAN_DEBE_ME ,PDO::PARAM_STR);                   
+        $stmt->bindParam(12, $CAN_HABER_ME  ,PDO::PARAM_STR);
+        $stmt->bindParam(13, $NRO_LINEA  ,PDO::PARAM_STR);
+        $stmt->bindParam(14, $COD_CUO  ,PDO::PARAM_STR);
+        $stmt->bindParam(15, $IND_EXTORNO ,PDO::PARAM_STR);                   
+        $stmt->bindParam(16, $TXT_TIPO_REFERENCIA  ,PDO::PARAM_STR);
+        $stmt->bindParam(17, $TXT_REFERENCIA  ,PDO::PARAM_STR);
+        $stmt->bindParam(18, $COD_ESTADO  ,PDO::PARAM_STR);
+        $stmt->bindParam(19, $COD_USUARIO_REGISTRO  ,PDO::PARAM_STR);
+        $stmt->bindParam(20, $COD_DOC_CTBLE_REF  ,PDO::PARAM_STR);
+
+        $stmt->bindParam(21, $COD_ORDEN_REF ,PDO::PARAM_STR);   
+        $stmt->bindParam(22, $IND_PRODUCTO ,PDO::PARAM_STR);                 
+        $stmt->execute();
+
+
+		return true;
+		
+	}
+
 
 
 }

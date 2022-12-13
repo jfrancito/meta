@@ -88,6 +88,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-detalle-asiento', 'RegistroDiarioController@actionAjaxModalDetalleAsiento');
 
 
+
+
+
 	Route::any('/gestion-observacion-documentos/{tipo_asiento_id}', 'MigrarVentaController@actionListarObservacionDocumentos');
 	Route::any('/ajax-modal-detalle-producto-migracion-ventas', 'MigrarVentaController@actionAjaxModalDetalleProductoMigracionVentas');
 	Route::any('/generar-asiento-contables-xdocumentos', 'MigrarVentaController@actionGenerarAsientoContablesXDocumentos');
@@ -128,6 +131,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-detalle-asiento-diario-compra', 'ComprasController@actionAjaxModalDetalleAsientoDiarioCompra');
 	Route::any('/ajax-modal-detalle-asiento-diario-reversion', 'ComprasController@actionAjaxModalDetalleAsientoDiarioReversion');
 	Route::any('/ajax-modal-crear-detalle-asiento-diario', 'ComprasController@actionAjaxModalCrearDetalleAsientoDiario');
+	Route::any('/ajax-editar-asiento-contable-movimiento', 'ComprasController@actionAjaxEditarAsientoContableMovimiento');
+
+
 
 	Route::any('/popup-detalle-asiento-diario-compra/{anio}/{asiento_compra_id}', 'ComprasController@actionPopUpDetalleAsientoDiarioCompra');
 
@@ -183,6 +189,12 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-agregar-detalle-asiento', 'AsientoController@actionAjaxAgregarDetalleAsiento');
 	Route::any('/ajax-eliminar-detalle-asiento', 'AsientoController@actionAjaxEliminarDetalleAsiento');
 	Route::any('/ajax-input-tipo-cambio', 'AsientoController@actionAjaxInputTipoCambio');
+	Route::any('/ajax-modal-confirmacion-guardar', 'AsientoController@actionAjaxModalConfirmacionGuardar');
+	
+	Route::any('/gestion-pago-cobro/{idopcion}', 'AsientoController@actionGestionarPagoCobro');
+	Route::any('/ajax-buscar-asiento-pago-cobro', 'AsientoController@actionAjaxBuscarAsientoPagoCobro');
+	Route::any('/ajax-combo-cuentapagocobro-xtipoasiento', 'AsientoController@actionAjaxComboCuentaPagoCobro');
+	Route::any('/ajax-combo-tipo-documento-referencia-xtipodocumento', 'AsientoController@actionAjaxComboDocumentoReferencia');
 
 
 

@@ -71,6 +71,42 @@ trait PlanContableTraits
 
 	}
 
+
+	private function pc_array_nro_cuentas_nombre_xnivel_caja($empresa_id,$nivel, $anio)
+	{
+
+	    $array_nro_cuenta_pc 		= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
+	    								->where('anio','=',$anio)
+	    								->where('nivel','=',$nivel)
+	    								->where('nro_cuenta','=','101101')
+										->where('activo','=',1)
+										->orderBy('id', 'asc')
+										->select(DB::raw("nro_cuenta + ' ' + nombre as nro_cuenta_nombre, id"))
+										->pluck('nro_cuenta_nombre','id')									
+										->toArray();
+
+		return $array_nro_cuenta_pc;
+
+	}
+
+
+	private function pc_array_nro_cuentas_nombre_xnivel_banco($empresa_id,$nivel, $anio)
+	{
+
+	    $array_nro_cuenta_pc 		= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
+	    								->where('anio','=',$anio)
+	    								->where('nivel','=',$nivel)
+	    								->where('nro_cuenta','like','1041%')
+										->where('activo','=',1)
+										->orderBy('id', 'asc')
+										->select(DB::raw("nro_cuenta + ' ' + nombre as nro_cuenta_nombre, id"))
+										->pluck('nro_cuenta_nombre','id')									
+										->toArray();
+
+		return $array_nro_cuenta_pc;
+
+	}
+
 	private function pc_array_nro_cuentas_nombre($empresa_id, $anio)
 	{
 

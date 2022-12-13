@@ -2,6 +2,118 @@ $(document).ready(function(){
 
     var carpeta = $("#carpeta").val();
 
+    $(".compras").on('click','.btn-editar-asiento', function(e) {
+
+        var _token                  =   $('#token').val();
+        var cuenta_contable_id      =   $('#cuenta_contable_id').val();
+        var monto                   =   $('#monto').val();
+        monto                       = monto.replace(",", "");
+
+        
+        var asiento_movimiento_id   =   $('#asiento_movimiento_id').val();
+        var asiento_id_editar       =   $('#asiento_id_editar').val();
+        var partida_id              =   $('#partida_id').val();
+        var activo                  =   $('#activo').val();
+        var ruta                    =   $('#ruta').val();
+        var accion                  =   $('#accion').val();
+
+        if(monto == '' || monto == '0.0000'){alerterrorajax("Ingrese un monto");return false;}
+        if(cuenta_contable_id ==''){ alerterrorajax("Seleccione una cuenta contable."); return false;}
+
+        data                            =   {
+                                                _token                  : _token,
+                                                cuenta_contable_id      : cuenta_contable_id,
+                                                monto                   : monto,
+                                                asiento_movimiento_id   : asiento_movimiento_id,
+                                                asiento_id              : asiento_id_editar,
+                                                partida_id              : partida_id,
+                                                activo                  : activo,
+                                                accion                  : accion,
+                                            };
+
+        link                            =    "/ajax-editar-asiento-contable-movimiento";                                     
+        $.ajax({
+            type    :   "POST",
+            url     :   carpeta+link,
+            data    :   data,
+            success: function (data) {
+
+                //$('#modal-detalle-asiento-confirmar').niftyModal('hide');
+                $('.modal-close').click();
+                
+                cerrarcargando();
+                actualizarmodal(ruta,asiento_id_editar)
+
+            },
+            error: function (data) {
+                cerrarcargando();
+                error500(data);
+            }
+        });
+
+
+
+    });
+
+
+
+
+    $(".compras").on('click','.btn-regresar-lista', function(e) {
+        $('.tablageneral').toggle("slow");
+        $('.editarcuentas').toggle("slow");
+    });
+
+
+
+
+
+    $(".compras").on('click','.editar-cuenta', function(e) {
+
+        var _token                  =   $('#token').val();
+
+        data_id                     =   $(this).parents('.fila').attr('data_id');
+        data_cuenta_id              =   $(this).parents('.fila').attr('data_cuenta_id');
+        data_debe_mn                =   $(this).parents('.fila').attr('data_debe_mn');
+        data_haber_mn               =   $(this).parents('.fila').attr('data_haber_mn');
+        data_debe_me                =   $(this).parents('.fila').attr('data_debe_me');
+        data_haber_me               =   $(this).parents('.fila').attr('data_haber_me');
+        data_moneda                 =   $(this).parents('.fila').attr('data_moneda');
+        data_registro               =   $(this).parents('.fila').attr('data_registro');
+
+        if(data_registro=='editar'){
+            partida                     =   'COP0000000000001';
+            if(parseFloat(data_haber_mn)>0){
+                partida                     =   'COP0000000000002';
+            }            
+        }else{
+            partida                     =   '';
+        }
+
+        if(data_registro=='editar'){
+            monto = parseFloat(data_debe_me)+parseFloat(data_haber_me);
+            if(data_moneda == 'MON0000000000001'){
+                monto = parseFloat(data_debe_mn)+parseFloat(data_haber_mn);
+            }
+        }else{
+            monto                     =   0;
+        }
+
+
+        $('#cuenta_contable_id').val(data_cuenta_id.trim()).trigger('change');
+        $('#partida_id').val(partida.trim()).trigger('change');
+
+        $('#monto').val(monto);
+        $('#asiento_movimiento_id').val(data_id);
+        $('#partida_id').val(partida);
+        $('#accion').val(data_registro);
+
+        $('.tablageneral').toggle("slow");
+        $('.editarcuentas').toggle("slow");
+
+
+    });
+
+
 
     $(".compras").on('click','.generarasiento', function() {
 
@@ -261,6 +373,7 @@ $(document).ready(function(){
         var periodo_id              =   $('#periodo_id').val();
         var serie                   =   $('#serie').val();
         var documento               =   $('#documento').val();
+        var ruta                    =   '/ajax-modal-crear-detalle-asiento-diario';
 
         data                        =   {
                                             _token                  : _token,
@@ -270,11 +383,14 @@ $(document).ready(function(){
                                             periodo_id              : periodo_id,
                                             serie                   : serie,
                                             documento               : documento,
+                                            ruta                    : ruta,
                                         };
         ajax_modal(data,"/ajax-modal-crear-detalle-asiento-diario",
                   "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
 
     });
+
+
 
 
 
@@ -313,6 +429,7 @@ $(document).ready(function(){
         var periodo_id              =   $('#periodo_id').val();
         var serie                   =   $('#serie').val();
         var documento               =   $('#documento').val();
+        var ruta                    =   '/ajax-modal-detalle-asiento-confirmar';
 
         data                        =   {
                                             _token                  : _token,
@@ -322,6 +439,7 @@ $(document).ready(function(){
                                             periodo_id              : periodo_id,
                                             serie                   : serie,
                                             documento               : documento,
+                                            ruta                    : ruta,
                                         };
         ajax_modal(data,"/ajax-modal-detalle-asiento-confirmar",
                   "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
@@ -411,3 +529,29 @@ function dataenviar(){
     });
     return data;
 }
+
+function actualizarmodal(ruta,asiento_id){
+        var _token                  =   $('#token').val();
+        var asiento_id              =   asiento_id;
+        var idopcion                =   $('#idopcion').val();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();
+        var serie                   =   $('#serie').val();
+        var documento               =   $('#documento').val();
+
+        data                        =   {
+                                            _token                  : _token,
+                                            asiento_id              : asiento_id,
+                                            idopcion                : idopcion,
+                                            anio                    : anio,
+                                            periodo_id              : periodo_id,
+                                            serie                   : serie,
+                                            documento               : documento,
+                                        };
+        ajax_modal_actualizar(data,ruta,
+                  "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
+}
+
+
+
+

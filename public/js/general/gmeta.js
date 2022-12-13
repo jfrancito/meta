@@ -157,6 +157,26 @@ function ajax_normal_guardar_lista(data,link,btnclick) {
 
 
 
+function ajax_modal_actualizar(data,link,modal,contenedor_ajax) {
+
+    abrircargando();
+
+    $.ajax({
+        type    :   "POST",
+        url     :   carpeta+link,
+        data    :   data,
+        success: function (data) {
+            cerrarcargando();
+            $('.'+contenedor_ajax).html(data);
+
+            $('#'+modal).niftyModal("show");
+        },
+        error: function (data) {
+            cerrarcargando();
+            error500(data);
+        }
+    });
+}
 function ajax_modal(data,link,modal,contenedor_ajax) {
 
     abrircargando();
@@ -169,7 +189,6 @@ function ajax_modal(data,link,modal,contenedor_ajax) {
             cerrarcargando();
             $('.'+contenedor_ajax).html(data);
             $('#'+modal).niftyModal();
-
         },
         error: function (data) {
             cerrarcargando();
@@ -177,7 +196,6 @@ function ajax_modal(data,link,modal,contenedor_ajax) {
         }
     });
 }
-
 
 
 function ajax_modal_syn(data,link,modal,contenedor_ajax) {

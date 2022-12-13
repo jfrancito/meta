@@ -40,41 +40,18 @@
 
 	            <div id="asientocontable" class="tab-pane active cont">
 
-					<table class="table table-condensed table-striped">
-					    <thead>
-					      <tr>
-					      	<th>Linea</th>
-					        <th>Cuenta</th>
-					        <th>Glosa</th>
-					        <th>Debe MN</th>
-					        <th>Haber MN</th>
-					        <th>Debe ME</th>
-					        <th>Haber ME</th>
-					      </tr>
-					    </thead>
-					    <tbody>
-					    @foreach($listaasientomovimiento as $index => $item)
-					      	<tr>
-					      	   <td>{{$item->NRO_LINEA}}</td>
-						       <td>{{$item->TXT_CUENTA_CONTABLE}}</td>
-						       <td>{{$item->TXT_GLOSA}}</td>
-						       <td>{{number_format($item->CAN_DEBE_MN, $redondeo, '.', ',')}}</td>
-						       <td>{{number_format($item->CAN_HABER_MN, $redondeo, '.', ',')}}</td>
-						       <td>{{number_format($item->CAN_DEBE_ME, $redondeo, '.', ',')}}</td>
-						       <td>{{number_format($item->CAN_HABER_ME, $redondeo, '.', ',')}}</td>
-					      	</tr>                  
-					    @endforeach
-					    </tbody>
-					    <tfoot>
-					      <tr>
-					      	<th colspan="3">Totales</th>
-					      	<th>{{number_format($listaasientomovimiento->sum("CAN_DEBE_MN"), $redondeo, '.', ',')}}</th>
-					      	<th>{{number_format($listaasientomovimiento->sum("CAN_HABER_MN"), $redondeo, '.', ',')}}</th>
-					      	<th>{{number_format($listaasientomovimiento->sum("CAN_DEBE_ME"), $redondeo, '.', ',')}}</th>
-					      	<th>{{number_format($listaasientomovimiento->sum("CAN_HABER_ME"), $redondeo, '.', ',')}}</th>
-					      </tr>
-					    </tfoot>
-					</table>
+
+	            	<div class='tablageneral '>
+
+	            		@include('compras.listadetalleasientomovimiento')
+
+	            	</div>
+
+	           		<div class='editarcuentas'>
+						@include('compras.form.feditarasientomovimiento')
+	            	</div>
+
+
 	            </div>
 
 	            <div id="actualizarasiento" class="tab-pane cont">

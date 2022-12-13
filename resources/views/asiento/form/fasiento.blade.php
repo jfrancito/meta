@@ -83,6 +83,23 @@
     
   </div>
 
+  <div class="form-group quitar-tb">
+
+    <label class="col-sm-12 control-label izquierda">RUC </label>
+    <div class="col-sm-12">
+      {!! Form::select( 'cliente_id', $combo_empresa, $defecto_empresa,
+                        [
+                          'class'       => 'select2 form-control control input-xs' ,
+                          'id'          => 'cliente_id',
+                          'required'    => '',
+                          'data-aw'     => '4'
+                        ]) !!}
+
+
+
+    </div>
+  </div>
+
 
 
 </div>
@@ -159,7 +176,7 @@
 
 
   <div class="form-group quitar-tb">
-      <label class="col-sm-12 control-label izquierda">Fecha Documento</label>
+      <label class="col-sm-12 control-label izquierda">Fecha Documento <b>(*)</b></label>
       <div class="col-sm-12">
           <div data-min-view="2" 
                  data-date-format="dd-mm-yyyy"  
@@ -177,22 +194,11 @@
 </div>
 
 
-<div class="col-sm-4">
-  <div class="form-group quitar-tb">
-    <label class="col-sm-12 control-label izquierda">Tipo documento Referencia</label>
-    <div class="col-sm-12">
-      {!! Form::select( 'tipo_documento_referencia', $combo_tipo_documento, $defecto_tipo_documento,
-                        [
-                          'class'       => 'select2 form-control control input-xs' ,
-                          'id'          => 'tipo_documento_referencia',
-                          'data-aw'     => '9'
-                        ]) !!}
-        @include('error.erroresvalidate', [ 'id' => $errors->has('tipo_documento_referencia')  , 
-                                            'error' => $errors->first('tipo_documento_referencia', ':message') , 
-                                            'data' => '9'])
-    </div>
-  </div>
+<div class="col-sm-4 ">
 
+  <div class='ajax_tiporeferencia'>
+    @include('general.combo.ctipodocumentoreferencial')
+  </div>
 
   <div class="form-group quitar-tb">
     <label class="col-sm-12 control-label izquierda">Serie Referencia</label>
@@ -269,7 +275,7 @@
 
 </div>
 
-
+<input type="hidden" name="pagocobro" id='pagocobro' value='0'>
 <input type="hidden" name="ultimalinea" id='ultimalinea' value='0'>
 
 <div class="col-sm-12 listajax">
@@ -285,7 +291,7 @@
   </div>
   <div class="col-xs-6">
     <p class="text-right">
-      <button type="submit" class="btn btn-space btn-primary btn_guardar_asiento">Guardar</button>
+      <button type="button" class="btn btn-space btn-primary btn_guardar_asiento">Guardar</button>
     </p>
   </div>
 </div>
