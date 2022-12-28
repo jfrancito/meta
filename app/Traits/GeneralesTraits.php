@@ -206,6 +206,14 @@ trait GeneralesTraits
 	 	return  $combo;					 			
 	}
 
+	private function gn_generacion_combo_libro($titulo) {
+		
+		$combo  				= 	array('' => $titulo , 'LD' => 'LIBRO DIARIO', 'LM' => 'LIBRO MAYOR' ,'PC' => 'PLAN CONTABLE');
+
+	 	return  $combo;					 			
+	}
+
+
 
 	private function gn_generacion_combo_categoria_xarrayid($txt_grupo,$titulo,$todo,$array_ids) {
 		
@@ -675,8 +683,10 @@ trait GeneralesTraits
         $stmt->bindParam(21, $COD_ORDEN_REF ,PDO::PARAM_STR);                   
         $stmt->execute();
 
+        $cod = $stmt->fetch();
+        $codorden = $cod[0];
 
-		return true;
+		return $codorden;
 		
 	}
 

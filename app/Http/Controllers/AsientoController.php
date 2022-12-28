@@ -92,28 +92,70 @@ class AsientoController extends Controller
 			$serie 	 		 			= 	$request['serie'];
 			$nrocomprobante 	 		= 	$request['nrocomprobante'];
 			$cod_asiento 	 			= 	$request['cod_asiento'];
+
+			$array_cp 					=   json_decode($request['array_cp'], true);
+
 			$anio 	 					= 	$request['anio'];
 			$tipo_asiento_id 	 		= 	$request['tipo_asiento_id'];
 			$cuenta_id 	 		 		= 	$request['cuenta_id'];
 			$documento 	 				= 	$request['documento'];
 			$glosa 	 					= 	$request['glosa'];
 
-			$asiento					=	WEBAsiento::where('COD_ASIENTO','=',$cod_asiento)
-											->first();	
+			$can_total_debe_a 			=	0;
+			$can_total_haber_a 			=	0;
+
+			$cod_emor_cli_a 			=	'';
+			$txt_empr_cli_a 			=	'';
+
+
+
+			if($cod_asiento==''){
+
+				$asiento					=	WEBAsiento::whereIn('COD_ASIENTO',$array_cp)
+												->get();
+				foreach ($asiento as $key => $item) {
+					$can_total_debe_a 		= 	$can_total_debe_a+$item->CAN_TOTAL_DEBE;
+					$can_total_haber_a 		= 	$can_total_haber_a+$item->CAN_TOTAL_HABER;	
+				}
+
+			}else{
+				$asiento					=	WEBAsiento::where('COD_ASIENTO','=',$cod_asiento)
+												->first();
+				$can_total_debe_a 			= 	$asiento->CAN_TOTAL_DEBE;
+				$can_total_haber_a 			= 	$asiento->CAN_TOTAL_HABER;
+
+				$cod_emor_cli_a 			=	$asiento->COD_EMPR_CLI;
+				$txt_empr_cli_a 			=	$asiento->TXT_EMPR_CLI;
+
+
+			}
+
+
 	    	$detalle_asiento 			= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$cod_asiento)
 	    									->get();
 
 	    	$mes 						=	date_format(date_create($fechadocumento), 'm');
-	    	$periodo 					=   $this->gn_periodo_xanio_xmes($anio,$mes,$asiento->COD_EMPR);
+	    	$periodo 					=   $this->gn_periodo_xanio_xmes($anio,$mes,Session::get('empresas_meta')->COD_EMPR);
 	    	$tipo_asiento 				= 	CMPCategoria::where('COD_CATEGORIA','=',$tipo_asiento_id)->first();
-	    	$moneda 					= 	CMPCategoria::where('COD_CATEGORIA','=',$asiento->COD_CATEGORIA_MONEDA)->first();
+	    	$moneda 					= 	CMPCategoria::where('COD_CATEGORIA','=',$moneda_id)->first();
+
+	    	$cod_categoria_tipo_documento_a = '';
+	    	$txt_categoria_tipo_documento_a = '';
+
 
 			$tipodocumento 				= 	STDTipoDocumento::where('COD_TIPO_DOCUMENTO','=',$tipo_documento)->first();
 
+			if(count($tipodocumento)>0){
+				$cod_categoria_tipo_documento_a = $tipodocumento->COD_TIPO_DOCUMENTO;
+				$txt_categoria_tipo_documento_a = $tipodocumento->TXT_TIPO_DOCUMENTO;
+			}
+
+
+
 			$IND_TIPO_OPERACION = 'I';
 			$COD_ASIENTO = '';
-			$COD_EMPR = $asiento->COD_EMPR;
-			$COD_CENTRO = $asiento->COD_CENTRO;
+			$COD_EMPR = Session::get('empresas_meta')->COD_EMPR;
+			$COD_CENTRO = 'CEN0000000000001';
 			$COD_PERIODO = $periodo->COD_PERIODO;
 			$COD_CATEGORIA_TIPO_ASIENTO = $tipo_asiento->COD_CATEGORIA;
 			$TXT_CATEGORIA_TIPO_ASIENTO = $tipo_asiento->NOM_CATEGORIA;
@@ -127,8 +169,8 @@ class AsientoController extends Controller
 			$TXT_CATEGORIA_MONEDA = $moneda->NOM_CATEGORIA;
 			$CAN_TIPO_CAMBIO = $tipocambio;
 
-			$CAN_TOTAL_DEBE = $asiento->CAN_TOTAL_DEBE;
-			$CAN_TOTAL_HABER = $asiento->CAN_TOTAL_HABER;
+			$CAN_TOTAL_DEBE = $can_total_debe_a;
+			$CAN_TOTAL_HABER = $can_total_haber_a;
 
 			$COD_ASIENTO_EXTORNO = '';
 			$COD_ASIENTO_EXTORNADO = '';
@@ -141,11 +183,12 @@ class AsientoController extends Controller
 			$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
 			$COD_MOTIVO_EXTORNO = '';
 			$GLOSA_EXTORNO = '';
-			$COD_EMPR_CLI = $asiento->COD_EMPR_CLI;
-			$TXT_EMPR_CLI = $asiento->TXT_EMPR_CLI;
 
-			$COD_CATEGORIA_TIPO_DOCUMENTO = $tipodocumento->COD_TIPO_DOCUMENTO;
-			$TXT_CATEGORIA_TIPO_DOCUMENTO = $tipodocumento->TXT_TIPO_DOCUMENTO;
+			$COD_EMPR_CLI = $cod_emor_cli_a;
+			$TXT_EMPR_CLI = $txt_empr_cli_a;
+
+			$COD_CATEGORIA_TIPO_DOCUMENTO = $cod_categoria_tipo_documento_a;
+			$TXT_CATEGORIA_TIPO_DOCUMENTO = $txt_categoria_tipo_documento_a;
 
 			$NRO_SERIE = $serie;
 			$NRO_DOC = $nrocomprobante;
@@ -156,17 +199,13 @@ class AsientoController extends Controller
 			$CAN_DESCUENTO_DETRACCION = '0';
 			$CAN_TOTAL_DETRACCION = '0';
 
+			$COD_CATEGORIA_TIPO_DOCUMENTO_REF = '';
+			$TXT_CATEGORIA_TIPO_DOCUMENTO_REF = '';
 
-			$COD_CATEGORIA_TIPO_DOCUMENTO_REF = $asiento->COD_CATEGORIA_TIPO_DOCUMENTO;
-			$TXT_CATEGORIA_TIPO_DOCUMENTO_REF = $asiento->TXT_CATEGORIA_TIPO_DOCUMENTO;
-
-
-			$NRO_SERIE_REF = $asiento->NRO_SERIE;
-			$NRO_DOC_REF = $asiento->NRO_DOC;
-			$FEC_VENCIMIENTO = $asiento->FEC_ASIENTO;
+			$NRO_SERIE_REF = '';
+			$NRO_DOC_REF = '';
+			$FEC_VENCIMIENTO = '';
 			$IND_AFECTO = '0';
-
-
 
     		$asientocontable     	= 	$this->gn_crear_asiento_contable($IND_TIPO_OPERACION,
 												$COD_ASIENTO,
@@ -217,26 +256,78 @@ class AsientoController extends Controller
 												$IND_AFECTO);
 
 
-	    	$lista_asiento 						= 	$this->as_lista_asiento_pago_cobro($cod_asiento);
+			if($cuenta_referencia=='42'){
+		    	$lista_asiento 						= 	$this->as_lista_asiento_pago_cobro_array_compra($array_cp);
+			}else{
+				$lista_asiento 						= 	$this->as_lista_asiento_pago_cobro_array_venta($array_cp);
+			}
+
+
 
 	    	$montomn							=	0;
 		    $montome							=	0;    	
 
+		    $montome_md							=	0; 
+		    $montome_mn							=	0; 
+
+		    $i 									=   0;
+
 			foreach ($lista_asiento as $key => $item) {
 
+				$i 								=   $i + 1;
 
-				$CAN_DEBE_MN = $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
-				$CAN_HABER_MN = 0.0000;
-				$CAN_DEBE_ME = $item->CAN_DEBE_ME+$item->CAN_HABER_ME;
-				$CAN_HABER_ME = 0.0000;
+				$saldo = 0.0000;
+				if($cuenta_referencia=='42'){
 
-		    	$montomn							=	$CAN_DEBE_MN;
-			    $montome							=	$CAN_DEBE_ME; 
+					$CAN_DEBE_MN = $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
+					$CAN_HABER_MN = 0.0000;
+					$CAN_DEBE_ME = $item->CAN_DEBE_ME+$item->CAN_HABER_ME;
+					$CAN_HABER_ME = 0.0000;
+
+					if($moneda_id == 'MON0000000000001'){
+						$saldo 				= 	$CAN_DEBE_MN;
+						$montome_md			=	$montome_md + $CAN_DEBE_MN;
+					}else{
+						$saldo 				= 	$CAN_DEBE_ME;
+						$montome_md			=	$montome_md + ($CAN_DEBE_ME*$tipocambio);
+
+
+					}
+
+			    	$montomn							=	$montomn+$CAN_DEBE_MN;
+				    $montome							=	$montome+$CAN_DEBE_ME; 
+		    		$montome_mn							=	$montome_mn+$CAN_DEBE_MN;
+
+				}else{
+
+					$CAN_DEBE_MN = 0.0000;
+					$CAN_HABER_MN = $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
+					$CAN_DEBE_ME = 0.0000;
+					$CAN_HABER_ME = $item->CAN_DEBE_ME+$item->CAN_HABER_ME;
+
+					if($moneda_id == 'MON0000000000001'){
+						$saldo 				= 	$CAN_HABER_MN;
+						$montome_md			=	$montome_md + $CAN_HABER_MN;
+					}else{
+						$saldo 				= 	$CAN_HABER_ME;
+						$montome_md			=	$montome_md + ($CAN_HABER_ME*$tipocambio);
+					}
+
+		    		$montomn							=	$montomn+$CAN_HABER_MN;
+				    $montome							=	$montome+$CAN_HABER_ME; 
+		    		$montome_mn							=	$montome_mn+$CAN_HABER_MN;
+
+
+				}
+
+
+
+
 
 				$IND_TIPO_OPERACION = 'I';
 				$COD_ASIENTO_MOVIMIENTO = '';
-				$COD_EMPR = $asiento->COD_EMPR;
-				$COD_CENTRO = $asiento->COD_CENTRO;
+				$COD_EMPR = Session::get('empresas_meta')->COD_EMPR;
+				$COD_CENTRO = 'CEN0000000000001';
 				$COD_ASIENTO = $asientocontable;
 
 				$COD_CUENTA_CONTABLE = $item->id;
@@ -278,27 +369,67 @@ class AsientoController extends Controller
 
 															$COD_ORDEN_REF);
 
+
+	    		$frmasiento 							= 	WEBAsiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)->first();
+
+	    		$frmasiento->COD_ASIENTO_PAGO_COBRO 	=   $COD_ASIENTO;
+	    		$frmasiento->SALDO 						=   $saldo;
+				$frmasiento->FEC_USUARIO_MODIF_AUD 	 	=   $this->fechaactual;
+				$frmasiento->COD_USUARIO_MODIF_AUD 		=   Session::get('usuario_meta')->id;
+				$frmasiento->save();
+
+
+
 			}
 
 
 		    $cuentacontable 	= 	WEBCuentaContable::where('id','=',$cuenta_id)
 									->first();
 
-			$CAN_DEBE_MN = 0.0000;
-			$CAN_HABER_MN = $montomn;
-			$CAN_DEBE_ME = 0.0000;
-			$CAN_HABER_ME = $montome;
+
+			if($cuenta_referencia=='42'){
+
+				$CAN_DEBE_MN = 0.0000;
+				$CAN_HABER_MN = $montomn;
+				$CAN_DEBE_ME = 0.0000;
+				$CAN_HABER_ME = $montome;
+
+				if($moneda_id == 'MON0000000000002'){
+					$CAN_DEBE_MN = 0.0000;
+					$CAN_HABER_MN = $montome_md;
+					$CAN_DEBE_ME = 0.0000;
+					$CAN_HABER_ME = $montome;
+				}
+
+			}else{
+
+				$CAN_DEBE_MN = $montomn;
+				$CAN_HABER_MN = 0.0000;
+				$CAN_DEBE_ME = $montome;
+				$CAN_HABER_ME = 0.0000;
+
+				if($moneda_id == 'MON0000000000002'){
+					$CAN_DEBE_MN = $montome_md;
+					$CAN_HABER_MN = 0.0000;
+					$CAN_DEBE_ME = $montome;
+					$CAN_HABER_ME = 0.0000;
+				}
+
+
+			}
+
+
 
 			$IND_TIPO_OPERACION = 'I';
 			$COD_ASIENTO_MOVIMIENTO = '';
-			$COD_EMPR = $asiento->COD_EMPR;
-			$COD_CENTRO = $asiento->COD_CENTRO;
+			$COD_EMPR = Session::get('empresas_meta')->COD_EMPR;
+			$COD_CENTRO = 'CEN0000000000001';
 			$COD_ASIENTO = $asientocontable;
 
 			$COD_CUENTA_CONTABLE = $cuentacontable->id;
 			$TXT_CUENTA_CONTABLE = $cuentacontable->nro_cuenta;
 			$TXT_GLOSA = 'CANCELADO : '. $glosa;
-			$NRO_LINEA = 2;
+			$NRO_LINEA = $i+1;
 			$COD_CUO = '';
 			$IND_EXTORNO = '0';
 			$TXT_TIPO_REFERENCIA = '';
@@ -334,6 +465,112 @@ class AsientoController extends Controller
 														$COD_ORDEN_REF);
 
 
+    		//perdida o  ganancia $montome_mn
+
+    		if($montome_mn <> $montome_md){
+
+
+    			if($montome_mn>$montome_md){
+
+				    $cuentacontable 	= 	WEBCuentaContable::where('nro_cuenta','=','776101')
+				    						->where('anio','=',$anio)
+				    						->where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+											->first();
+
+					if($cuenta_referencia=='42'){
+
+
+
+						$CAN_DEBE_MN = 0.0000;
+						$CAN_HABER_MN = $montome_mn - $montome_md;
+						$CAN_DEBE_ME = 0.0000;
+						$CAN_HABER_ME = 0.0000;
+
+					}else{
+
+						$CAN_DEBE_MN = $montome_mn - $montome_md;
+						$CAN_HABER_MN = 0.0000;
+						$CAN_DEBE_ME = 0.0000;
+						$CAN_HABER_ME = 0.0000;
+
+					}
+
+
+    			}else{
+
+				    $cuentacontable 	= 	WEBCuentaContable::where('nro_cuenta','=','676101')
+				    						->where('anio','=',$anio)
+				    						->where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+											->first();
+
+					if($cuenta_referencia=='42'){
+
+						$CAN_DEBE_MN = 0.0000;
+						$CAN_HABER_MN = $montome_md - $montome_mn;
+						$CAN_DEBE_ME = 0.0000;
+						$CAN_HABER_ME = 0.0000;
+
+					}else{
+
+						$CAN_DEBE_MN = $montome_md - $montome_mn;
+						$CAN_HABER_MN = 0.0000;
+						$CAN_DEBE_ME = 0.0000;
+						$CAN_HABER_ME = 0.0000;
+
+					}
+
+    			}
+
+
+				$IND_TIPO_OPERACION = 'I';
+				$COD_ASIENTO_MOVIMIENTO = '';
+				$COD_EMPR = Session::get('empresas_meta')->COD_EMPR;
+				$COD_CENTRO = 'CEN0000000000001';
+				$COD_ASIENTO = $asientocontable;
+
+				$COD_CUENTA_CONTABLE = $cuentacontable->id;
+				$TXT_CUENTA_CONTABLE = $cuentacontable->nro_cuenta;
+				$TXT_GLOSA = $cuentacontable->nombre;
+				$NRO_LINEA = $i+2;
+				$COD_CUO = '';
+				$IND_EXTORNO = '0';
+				$TXT_TIPO_REFERENCIA = '';
+				$TXT_REFERENCIA = '';
+				$COD_ESTADO = '1';
+				$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
+				$COD_DOC_CTBLE_REF = '';
+
+				$COD_ORDEN_REF = '';
+
+	    		$detalle     	= 	$this->gn_crear_detalle_asiento_contable(	$IND_TIPO_OPERACION,
+															$COD_ASIENTO_MOVIMIENTO,
+															$COD_EMPR,
+															$COD_CENTRO,
+															$COD_ASIENTO,
+															$COD_CUENTA_CONTABLE,
+															$TXT_CUENTA_CONTABLE,
+															$TXT_GLOSA,
+															$CAN_DEBE_MN,
+															$CAN_HABER_MN,
+
+															$CAN_DEBE_ME,
+															$CAN_HABER_ME,
+															$NRO_LINEA,
+															$COD_CUO,
+															$IND_EXTORNO,
+															$TXT_TIPO_REFERENCIA,
+															$TXT_REFERENCIA,
+															$COD_ESTADO,
+															$COD_USUARIO_REGISTRO,
+															$COD_DOC_CTBLE_REF,
+
+															$COD_ORDEN_REF);
+
+
+    		}
+
+
+
 			return Redirect::to('/gestion-pago-cobro/'.$idopcion)->with('bienhecho', 'Asiento '.$glosa.' registrado con exito');
 
 
@@ -341,9 +578,15 @@ class AsientoController extends Controller
 
 
 			if(Session::has('asiento_id_session')){
+				$ocultarbuscar          =   'ocultar';
+				$ocultarasignar         =   '';
 				$asiento_id 			=	Session::get('asiento_id_session');
 			}else{
 				$asiento_id 			=	'';
+
+				$ocultarbuscar          =   '';
+				$ocultarasignar         =   'ocultar';
+
 			}
 
 			$asiento				=	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)
@@ -383,6 +626,9 @@ class AsientoController extends Controller
 		    $anio  					=   $this->anio;
 	        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 			$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+			$array_cp 				=  	array();
+
+
 
 
 			return View::make('asiento/agregarpagocobro',
@@ -402,9 +648,13 @@ class AsientoController extends Controller
 							'fecha'						=> $fecha,
 							'asiento_id'				=> $asiento_id,
 							'lista_asiento'				=> $lista_asiento,
+							'array_cp'					=> $array_cp,
 							'anio'						=> $anio,
 							'combo_anio_pc'				=> $combo_anio_pc,
-						  	'idopcion'  				=> $idopcion
+						  	'idopcion'  				=> $idopcion,
+							'ocultarbuscar'				=> $ocultarbuscar,
+							'ocultarasignar'			=> $ocultarasignar,
+
 						]);
 		}
 	}
@@ -460,14 +710,58 @@ class AsientoController extends Controller
 		$serie 								= 	$request['serie'];
 		$asiento_id 						= 	$request['asiento_id'];
 		$nrocomprobante 					= 	$request['nrocomprobante'];
+		$array_cp 							=   json_decode($request['array_cp'], true);
+		$arrayasiento 						=	array($asiento_id);
 
 	    $lista_asiento 						= 	$this->as_lista_asiento_pago_cobro($asiento_id);
 
 		return View::make('asiento/ajax/aasientopagocobro',
 					[
 						'lista_asiento'  	=> $lista_asiento,
+						'array_cp'  		=> $arrayasiento,
 					]);
 	}
+
+	public function actionAjaxBuscarAsientoPagoCobroClienteProveedor(Request $request)
+	{
+
+		$data_archivo 						=   json_decode($request['datastring'], true);
+		$cuenta_referencia 					=   $request['cuenta_referencia'];
+		$array_cp 							=   json_decode($request['array_cp'], true);
+
+
+
+		$arrayasiento 						=	array();
+
+
+		foreach($data_archivo as $key => $obj){
+			$cod_asiento 		=   $obj['cod_asiento'];
+			array_push($arrayasiento, $cod_asiento);
+		}
+
+		foreach($array_cp as $key => $obj){
+			$cod_asiento 		=   $obj;
+
+			array_push($arrayasiento, $cod_asiento);
+		}
+
+
+		if($cuenta_referencia=='42'){
+	    	$lista_asiento 						= 	$this->as_lista_asiento_pago_cobro_array_compra($arrayasiento);
+		}else{
+			$lista_asiento 						= 	$this->as_lista_asiento_pago_cobro_array_venta($arrayasiento);
+		}
+
+		//dd($lista_asiento);
+
+		return View::make('asiento/ajax/aasientopagocobro',
+					[
+						'lista_asiento'  	=> $lista_asiento,
+						'array_cp'  		=> $arrayasiento,
+					]);
+	}
+
+
 
 	public function actionAjaxEliminarDetalleAsiento(Request $request)
 	{
@@ -899,6 +1193,61 @@ class AsientoController extends Controller
 						  	'idopcion'  				=> $idopcion
 						]);
 		}
+	}
+
+
+	public function actionAjaxModalProveedorCliente(Request $request)
+	{
+		
+		$funcion 				= 	$this;
+		$cuenta_referencia  	=   $request['cuenta_referencia'];
+		$tipo_documento  		=   $request['tipo_documento'];
+		$serie  				=   $request['serie'];
+		$nrocomprobante  		=   $request['nrocomprobante'];
+		$nombreruc  			=   $request['nombreruc'];
+
+		if($cuenta_referencia=='12'){//venta
+
+			$listaasiento 		= 	WEBAsiento::where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+			    							->where('COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000003')
+			    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+			    							->where(function ($query) {
+											    $query->where('saldo', '<=', 0)
+											          ->orwhereNull('saldo');
+											})
+			    							->TipoDocumento($tipo_documento)
+			    							->NroSerie($serie)
+			    							->NroDocumento($nrocomprobante)
+			    							->RazonSocial($nombreruc)
+			    							->orderby('WEB.asientos.FEC_ASIENTO','asc')
+			    							->get();
+
+		}else{
+
+			$listaasiento 		= 	WEBAsiento::where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+			    							->where('COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
+			    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+			    							->where(function ($query) {
+											    $query->where('saldo', '<=', 0)
+											          ->orwhereNull('saldo');
+											})
+			    							->TipoDocumento($tipo_documento)
+			    							->NroSerie($serie)
+			    							->NroDocumento($nrocomprobante)
+			    							->RazonSocial($nombreruc)
+			    							->orderby('WEB.asientos.FEC_ASIENTO','asc')
+			    							->get();
+
+		}
+
+		return View::make('asiento/modal/ajax/mlistaproveedorcliente',
+						 [		 	
+
+						 	'cuenta_referencia' 	=> $cuenta_referencia,
+						 	'listaasiento' 			=> $listaasiento,
+						 	'funcion' 				=> $funcion,
+						 	'ajax' 					=> true,						 	
+						 ]);
 	}
 
 	public function actionAjaxModalDetalleAsiento(Request $request)

@@ -72,15 +72,16 @@ $(document).ready(function(){
 
 
         var cuenta_referencia   =   $('#cuenta_referencia').val();
-        var tipo_documento      =   $('#tipo_documento').val();
-        var serie               =   $('#serie').val();
-        var nrocomprobante      =   $('#nrocomprobante').val();
+        //var tipo_documento      =   $('#tipo_documento').val();
+        //var serie               =   $('#serie').val();
+        //var nrocomprobante      =   $('#nrocomprobante').val();
         var glosa               =   '';
 
 
         $(".table-detalle-asientos-p-c .fila_asiento_p_c").each(function(){
             sw=1;         
-            glosa = $(this).attr('data_txt_documento').trim() +' '+$(this).attr('data_moneda')+' '+$(this).attr('data_serie')+' '+$(this).attr('data_nro')+' // '+$(this).attr('data_cliente');
+            debugger;
+            glosa = glosa +  $(this).attr('data_txt_documento').trim() +' '+$(this).attr('data_moneda').trim()+' '+$(this).attr('data_serie').trim()+' '+$(this).attr('data_nro').trim()+' // '+$(this).attr('data_cliente').trim() + '//';
 
         });
 
@@ -88,9 +89,9 @@ $(document).ready(function(){
         if(moneda_id ==''){ alerterrorajax("Seleccione una moneda."); return false;}
         if(tipocambio == ''){alerterrorajax("Ingrese un tipo cambio");return false;}
         if(cuenta_referencia ==''){ alerterrorajax("Seleccione un cuenta referencia."); return false;}
-        if(tipo_documento ==''){ alerterrorajax("Seleccione un tipo documento."); return false;}
-        if(serie == ''){alerterrorajax("Ingrese una serie");return false;}
-        if(nrocomprobante == ''){alerterrorajax("Ingrese una nro comprobante");return false;}
+        //if(tipo_documento ==''){ alerterrorajax("Seleccione un tipo documento."); return false;}
+        //if(serie == ''){alerterrorajax("Ingrese una serie");return false;}
+        //if(nrocomprobante == ''){alerterrorajax("Ingrese una nro comprobante");return false;}
 
 
         if(sw==0){alerterrorajax("No existe detalle de asientos");return false;}
@@ -143,6 +144,34 @@ $(document).ready(function(){
                   "modal-asiento","modal-asiento-container");
 
     });
+
+
+
+    $(".asiento").on('click','.buscarasientomodal', function() {
+        event.preventDefault();
+        var _token                  =   $('#token').val();
+        var cuenta_referencia       =   $('#cuenta_referencia').val();
+        var tipo_documento          =   $('#tipo_documento').val();
+        var serie                   =   $('#serie').val();
+        var nrocomprobante          =   $('#nrocomprobante').val();
+        var nombreruc               =   $('#nombreruc').val();
+
+        data                        =   {
+                                            _token                  : _token,
+                                            cuenta_referencia       : cuenta_referencia,
+                                            tipo_documento          : tipo_documento,
+                                            serie                   : serie,
+                                            nrocomprobante          : nrocomprobante,
+                                            nombreruc               : nombreruc,
+                                        };
+                              
+        ajax_modal(data,"/ajax-modal-asientos-proveedor-cliente",
+                  "modal-asiento","modal-asiento-container");
+
+    });
+
+
+
 
 
 
@@ -282,7 +311,7 @@ $(document).ready(function(){
         var serie               =   $('#serie').val();
         var nrocomprobante      =   $('#nrocomprobante').val();
         var asiento_id          =   $('#cod_asiento').val();        
-
+        var array_cp            =   $('#array_cp').val();
 
         if(tipo_documento ==''){ alerterrorajax("Seleccione un tipo documento."); return false;}
         if(serie == ''){alerterrorajax("Ingrese un serie");return false;}
@@ -294,13 +323,60 @@ $(document).ready(function(){
                                 tipo_documento          : tipo_documento,
                                 serie                   : serie,
                                 asiento_id              : asiento_id,
+                                array_cp                : array_cp,
                                 nrocomprobante          : nrocomprobante
                             };
         ajax_normal(data,"/ajax-buscar-asiento-pago-cobro");
 
+    });
+
+
+    $(".asiento").on('click','.btn-asigna-asiento-pc', function() {
+
+        var data = [];
+        var sw   = 0;
+        var msj  = '';
+        var _token                  =   $('#token').val();
+
+        var array_item              =   dataenviar();
+        var cuenta_referencia       =   $('#cuenta_referencia').val();
+        var array_cp                =   $('#array_cp').val();
+
+        if(array_item.length<=0){alerterrorajax('Seleccione por lo menos una fila'); return false;}
+        datastring = JSON.stringify(array_item);
+        $('#modal-asiento').niftyModal('hide');
+
+        data            =   {
+                                _token                  : _token,
+                                datastring              : datastring,
+                                cuenta_referencia       : cuenta_referencia,
+                                array_cp                : array_cp,
+                            };
+        ajax_normal(data,"/ajax-buscar-asiento-pago-cobro-cliente-proveedor");
 
     });
 
 
+
 });
+
+
+function dataenviar(){
+    var data = [];
+    $(".listatabla tr").each(function(){
+        nombre          = $(this).find('.input_asignar').attr('id');
+        if(nombre != 'todo_asignar'){
+
+            check            = $(this).find('.input_asignar');
+            cod_asiento     = $(this).attr('data_cod_asiento');
+
+            if($(check).is(':checked')){
+                data.push({
+                    cod_asiento     : cod_asiento
+                });
+            }               
+        }
+    });
+    return data;
+}
 

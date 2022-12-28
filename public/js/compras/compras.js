@@ -131,6 +131,7 @@ $(document).ready(function(){
         var documento                   =   $('#documento_configuracion').val();
         var _token                      =   $('#token').val();
 
+        var ruta                        =   '/ajax-modal-detalle-asiento-confirmar';
 
         $('#modal-detalle-asiento-confirmar').niftyModal('hide');
 
@@ -144,6 +145,7 @@ $(document).ready(function(){
                                                 serie                   : serie,
                                                 documento               : documento,
                                                 igv                     : igv,
+                                                ruta                    : ruta,
                                             };
 
         ajax_modal(data,"/ajax-modal-cambiar-asiento-fechaemision",

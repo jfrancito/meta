@@ -1,3 +1,4 @@
+<input type="hidden" name="array_cp" id='array_cp' value='{{json_encode($array_cp)}}'>
 <table class="table table-striped table-borderless table-detalle-asientos-p-c">
   <thead>
     <tr>

@@ -1368,7 +1368,7 @@ class ComprasController extends Controller
 
 		$asiento_id 			=   $request['asiento_id'];
 		$idopcion 				=   $request['idopcion'];
-
+		$ruta 					=   $request['ruta'];
 		$anio 					=   $request['anio'];
 		$periodo_id 			=   $request['periodo_id'];
 		$serie 					=   $request['serie'];
@@ -1425,6 +1425,22 @@ class ComprasController extends Controller
 
 		$funcion 				= 	$this;
 		
+        $array_nivel_pc     	= 	$this->pc_array_nivel_cuentas_contable(Session::get('empresas_meta')->COD_EMPR,$anio);
+		$combo_nivel_pc  		= 	$this->gn_generacion_combo_array('Seleccione nivel', '' , $array_nivel_pc);
+		$defecto_nivel 			= 	'6';
+
+		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel(Session::get('empresas_meta')->COD_EMPR,$defecto_nivel,$anio);
+		$combo_cuenta  			= 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
+
+		$combo_partida 			= 	$this->gn_generacion_combo_categoria('CONTABILIDAD_PARTIDA','Seleccione partida','');
+
+		$defecto_cuenta			= 	'';
+		$defecto_partida		= 	'';
+		$asiento_modelo_detalle_id = '';
+
+		$combo_activo 			= 	array('1' => 'ACTIVO','0' => 'ELIMINAR');
+		$defecto_activo			= 	'1';
+
 
 		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
 						 [
@@ -1444,6 +1460,17 @@ class ComprasController extends Controller
 						 	'periodo_id'				=> $periodo_id,
 						 	'serie'						=> $serie,
 						 	'documento'					=> $documento,
+
+						 	'combo_nivel_pc' 			=> $combo_nivel_pc,
+						 	'combo_cuenta' 				=> $combo_cuenta,
+						 	'combo_partida' 			=> $combo_partida,
+						 	'combo_activo' 			=> $combo_activo,
+
+						 	'defecto_nivel' 			=> $defecto_nivel,
+						 	'defecto_cuenta' 			=> $defecto_cuenta,
+						 	'defecto_partida' 			=> $defecto_partida,
+						 	'defecto_activo' 			=> $defecto_activo,
+						 	'ruta' 						=> $ruta,
 
 
 						 	'ajax' 						=> true,						 	

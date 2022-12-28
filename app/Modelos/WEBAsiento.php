@@ -49,10 +49,23 @@ class WEBAsiento extends Model
         return $this->belongsTo('App\Modelos\STDEmpresa', 'COD_EMPR_CLI', 'COD_EMPR');
     }
 
+    public function scopeTipoDocumento($query,$tipodocumento){
+        if(trim($tipodocumento) != ''){
+            $query->where('WEB.asientos.COD_CATEGORIA_TIPO_DOCUMENTO', 'like', '%'.$tipodocumento.'%');
+        }
+    }
+
 
     public function scopeNroSerie($query,$serie){
         if(trim($serie) != ''){
             $query->where('WEB.asientos.NRO_SERIE', 'like', '%'.$serie.'%');
+        }
+    }
+
+
+    public function scopeRazonSocial($query,$razonsocial){
+        if(trim($razonsocial) != ''){
+            $query->where('WEB.asientos.TXT_EMPR_CLI', 'like', '%'.$razonsocial.'%');
         }
     }
 

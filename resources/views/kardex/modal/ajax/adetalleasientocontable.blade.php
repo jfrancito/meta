@@ -71,6 +71,16 @@
 
 </div>
 
+@if(isset($ajax))
+  <script type="text/javascript">
+    $(document).ready(function(){
 
+      App.init();
+      App.formElements();
+      $('form').parsley();
+
+    });
+  </script>
+@endif
 
 

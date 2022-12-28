@@ -70,6 +70,23 @@
               </div>
             </div>
           </div>
+
+
+          <div class="col-sm-8">
+            <div class="form-group quitar-tb">
+              <label class="col-sm-12 control-label izquierda">Nombre o Razón Social</label>
+              <div class="col-sm-12">
+                  <input  type="text"
+                          id="nombreruc" name='nombreruc' 
+                          value=""
+                          placeholder="Nombre o ruc"
+                          autocomplete="off" class="form-control input-sm" data-aw="7"/>
+
+              </div>
+            </div>
+          </div>
+
+
           <div class="col-sm-4">
             <div class="form-group quitar-tb">
               <label class="col-sm-12 control-label izquierda">Tipo documento</label>
@@ -115,9 +132,15 @@
                           value="{{$nrocomprobante}}"
                           placeholder="Nro. Comprobante"
                           autocomplete="off" class="form-control input-sm" data-aw="8"/>
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-primary buscarasiento" style="height: 37px;">Buscar</button>
+
+                  <span class="input-group-btn {{$ocultarbuscar}} ">
+                    <button type="button" class="btn btn-success buscarasientomodal" style="height: 37px;">Buscar</button>
                   </span>
+
+                  <span class="input-group-btn  {{$ocultarasignar}}">
+                    <button type="button" class="btn btn-primary buscarasiento" style="height: 37px;">Asignar</button>
+                  </span>
+
                   @include('error.erroresvalidate', [ 'id' => $errors->has('nrocomprobante')  , 
                                                       'error' => $errors->first('nrocomprobante', ':message') , 
                                                       'data' => '8'])
@@ -128,7 +151,6 @@
           </div>
 
           <input type="hidden" name="cod_asiento" id='cod_asiento' value='{{$asiento_id}}'>
-
           <div class="col-sm-12 listajax">
               @include('asiento.ajax.aasientopagocobro')
           </div>

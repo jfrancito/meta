@@ -193,8 +193,23 @@ Route::group(['middleware' => ['authaw']], function () {
 	
 	Route::any('/gestion-pago-cobro/{idopcion}', 'AsientoController@actionGestionarPagoCobro');
 	Route::any('/ajax-buscar-asiento-pago-cobro', 'AsientoController@actionAjaxBuscarAsientoPagoCobro');
+	Route::any('/ajax-buscar-asiento-pago-cobro-cliente-proveedor', 'AsientoController@actionAjaxBuscarAsientoPagoCobroClienteProveedor');
+
+
+
 	Route::any('/ajax-combo-cuentapagocobro-xtipoasiento', 'AsientoController@actionAjaxComboCuentaPagoCobro');
 	Route::any('/ajax-combo-tipo-documento-referencia-xtipodocumento', 'AsientoController@actionAjaxComboDocumentoReferencia');
+	Route::any('/ajax-modal-asientos-proveedor-cliente', 'AsientoController@actionAjaxModalProveedorCliente');
+
+
+
+
+	Route::any('/libro-mayor-diario/{idopcion}', 'ReporteController@actionGestionLibrosMayorDiario');
+	Route::any('/descargar-archivo-diario-mayor', 'ReporteController@actionDescargarArchivoDiarioMayor');
+	Route::any('/ajax-buscar-lista-ple-diario', 'ReporteController@actionAjaxBuscarListaPleDiario');
+	/*Route::any('/registro-ventas-txt', 'ArchivoController@actionRegistroVentasTxt');
+	Route::any('/archivo-ple-excel/{anio}/{tipo_asiento_id}/{periodo_id}/{documento}', 'ArchivoController@actionDescargarArchivoPleExcel');
+	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');*/
 
 
 
