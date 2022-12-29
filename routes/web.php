@@ -207,7 +207,14 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/libro-mayor-diario/{idopcion}', 'ReporteController@actionGestionLibrosMayorDiario');
 	Route::any('/descargar-archivo-diario-mayor', 'ReporteController@actionDescargarArchivoDiarioMayor');
 	Route::any('/ajax-buscar-lista-ple-diario', 'ReporteController@actionAjaxBuscarListaPleDiario');
-	/*Route::any('/registro-ventas-txt', 'ArchivoController@actionRegistroVentasTxt');
+
+
+
+	Route::any('/gestion-balance-comprobacion/{idopcion}', 'ReporteController@actionGestionBalanceComprobacion');
+	Route::any('/ajax-buscar-balance-comprobacion', 'ReporteController@actionAjaxBuscarBalanceComprobacion');
+	Route::any('/descargar-balance-comprobacion-excel', 'ReporteController@actionDescargarBalanceComprobacionExcel');
+	/*Route::any('/descargar-archivo-ple', 'ArchivoController@actionDescargarArchivoPle');
+	Route::any('/registro-ventas-txt', 'ArchivoController@actionRegistroVentasTxt');
 	Route::any('/archivo-ple-excel/{anio}/{tipo_asiento_id}/{periodo_id}/{documento}', 'ArchivoController@actionDescargarArchivoPleExcel');
 	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');*/
 

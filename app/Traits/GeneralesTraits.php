@@ -31,6 +31,27 @@ trait GeneralesTraits
 {
 
 
+	public function gn_suma_debe_haber_balance_comprobacion($debe_haber,$cuentacontable,$periodoinicio_id,$periodofin_id)
+	{
+
+
+		$periodoinicio   	=   CONPeriodo::where('COD_PERIODO','=',$periodoinicio_id)->first();
+		$periodofin   		=   CONPeriodo::where('COD_PERIODO','=',$periodofin_id)->first();
+
+	    $suma 				= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    						->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
+	    						->where('WEB.asientomovimientos.TXT_CUENTA_CONTABLE','=',$cuentacontable)
+	    						->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    						->where('WEB.asientos.COD_ESTADO','=','1')
+	    						->where('WEB.asientomovimientos.COD_ESTADO ','=','1')
+	    						->where('CON.PERIODO.COD_MES','>=',$periodoinicio->COD_MES)
+	    						->where('CON.PERIODO.COD_MES','<=',$periodofin->COD_MES)
+	    						->sum('WEB.asientomovimientos.CAN_DEBE_MN');
+
+	 	return  $suma;	
+	}
+
+
 	private function gn_encontrar_cod_asiento($empresa_id, $centro_id, $periodo_id, $tipo_asiento_id,$tipo_referencia)
 	{
 		$cod_asiento 	= 	'';

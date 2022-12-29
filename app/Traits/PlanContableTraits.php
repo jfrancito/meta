@@ -17,6 +17,20 @@ use Keygen;
 
 trait PlanContableTraits
 {
+
+	private function pc_lista_cuentas_contable_array_cuenta($empresa_id, $anio, $array_cuenta)
+	{
+	    $listacuentacontable 	= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
+									->where('anio','=',$anio)
+									->whereIn('nro_cuenta', $array_cuenta)
+									->where('activo','=',1)
+									->orderBy('orden', 'asc')
+			    					->get();
+
+		return $listacuentacontable;
+
+	}
+
 	private function pc_lista_cuentas_contable($empresa_id, $anio)
 	{
 	    $listacuentacontable 	= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)

@@ -46,6 +46,159 @@ class ReporteController extends Controller
 	use ReporteTraits;
 
 
+	public function actionDescargarBalanceComprobacionExcel(Request $request)
+	{
+
+
+		set_time_limit(0);
+
+		$anio 					=   $request['anio'];
+		$periodo_inicio_id 		=   $request['periodo_inicio_id'];
+		$periodo_fin_id 		=   $request['periodo_fin_id'];
+		$idopcion 				=   $request['idopcion'];
+
+		$periodoinicio   		=   CONPeriodo::where('COD_PERIODO','=',$periodo_inicio_id)->first();
+		$periodofin   			=   CONPeriodo::where('COD_PERIODO','=',$periodo_fin_id)->first();
+
+
+		$periodo_array 			=   CONPeriodo::where('COD_ANIO','=',$anio)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('CON.PERIODO.COD_MES','>=',$periodoinicio->COD_MES)
+	    							->where('CON.PERIODO.COD_MES','<=',$periodofin->COD_MES)
+									->pluck('COD_PERIODO')->toArray();
+
+	    $suma 					= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    							->where('WEB.asientos.COD_ESTADO','=','1')
+	    							->where('WEB.asientomovimientos.COD_ESTADO ','=','1')
+	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->whereIn('CON.PERIODO.COD_PERIODO', $periodo_array);
+
+
+		$array_cuenta 			=	$suma->select('TXT_CUENTA_CONTABLE')->distinct()->pluck('TXT_CUENTA_CONTABLE')->toArray();
+
+	    $listacuentacontable 	= 	$this->pc_lista_cuentas_contable_array_cuenta(Session::get('empresas_meta')->COD_EMPR,$anio,$array_cuenta);
+
+
+	    $sumat 					= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    							->where('WEB.asientos.COD_ESTADO','=','1')
+	    							->where('WEB.asientomovimientos.COD_ESTADO ','=','1')
+	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->whereIn('CON.PERIODO.COD_PERIODO', $periodo_array)->get();					
+
+	    $funcion 				= 	$this;
+
+
+		$titulo 				=   'BALANCE-COMPROBACION-'.Session::get('empresas_meta')->NOM_EMPR;
+
+	    Excel::create($titulo, function($excel) use ($sumat,$listacuentacontable) {
+	        $excel->sheet('Balance', function($sheet) use ($sumat,$listacuentacontable) {
+	            $sheet->loadView('reporte/excel/listabalancecomprobacion')->with('listacuentacontable',$listacuentacontable)
+	            														->with('sumat',$sumat);         
+	        });
+	    })->export('xls');
+
+
+
+	}
+
+
+	public function actionGestionBalanceComprobacion($idopcion)
+	{
+
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Ver');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+	    View::share('titulo','Balance de Comprobacion');
+	    $sel_periodo 			=	'';
+
+
+	    $anio  					=   $this->anio;
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+		$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+
+	    $combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$funcion 				= 	$this;
+		$lista_balance          =   array();
+		return View::make('reporte/balancecomprobacion',
+						 [
+						 	'combo_anio_pc'			=> $combo_anio_pc,
+						 	'combo_periodo'			=> $combo_periodo,
+						 	'anio'					=> $anio,
+						 	'sel_periodo'	 		=> $sel_periodo,
+
+						 	'idopcion' 				=> $idopcion,
+						 	'funcion' 				=> $funcion,
+						 	'lista_balance' 		=> $lista_balance,						 	
+						 ]);
+	}
+
+
+	public function actionAjaxBuscarBalanceComprobacion(Request $request)
+	{
+
+		$anio 					=   $request['anio'];
+		$periodo_inicio_id 		=   $request['periodo_inicio_id'];
+		$periodo_fin_id 		=   $request['periodo_fin_id'];
+		$idopcion 				=   $request['idopcion'];
+
+		$periodoinicio   		=   CONPeriodo::where('COD_PERIODO','=',$periodo_inicio_id)->first();
+		$periodofin   			=   CONPeriodo::where('COD_PERIODO','=',$periodo_fin_id)->first();
+
+
+		$periodo_array 			=   CONPeriodo::where('COD_ANIO','=',$anio)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('CON.PERIODO.COD_MES','>=',$periodoinicio->COD_MES)
+	    							->where('CON.PERIODO.COD_MES','<=',$periodofin->COD_MES)
+									->pluck('COD_PERIODO')->toArray();
+
+	    $suma 					= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    							->where('WEB.asientos.COD_ESTADO','=','1')
+	    							->where('WEB.asientomovimientos.COD_ESTADO ','=','1')
+	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->whereIn('CON.PERIODO.COD_PERIODO', $periodo_array);
+
+
+		$array_cuenta 			=	$suma->select('TXT_CUENTA_CONTABLE')->distinct()->pluck('TXT_CUENTA_CONTABLE')->toArray();
+
+	    $listacuentacontable 	= 	$this->pc_lista_cuentas_contable_array_cuenta(Session::get('empresas_meta')->COD_EMPR,$anio,$array_cuenta);
+
+
+	    $sumat 					= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    							->where('WEB.asientos.COD_ESTADO','=','1')
+	    							->where('WEB.asientomovimientos.COD_ESTADO ','=','1')
+	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->whereIn('CON.PERIODO.COD_PERIODO', $periodo_array)->get();					
+
+	    $funcion 				= 	$this;
+
+		return View::make('reporte/ajax/alistabalancecomprobacion',
+						 [
+						 	'listacuentacontable'	=> $listacuentacontable,
+						 	'periodo_inicio_id'		=> $periodo_inicio_id,
+						 	'periodo_fin_id'		=> $periodo_fin_id,					 	
+						 	'idopcion' 				=> $idopcion,
+						 	'suma' 					=> $suma,
+						 	'sumat' 				=> $sumat,
+						 	'funcion' 				=> $funcion,
+						 	'ajax' 					=> true,					 	
+						 ]);
+
+
+
+
+
+	}
+
+
 
 	public function actionGestionLibrosMayorDiario($idopcion)
 	{
