@@ -201,24 +201,22 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-combo-tipo-documento-referencia-xtipodocumento', 'AsientoController@actionAjaxComboDocumentoReferencia');
 	Route::any('/ajax-modal-asientos-proveedor-cliente', 'AsientoController@actionAjaxModalProveedorCliente');
 
-
-
-
 	Route::any('/libro-mayor-diario/{idopcion}', 'ReporteController@actionGestionLibrosMayorDiario');
 	Route::any('/descargar-archivo-diario-mayor', 'ReporteController@actionDescargarArchivoDiarioMayor');
 	Route::any('/ajax-buscar-lista-ple-diario', 'ReporteController@actionAjaxBuscarListaPleDiario');
 
-
-
 	Route::any('/gestion-balance-comprobacion/{idopcion}', 'ReporteController@actionGestionBalanceComprobacion');
 	Route::any('/ajax-buscar-balance-comprobacion', 'ReporteController@actionAjaxBuscarBalanceComprobacion');
 	Route::any('/descargar-balance-comprobacion-excel', 'ReporteController@actionDescargarBalanceComprobacionExcel');
-	/*Route::any('/descargar-archivo-ple', 'ArchivoController@actionDescargarArchivoPle');
-	Route::any('/registro-ventas-txt', 'ArchivoController@actionRegistroVentasTxt');
-	Route::any('/archivo-ple-excel/{anio}/{tipo_asiento_id}/{periodo_id}/{documento}', 'ArchivoController@actionDescargarArchivoPleExcel');
-	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');*/
+	Route::any('/ajax-combo-periodo-xanio-titulo', 'ReporteController@actionAjaxComboPeriodoAnioEmpresa');
 
+	Route::any('/gestion-situacion-financiera/{idopcion}', 'ReporteController@actionGestionSituacionFinanciera');
+	Route::any('/ajax-buscar-situacion-financiera', 'ReporteController@actionAjaxBuscarSituacionFinanciera');
+	Route::any('/descargar-situacion-financiera-excel', 'ReporteController@actionSituacionFinancieraExcel');
 
+	Route::any('/gestion-resultado-funcion/{idopcion}', 'ReporteController@actionGestionResultadoFuncion');
+	Route::any('/ajax-buscar-resultado-funcion', 'ReporteController@actionAjaxBuscarResultadoFuncion');
+	Route::any('/descargar-resultado-funcion-excel', 'ReporteController@actionResutadoFuncionExcel');
 
 
 

@@ -8,25 +8,25 @@
 @stop
 @section('section')
 
-  <div class="be-content contenido diariomayor">
+  <div class="be-content contenido situacionfinanciera">
     <div class="main-content container-fluid">
           <div class="row">
             <div class="col-sm-12">
               <div class="panel panel-default panel-border-color panel-border-color-success">
-                <div class="panel-heading">Generacion del libro mayor y diario
+                <div class="panel-heading">Situacion Financiera
                   <div class="tools tooltiptop">
 
                     <div class="dropdown">
                       <span class="icon mdi mdi-more-vert dropdown-toggle" id="menudespacho" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></span>
-                      <a href="#" class="tooltipcss opciones buscarple">
-                        <span class="tooltiptext">Buscar PLE</span>
+                      <a href="#" class="tooltipcss opciones buscarsf">
+                        <span class="tooltiptext">Buscar Situacion Financiera</span>
                         <span class="icon mdi mdi-search"></span>
                       </a>
 
-
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
+
                         <li>
-                          <a href="#" class='descargararchivo' data_archivo = 'ple'><b>Descargar archivo txt</b> <span class="mdi mdi-check-circle"></span></a>
+                          <a href="#" class='descargararchivo' data_archivo = 'registrocompra'><b>Situacion Financiera excel</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
                       </ul>
                     </div>
@@ -44,7 +44,7 @@
                       <form method="POST"
                       id="formdescargar"
                       target="_blank"
-                      action="{{ url('/descargar-archivo-diario-mayor') }}" 
+                      action="{{ url('/descargar-situacion-financiera-excel') }}" 
                       style="border-radius: 0px;" 
                       >
                         {{ csrf_field() }}
@@ -66,20 +66,22 @@
                         </div>
 
 
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte ajax_anio">
-                            @include('general.combo.cperiodo', ['sel_periodo' => $sel_periodo])
+                        <div class='ajax_anio'>
 
+                          @include('general.combo.cperiodotitulo')
+
+                        
                         </div>
 
 
                         <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
                             <div class="form-group">
-                              <label class="col-sm-12 control-label labelleft" >Libro :</label>
+                              <label class="col-sm-12 control-label labelleft" >Reporte :</label>
                               <div class="col-sm-12 abajocaja" >
-                                {!! Form::select( 'libro_id', $combo_libro, $sel_libro,
+                                {!! Form::select( 'reporte', $combo_reporte, 'DETALLADO',
                                                   [
                                                     'class'       => 'select2 form-control control input-xs' ,
-                                                    'id'          => 'libro_id',
+                                                    'id'          => 'reporte',
                                                     'required'    => '',
                                                     'data-aw'     => '1',
                                                   ]) !!}
@@ -87,9 +89,9 @@
                             </div>
                         </div>
 
-                        
+
                         <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
-                        <input type="hidden" name="data_archivo" id='data_archivo' value=''>
+
 
                       </form>
 
@@ -160,12 +162,11 @@
       $('form').parsley();
 
     });
-
     $(".select3").select2({
         width: '100%'
     });
 
   </script>
-  <script src="{{ asset('public/js/reporte/diariomayor.js?v='.$version) }}" type="text/javascript"></script>
+  <script src="{{ asset('public/js/reporte/situacionfinanciera.js?v='.$version) }}" type="text/javascript"></script>
 
 @stop

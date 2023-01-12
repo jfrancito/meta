@@ -96,6 +96,9 @@ class AsientoController extends Controller
 			$array_cp 					=   json_decode($request['array_cp'], true);
 
 			$anio 	 					= 	$request['anio'];
+			$mes 						=	date_format(date_create($fechadocumento), 'y');
+			//dd($anio);
+
 			$tipo_asiento_id 	 		= 	$request['tipo_asiento_id'];
 			$cuenta_id 	 		 		= 	$request['cuenta_id'];
 			$documento 	 				= 	$request['documento'];

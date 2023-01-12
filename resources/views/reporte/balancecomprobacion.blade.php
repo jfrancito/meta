@@ -22,25 +22,18 @@
                         <span class="tooltiptext">Buscar Balnace Comprobacion</span>
                         <span class="icon mdi mdi-search"></span>
                       </a>
-
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
-
                         <li>
                           <a href="#" class='descargararchivo' data_archivo = 'registrocompra'><b>Balnace Comprobacion excel</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
                       </ul>
                     </div>
-
                   </div>
                   <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}} </span>
-
                 </div>
-
                 <div class="panel-body">
                   <div class='filtrotabla row'>
                     <div class="col-xs-12">
-
-
                       <form method="POST"
                       id="formdescargar"
                       target="_blank"
@@ -54,7 +47,7 @@
                             <div class="form-group">
                               <label class="col-sm-12 control-label labelleft" >Año :</label>
                               <div class="col-sm-12 abajocaja" >
-                                {!! Form::select( 'anio', $combo_anio_pc, $anio,
+                                {!! Form::select( 'anio', $combo_anio_pc, array(),
                                                   [
                                                     'class'       => 'select2 form-control control input-xs' ,
                                                     'id'          => 'anio',
@@ -65,31 +58,16 @@
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte ajax_anio">
-                            @include('general.combo.cperiodotitulo', ['sel_periodo' => $sel_periodo,'titulo' => 'inicio'])
+
+                        <div class='ajax_anio'>
+                          @include('general.combo.cperiodotitulo')
                         </div>
-
-                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte ajax_anio">
-                            @include('general.combo.cperiodotitulo', ['sel_periodo' => $sel_periodo,'titulo' => 'fin'])
-                        </div>
-
-
                         <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
-
-
                       </form>
-
-
                     </div>
-
-
-
-
-
                   </div>
-
                   <div class='listajax'>
-                    
+  
                   </div>
 
 
@@ -150,7 +128,9 @@
 
     });
 
-
+    $(".select3").select2({
+        width: '100%'
+    });
 
   </script>
   <script src="{{ asset('public/js/reporte/balancecomprobacion.js?v='.$version) }}" type="text/javascript"></script>

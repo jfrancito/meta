@@ -3,12 +3,13 @@ $(document).ready(function(){
     var carpeta = $("#carpeta").val();
 
 
-    $(".balancecomprobacion").on('click','.descargararchivo', function() {
+    $(".resultadofuncion").on('click','.descargararchivo', function() {
 
         event.preventDefault();
         var anio                    =   $('#anio').val();
         var periodo_inicio_id       =   $('#periodo_inicio_id').val();
         var periodo_fin_id          =   $('#periodo_fin_id').val();
+        var reporte                 =   $('#reporte').val();
 
         var idopcion                =   $('#idopcion').val();
         var _token                  =   $('#token').val();
@@ -24,7 +25,7 @@ $(document).ready(function(){
     });
 
 
-    $(".balancecomprobacion").on('click','.buscarbalancecomprobacion', function() {
+    $(".resultadofuncion").on('click','.buscarrf', function() {
 
         event.preventDefault();
         var anio                    =   $('#anio').val();
@@ -46,12 +47,12 @@ $(document).ready(function(){
                                 periodo_fin_id          : periodo_fin_id,
                                 idopcion                : idopcion,
                             };
-        ajax_normal(data,"/ajax-buscar-balance-comprobacion");
+        ajax_normal(data,"/ajax-buscar-resultado-funcion");
 
     });
 
 
-    $(".balancecomprobacion").on('change','#anio', function() {
+    $(".resultadofuncion").on('change','#anio', function() {
 
         event.preventDefault();
         var anio        =   $('#anio').val();

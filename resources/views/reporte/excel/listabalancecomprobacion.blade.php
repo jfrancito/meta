@@ -147,85 +147,85 @@
         <td width="15">{{$item->nro_cuenta}}</td>
         <td width="50">{{$item->nombre}}</td>
 
-        <td width="15">{{number_format(0, $redondeo, '.', ',')}}</td>
-        <td width="15">{{number_format(0, $redondeo, '.', ',')}}</td>
+        <td width="15">{{number_format(0, $redondeo, '.', '')}}</td>
+        <td width="15">{{number_format(0, $redondeo, '.', '')}}</td>
 
-        <td width="15">{{number_format($sum_debe, $redondeo, '.', ',')}}</td>
-        <td width="15">{{number_format($sum_haber, $redondeo, '.', ',')}}</td>
+        <td width="15">{{number_format($sum_debe, $redondeo, '.', '')}}</td>
+        <td width="15">{{number_format($sum_haber, $redondeo, '.', '')}}</td>
 
-        <td width="15">{{number_format($sfd, $redondeo, '.', ',')}}</td>
-        <td width="15">{{number_format($sfa, $redondeo, '.', ',')}}</td>
+        <td width="15">{{number_format($sfd, $redondeo, '.', '')}}</td>
+        <td width="15">{{number_format($sfa, $redondeo, '.', '')}}</td>
 
 
         <td width="15">
           @if($item->clase_categoria_id == 'COC0000000000001') 
-            {{number_format($sfd, $redondeo, '.', ',')}}
+            {{number_format($sfd, $redondeo, '.', '')}}
 
             @php
               $bdt       =   $bdt + $sfd;
             @endphp
 
           @else
-            {{number_format(0, $redondeo, '.', ',')}}
+            {{number_format(0, $redondeo, '.', '')}}
           @endif
         </td>
         <td width="15">
           @if($item->clase_categoria_id == 'COC0000000000001') 
-            {{number_format($sfa, $redondeo, '.', ',')}}
+            {{number_format($sfa, $redondeo, '.', '')}}
 
             @php
               $bht       =   $bht + $sfa;
             @endphp
 
           @else
-            {{number_format(0, $redondeo, '.', ',')}}  
+            {{number_format(0, $redondeo, '.', '')}}  
           @endif
         </td>
 
 
         <td width="15">
           @if($item->clase_categoria_id == 'COC0000000000002') 
-            {{number_format($sfd, $redondeo, '.', ',')}}
+            {{number_format($sfd, $redondeo, '.', '')}}
             @php
               $endt       =   $endt + $sfd;
             @endphp
           @else
-            {{number_format(0, $redondeo, '.', ',')}}  
+            {{number_format(0, $redondeo, '.', '')}}  
           @endif
         </td>
         <td width="15">
           @if($item->clase_categoria_id == 'COC0000000000002') 
-            {{number_format($sfa, $redondeo, '.', ',')}}
+            {{number_format($sfa, $redondeo, '.', '')}}
             @php
               $enht       =   $enht + $sfa;
             @endphp
 
           @else
-            {{number_format(0, $redondeo, '.', ',')}}  
+            {{number_format(0, $redondeo, '.', '')}}  
           @endif
         </td>
 
 
         <td width="15">
           @if($item->clase_categoria_id == 'COC0000000000004') 
-            {{number_format($sfd, $redondeo, '.', ',')}}
+            {{number_format($sfd, $redondeo, '.', '')}}
             @php
               $efdt       =   $efdt + $sfd;
             @endphp
 
           @else
-            {{number_format(0, $redondeo, '.', ',')}}  
+            {{number_format(0, $redondeo, '.', '')}}  
           @endif
         </td>
         <td width="15">
           @if($item->clase_categoria_id == 'COC0000000000004') 
-            {{number_format($sfa, $redondeo, '.', ',')}}
+            {{number_format($sfa, $redondeo, '.', '')}}
             @php
               $efht       =   $efht + $sfa;
             @endphp
 
           @else
-            {{number_format(0, $redondeo, '.', ',')}}  
+            {{number_format(0, $redondeo, '.', '')}}  
           @endif
         </td>
 
@@ -236,48 +236,48 @@
   <tfoot>
     <tr>
       <th colspan="3">Totales</th>
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format($sdt, $redondeo, '.', ',')}}</th>
-      <th>{{number_format($sht, $redondeo, '.', ',')}}</th>
+      <th>{{number_format($sdt, $redondeo, '.', '')}}</th>
+      <th>{{number_format($sht, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format($sfdt, $redondeo, '.', ',')}}</th>
-      <th>{{number_format($sfht, $redondeo, '.', ',')}}</th>
+      <th>{{number_format($sfdt, $redondeo, '.', '')}}</th>
+      <th>{{number_format($sfht, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format($bdt, $redondeo, '.', ',')}}</th>
-      <th>{{number_format($bht, $redondeo, '.', ',')}}</th>
+      <th>{{number_format($bdt, $redondeo, '.', '')}}</th>
+      <th>{{number_format($bht, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format($endt, $redondeo, '.', ',')}}</th>
-      <th>{{number_format($enht, $redondeo, '.', ',')}}</th>
+      <th>{{number_format($endt, $redondeo, '.', '')}}</th>
+      <th>{{number_format($enht, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format($efdt, $redondeo, '.', ',')}}</th>
-      <th>{{number_format($efht, $redondeo, '.', ',')}}</th>
+      <th>{{number_format($efdt, $redondeo, '.', '')}}</th>
+      <th>{{number_format($efht, $redondeo, '.', '')}}</th>
     </tr>
 
     <tr>
       <th colspan="3">RESULTADO DEL EJERCICIO O PERIODO</th>
 
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
 
 
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
 
 
       <th>
         @if($bdt > $bht)
-          {{number_format(0, $redondeo, '.', ',')}}
+          {{number_format(0, $redondeo, '.', '')}}
             @php
               $rbdt       =   $bdt;
             @endphp
 
         @else
-          {{number_format($bht-$bdt, $redondeo, '.', ',')}}
+          {{number_format($bht-$bdt, $redondeo, '.', '')}}
             @php
               $rbdt       =   ($bht-$bdt) + $bdt;
             @endphp
@@ -285,12 +285,12 @@
       </th>
       <th>        
         @if($bdt > $bht)
-          {{number_format($bdt-$bht, $redondeo, '.', ',')}}
+          {{number_format($bdt-$bht, $redondeo, '.', '')}}
             @php
               $rbht       =   ($bdt-$bht) + $bht;
             @endphp
         @else
-          {{number_format(0, $redondeo, '.', ',')}}
+          {{number_format(0, $redondeo, '.', '')}}
             @php
               $rbht       =   $bht;
             @endphp
@@ -301,13 +301,13 @@
 
       <th>
         @if($endt > $enht)
-          {{number_format(0, $redondeo, '.', ',')}}
+          {{number_format(0, $redondeo, '.', '')}}
             @php
               $rendt       =   $endt;
             @endphp
 
         @else
-          {{number_format($enht-$endt, $redondeo, '.', ',')}}
+          {{number_format($enht-$endt, $redondeo, '.', '')}}
             @php
               $rendt       =   ($enht-$endt) + $endt;
             @endphp
@@ -316,13 +316,13 @@
       </th>
       <th>
         @if($endt > $enht)
-          {{number_format($endt-$enht, $redondeo, '.', ',')}}
+          {{number_format($endt-$enht, $redondeo, '.', '')}}
             @php
               $renht       =   ($endt-$enht) + $enht;
             @endphp
 
         @else
-          {{number_format(0, $redondeo, '.', ',')}}
+          {{number_format(0, $redondeo, '.', '')}}
             @php
               $renht       =    $enht;
             @endphp
@@ -333,13 +333,13 @@
 
       <th>
         @if($efdt > $efht)
-          {{number_format(0, $redondeo, '.', ',')}}
+          {{number_format(0, $redondeo, '.', '')}}
             @php
               $refdt       =   $efdt;
             @endphp
 
         @else
-          {{number_format($efht-$efdt, $redondeo, '.', ',')}}
+          {{number_format($efht-$efdt, $redondeo, '.', '')}}
             @php
               $refdt       =   ($efht-$efdt) + $efdt;
             @endphp
@@ -348,12 +348,12 @@
       </th>
       <th>
         @if($efdt > $efht)
-          {{number_format($efdt-$efht, $redondeo, '.', ',')}}
+          {{number_format($efdt-$efht, $redondeo, '.', '')}}
             @php
               $refht       =   ($efdt-$efht) + $efht;
             @endphp
         @else
-          {{number_format(0, $redondeo, '.', ',')}}
+          {{number_format(0, $redondeo, '.', '')}}
             @php
               $refht       =  $efht;
             @endphp
@@ -364,25 +364,25 @@
 
     <tr>
       <th colspan="3">Totales</th>
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
-      <th>{{number_format(0, $redondeo, '.', ',')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
+      <th>{{number_format(0, $redondeo, '.', '')}}</th>
 
 
 
-      <th>{{number_format($rbdt, $redondeo, '.', ',')}}</th>
-      <th>{{number_format($rbht, $redondeo, '.', ',')}}</th>
+      <th>{{number_format($rbdt, $redondeo, '.', '')}}</th>
+      <th>{{number_format($rbht, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format($rendt, $redondeo, '.', ',')}}</th>
-      <th>{{number_format($renht, $redondeo, '.', ',')}}</th>
+      <th>{{number_format($rendt, $redondeo, '.', '')}}</th>
+      <th>{{number_format($renht, $redondeo, '.', '')}}</th>
 
-      <th>{{number_format($refdt, $redondeo, '.', ',')}}</th>
-      <th>{{number_format($refht, $redondeo, '.', ',')}}</th>
+      <th>{{number_format($refdt, $redondeo, '.', '')}}</th>
+      <th>{{number_format($refht, $redondeo, '.', '')}}</th>
     </tr>
 
   </tfoot>
