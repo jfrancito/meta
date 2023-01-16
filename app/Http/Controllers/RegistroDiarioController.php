@@ -86,6 +86,24 @@ class RegistroDiarioController extends Controller
 						 	'ajax' 					=> true,						 	
 						 ]);
 	}
+	public function actionAjaxComboPeriodoAnioEmpresaGC(Request $request)
+	{
+
+
+		$anio 					=   $request['anio'];
+	    $combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+	    $sel_periodo 			=	'';
+		$funcion 				= 	$this;
+		
+		return View::make('general/combo/cperiodogc',
+						 [
+
+						 	'combo_periodo'			=> $combo_periodo,
+						 	'sel_periodo'	 		=> $sel_periodo,					 	
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
 
 
 	public function actionAjaxRegistroDiario(Request $request)

@@ -271,7 +271,7 @@ $(document).ready(function(){
                                 anio        : anio
                             };
 
-        ajax_normal_combo(data,"/ajax-combo-periodo-xanio-xempresa","ajax_anio_asiento")                    
+        ajax_normal_combo(data,"/ajax-combo-periodo-xanio-xempresa-gc","ajax_anio_asiento")                    
 
     });
 

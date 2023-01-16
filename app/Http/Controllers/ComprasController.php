@@ -1272,7 +1272,7 @@ class ComprasController extends Controller
 		if($_POST)
 		{
 
-
+			//dd($request['periodo_asiento_id']);
 			$anio_asiento 					= $request['anio_asiento'];
 			$periodo_asiento_id 			= $request['periodo_asiento_id'];
 			$tipo_descuento 				= $request['tipo_descuento'];

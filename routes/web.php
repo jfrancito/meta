@@ -88,7 +88,7 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-detalle-asiento', 'RegistroDiarioController@actionAjaxModalDetalleAsiento');
 
 
-
+	Route::any('/ajax-combo-periodo-xanio-xempresa-gc', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresaGC');
 
 
 	Route::any('/gestion-observacion-documentos/{tipo_asiento_id}', 'MigrarVentaController@actionListarObservacionDocumentos');
