@@ -2,6 +2,24 @@ $(document).ready(function(){
 
     var carpeta = $("#carpeta").val();
 
+    $(".bienvenido").on('click','.buscarobsasiento', function() {
+
+        event.preventDefault();
+        var _token                  =   $('#token').val();
+        var anio                    =   $('#anio').val();
+
+        if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
+
+        data            =   {
+                                _token                  : _token,
+                                anio                    : anio,
+                            };
+        ajax_normal(data,"/ajax-observaciones-asiento");
+
+    });
+
+
+
     $(".bienvenido").on('click','.btndetallesunat', function() {
 
         var _token                  =   $('#token').val();

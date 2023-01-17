@@ -39,7 +39,7 @@ class ConfiguracioProductoController extends Controller
 		return Redirect::to('/gestion-configuracion-producto/'.$idopcion.'/'.$tipo_asiento);
 	}
 
-	public function actionListarConfiguracionProducto($idopcion,$tipo_asiento)
+	public function actionListarConfiguracionProducto($idopcion,$tipo_asiento,$anio)
 	{
 
 		/******************* validar url **********************/
@@ -56,7 +56,7 @@ class ConfiguracioProductoController extends Controller
 
 	    $combo_producto  				= 	$this->gn_generacion_combo_productos('Seleccione producto', '');
 		$funcion 						= 	$this;
-	    $anio  							=   $this->anio;
+	    $anio  							=   $anio;
         $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 		$empresa_id 					=   Session::get('empresas_meta')->COD_EMPR;
@@ -284,13 +284,14 @@ class ConfiguracioProductoController extends Controller
 		$cuenta_contable_ter_id 	=   $request['cuenta_contable_ter_id'];
 		$cuenta_contable_compra_id 	=   $request['cuenta_contable_compra_id'];
 		$ind_venta_compra 			=   $request['ind_venta_compra'];
-		$anio  						=   $this->anio;
+		$anio  						=   $request['anio'];;
 
-
+		//dd($anio);
 
 		foreach ($array_productos as $key => $item) {
 
 			$cabecera 			= 	WEBProductoEmpresa::where('producto_id','=',$item['producto_id'])
+									->where('anio','=',$anio)
 									->where('WEB.productoempresas.empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
 									->first();
 
@@ -336,7 +337,6 @@ class ConfiguracioProductoController extends Controller
 		}
 		echo('Registro de cuenta contable modificada con exito');
 
-
 	}
 
 	public function actionAjaxGuardarCodigoMigracion(Request $request)
@@ -344,13 +344,14 @@ class ConfiguracioProductoController extends Controller
 		
 		$array_productos 			=   json_decode($request['array_productos'],true);
 		$codigo_migracion 			=   $request['codigo_migracion'];
-		$anio  						=   $this->anio;
+		$anio  						=   $request['anio'];
 
 
 
 		foreach ($array_productos as $key => $item) {
 
 			$cabecera 			= 	WEBProductoEmpresa::where('producto_id','=',$item['producto_id'])
+									->where('anio','=',$anio)
 									->where('WEB.productoempresas.empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
 									->first();
 

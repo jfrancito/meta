@@ -12,83 +12,30 @@
 
         <div class="main-content container-fluid">
           <div class="row">
+
             <div class="col-md-6">
               <div class="panel panel-default panel-table">
                 <div class="panel-heading"> 
+                  <div class="tools tooltiptop">
+                    <a href="#" class="tooltipcss opciones buscarobsasiento">
+                      <span class="tooltiptext">Buscar</span>
+                      <span class="icon mdi mdi-search"></span>
+                    </a>
+                  </div>
+
                   <div class="title">Observaciones de asientos</div>
+
+                  {!! Form::select( 'anio', $combo_anio_pc, $anio,
+                                    [
+                                      'class'       => 'form-control control input-xs' ,
+                                      'id'          => 'anio',
+                                      'required'    => '',
+                                      'data-aw'     => '1',
+                                    ]) !!}
+
                 </div>
-                <div class="panel-body table-responsive">
-                  <table class="table table-striped table-borderless">
-                    <thead>
-                      <tr>
-                        <th>Tipo de asiento</th>
-                        <th>Observación</th>
-                        <th>Cantidad</th>
-                        <th>Migrar</th>
-                      </tr>
-                    </thead>
-                    <tbody class="no-border-x">
-                      <tr>
-                        <td>Ventas</td>
-                        <td>Ventas sin asientos</td>
-                        <td class="actions">
-                          <a href="{{ url('/gestion-observacion-documentos/3') }}">
-                          <span class="badge badge-primary">{{count($lista_ventas)}}</span>
-                          </a>
-                        </td>
-                        <td class="actions">
-                          <a href="{{ url('/migrar-ventas') }}" class='cargando'>
-                          <span class="badge badge-primary">migrar</span>
-                          </a>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td>Ventas</td>
-                        <td>Productos sin configurar</td>
-                        <td class="actions">
-                          <a href="{{ url('/gestion-configuracion-producto/1R/3') }}">
-                          <span class="badge badge-primary">{{count($lista_productos_sc)}}</span>
-                          </a>
-                        </td>
-                        <td class="actions">
-                        </td>
-
-                      </tr>
-
-
-                      <tr>
-                        <td>Compras</td>
-                        <td>Compras sin asientos</td>
-                        <td class="actions">
-                          <a href="{{ url('/gestion-observacion-documentos/4') }}">
-                          <span class="badge badge-success">{{count($lista_compras)}}</span>
-                          </a>
-                        </td>
-
-                        <td class="actions">
-                          <a href="{{ url('/migrar-compras') }}" class='cargando'>
-                          <span class="badge badge-primary">migrar</span>
-                          </a>
-                        </td>
-
-                      </tr>
-
-                      <tr>
-                        <td>Compras</td>
-                        <td>Productos sin configurar</td>
-                        <td class="actions">
-                          <a href="{{ url('/gestion-configuracion-producto/1R/4') }}">
-                          <span class="badge badge-success">{{count($lista_productos_sc_comp)}}</span>
-                          </a>
-                        </td>
-
-                        <td class="actions">
-                        </td>
-
-                      </tr>
-                    </tbody>
-                  </table>
+                <div class="panel-body table-responsive listajax">
+                  @include('usuario.ajax.alistaobservacionesasiento')
                 </div>
               </div>
             </div>

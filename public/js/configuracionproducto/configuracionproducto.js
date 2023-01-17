@@ -123,6 +123,8 @@ $(document).ready(function(){
         var cuenta_contable_ter_id    =   $('#cuenta_contable_ter_id').val();
         var cuenta_contable_compra_id =   $('#cuenta_contable_compra_id').val();
         var ind_venta_compra          =   $('#ind_venta_compra').val();
+        var anio          =   $('#anio').val();
+
         var _token                    =   $('#token').val();
         //validacioones
         if(ind_venta_compra=='1'){
@@ -139,6 +141,7 @@ $(document).ready(function(){
                                 cuenta_contable_ter_id   : cuenta_contable_ter_id,
                                 cuenta_contable_compra_id   : cuenta_contable_compra_id,
                                 ind_venta_compra         : ind_venta_compra,
+                                anio                     : anio,
                                 array_productos          : array_productos,
                             };
 
@@ -151,6 +154,7 @@ $(document).ready(function(){
 
         var array_productos           =   $('#array_productos').val();
         var codigo_migracion          =   $('#codigo_migracion').val();
+        var anio                      =   $('#anio').val();
         var _token                    =   $('#token').val();
         //validacioones
         if(codigo_migracion  ==''){ alerterrorajax("Ingrese un codigo de migracion."); return false;} 
@@ -162,6 +166,7 @@ $(document).ready(function(){
                                 _token                   : _token,
                                 codigo_migracion         : codigo_migracion,
                                 array_productos          : array_productos,
+                                anio                     : anio,
                             };
 
         ajax_normal_guardar_lista(data,"/ajax-guardar-codigo-migracion","buscarproducto");                 

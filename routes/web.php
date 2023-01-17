@@ -34,6 +34,9 @@ Route::get('/migrar-recibo-honorario', 'MigrarReciboHonorarioController@actionMi
 Route::group(['middleware' => ['authaw']], function () {
 
 	Route::get('/bienvenido', 'UserController@actionBienvenido');
+	Route::any('/ajax-observaciones-asiento', 'UserController@actionAjaxListarObservacionesAsiento');
+
+
 
 	Route::any('/gestion-de-usuarios/{idopcion}', 'UserController@actionListarUsuarios');
 	Route::any('/agregar-usuario/{idopcion}', 'UserController@actionAgregarUsuario');
@@ -64,7 +67,7 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-configuracion-asiento-modelo-detalle', 'AsientoModeloController@actionAjaxModalConfiguracionAsientoModelo');
 	Route::any('/ajax-modal-modificar-configuracion-asiento-modelo-detalle', 'AsientoModeloController@actionAjaxModalModificarConfiguracionAsientoModelo');
 
-	Route::any('/gestion-configuracion-producto/{idopcion}/{tipo_asiento_id}', 'ConfiguracioProductoController@actionListarConfiguracionProducto');
+	Route::any('/gestion-configuracion-producto/{idopcion}/{tipo_asiento_id}/{anio}', 'ConfiguracioProductoController@actionListarConfiguracionProducto');
 	Route::any('/gestion-configuracion-producto/{idopcion}', 'ConfiguracioProductoController@actionListarConfiguracionProductoMenu');
 
 
@@ -91,7 +94,7 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-combo-periodo-xanio-xempresa-gc', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresaGC');
 
 
-	Route::any('/gestion-observacion-documentos/{tipo_asiento_id}', 'MigrarVentaController@actionListarObservacionDocumentos');
+	Route::any('/gestion-observacion-documentos/{tipo_asiento_id}/{anio}', 'MigrarVentaController@actionListarObservacionDocumentos');
 	Route::any('/ajax-modal-detalle-producto-migracion-ventas', 'MigrarVentaController@actionAjaxModalDetalleProductoMigracionVentas');
 	Route::any('/generar-asiento-contables-xdocumentos', 'MigrarVentaController@actionGenerarAsientoContablesXDocumentos');
 	Route::any('/ajax-observacion-documentos-ventas', 'MigrarVentaController@actionAjaxObeservacionDocumentosVentas');

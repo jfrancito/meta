@@ -208,19 +208,18 @@ trait MigrarVentaTraits
 	}
 
 
-	private function mv_lista_ventas_observadas($tipo_asiento,$empresa_id)
+	private function mv_lista_ventas_observadas($tipo_asiento,$empresa_id,$anio)
 	{
 		
 
 		$array_empresas  		    = 		$this->mv_array_empresa_venta();
 
-
-
-		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
+		$lista_ventas				=		WEBHistorialMigrar::join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.historialmigrar.COD_PERIODO')
+											->where('WEB.historialmigrar.COD_EMPR','=',$empresa_id)
+											->where('CON.PERIODO.COD_ANIO','=',$anio)
 											->where('IND_ASIENTO_MODELO','=',-1)
 											->where('IND_ERROR','=',1)
 											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
-											->where('COD_EMPR','=',$empresa_id)
 											->orderby('COD_REFERENCIA','asc')
 											->get();
 
@@ -251,13 +250,16 @@ trait MigrarVentaTraits
 	private function mv_lista_productos_sin_configuracion($tipo_asiento,$empresa_id,$anio)
 	{
 		
-		$array_ventas_con_error		=		WEBHistorialMigrar::where('COD_EMPR','=',$empresa_id)
+		$array_ventas_con_error		=		WEBHistorialMigrar::join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.historialmigrar.COD_PERIODO')
+											->where('WEB.historialmigrar.COD_EMPR','=',$empresa_id)
+											->where('CON.PERIODO.COD_ANIO','=',$anio)
 											->where('IND_ASIENTO_MODELO','=',-1)
 											->where('IND_ERROR','=',1)
 											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
 											->where('TXT_ERROR','=','Hay productos que no tienen asociados cuenta contable')
 											->pluck('COD_REFERENCIA')
 											->toArray();
+
 
 		if($tipo_asiento=='TAS0000000000003'){
 
@@ -275,8 +277,6 @@ trait MigrarVentaTraits
 												->pluck('producto_id')
 												->toArray();
 
-
-
 		}else{
 
 			$array_total_producos		=		CMPDetalleProducto::whereIn('COD_TABLA',$array_ventas_con_error)
@@ -291,7 +291,6 @@ trait MigrarVentaTraits
 												->where('cuenta_contable_compra_id','<>','')
 												->pluck('producto_id')
 												->toArray();
-
 
 		}
 

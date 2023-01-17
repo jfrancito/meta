@@ -66,6 +66,7 @@
                                                   'id'          => 'anio',
                                                   'required'    => '',
                                                   'data-aw'     => '1',
+                                                  'disabled'    => 'disabled',
                                                 ]) !!}
                             </div>
                           </div>

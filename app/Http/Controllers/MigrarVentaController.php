@@ -155,18 +155,18 @@ class MigrarVentaController extends Controller
 	}
 
 
-	public function actionListarObservacionDocumentos($tipo_asiento)
+	public function actionListarObservacionDocumentos($tipo_asiento,$anio)
 	{
 	    View::share('titulo','Observaciones en documentos de venta');
 	    if($tipo_asiento == '3'){$tipo_asiento = 'TAS0000000000003';}
 	    if($tipo_asiento == '4'){$tipo_asiento = 'TAS0000000000004';}
 
 
-		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento,Session::get('empresas_meta')->COD_EMPR);
+		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento,Session::get('empresas_meta')->COD_EMPR,$anio);
 		$funcion 						= 	$this;
 	    $sel_tipo_asiento 				=	'';
 	    $sel_periodo 					=	'';
-	    $anio  							=   $this->anio;
+	    $anio  							=   $anio;
         $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 	    $combo_tipo_asiento 			= 	$this->gn_generacion_combo_categoria('TIPO_ASIENTO','Seleccione tipo asiento','');

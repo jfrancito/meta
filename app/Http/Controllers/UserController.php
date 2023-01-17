@@ -13,15 +13,18 @@ use View;
 use Session;
 use Hashids;
 
-
+use App\Traits\GeneralesTraits;
 use App\Traits\MigrarVentaTraits;
 use App\Traits\AlertaTraits;
+use App\Traits\PlanContableTraits;
 
 class UserController extends Controller
 {
 
 	use MigrarVentaTraits;
 	use AlertaTraits;
+	use GeneralesTraits;
+	use PlanContableTraits;
 
     public function actionLogin(Request $request){
 
@@ -130,6 +133,37 @@ class UserController extends Controller
 
 	}
 
+
+
+	public function actionAjaxListarObservacionesAsiento(Request $request)
+	{
+
+		$anio 							=   $request['anio'];
+
+	    $tipo_asiento_venta 			=	'TAS0000000000003';
+	    $tipo_asiento_compra 			=	'TAS0000000000004';
+
+		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento_venta,Session::get('empresas_meta')->COD_EMPR,$anio);
+		$lista_productos_sc 		 	= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento_venta,Session::get('empresas_meta')->COD_EMPR,$anio);
+
+		$lista_compras 					= 	$this->mv_lista_ventas_observadas($tipo_asiento_compra,Session::get('empresas_meta')->COD_EMPR,$anio);
+		$lista_productos_sc_comp 		= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento_compra,Session::get('empresas_meta')->COD_EMPR,$anio);
+
+
+		$funcion 						= 	$this;
+
+		return View::make('usuario/ajax/alistaobservacionesasiento',
+						 [
+						 	'lista_ventas' 		 			=> $lista_ventas,
+						 	'lista_productos_sc' 			=> $lista_productos_sc,
+						 	'lista_compras' 	 			=> $lista_compras,
+						 	'lista_productos_sc_comp' 		=> $lista_productos_sc_comp,
+						 	'anio' 				 			=> $anio,
+						 	'funcion' 						=> $funcion,
+						 	'ajax' 							=> true,						 	
+						 ]);
+	}
+
 	public function actionBienvenido()
 	{
 
@@ -140,27 +174,31 @@ class UserController extends Controller
 	    $tipo_asiento_venta 			=	'TAS0000000000003';
 	    $tipo_asiento_compra 			=	'TAS0000000000004';
 
-		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento_venta,Session::get('empresas_meta')->COD_EMPR);
+		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento_venta,Session::get('empresas_meta')->COD_EMPR,$anio);
 		$lista_productos_sc 		 	= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento_venta,Session::get('empresas_meta')->COD_EMPR,$anio);
 
 		$lista_documento_sin_enviar 	= 	$this->al_lista_documentos_sin_enviar_agrupado(Session::get('empresas_meta')->COD_EMPR);
 		$lista_documento_correlativo 	= 	$this->al_lista_documentos_correlativos_faltante_agrupado(Session::get('empresas_meta')->COD_EMPR);
 
 
-		$lista_compras 					= 	$this->mv_lista_ventas_observadas($tipo_asiento_compra,Session::get('empresas_meta')->COD_EMPR);
+		$lista_compras 					= 	$this->mv_lista_ventas_observadas($tipo_asiento_compra,Session::get('empresas_meta')->COD_EMPR,$anio);
 		$lista_productos_sc_comp 		= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento_compra,Session::get('empresas_meta')->COD_EMPR,$anio);
 
+		//dd($lista_productos_sc_comp);
 
-
+        $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 
 		return View::make('bienvenido',
 						 [
-						 	'lista_ventas' 		 => $lista_ventas,
-						 	'lista_productos_sc' => $lista_productos_sc,
-						 	'lista_documento_sin_enviar' => $lista_documento_sin_enviar,
-						 	'lista_documento_correlativo' => $lista_documento_correlativo,
-						 	'lista_compras' 	 => $lista_compras,
-						 	'lista_productos_sc_comp' => $lista_productos_sc_comp,
+						 	'lista_ventas' 		 			=> $lista_ventas,
+						 	'lista_productos_sc' 			=> $lista_productos_sc,
+						 	'lista_documento_sin_enviar' 	=> $lista_documento_sin_enviar,
+						 	'lista_documento_correlativo' 	=> $lista_documento_correlativo,
+						 	'lista_compras' 	 			=> $lista_compras,
+						 	'lista_productos_sc_comp' 		=> $lista_productos_sc_comp,
+						 	'anio' 				 			=> $anio,
+						 	'combo_anio_pc' 				=> $combo_anio_pc,
 
 						 ]);
 	}
