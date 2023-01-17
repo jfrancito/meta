@@ -12,7 +12,7 @@
 >
   <span class="mdi mdi-playlist-plus cursor editar-cuenta"></span>
 </div>
-
+<div class="scroll_text scroll_text_heigth_aler" style = "padding: 0px !important;"> 
 <table class="table table-condensed table-striped">
     <thead>
       <tr>
@@ -61,3 +61,4 @@
       </tr>
     </tfoot>
 </table>
+</div>
