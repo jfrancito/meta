@@ -14,12 +14,23 @@
             <div class="col-sm-12">
               <div class="panel panel-default panel-border-color panel-border-color-success">
                 <div class="panel-heading">Registro Diario
+
                   <div class="tools tooltiptop">
-                    <a href="#" class="tooltipcss opciones buscarregistrodiario">
-                      <span class="tooltiptext">Buscar Registro Diario</span>
-                      <span class="icon mdi mdi-search"></span>
-                    </a>
+                    <div class="dropdown">
+                      <span class="icon mdi mdi-more-vert dropdown-toggle" id="menudespacho" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></span>
+                      <a href="#" class="tooltipcss opciones buscarregistrodiario">
+                        <span class="tooltiptext">Buscar Registro Diario</span>
+                        <span class="icon mdi mdi-search"></span>
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
+                        <li>
+                          <a href="#" class='descargararchivo' data_archivo = 'registrocompra'><b>Asiento Contable excel</b> <span class="mdi mdi-check-circle"></span></a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
+
+
                   <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}} </span>
 
                 </div>
@@ -27,6 +38,15 @@
                 <div class="panel-body">
                   <div class='filtrotabla row'>
                     <div class="col-xs-12">
+
+                      <form method="POST"
+                      id="formdescargar"
+                      target="_blank"
+                      action="{{ url('/descargar-asientos-contable-excel') }}" 
+                      style="border-radius: 0px;" 
+                      >
+                        {{ csrf_field() }}
+
 
 
                       <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
@@ -68,6 +88,10 @@
 
                       
                       <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
+
+
+
+                      </form>
                     </div>
 
 

@@ -28,12 +28,15 @@
                         </li>
                       </ul>
                     </div>
+
+
                   </div>
                   <span class="panel-subtitle">{{Session::get('empresas_meta')->NOM_EMPR}} </span>
                 </div>
                 <div class="panel-body">
                   <div class='filtrotabla row'>
                     <div class="col-xs-12">
+                      
                       <form method="POST"
                       id="formdescargar"
                       target="_blank"

@@ -9,6 +9,7 @@
       <th>T.C.</th>
       <th>Total Debe</th>
       <th>Total Haber</th>
+      <th>Opcion</th>      
     </tr>
   </thead>
   <tbody>
@@ -24,6 +25,18 @@
         <td>{{number_format($item->CAN_TIPO_CAMBIO, $redondeo, '.', ',')}}</td>
         <td>{{number_format($item->CAN_TOTAL_DEBE, $redondeo, '.', ',')}}</td>
         <td>{{number_format($item->CAN_TOTAL_HABER, $redondeo, '.', ',')}}</td>
+        <td class="rigth">
+          <div class="btn-group btn-hspace">
+            <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">Acción <span class="icon-dropdown mdi mdi-chevron-down"></span></button>
+            <ul role="menu" class="dropdown-menu pull-right">
+              <li>
+                <a href="{{ url('/asiento-contable-excel-xasiento/'.$item->COD_ASIENTO) }}" target="_blank">
+                  Exportar excel
+                </a>
+              </li>
+            </ul>
+          </div>
+        </td>
       </tr>                    
     @endforeach
   </tbody>

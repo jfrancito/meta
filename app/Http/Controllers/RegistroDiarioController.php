@@ -28,13 +28,76 @@ use Keygen;
 
 
 use Illuminate\Support\Facades\Storage;
-
+use Maatwebsite\Excel\Facades\Excel;
 class RegistroDiarioController extends Controller
 {
 
 	use GeneralesTraits;
 	use AsientoModeloTraits;
 	use PlanContableTraits;
+
+	public function actionAsientoContableExcelXAsiento($cod_asiento,Request $request)
+	{
+
+
+		set_time_limit(0);
+
+
+	    $listaasiento 			= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->where('WEB.asientos.COD_ASIENTO','=',$cod_asiento)
+	    							->get();					
+
+	    $funcion 				= 	$this;
+		$titulo 				=   'ASIENTO-CONTABLE-'.Session::get('empresas_meta')->NOM_EMPR;
+
+	    Excel::create($titulo, function($excel) use ($funcion,$listaasiento) {
+	        $excel->sheet('asiento', function($sheet) use ($funcion,$listaasiento) {
+	            $sheet->loadView('registrodiario/excel/listaasientocontable')->with('listaasiento',$listaasiento)
+	            														->with('funcion',$funcion);         
+	        });
+	    })->export('xls');
+
+
+
+	}
+
+
+
+	public function actionAjaxDescargarAsientoContable(Request $request)
+	{
+
+
+		set_time_limit(0);
+
+		$anio 					=   $request['anio'];
+		$tipo_asiento_id 		=   $request['tipo_asiento_id'];
+		$periodo_id 			=   $request['periodo_id'];
+		$idopcion 				=   $request['idopcion'];
+
+	    $listaasiento 			= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+	    							->OrdFecha($tipo_asiento_id)
+	    							->get();					
+
+	    $funcion 				= 	$this;
+		$titulo 				=   'ASIENTO-CONTABLE-'.Session::get('empresas_meta')->NOM_EMPR;
+
+
+
+	    Excel::create($titulo, function($excel) use ($funcion,$listaasiento) {
+	        $excel->sheet('asiento', function($sheet) use ($funcion,$listaasiento) {
+	            $sheet->loadView('registrodiario/excel/listaasientocontable')->with('listaasiento',$listaasiento)
+	            														->with('funcion',$funcion);         
+	        });
+	    })->export('xls');
+
+
+
+	}
+
 
 	public function actionListarRegistroDiario($idopcion)
 	{
