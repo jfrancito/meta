@@ -538,7 +538,7 @@ class ComprasController extends Controller
 	    							->where('COD_ESTADO','=','1')->orderBy('NRO_LINEA', 'asc')->get();
 
         $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
-	    $anio  					=   $this->anio;
+
 	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
 		$sel_periodo 			=	'';
@@ -549,7 +549,7 @@ class ComprasController extends Controller
 		$funcion 				= 	$this;
 		
 
-		$anio  					=   $this->anio;
+
         $array_nivel_pc     	= 	$this->pc_array_nivel_cuentas_contable(Session::get('empresas_meta')->COD_EMPR,$anio);
 		$combo_nivel_pc  		= 	$this->gn_generacion_combo_array('Seleccione nivel', '' , $array_nivel_pc);
 		$defecto_nivel 			= 	'6';
@@ -1317,7 +1317,7 @@ class ComprasController extends Controller
 	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)->orderBy('NRO_LINEA', 'asc')->get();
 
         $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
-	    $anio  					=   $this->anio;
+
 	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
 		$sel_periodo 			=	'';
@@ -1496,11 +1496,13 @@ class ComprasController extends Controller
 		$documento 				=   $request['documento'];
 		$ruta 					=   $request['ruta'];
 
+		$anio  					=   $anio;
+
 	    $asiento 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
 	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)->where('COD_ESTADO','=','1')->orderBy('NRO_LINEA', 'asc')->get();
 
         $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
-	    $anio  					=   $this->anio;
+
 	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
 		$sel_periodo 			=	'';
@@ -1511,12 +1513,10 @@ class ComprasController extends Controller
 		$funcion 				= 	$this;
 		
 
-		$anio  					=   $this->anio;
+
         $array_nivel_pc     	= 	$this->pc_array_nivel_cuentas_contable(Session::get('empresas_meta')->COD_EMPR,$anio);
 		$combo_nivel_pc  		= 	$this->gn_generacion_combo_array('Seleccione nivel', '' , $array_nivel_pc);
 		$defecto_nivel 			= 	'6';
-
-		//dd($combo_nivel_pc);
 
 		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel(Session::get('empresas_meta')->COD_EMPR,$defecto_nivel,$anio);
 		$combo_cuenta  			= 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
@@ -1613,7 +1613,6 @@ class ComprasController extends Controller
 	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)->where('COD_ESTADO','=','1')->orderBy('NRO_LINEA', 'asc')->get();
 
         $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
-	    $anio  					=   $this->anio;
 	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
 		$sel_periodo 			=	'';
@@ -1694,7 +1693,7 @@ class ComprasController extends Controller
 
 
         $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
-	    $anio  					=   $this->anio;
+
 	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
 		$sel_periodo 			=	'';
