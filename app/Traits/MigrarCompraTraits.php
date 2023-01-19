@@ -41,6 +41,7 @@ trait MigrarCompraTraits
 											->pluck('COD_PERIODO')
 											->toArray();
 
+
 		$lista_migrar_compras		=		WEBViewMigrarCompras::leftJoin('WEB.historialmigrar', function ($join) {
 									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
 									                 ->where('WEB.historialmigrar.IND_ASIENTO_MODELO', '=', 1);
@@ -48,7 +49,7 @@ trait MigrarCompraTraits
 											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
 											->whereIn('WEB.viewmigrarcompras.COD_PERIODO',$array_periodo)
 											->whereIn('WEB.viewmigrarcompras.COD_EMPR',$array_empresas)
-											//->where('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE','=','ICCHFC0000047269')
+											//->where('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE','=','ICCHFC0000051981')
 											->where('WEB.viewmigrarcompras.NOM_ESTADO','=','ENVIADO')
 											->select(DB::raw('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE'))
 											->groupBy('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
@@ -347,6 +348,8 @@ trait MigrarCompraTraits
 		$empresa 					= 		$documento_ctble->COD_EMPR;
 		$cod_contable 				= 		$documento_ctble->COD_DOCUMENTO_CTBLE;
 		$asiento_modelo_id 			= 		trim($historialmigrar->COD_ASIENTO_MODELO);
+		$ind_recalcular 			= 		1;
+
 
 		if($documento_ctble->ESTADO_ELEC == 'R'){
 		    $anulado 				= 		0;
@@ -363,7 +366,8 @@ trait MigrarCompraTraits
 											@asiento_modelo_id = ?,
 											@ind_anulado = ?,
 											@fechaemision = ?,
-											@igv = ?');
+											@igv = ?,
+											@ind_recalcular = ?');
 
         $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
         $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
@@ -373,6 +377,7 @@ trait MigrarCompraTraits
         $stmt->bindParam(6, $anulado  ,PDO::PARAM_STR);
         $stmt->bindParam(7, $fechaemision  ,PDO::PARAM_STR);
         $stmt->bindParam(8, $igv  ,PDO::PARAM_STR);
+        $stmt->bindParam(9, $ind_recalcular  ,PDO::PARAM_STR);
         $stmt->execute();
 
 		$historialmigrar->IND_ASIENTO_MODELO 	=   1;

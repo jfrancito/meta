@@ -64,6 +64,9 @@
 
 	          <div class="tab-content" style="margin-bottom: 0px;">
 	            <div id="asientocontable" class="tab-pane active cont">
+
+<div class="scroll_text scroll_text_heigth_aler" style = "padding: 0px !important;"> 
+
 					<table class="table table-condensed table-striped">
 					    <thead>
 					      <tr>
@@ -99,6 +102,7 @@
 					      </tr>
 					    </tfoot>
 					</table>
+	            </div>					
 	            </div>
 	            <div id="configuracion" class="tab-pane cont">
 

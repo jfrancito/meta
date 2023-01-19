@@ -16,7 +16,7 @@ use App\Modelos\WEBProductoEmpresa;
 use App\Modelos\WEBCuentaDetraccion;
 use App\Modelos\CMPTipoCambio;
 use App\Modelos\WEBAsiento;
-
+use App\Modelos\WEBAsientoMovimiento;
 
 use View;
 use Session;
@@ -30,6 +30,432 @@ use PDO;
 trait GeneralesTraits
 {
 
+	public function gn_generar_total_asientos($COD_ASIENTO)
+	{
+
+		$asiento 								=	WEBAsiento::where('COD_ASIENTO','=',$COD_ASIENTO)->first();
+
+
+		$total_debe 								=	0;
+		$total_haber 								=	0;
+		//actualizar totales
+		$listaasientomovimiento 					=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$COD_ASIENTO)
+														->where('COD_ESTADO','=','1')
+														->where('IND_PRODUCTO','<>','2')
+														->orderBy('NRO_LINEA','ASC')
+														->get();
+
+		foreach($listaasientomovimiento as $key => $item){
+
+			if($asiento->COD_CATEGORIA_MONEDA=='MON0000000000001'){//soles
+				$total_debe 	=	$total_debe + $item->CAN_DEBE_MN;
+				$total_haber 	=	$total_haber + $item->CAN_HABER_MN;
+			}else{//DOLARES
+				$total_debe 	=	$total_debe + $item->CAN_DEBE_ME;
+				$total_haber 	=	$total_haber + $item->CAN_HABER_ME;
+			}
+
+		}
+
+		//ACTUALIZAR TOTAL
+		$asiento->CAN_TOTAL_DEBE 			= 	$total_debe;				
+		$asiento->CAN_TOTAL_HABER 			= 	$total_haber;
+		$asiento->FEC_USUARIO_MODIF_AUD 	=   $this->fechaactual;
+		$asiento->COD_USUARIO_MODIF_AUD 	=   Session::get('usuario_meta')->name;
+		$asiento->save();
+
+
+    }
+
+
+
+
+
+	public function gn_crear_asiento_destino($cod_asiento,$cod_asientomovimiento,$anio)
+	{
+
+		$empresa 				=   Session::get('empresas_meta')->COD_EMPR;
+		$asiento 				= 	WEBAsiento::where('COD_ASIENTO','=',$cod_asiento)->first();
+		$listaasientomovimiento 	= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$cod_asiento)
+										->where('COD_ASIENTO_MOVIMIENTO','=',$cod_asientomovimiento)
+										->get();
+
+
+		foreach($listaasientomovimiento as $key => $item){
+
+			$ind_alimentacion = 0;
+
+			$asientomovimiento 		= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$cod_asiento)
+										->where('COD_ESTADO','=',1)
+										->get();
+
+			$cont_detalle_asiento 	=	count($asientomovimiento)+1;						
+			$COD_CUENTA_CONTABLE 	= 	$item->COD_CUENTA_CONTABLE;
+			$nro_cuenta_alimentacion =  $item->TXT_CUENTA_CONTABLE;
+
+			if($nro_cuenta_alimentacion=='631401' and Ltrim(Rtrim($nro_cuenta_alimentacion)) == '91'){
+				$ind_alimentacion = 1;
+			}
+
+			/////////////////////////////////////////DEBE 01///////////////////////////////////////////
+			$dcc 					=	WEBCuentaContable::where('id','=',$COD_CUENTA_CONTABLE)
+										->where('cuenta_contable_transferencia_debe','<>','')->get();
+
+			if(count($dcc)>0 and $ind_alimentacion <=0){
+
+				$cctd = WEBCuentaContable::where('id','=',$COD_CUENTA_CONTABLE)->first();
+				$nro_cuenta_rel =	Ltrim(Rtrim($cctd->cuenta_contable_transferencia_debe));
+
+				$cc = WEBCuentaContable::where('nro_cuenta','=',$nro_cuenta_rel)->where('empresa_id','=',$empresa)->where('anio','=',$anio)->first();				
+				$COD_CUENTA_CONTABLE 	= 	$cc->id;
+				$TXT_GLOSA_PRODUCTO 	= 	$cc->nombre;
+				$cctn = WEBCuentaContable::where('id','=',$COD_CUENTA_CONTABLE)->first();
+				$porcentaje_debe	= 	$cctn->transferencia_debe_porcentaje/100;
+				$CAN_DEBE_MN = 0.000;
+				$CAN_HABER_MN  = 0.000;
+				$CAN_DEBE_ME  = 0.000;
+				$CAN_HABER_ME  = 0.000;
+				$CAN_VALOR  = 0.000;
+
+				if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001'){
+					$CAN_VALOR =  $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
+				}
+				else{
+					$CAN_VALOR =  $item->CAN_DEBE_ME+$item->CAN_HABER_ME;
+				}
+
+
+				$contadorpro = $cont_detalle_asiento;
+				$partida_id = 'COP0000000000001';
+				if($partida_id == 'COP0000000000001')
+					{
+						if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001')
+							{
+								$CAN_DEBE_MN = $CAN_VALOR;
+								$CAN_DEBE_ME = $CAN_VALOR/$asiento->CAN_TIPO_CAMBIO;
+							}
+						else
+							{
+								$CAN_DEBE_MN = $CAN_VALOR*$asiento->CAN_TIPO_CAMBIO;
+								$CAN_DEBE_ME = $CAN_VALOR;
+							}
+					}
+				else
+					{
+						if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001')
+							{
+								$CAN_HABER_MN = $CAN_VALOR;
+								$CAN_HABER_ME = $CAN_VALOR/$asiento->CAN_TIPO_CAMBIO;
+							}
+						else
+							{
+								$CAN_HABER_MN = $CAN_VALOR*$asiento->CAN_TIPO_CAMBIO;
+								$CAN_HABER_ME = $CAN_VALOR;
+							}
+					}
+
+
+					$CAN_DEBE_MN = $CAN_DEBE_MN*$porcentaje_debe;
+					$CAN_HABER_MN = $CAN_HABER_MN*$porcentaje_debe;
+					$CAN_DEBE_ME = $CAN_DEBE_ME*$porcentaje_debe;
+					$CAN_HABER_ME = $CAN_HABER_ME*$porcentaje_debe;
+
+					$IND_TIPO_OPERACION = 'I';
+					$COD_ASIENTO_MOVIMIENTO = '';
+					$COD_EMPR = $asiento->COD_EMPR;
+					$COD_CENTRO = $asiento->COD_CENTRO;
+					$COD_ASIENTO = $asiento->COD_ASIENTO;
+
+					$COD_CUO = '';
+					$IND_EXTORNO = '0';
+					$TXT_TIPO_REFERENCIA = 'WEB.asientomovimientos';
+					$TXT_REFERENCIA = $cod_asientomovimiento;
+					$COD_ESTADO = '1';
+					$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->nombre;
+					$COD_DOC_CTBLE_REF = '';
+					$COD_ORDEN_REF = '';
+
+		    		$detalle     	= 	$this->gn_crear_detalle_asiento_contable($IND_TIPO_OPERACION,
+											$COD_ASIENTO_MOVIMIENTO,
+											$COD_EMPR,
+											$COD_CENTRO,
+											$COD_ASIENTO,
+											$COD_CUENTA_CONTABLE,
+											$nro_cuenta_rel,
+											$TXT_GLOSA_PRODUCTO,
+											$CAN_DEBE_MN,
+											$CAN_HABER_MN,
+
+											$CAN_DEBE_ME,
+											$CAN_HABER_ME,
+
+											$contadorpro,
+
+											$COD_CUO,
+											$IND_EXTORNO,
+											$TXT_TIPO_REFERENCIA,
+											$TXT_REFERENCIA,
+											$COD_ESTADO,
+											$COD_USUARIO_REGISTRO,
+											$COD_DOC_CTBLE_REF,
+											$COD_ORDEN_REF);
+
+
+
+					$asmo 			= 		WEBAsientoMovimiento::where('COD_ASIENTO_MOVIMIENTO','=',$detalle)->first();
+					$asmo->IND_PRODUCTO = 2;
+					$asmo->save();
+
+
+					$asientomovimiento 		= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$cod_asiento)
+												->where('COD_ESTADO','=',1)
+												->get();
+
+			}
+
+			/////////////////////////////////////////DEBE 02/////////////////////////////////////////// 
+
+			$asientomovimiento 		= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$cod_asiento)
+										->where('COD_ESTADO','=',1)
+										->get();
+			$cont_detalle_asiento 	=	count($asientomovimiento)+1;	
+			$COD_CUENTA_CONTABLE 	= 	$item->COD_CUENTA_CONTABLE;
+			$dcc 					=	WEBCuentaContable::where('id','=',$COD_CUENTA_CONTABLE)
+										->where('cuenta_contable_transferencia_debe02','<>','')->get();
+
+
+			if(count($dcc)>0 and $ind_alimentacion <=0){
+
+				$cctd = WEBCuentaContable::where('id','=',$COD_CUENTA_CONTABLE)->first();
+				$nro_cuenta_rel =	Ltrim(Rtrim($cctd->cuenta_contable_transferencia_debe02));
+
+				$cc = WEBCuentaContable::where('nro_cuenta','=',$nro_cuenta_rel)->where('empresa_id','=',$empresa)->where('anio','=',$anio)->first();				
+				$COD_CUENTA_CONTABLE 	= 	$cc->id;
+				$TXT_GLOSA_PRODUCTO 	= 	$cc->nombre;
+				$cctn = WEBCuentaContable::where('id','=',$COD_CUENTA_CONTABLE)->first();
+				$porcentaje_debe	= 	$cctn->transferencia_debe02_porcentaje/100;
+				$CAN_DEBE_MN = 0.000;
+				$CAN_HABER_MN  = 0.000;
+				$CAN_DEBE_ME  = 0.000;
+				$CAN_HABER_ME  = 0.000;
+				$CAN_VALOR  = 0.000;
+
+				if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001'){
+					$CAN_VALOR =  $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
+				}
+				else{
+					$CAN_VALOR =  $item->CAN_DEBE_ME+$item->CAN_HABER_ME;
+				}
+
+
+				$contadorpro = $cont_detalle_asiento;
+				$partida_id = 'COP0000000000001';
+				if($partida_id == 'COP0000000000001')
+					{
+						if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001')
+							{
+								$CAN_DEBE_MN = $CAN_VALOR;
+								$CAN_DEBE_ME = $CAN_VALOR/$asiento->CAN_TIPO_CAMBIO;
+							}
+						else
+							{
+								$CAN_DEBE_MN = $CAN_VALOR*$asiento->CAN_TIPO_CAMBIO;
+								$CAN_DEBE_ME = $CAN_VALOR;
+							}
+					}
+				else
+					{
+						if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001')
+							{
+								$CAN_HABER_MN = $CAN_VALOR;
+								$CAN_HABER_ME = $CAN_VALOR/$asiento->CAN_TIPO_CAMBIO;
+							}
+						else
+							{
+								$CAN_HABER_MN = $CAN_VALOR*$asiento->CAN_TIPO_CAMBIO;
+								$CAN_HABER_ME = $CAN_VALOR;
+							}
+					}
+
+
+					$CAN_DEBE_MN = $CAN_DEBE_MN*$porcentaje_debe;
+					$CAN_HABER_MN = $CAN_HABER_MN*$porcentaje_debe;
+					$CAN_DEBE_ME = $CAN_DEBE_ME*$porcentaje_debe;
+					$CAN_HABER_ME = $CAN_HABER_ME*$porcentaje_debe;
+
+					$IND_TIPO_OPERACION = 'I';
+					$COD_ASIENTO_MOVIMIENTO = '';
+					$COD_EMPR = $asiento->COD_EMPR;
+					$COD_CENTRO = $asiento->COD_CENTRO;
+					$COD_ASIENTO = $asiento->COD_ASIENTO;
+
+					$COD_CUO = '';
+					$IND_EXTORNO = '0';
+					$TXT_TIPO_REFERENCIA = 'WEB.asientomovimientos';
+					$TXT_REFERENCIA = $cod_asientomovimiento;
+					$COD_ESTADO = '1';
+					$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->nombre;
+					$COD_DOC_CTBLE_REF = '';
+					$COD_ORDEN_REF = '';
+
+		    		$detalle     	= 	$this->gn_crear_detalle_asiento_contable($IND_TIPO_OPERACION,
+											$COD_ASIENTO_MOVIMIENTO,
+											$COD_EMPR,
+											$COD_CENTRO,
+											$COD_ASIENTO,
+											$COD_CUENTA_CONTABLE,
+											$nro_cuenta_rel,
+											$TXT_GLOSA_PRODUCTO,
+											$CAN_DEBE_MN,
+											$CAN_HABER_MN,
+
+											$CAN_DEBE_ME,
+											$CAN_HABER_ME,
+
+											$contadorpro,
+
+											$COD_CUO,
+											$IND_EXTORNO,
+											$TXT_TIPO_REFERENCIA,
+											$TXT_REFERENCIA,
+											$COD_ESTADO,
+											$COD_USUARIO_REGISTRO,
+											$COD_DOC_CTBLE_REF,
+											$COD_ORDEN_REF);
+
+
+
+					$asmo 			= 		WEBAsientoMovimiento::where('COD_ASIENTO_MOVIMIENTO','=',$detalle)->first();
+					$asmo->IND_PRODUCTO = 2;
+					$asmo->save();
+
+
+			}
+
+
+			/////////////////////////////////////////HABER 01/////////////////////////////////////////// 
+
+			$asientomovimiento 		= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$cod_asiento)
+										->where('COD_ESTADO','=',1)
+										->get();
+			$cont_detalle_asiento 	=	count($asientomovimiento)+1;	
+			$COD_CUENTA_CONTABLE 	= 	$item->COD_CUENTA_CONTABLE;
+			$dcc 					=	WEBCuentaContable::where('id','=',$COD_CUENTA_CONTABLE)
+										->where('cuenta_contable_transferencia_haber','<>','')->get();
+
+
+			if(count($dcc)>0 and $ind_alimentacion <=0){
+
+				$cctd = WEBCuentaContable::where('id','=',$COD_CUENTA_CONTABLE)->first();
+				$nro_cuenta_rel =	Ltrim(Rtrim($cctd->cuenta_contable_transferencia_haber));
+
+				$cc = WEBCuentaContable::where('nro_cuenta','=',$nro_cuenta_rel)->where('empresa_id','=',$empresa)->where('anio','=',$anio)->first();				
+				$COD_CUENTA_CONTABLE 	= 	$cc->id;
+				$TXT_GLOSA_PRODUCTO 	= 	$cc->nombre;
+
+
+
+
+				$CAN_DEBE_MN = 0.000;
+				$CAN_HABER_MN  = 0.000;
+				$CAN_DEBE_ME  = 0.000;
+				$CAN_HABER_ME  = 0.000;
+				$CAN_VALOR  = 0.000;
+
+				if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001'){
+					$CAN_VALOR =  $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
+				}
+				else{
+					$CAN_VALOR =  $item->CAN_DEBE_ME+$item->CAN_HABER_ME;
+				}
+
+
+				$contadorpro = $cont_detalle_asiento;
+				$partida_id = 'COP0000000000002';
+				if($partida_id == 'COP0000000000001')
+					{
+						if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001')
+							{
+								$CAN_DEBE_MN = $CAN_VALOR;
+								$CAN_DEBE_ME = $CAN_VALOR/$asiento->CAN_TIPO_CAMBIO;
+							}
+						else
+							{
+								$CAN_DEBE_MN = $CAN_VALOR*$asiento->CAN_TIPO_CAMBIO;
+								$CAN_DEBE_ME = $CAN_VALOR;
+							}
+					}
+				else
+					{
+						if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001')
+							{
+								$CAN_HABER_MN = $CAN_VALOR;
+								$CAN_HABER_ME = $CAN_VALOR/$asiento->CAN_TIPO_CAMBIO;
+							}
+						else
+							{
+								$CAN_HABER_MN = $CAN_VALOR*$asiento->CAN_TIPO_CAMBIO;
+								$CAN_HABER_ME = $CAN_VALOR;
+							}
+					}
+
+
+					$IND_TIPO_OPERACION = 'I';
+					$COD_ASIENTO_MOVIMIENTO = '';
+					$COD_EMPR = $asiento->COD_EMPR;
+					$COD_CENTRO = $asiento->COD_CENTRO;
+					$COD_ASIENTO = $asiento->COD_ASIENTO;
+
+					$COD_CUO = '';
+					$IND_EXTORNO = '0';
+					$TXT_TIPO_REFERENCIA = 'WEB.asientomovimientos';
+					$TXT_REFERENCIA = $cod_asientomovimiento;
+					$COD_ESTADO = '1';
+					$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->nombre;
+					$COD_DOC_CTBLE_REF = '';
+					$COD_ORDEN_REF = '';
+
+		    		$detalle     	= 	$this->gn_crear_detalle_asiento_contable($IND_TIPO_OPERACION,
+											$COD_ASIENTO_MOVIMIENTO,
+											$COD_EMPR,
+											$COD_CENTRO,
+											$COD_ASIENTO,
+											$COD_CUENTA_CONTABLE,
+											$nro_cuenta_rel,
+											$TXT_GLOSA_PRODUCTO,
+											$CAN_DEBE_MN,
+											$CAN_HABER_MN,
+
+											$CAN_DEBE_ME,
+											$CAN_HABER_ME,
+
+											$contadorpro,
+
+											$COD_CUO,
+											$IND_EXTORNO,
+											$TXT_TIPO_REFERENCIA,
+											$TXT_REFERENCIA,
+											$COD_ESTADO,
+											$COD_USUARIO_REGISTRO,
+											$COD_DOC_CTBLE_REF,
+											$COD_ORDEN_REF);
+
+
+
+					$asmo 			= 		WEBAsientoMovimiento::where('COD_ASIENTO_MOVIMIENTO','=',$detalle)->first();
+					$asmo->IND_PRODUCTO = 2;
+					$asmo->save();
+
+
+			}
+
+
+
+		}
+
+
+	 	return  'exito';	
+	}
 
 	public function gn_suma_debe_haber_balance_comprobacion($debe_haber,$cuentacontable,$periodoinicio_id,$periodofin_id)
 	{
