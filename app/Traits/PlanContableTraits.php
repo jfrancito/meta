@@ -291,7 +291,7 @@ trait PlanContableTraits
 	    $array_nro_cuenta_pc 		= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
 	    								->where('anio','=',$anio)
 										->where('activo','=',1)
-										->orderBy('id', 'asc')
+										->orderBy('orden', 'asc')
 										->select(DB::raw("nro_cuenta + ' ' + nombre as nro_cuenta_nombre, nro_cuenta"))
 										->pluck('nro_cuenta_nombre','nro_cuenta')									
 										->toArray();
