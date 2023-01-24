@@ -49,6 +49,140 @@ class ComprasController extends Controller
 	use MigrarCompraTraits;
 
 
+
+	public function actionAjaxModalCambiarAsientoFechaEmision(Request $request)
+	{
+
+
+		$asiento_id 			=   $request['asiento_id'];
+		$idopcion 				=   $request['idopcion'];
+		$ruta 					=   $request['ruta'];
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+		$serie 					=   $request['serie'];
+		$documento 				=   $request['documento'];
+		$igv 					=   $request['igv'];
+		$fechaemision 			=   date_format(date_create($request['fechaemision']), 'Ymd');
+	    $asiento2 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
+	    $tipo_asiento 			= 	'TAS0000000000004';
+
+		$anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
+																	Session::get('usuario_meta')->name,
+																	$this->fechaactual);
+
+		WEBHistorialMigrar::where('COD_REFERENCIA','=', $asiento2->TXT_REFERENCIA)->delete();
+
+
+		$lista_compras_migrar_emitido = $this->mv_lista_compras_migrar_agrupado_emitidoxdocumento($this->array_empresas,
+																								  $this->anio_inicio,
+																								  $asiento2->TXT_REFERENCIA);
+
+		$lista_compras_migrar_anulado = array();
+
+		$this->mv_agregar_historial_compras($lista_compras_migrar_emitido,$lista_compras_migrar_anulado,$tipo_asiento);
+
+
+		foreach($lista_compras_migrar_emitido as $index => $item){
+			$respuesta = $this->mv_update_historial_compras($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
+		}
+
+		//asignar asiento
+		$lista_compras 				= 	$this->mv_lista_compras_asignarxdocumento($this->array_empresas,$tipo_asiento,$asiento2->TXT_REFERENCIA);
+
+		$igv  = (1+($igv/100));
+		foreach($lista_compras as $index => $item){
+			$respuesta2 = $this->mv_asignar_asiento_modelo_x_fechaemision($item,$tipo_asiento,$fechaemision,$igv);
+		}
+
+
+	    $asiento 					= 	WEBAsiento::where('TXT_REFERENCIA','=',$asiento2->TXT_REFERENCIA)
+	    								->where('COD_CATEGORIA_ESTADO_ASIENTO','<>','IACHTE0000000024')
+	    								->where('COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
+	    								->first();
+
+	    $listaasientomovimientodes 	= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento->COD_ASIENTO)
+	    								->where('COD_ESTADO','=','1')
+	    								->where('IND_PRODUCTO','<>','2')
+	    								->orderBy('NRO_LINEA', 'asc')
+	    								->get();
+
+		$periodo 					= 	CONPeriodo::where('COD_PERIODO','=',$asiento->COD_PERIODO)->first();
+	    $anio  						=   $periodo->COD_ANIO;
+
+		foreach($listaasientomovimientodes as $index => $item){
+			$this->gn_crear_asiento_destino($asiento->COD_ASIENTO,$item->COD_ASIENTO_MOVIMIENTO,$anio);
+		}
+
+		$this->gn_generar_total_asientos($asiento->COD_ASIENTO);
+
+
+	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento->COD_ASIENTO)->where('COD_ESTADO','=','1')->orderBy('NRO_LINEA', 'asc')->get();
+
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+
+	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$sel_periodo 			=	'';
+
+		$orden					=	$this->co_orden_xdocumento_contable($asiento->TXT_REFERENCIA);
+		$sel_tipo_descuento		=	$this->co_orden_compra_tipo_descuento($orden);
+		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
+
+
+		$funcion 				= 	$this;
+		
+        $array_nivel_pc     	= 	$this->pc_array_nivel_cuentas_contable(Session::get('empresas_meta')->COD_EMPR,$anio);
+		$combo_nivel_pc  		= 	$this->gn_generacion_combo_array('Seleccione nivel', '' , $array_nivel_pc);
+		$defecto_nivel 			= 	'6';
+
+		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel(Session::get('empresas_meta')->COD_EMPR,$defecto_nivel,$anio);
+		$combo_cuenta  			= 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
+
+		$combo_partida 			= 	$this->gn_generacion_combo_categoria('CONTABILIDAD_PARTIDA','Seleccione partida','');
+
+		$defecto_cuenta			= 	'';
+		$defecto_partida		= 	'';
+		$asiento_modelo_detalle_id = '';
+
+		$combo_activo 			= 	array('1' => 'ACTIVO','0' => 'ELIMINAR');
+		$defecto_activo			= 	'1';
+
+
+		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
+						 [
+						 	'asiento'					=> $asiento,
+						 	'listaasientomovimiento'	=> $listaasientomovimiento,
+						 	'combo_periodo'				=> $combo_periodo,
+						 	'combo_anio_pc'				=> $combo_anio_pc,
+						 	'anio'						=> $anio,
+						 	'sel_periodo'				=> $sel_periodo,
+
+						 	'sel_tipo_descuento'		=> $sel_tipo_descuento,
+						 	'combo_descuento'			=> $combo_descuento,
+						 	'orden'						=> $orden,
+						 	'idopcion'					=> $idopcion,
+
+						 	'anio'						=> $anio,
+						 	'periodo_id'				=> $periodo_id,
+						 	'serie'						=> $serie,
+						 	'documento'					=> $documento,
+
+						 	'combo_nivel_pc' 			=> $combo_nivel_pc,
+						 	'combo_cuenta' 				=> $combo_cuenta,
+						 	'combo_partida' 			=> $combo_partida,
+						 	'combo_activo' 			=> $combo_activo,
+
+						 	'defecto_nivel' 			=> $defecto_nivel,
+						 	'defecto_cuenta' 			=> $defecto_cuenta,
+						 	'defecto_partida' 			=> $defecto_partida,
+						 	'defecto_activo' 			=> $defecto_activo,
+						 	'ruta' 						=> $ruta,
+
+
+						 	'ajax' 						=> true,						 	
+						 ]);
+	}
+
 	public function actionAjaxEditarAsientoContableMovimiento(Request $request)
 	{
 
@@ -59,7 +193,12 @@ class ComprasController extends Controller
 		$activo 								=   $request['activo'];
 		$accion 								=   $request['accion'];
 		$COD_ASIENTO 							=   $request['asiento_id'];
-
+		$anio 									=   $request['anio'];
+		$idopcion 								=   $request['idopcion'];
+		$periodo_id 							=   $request['periodo_id'];
+		$serie 									=   $request['serie'];
+		$documento 								=   $request['documento'];
+		$ruta 									=   $request['ruta'];
 
 
 		if($accion == 'editar'){
@@ -120,125 +259,136 @@ class ComprasController extends Controller
 			$cuenta_destino_haber 	    = '';
 			$sw_destino_debe 	    	= 0;
 			$sw_destino_haber 	    	= 0;
+			$monto_original				= 0;
+			$monto     					= 0;
 
 
-			// if($cuenta_sinmodificar->cuenta_contable_transferencia_debe <> '' and $cuenta_sinmodificar->cuenta_contable_transferencia_haber <>''){
-			// 	$sw_tiene_destino = 1;
-			// 	$cuenta_destino_debe = $cuenta_sinmodificar->cuenta_contable_transferencia_debe;
-			// 	$cuenta_destino_haber = $cuenta_sinmodificar->cuenta_contable_transferencia_haber;
+			if($cuenta_sinmodificar->cuenta_contable_transferencia_debe <> '' and $cuenta_sinmodificar->cuenta_contable_transferencia_haber <>''){
+				$sw_tiene_destino = 1;
+				$cuenta_destino_debe = $cuenta_sinmodificar->cuenta_contable_transferencia_debe;
+				$cuenta_destino_haber = $cuenta_sinmodificar->cuenta_contable_transferencia_haber;
+				$monto_original	= $cuenta_sinmodificar->CAN_DEBE_MN+$cuenta_sinmodificar->CAN_HABER_MN;
 
-			// }
+			}
 
-			// if($sw_tiene_destino == 1){
+			if($sw_tiene_destino == 1){
 
-			// 	$listaasientomovimientoer 					=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asientomovimiento->COD_ASIENTO)
-			// 													->where('COD_ESTADO','=','1')
-			// 													->where('IND_PRODUCTO','=','2')
-			// 													->where('TXT_REFERENCIA','=',$asientomovimiento->COD_ASIENTO_MOVIMIENTO)
-			// 													->orderBy('NRO_LINEA','ASC')
-			// 													->get();
-			// 	//existe referencia
-			// 	if(count($listaasientomovimientoer)<=0){
-			// 		//agregar referencia
-			// 		$listaasientomovimientoar 					=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asientomovimiento->COD_ASIENTO)
-			// 														->where('COD_ESTADO','=','1')
-			// 														->where('IND_PRODUCTO','=','2')
-			// 														->orderBy('NRO_LINEA','ASC')
-			// 														->get();
-			// 		//asignarreferencia
-			// 		foreach($listaasientomovimientoar as $key => $item){
-
-			// 			if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_debe and $sw_destino_debe == 0){
-			// 				$item->TXT_TIPO_REFERENCIA = 'WEB.asientomovimientos';
-			// 				$item->TXT_REFERENCIA = $asientomovimiento->COD_ASIENTO_MOVIMIENTO;
-			// 				$item->save();
-			// 				$sw_destino_debe = 1;
-
-			// 			}
-			// 			if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_haber and $sw_destino_haber == 0 ){
-			// 				$item->TXT_TIPO_REFERENCIA = 'WEB.asientomovimientos';
-			// 				$item->TXT_REFERENCIA = $asientomovimiento->COD_ASIENTO_MOVIMIENTO;
-			// 				$item->save();
-			// 				$sw_destino_haber = 1;
-			// 			}
-
-			// 		}
+				$listaasientomovimientoer 					=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asientomovimiento->COD_ASIENTO)
+																->where('COD_ESTADO','=','1')
+																->where('IND_PRODUCTO','=','2')
+																->where('TXT_REFERENCIA','=',$asientomovimiento->COD_ASIENTO_MOVIMIENTO)
+																->orderBy('NRO_LINEA','ASC')
+																->get();
+				//existe referencia
+				if(count($listaasientomovimientoer)<=0){
+					//agregar referencia
+					$listaasientomovimientoar 					=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asientomovimiento->COD_ASIENTO)
+																	->where('COD_ESTADO','=','1')
+																	->where('IND_PRODUCTO','=','2')
+																	->orderBy('NRO_LINEA','ASC')
+																	->get();
+					//asignarreferencia
+					foreach($listaasientomovimientoar as $key => $item){
 
 
-			// 	}
+						$monto = $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
 
-			// 	//cambiar cuenta destino
-			// 	$listaasientomovimientocc 					=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asientomovimiento->COD_ASIENTO)
-			// 													->where('COD_ESTADO','=','1')
-			// 													->where('IND_PRODUCTO','=','2')
-			// 													->where('TXT_REFERENCIA','=',$asientomovimiento->COD_ASIENTO_MOVIMIENTO)
-			// 													->orderBy('NRO_LINEA','ASC')
-			// 													->get();
-			// 	$sw_destino_debe = 0;
-			// 	$sw_destino_haber = 0;	
+						if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_debe and $monto_original = $monto and $sw_destino_debe == 0){
+							$item->TXT_TIPO_REFERENCIA = 'WEB.asientomovimientos';
+							$item->TXT_REFERENCIA = $asientomovimiento->COD_ASIENTO_MOVIMIENTO;
+							$item->save();
+							$sw_destino_debe = 1;
 
-			// 	$cuentacontable_seleccionado            	=   WEBCuentaContable::where('id','=',$cuenta_contable_id)
-			// 							    					->first();
+						}
+						if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_haber and $monto_original = $monto and $sw_destino_haber == 0 ){
+							$item->TXT_TIPO_REFERENCIA = 'WEB.asientomovimientos';
+							$item->TXT_REFERENCIA = $asientomovimiento->COD_ASIENTO_MOVIMIENTO;
+							$item->save();
+							$sw_destino_haber = 1;
+						}
+
+					}
 
 
-			// 	foreach($listaasientomovimientocc as $key => $item){
+				}
 
-			// 		if($cuentacontable_seleccionado->cuenta_contable_transferencia_debe <> '' and $cuentacontable_seleccionado->cuenta_contable_transferencia_haber <>''){
-			// 			//debe
-			// 			if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_debe and $sw_destino_debe == 0){
+				//cambiar cuenta destino
+				$listaasientomovimientocc 					=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asientomovimiento->COD_ASIENTO)
+																->where('COD_ESTADO','=','1')
+																->where('IND_PRODUCTO','=','2')
+																->where('TXT_REFERENCIA','=',$asientomovimiento->COD_ASIENTO_MOVIMIENTO)
+																->orderBy('NRO_LINEA','ASC')
+																->get();
+				$sw_destino_debe = 0;
+				$sw_destino_haber = 0;	
 
-			// 				$cuentacontable_debe            =   WEBCuentaContable::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
-			// 													->where('anio','=',$periodo->COD_ANIO)
-			// 													->where('nro_cuenta','=',$cuentacontable_seleccionado->cuenta_contable_transferencia_debe)
-			// 							    					->first();
+				$cuentacontable_seleccionado            	=   WEBCuentaContable::where('id','=',$cuenta_contable_id)
+										    					->first();
 
-			// 				$item->COD_CUENTA_CONTABLE 		= 	$cuentacontable_debe->id;
-			// 				$item->TXT_CUENTA_CONTABLE 		= 	$cuentacontable_debe->nro_cuenta;
-			// 				$item->TXT_GLOSA 				= 	$cuentacontable_debe->nombre;
-			// 				$item->CAN_DEBE_MN 				= 	$m_debe_mn+$m_haber_mn;
-			// 				$item->CAN_HABER_MN 			= 	0;
-			// 				$item->CAN_DEBE_ME 				= 	$m_debe_me+$m_haber_me;				
-			// 				$item->CAN_HABER_ME 			= 	0;
-			// 				$item->COD_ESTADO 				=   $activo;
-			// 				$item->FEC_USUARIO_MODIF_AUD 	=   $this->fechaactual;
-			// 				$item->COD_USUARIO_MODIF_AUD 	=   Session::get('usuario_meta')->id;
-			// 				$item->save();
-			// 				$sw_destino_debe = 1;
 
-			// 			}
+				foreach($listaasientomovimientocc as $key => $item){
 
-			// 			//haber
-			// 			if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_haber and $sw_destino_haber == 0 ){
 
-			// 				$cuentacontable_haber            =   WEBCuentaContable::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
-			// 													->where('anio','=',$periodo->COD_ANIO)
-			// 													->where('nro_cuenta','=',$cuentacontable_seleccionado->cuenta_contable_transferencia_haber)
-			// 							    					->first();
 
-			// 				$item->COD_CUENTA_CONTABLE 		= 	$cuentacontable_haber->id;
-			// 				$item->TXT_CUENTA_CONTABLE 		= 	$cuentacontable_haber->nro_cuenta;
-			// 				$item->TXT_GLOSA 				= 	$cuentacontable_haber->nombre;
-			// 				$item->CAN_DEBE_MN 				= 	0;
-			// 				$item->CAN_HABER_MN 			= 	$m_debe_mn+$m_haber_mn;
-			// 				$item->CAN_DEBE_ME 				= 	0;				
-			// 				$item->CAN_HABER_ME 			= 	$m_debe_me+$m_haber_me;
-			// 				$item->COD_ESTADO 				=   $activo;
-			// 				$item->FEC_USUARIO_MODIF_AUD 	=   $this->fechaactual;
-			// 				$item->COD_USUARIO_MODIF_AUD 	=   Session::get('usuario_meta')->id;
-			// 				$item->save();
+					if($cuentacontable_seleccionado->cuenta_contable_transferencia_debe <> '' and $cuentacontable_seleccionado->cuenta_contable_transferencia_haber <>''){
+						
 
-			// 				$sw_destino_haber = 1;
-			// 			}
-			// 		}else{
+						$monto = $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
+						//debe
+						if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_debe and $monto_original = $monto and $sw_destino_debe == 0){
 
-			// 				$item->COD_ESTADO 				=   0;
-			// 				$item->FEC_USUARIO_MODIF_AUD 	=   $this->fechaactual;
-			// 				$item->COD_USUARIO_MODIF_AUD 	=   Session::get('usuario_meta')->id;
-			// 				$item->save();
+							$cuentacontable_debe            =   WEBCuentaContable::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+																->where('anio','=',$periodo->COD_ANIO)
+																->where('nro_cuenta','=',$cuentacontable_seleccionado->cuenta_contable_transferencia_debe)
+										    					->first();
 
-			// 		}
-			// 	}
-			// }
+							$item->COD_CUENTA_CONTABLE 		= 	$cuentacontable_debe->id;
+							$item->TXT_CUENTA_CONTABLE 		= 	$cuentacontable_debe->nro_cuenta;
+							$item->TXT_GLOSA 				= 	$cuentacontable_debe->nombre;
+							$item->CAN_DEBE_MN 				= 	$m_debe_mn+$m_haber_mn;
+							$item->CAN_HABER_MN 			= 	0;
+							$item->CAN_DEBE_ME 				= 	$m_debe_me+$m_haber_me;				
+							$item->CAN_HABER_ME 			= 	0;
+							$item->COD_ESTADO 				=   $activo;
+							$item->FEC_USUARIO_MODIF_AUD 	=   $this->fechaactual;
+							$item->COD_USUARIO_MODIF_AUD 	=   Session::get('usuario_meta')->id;
+							$item->save();
+							$sw_destino_debe = 1;
+
+						}
+
+						//haber
+						if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_haber and $monto_original = $monto and $sw_destino_haber == 0 ){
+
+							$cuentacontable_haber            =   WEBCuentaContable::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+																->where('anio','=',$periodo->COD_ANIO)
+																->where('nro_cuenta','=',$cuentacontable_seleccionado->cuenta_contable_transferencia_haber)
+										    					->first();
+
+							$item->COD_CUENTA_CONTABLE 		= 	$cuentacontable_haber->id;
+							$item->TXT_CUENTA_CONTABLE 		= 	$cuentacontable_haber->nro_cuenta;
+							$item->TXT_GLOSA 				= 	$cuentacontable_haber->nombre;
+							$item->CAN_DEBE_MN 				= 	0;
+							$item->CAN_HABER_MN 			= 	$m_debe_mn+$m_haber_mn;
+							$item->CAN_DEBE_ME 				= 	0;				
+							$item->CAN_HABER_ME 			= 	$m_debe_me+$m_haber_me;
+							$item->COD_ESTADO 				=   $activo;
+							$item->FEC_USUARIO_MODIF_AUD 	=   $this->fechaactual;
+							$item->COD_USUARIO_MODIF_AUD 	=   Session::get('usuario_meta')->id;
+							$item->save();
+
+							$sw_destino_haber = 1;
+						}
+					}else{
+
+							$item->COD_ESTADO 				=   0;
+							$item->FEC_USUARIO_MODIF_AUD 	=   $this->fechaactual;
+							$item->COD_USUARIO_MODIF_AUD 	=   Session::get('usuario_meta')->id;
+							$item->save();
+
+					}
+				}
+			}
 
 			$listaasientomovimientolinea 				=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asientomovimiento->COD_ASIENTO)
 															->where('COD_ESTADO','=','1')
@@ -340,6 +490,77 @@ class ComprasController extends Controller
 
 
 		$this->gn_generar_total_asientos($COD_ASIENTO);
+
+
+
+
+		$asiento 				=	WEBAsiento::where('COD_ASIENTO','=',$COD_ASIENTO)->first();
+	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento->COD_ASIENTO)->where('COD_ESTADO','=','1')->orderBy('NRO_LINEA', 'asc')->get();
+
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+
+	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$sel_periodo 			=	'';
+
+		$orden					=	$this->co_orden_xdocumento_contable($asiento->TXT_REFERENCIA);
+		$sel_tipo_descuento		=	$this->co_orden_compra_tipo_descuento($orden);
+		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
+
+
+		$funcion 				= 	$this;
+		
+        $array_nivel_pc     	= 	$this->pc_array_nivel_cuentas_contable(Session::get('empresas_meta')->COD_EMPR,$anio);
+		$combo_nivel_pc  		= 	$this->gn_generacion_combo_array('Seleccione nivel', '' , $array_nivel_pc);
+		$defecto_nivel 			= 	'6';
+
+		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel(Session::get('empresas_meta')->COD_EMPR,$defecto_nivel,$anio);
+		$combo_cuenta  			= 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
+
+		$combo_partida 			= 	$this->gn_generacion_combo_categoria('CONTABILIDAD_PARTIDA','Seleccione partida','');
+
+		$defecto_cuenta			= 	'';
+		$defecto_partida		= 	'';
+		$asiento_modelo_detalle_id = '';
+
+		$combo_activo 			= 	array('1' => 'ACTIVO','0' => 'ELIMINAR');
+		$defecto_activo			= 	'1';
+
+
+
+		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
+						 [
+						 	'asiento'					=> $asiento,
+						 	'listaasientomovimiento'	=> $listaasientomovimiento,
+						 	'combo_periodo'				=> $combo_periodo,
+						 	'combo_anio_pc'				=> $combo_anio_pc,
+						 	'anio'						=> $anio,
+						 	'sel_periodo'				=> $sel_periodo,
+
+						 	'sel_tipo_descuento'		=> $sel_tipo_descuento,
+						 	'combo_descuento'			=> $combo_descuento,
+						 	'orden'						=> $orden,
+						 	'idopcion'					=> $idopcion,
+
+
+						 	'periodo_id'				=> $periodo_id,
+						 	'serie'						=> $serie,
+						 	'documento'					=> $documento,
+
+						 	'combo_nivel_pc' 			=> $combo_nivel_pc,
+						 	'combo_cuenta' 				=> $combo_cuenta,
+						 	'combo_partida' 			=> $combo_partida,
+						 	'combo_activo' 			=> $combo_activo,
+
+						 	'defecto_nivel' 			=> $defecto_nivel,
+						 	'defecto_cuenta' 			=> $defecto_cuenta,
+						 	'defecto_partida' 			=> $defecto_partida,
+						 	'defecto_activo' 			=> $defecto_activo,
+						 	'ruta' 						=> $ruta,
+
+
+						 	'ajax' 						=> true,						 	
+						 ]);
 
 
 
@@ -1349,137 +1570,7 @@ class ComprasController extends Controller
 	}
 
 
-	public function actionAjaxModalCambiarAsientoFechaEmision(Request $request)
-	{
 
-
-		$asiento_id 			=   $request['asiento_id'];
-		$idopcion 				=   $request['idopcion'];
-		$ruta 					=   $request['ruta'];
-		$anio 					=   $request['anio'];
-		$periodo_id 			=   $request['periodo_id'];
-		$serie 					=   $request['serie'];
-		$documento 				=   $request['documento'];
-		$igv 					=   $request['igv'];
-		$fechaemision 			=   date_format(date_create($request['fechaemision']), 'Ymd');
-	    $asiento2 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
-	    $tipo_asiento 			= 	'TAS0000000000004';
-
-		$anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
-																	Session::get('usuario_meta')->name,
-																	$this->fechaactual);
-
-		WEBHistorialMigrar::where('COD_REFERENCIA','=', $asiento2->TXT_REFERENCIA)->delete();
-
-
-		$lista_compras_migrar_emitido = $this->mv_lista_compras_migrar_agrupado_emitidoxdocumento($this->array_empresas,
-																								  $this->anio_inicio,
-																								  $asiento2->TXT_REFERENCIA);
-
-		$lista_compras_migrar_anulado = array();
-
-		$this->mv_agregar_historial_compras($lista_compras_migrar_emitido,$lista_compras_migrar_anulado,$tipo_asiento);
-
-
-		foreach($lista_compras_migrar_emitido as $index => $item){
-			$respuesta = $this->mv_update_historial_compras($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
-		}
-
-		//asignar asiento
-		$lista_compras 				= 	$this->mv_lista_compras_asignarxdocumento($this->array_empresas,$tipo_asiento,$asiento2->TXT_REFERENCIA);
-
-		$igv  = (1+($igv/100));
-		foreach($lista_compras as $index => $item){
-			$respuesta2 = $this->mv_asignar_asiento_modelo_x_fechaemision($item,$tipo_asiento,$fechaemision,$igv);
-		}
-
-
-	    $asiento 					= 	WEBAsiento::where('TXT_REFERENCIA','=',$asiento2->TXT_REFERENCIA)
-	    								->where('COD_CATEGORIA_ESTADO_ASIENTO','<>','IACHTE0000000024')
-	    								->first();
-
-	    $listaasientomovimientodes 	= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento->COD_ASIENTO)
-	    								->where('COD_ESTADO','=','1')
-	    								->where('IND_PRODUCTO','<>','2')
-	    								->orderBy('NRO_LINEA', 'asc')
-	    								->get();
-
-		$periodo 					= 	CONPeriodo::where('COD_PERIODO','=',$asiento->COD_PERIODO)->first();
-	    $anio  						=   $periodo->COD_ANIO;
-
-		foreach($listaasientomovimientodes as $index => $item){
-			$this->gn_crear_asiento_destino($asiento->COD_ASIENTO,$item->COD_ASIENTO_MOVIMIENTO,$anio);
-		}
-
-		$this->gn_generar_total_asientos($asiento->COD_ASIENTO);
-
-
-	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento->COD_ASIENTO)->where('COD_ESTADO','=','1')->orderBy('NRO_LINEA', 'asc')->get();
-
-        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
-
-	    $combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
-		$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
-		$sel_periodo 			=	'';
-
-		$orden					=	$this->co_orden_xdocumento_contable($asiento->TXT_REFERENCIA);
-		$sel_tipo_descuento		=	$this->co_orden_compra_tipo_descuento($orden);
-		$combo_descuento 		= 	$this->co_generacion_combo_detraccion('DESCUENTO','Seleccione tipo descuento','');
-
-
-		$funcion 				= 	$this;
-		
-        $array_nivel_pc     	= 	$this->pc_array_nivel_cuentas_contable(Session::get('empresas_meta')->COD_EMPR,$anio);
-		$combo_nivel_pc  		= 	$this->gn_generacion_combo_array('Seleccione nivel', '' , $array_nivel_pc);
-		$defecto_nivel 			= 	'6';
-
-		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel(Session::get('empresas_meta')->COD_EMPR,$defecto_nivel,$anio);
-		$combo_cuenta  			= 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
-
-		$combo_partida 			= 	$this->gn_generacion_combo_categoria('CONTABILIDAD_PARTIDA','Seleccione partida','');
-
-		$defecto_cuenta			= 	'';
-		$defecto_partida		= 	'';
-		$asiento_modelo_detalle_id = '';
-
-		$combo_activo 			= 	array('1' => 'ACTIVO','0' => 'ELIMINAR');
-		$defecto_activo			= 	'1';
-
-
-		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
-						 [
-						 	'asiento'					=> $asiento,
-						 	'listaasientomovimiento'	=> $listaasientomovimiento,
-						 	'combo_periodo'				=> $combo_periodo,
-						 	'combo_anio_pc'				=> $combo_anio_pc,
-						 	'anio'						=> $anio,
-						 	'sel_periodo'				=> $sel_periodo,
-
-						 	'sel_tipo_descuento'		=> $sel_tipo_descuento,
-						 	'combo_descuento'			=> $combo_descuento,
-						 	'orden'						=> $orden,
-						 	'idopcion'					=> $idopcion,
-
-						 	'anio'						=> $anio,
-						 	'periodo_id'				=> $periodo_id,
-						 	'serie'						=> $serie,
-						 	'documento'					=> $documento,
-
-						 	'combo_nivel_pc' 			=> $combo_nivel_pc,
-						 	'combo_cuenta' 				=> $combo_cuenta,
-						 	'combo_partida' 			=> $combo_partida,
-						 	'combo_activo' 			=> $combo_activo,
-
-						 	'defecto_nivel' 			=> $defecto_nivel,
-						 	'defecto_cuenta' 			=> $defecto_cuenta,
-						 	'defecto_partida' 			=> $defecto_partida,
-						 	'defecto_activo' 			=> $defecto_activo,
-						 	'ruta' 						=> $ruta,
-
-
-						 	'ajax' 						=> true,						 	
-						 ]);
-	}
 
 
 

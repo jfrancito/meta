@@ -2,69 +2,11 @@ $(document).ready(function(){
 
     var carpeta = $("#carpeta").val();
 
-    $(".compras").on('click','.btn-editar-asiento', function(e) {
-
-        var _token                  =   $('#token').val();
-        var cuenta_contable_id      =   $('#cuenta_contable_id').val();
-        var monto                   =   $('#monto').val();
-        monto                       = monto.replace(",", "");
-
-        
-        var asiento_movimiento_id   =   $('#asiento_movimiento_id').val();
-        var asiento_id_editar       =   $('#asiento_id_editar').val();
-        var partida_id              =   $('#partida_id').val();
-        var activo                  =   $('#activo').val();
-        var ruta                    =   $('#ruta').val();
-        var accion                  =   $('#accion').val();
-
-        if(monto == '' || monto == '0.0000'){alerterrorajax("Ingrese un monto");return false;}
-        if(cuenta_contable_id ==''){ alerterrorajax("Seleccione una cuenta contable."); return false;}
-
-        data                            =   {
-                                                _token                  : _token,
-                                                cuenta_contable_id      : cuenta_contable_id,
-                                                monto                   : monto,
-                                                asiento_movimiento_id   : asiento_movimiento_id,
-                                                asiento_id              : asiento_id_editar,
-                                                partida_id              : partida_id,
-                                                activo                  : activo,
-                                                accion                  : accion,
-                                            };
-
-        link                            =    "/ajax-editar-asiento-contable-movimiento";                                     
-        $.ajax({
-            type    :   "POST",
-            url     :   carpeta+link,
-            data    :   data,
-            success: function (data) {
-
-                //$('#modal-detalle-asiento-confirmar').niftyModal('hide');
-                $('.modal-close').click();
-                
-                cerrarcargando();
-                actualizarmodal(ruta,asiento_id_editar)
-
-            },
-            error: function (data) {
-                cerrarcargando();
-                error500(data);
-            }
-        });
-
-
-
-    });
-
-
-
 
     $(".compras").on('click','.btn-regresar-lista', function(e) {
         $('.tablageneral').toggle("slow");
         $('.editarcuentas').toggle("slow");
     });
-
-
-
 
 
     $(".compras").on('click','.editar-cuenta', function(e) {
@@ -113,6 +55,80 @@ $(document).ready(function(){
 
     });
 
+
+
+    $(".compras").on('click','.btn-editar-asiento', function(e) {
+
+        var _token                  =   $('#token').val();
+        var cuenta_contable_id      =   $('#cuenta_contable_id').val();
+        var monto                   =   $('#monto').val();
+        monto                       =   monto.replace(",", "");
+        var anio                    =   $('#anio_configuracion').val();
+        var asiento_movimiento_id   =   $('#asiento_movimiento_id').val();
+        var asiento_id_editar       =   $('#asiento_id_editar').val();
+        var partida_id              =   $('#partida_id').val();
+        var activo                  =   $('#activo').val();
+        var ruta                    =   $('#ruta').val();
+        var accion                  =   $('#accion').val();
+        var idopcion                =   $('#opcion_configuracion').val();
+        var periodo_id              =   $('#periodo_id_configuracion').val();
+        var serie                   =   $('#serie_configuracion').val();
+        var documento               =   $('#documento_configuracion').val();
+
+
+        debugger;
+
+        $('#modal-detalle-asiento-confirmar').niftyModal('hide');
+
+        if(monto == '' || monto == '0.0000'){alerterrorajax("Ingrese un monto");return false;}
+        if(cuenta_contable_id ==''){ alerterrorajax("Seleccione una cuenta contable."); return false;}
+
+        data                            =   {
+                                                _token                  : _token,
+                                                cuenta_contable_id      : cuenta_contable_id,
+                                                monto                   : monto,
+                                                asiento_movimiento_id   : asiento_movimiento_id,
+                                                asiento_id              : asiento_id_editar,
+                                                partida_id              : partida_id,
+                                                activo                  : activo,
+                                                anio                    : anio,
+                                                idopcion                : idopcion,
+                                                accion                  : accion,
+                                                periodo_id              : periodo_id,
+                                                serie                   : serie,
+                                                documento               : documento,
+                                                ruta                    : ruta,
+                                            };
+
+
+        link                            =    "/ajax-editar-asiento-contable-movimiento";
+
+        ajax_modal(data,link,
+                  "modal-detalle-asiento-confirmar","modal-detalle-asiento-confirmar-container");
+
+
+        // $.ajax({
+        //     type    :   "POST",
+        //     url     :   carpeta+link,
+        //     data    :   data,
+        //     success: function (data) {
+
+        //         //$('#modal-detalle-asiento-confirmar').niftyModal('hide');
+        //         $('.modal-close').click();
+                
+        //         cerrarcargando();
+        //         actualizarmodal(ruta,asiento_id_editar)
+
+        //     },
+        //     error: function (data) {
+        //         cerrarcargando();
+        //         error500(data);
+        //     }
+        // });
+
+
+
+    });
 
 
     $(".compras").on('click','.generarasiento', function() {
