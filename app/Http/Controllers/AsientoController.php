@@ -1158,7 +1158,8 @@ class AsientoController extends Controller
 
 
 		    $sel_periodo 			=	'';
-		    $anio  					=   $this->anio;
+		    // $anio  					=   $this->anio;
+		    $anio  					=   '2022';
 	        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 			$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 	    	$combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');

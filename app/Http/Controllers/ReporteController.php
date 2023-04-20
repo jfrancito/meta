@@ -46,6 +46,191 @@ class ReporteController extends Controller
 	use ReporteTraits;
 
 
+	public function actionGestionResultadoNaturaleza($idopcion)
+	{
+
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Ver');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+	    View::share('titulo','Estado de resultado por naturaleza');
+	    $sel_periodo 			=	'';
+
+
+	    $anio  					=   $this->anio;
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+		$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+
+	    $combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$funcion 				= 	$this;
+		$lista_situacion_fin    =   array();
+
+
+		return View::make('reporte/resultadonaturaleza',
+						 [
+						 	'combo_anio_pc'			=> $combo_anio_pc,
+						 	'combo_periodo'			=> $combo_periodo,
+						 	'anio'					=> $anio,
+						 	'sel_periodo'	 		=> $sel_periodo,
+
+						 	'idopcion' 				=> $idopcion,
+						 	'funcion' 				=> $funcion,
+						 	'lista_situacion_fin' 	=> $lista_situacion_fin,						 	
+						 ]);
+	}
+
+
+
+	public function actionAjaxBuscarResultadoNaturaleza(Request $request)
+	{
+
+		$anio 					=   $request['anio'];
+		$periodo_inicio_id 		=   $request['periodo_inicio_id'];
+		$periodo_fin_id 		=   $request['periodo_fin_id'];
+		$idopcion 				=   $request['idopcion'];
+
+		$periodoinicio   		=   CONPeriodo::where('COD_PERIODO','=',$periodo_inicio_id)->first();
+		$periodofin   			=   CONPeriodo::where('COD_PERIODO','=',$periodo_fin_id)->first();
+
+		$periodo_array 			=   CONPeriodo::where('COD_ANIO','=',$anio)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('CON.PERIODO.COD_MES','>=',$periodoinicio->COD_MES)
+	    							->where('CON.PERIODO.COD_MES','<=',$periodofin->COD_MES)
+									->pluck('COD_PERIODO')->toArray();
+
+
+	    $suma 					= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    							->where('WEB.asientos.COD_ESTADO','=','1')
+	    							->where('WEB.asientomovimientos.COD_ESTADO ','=','1')
+	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->whereIn('CON.PERIODO.COD_PERIODO', $periodo_array);
+
+
+		$array_cuenta 			=	$suma->select('TXT_CUENTA_CONTABLE')->distinct()->pluck('TXT_CUENTA_CONTABLE')->toArray();
+
+	    $listacuentacontable 	= 	$this->pc_lista_cuentas_contable_naturaleza_detallado_array_cuenta(Session::get('empresas_meta')->COD_EMPR,$anio,$array_cuenta);
+
+
+	    $funcion 				= 	$this;
+
+		return View::make('reporte/ajax/alistaresultadonaturaleza',
+						 [
+						 	'listacuentacontable'	=> $listacuentacontable,
+						 	'periodo_inicio_id'		=> $periodo_inicio_id,
+						 	'periodo_fin_id'		=> $periodo_fin_id,					 	
+						 	'idopcion' 				=> $idopcion,
+						 	'suma' 					=> $suma,
+						 	'funcion' 				=> $funcion,
+						 	'array_cuenta' 			=> $array_cuenta,
+						 	'periodo_array' 		=> $periodo_array,
+						 	'anio' 					=> $anio,
+						 	'ajax' 					=> true,					 	
+						 ]);
+	   
+	}
+
+
+
+
+	public function actionIngresoMensualExcel(Request $request)
+	{
+
+
+		set_time_limit(0);
+
+		$anio 					=   $request['anio'];
+		$periodo_inicio_id 		=   $request['periodo_inicio_id'];
+		$periodo_fin_id 		=   $request['periodo_fin_id'];
+		$moneda_id 				=   $request['moneda_id'];
+		$cuenta_inicio_id 		=   $request['cuenta_inicio_id'];
+		$cuenta_fin_id 			=   $request['cuenta_fin_id'];
+
+		$ingresosmensuales 		= 	$this->rp_ingresos_mensuales($anio,$periodo_inicio_id,$periodo_fin_id,$moneda_id,$cuenta_inicio_id,$cuenta_fin_id);
+		//dd($ingresosmensuales);
+
+		$periodoinicio   		=   CONPeriodo::where('COD_PERIODO','=',$periodo_inicio_id)->first();
+		$periodofin   			=   CONPeriodo::where('COD_PERIODO','=',$periodo_fin_id)->first();
+
+		$lista_periodo 			=   CONPeriodo::where('COD_ANIO','=',$anio)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('CON.PERIODO.COD_MES','>=',$periodoinicio->COD_MES)
+	    							->where('CON.PERIODO.COD_MES','<=',$periodofin->COD_MES)
+									->get();
+
+	    $funcion 				= 	$this;
+
+		$titulo 				=   'INGRESOS-MENSUAL-'.Session::get('empresas_meta')->NOM_EMPR;
+
+	    Excel::create($titulo, function($excel) use ($lista_periodo,$ingresosmensuales,$funcion) {
+	        $excel->sheet('situacionfinanciera', function($sheet) use ($lista_periodo,$ingresosmensuales,$funcion) {
+	            $sheet->loadView('reporte/excel/listaingresomensual')->with('ingresosmensuales',$ingresosmensuales)
+	            														  ->with('funcion',$funcion)
+	            														  ->with('lista_periodo',$lista_periodo);         
+	        });
+	    })->export('xls');
+
+
+	}
+
+
+
+	public function actionResutadoNaturalezaExcel(Request $request)
+	{
+
+
+		set_time_limit(0);
+
+		$anio 					=   $request['anio'];
+		$periodo_inicio_id 		=   $request['periodo_inicio_id'];
+		$periodo_fin_id 		=   $request['periodo_fin_id'];
+		$idopcion 				=   $request['idopcion'];
+
+
+
+		$periodoinicio   		=   CONPeriodo::where('COD_PERIODO','=',$periodo_inicio_id)->first();
+		$periodofin   			=   CONPeriodo::where('COD_PERIODO','=',$periodo_fin_id)->first();
+
+		$periodo_array 			=   CONPeriodo::where('COD_ANIO','=',$anio)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('CON.PERIODO.COD_MES','>=',$periodoinicio->COD_MES)
+	    							->where('CON.PERIODO.COD_MES','<=',$periodofin->COD_MES)
+									->pluck('COD_PERIODO')->toArray();
+
+
+	    $suma 					= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    							->where('WEB.asientos.COD_ESTADO','=','1')
+	    							->where('WEB.asientomovimientos.COD_ESTADO ','=','1')
+	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->whereIn('CON.PERIODO.COD_PERIODO', $periodo_array);
+
+
+		$array_cuenta 			=	$suma->select('TXT_CUENTA_CONTABLE')->distinct()->pluck('TXT_CUENTA_CONTABLE')->toArray();
+
+	    $listacuentacontable 	= 	$this->pc_lista_cuentas_contable_naturaleza_detallado_array_cuenta(Session::get('empresas_meta')->COD_EMPR,$anio,$array_cuenta);
+
+
+	    $funcion 				= 	$this;
+
+
+		$titulo 				=   'RESULTADO-NATURALEZA-'.Session::get('empresas_meta')->NOM_EMPR;
+
+	    Excel::create($titulo, function($excel) use ($listacuentacontable,$funcion,$anio,$array_cuenta,$periodo_array) {
+	        $excel->sheet('resultadonaturaleza', function($sheet) use ($listacuentacontable,$funcion,$anio,$array_cuenta,$periodo_array) {
+	            $sheet->loadView('reporte/excel/listaresultadonaturaleza')->with('listacuentacontable',$listacuentacontable)
+	            														->with('funcion',$funcion)
+	            														->with('anio',$anio)
+	            														->with('array_cuenta',$array_cuenta)
+	            														->with('periodo_array',$periodo_array);         
+	        });
+	    })->export('xls');
+
+
+
+	}
 
 	public function actionGestionResultadoFuncion($idopcion)
 	{
@@ -129,6 +314,84 @@ class ReporteController extends Controller
 						 	'ajax' 					=> true,					 	
 						 ]);
 	   
+	}
+
+
+
+	public function actionAjaxBuscarIngresosMensuales(Request $request)
+	{
+
+		$anio 					=   $request['anio'];
+		$periodo_inicio_id 		=   $request['periodo_inicio_id'];
+		$periodo_fin_id 		=   $request['periodo_fin_id'];
+		$moneda_id 				=   $request['moneda_id'];
+		$cuenta_inicio_id 		=   $request['cuenta_inicio_id'];
+		$cuenta_fin_id 			=   $request['cuenta_fin_id'];
+
+		$ingresosmensuales 		= 	$this->rp_ingresos_mensuales($anio,$periodo_inicio_id,$periodo_fin_id,$moneda_id,$cuenta_inicio_id,$cuenta_fin_id);
+		//dd($ingresosmensuales);
+
+		$periodoinicio   		=   CONPeriodo::where('COD_PERIODO','=',$periodo_inicio_id)->first();
+		$periodofin   			=   CONPeriodo::where('COD_PERIODO','=',$periodo_fin_id)->first();
+
+		$lista_periodo 			=   CONPeriodo::where('COD_ANIO','=',$anio)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('CON.PERIODO.COD_MES','>=',$periodoinicio->COD_MES)
+	    							->where('CON.PERIODO.COD_MES','<=',$periodofin->COD_MES)
+									->get();
+
+		return View::make('reporte/ajax/alistaingresosmensuales',
+						 [
+						 	'ingresosmensuales'		=> $ingresosmensuales,
+						 	'lista_periodo'			=> $lista_periodo,
+						 	'ajax' 					=> true,					 	
+						 ]);
+
+
+
+
+	}
+
+
+	public function actionGestionIngresosMensuales($idopcion)
+	{
+
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Ver');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+	    View::share('titulo','Consulta de ingresos mensuales');
+	    $sel_periodo 			=	'';
+
+	    $anio  					=   $this->anio;
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+		$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+
+	    $combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$combo_moneda 			= 	$this->gn_generacion_combo_categoria('MONEDA','Seleccione moneda','');
+
+		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel(Session::get('empresas_meta')->COD_EMPR,2,$anio);
+		$combo_cuenta  			= 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
+
+
+		$funcion 				= 	$this;
+		$lista_ingresos_mensual =   array();
+
+		return View::make('reporte/ingresosmensuales',
+						 [
+						 	'combo_anio_pc'			=> $combo_anio_pc,
+						 	'combo_periodo'			=> $combo_periodo,
+						 	'combo_moneda'			=> $combo_moneda,
+						 	'combo_cuenta'			=> $combo_cuenta,
+
+
+						 	'anio'					=> $anio,
+						 	'sel_periodo'	 		=> $sel_periodo,
+
+						 	'idopcion' 				=> $idopcion,
+						 	'funcion' 				=> $funcion,
+						 	'lista_ingresos_mensual'=> $lista_ingresos_mensual,						 	
+						 ]);
 	}
 
 
@@ -280,6 +543,22 @@ class ReporteController extends Controller
 
 						 	'combo_periodo'			=> $combo_periodo,
 						 	'sel_periodo'	 		=> $sel_periodo,					 	
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
+
+	public function actionAjaxComboCuentasAnioEmpresa(Request $request)
+	{
+
+		$anio 					=   $request['anio'];
+		$array_cuenta 	    	= 	$this->pc_array_nro_cuentas_nombre_xnivel(Session::get('empresas_meta')->COD_EMPR,2,$anio);
+		$combo_cuenta  			= 	$this->gn_generacion_combo_array('Seleccione cuenta contable', '' , $array_cuenta);
+		$funcion 				= 	$this;
+		
+		return View::make('general/combo/ccuentastitulo',
+						 [
+						 	'combo_cuenta'			=> $combo_cuenta,					 	
 						 	'ajax' 					=> true,						 	
 						 ]);
 	}

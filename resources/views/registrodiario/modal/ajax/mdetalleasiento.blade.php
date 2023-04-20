@@ -6,7 +6,8 @@
 			{{$asiento->TXT_GLOSA}}
 		</h5>
 	</div>
-	<div class="col-xs-1">
+
+	<div class="col-xs-2">
 		Año : {{$asiento->periodo->COD_ANIO}}
 	</div>
 	<div class="col-xs-2">
@@ -24,6 +25,15 @@
 	<div class="col-xs-2">
 		Total haber : {{$asiento->CAN_TOTAL_HABER}}
 	</div>
+
+
+	<div class="col-xs-3">
+		DOCUMENTO REFERENCIA : {{$asiento->TXT_CATEGORIA_TIPO_DOCUMENTO_REF}}
+	</div>	
+	<div class="col-xs-4">
+		DOCUMENTO REFERENCIA : {{$asiento->NRO_SERIE_REF}} - {{$asiento->NRO_DOC_REF}}
+	</div>
+
 </div>
 <div class="modal-body">
 

@@ -71,6 +71,8 @@ class UserController extends Controller
 											->orderBy('web.grupoopciones.orden', 'asc')
 											->get();
 
+											
+
 					$listaopciones    	= 	WEBRolOpcion::where('rol_id', '=', $tusuario->rol_id)
 											->where('ver', '=', 1)
 											->orderBy('orden', 'asc')

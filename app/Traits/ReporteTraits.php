@@ -48,6 +48,146 @@ trait ReporteTraits
         return $identificador_fijo;
     }
 
+
+	public function rp_ingresos_mensuales($anio,$periodo_inicio_id,$periodo_fin_id,$moneda_id,$cuenta_inicio_id,$cuenta_fin_id){
+
+
+
+		$periodoinicio   		=   CONPeriodo::where('COD_PERIODO','=',$periodo_inicio_id)->first();
+		$periodofin   			=   CONPeriodo::where('COD_PERIODO','=',$periodo_fin_id)->first();
+
+		$periodo_array 			=   CONPeriodo::where('COD_ANIO','=',$anio)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('CON.PERIODO.COD_MES','>=',$periodoinicio->COD_MES)
+	    							->where('CON.PERIODO.COD_MES','<=',$periodofin->COD_MES)
+									->pluck('COD_PERIODO')->toArray();
+
+		$cuentainicio   		=   WEBCuentaContable::where('id','=',$cuenta_inicio_id)->first();
+		$cuentafin   			=   WEBCuentaContable::where('id','=',$cuenta_fin_id)->first();
+
+		$cuentas_array 			=   WEBCuentaContable::where('anio','=',$anio)
+									->where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('nro_cuenta','>=',strval($cuentainicio->nro_cuenta))
+	    							->where('nro_cuenta','<',strval($cuentafin->nro_cuenta+1))
+									->pluck('id')->toArray();
+
+
+	    $suma 					= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
+	    							->join('WEB.cuentacontables', 'WEB.cuentacontables.id', '=', 'WEB.asientomovimientos.COD_CUENTA_CONTABLE')
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    							->where('WEB.asientos.COD_ESTADO','=','1')
+	    							->where('WEB.asientomovimientos.COD_ESTADO ','=','1')
+	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->whereIn('CON.PERIODO.COD_PERIODO', $periodo_array)
+	    							->whereIn('WEB.asientomovimientos.COD_CUENTA_CONTABLE', $cuentas_array)
+	    							->selectRaw('WEB.asientomovimientos.*,
+	    										 WEB.asientos.*,
+	    										 SUBSTRING(nro_cuenta, 1, 2) as nro_cuenta_2,
+	    										 SUBSTRING(nro_cuenta, 1, 3) as nro_cuenta_3,
+	    										 SUBSTRING(nro_cuenta, 1, 4) as nro_cuenta_4,
+	    										 SUBSTRING(nro_cuenta, 1, 5) as nro_cuenta_5,
+	    										 SUBSTRING(nro_cuenta, 1, 6) as nro_cuenta_6')
+	    							->get();
+
+
+		$lista_cuentas 			=   WEBCuentaContable::where('anio','=',$anio)
+									->where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('nro_cuenta','>=',strval($cuentainicio->nro_cuenta))
+	    							->where('nro_cuenta','<',strval($cuentafin->nro_cuenta+1))
+	    							->select('nro_cuenta','nombre','orden','nivel')
+	    							->groupby('nro_cuenta')
+	    							->groupby('nivel')
+	    							->groupby('nombre')
+	    							->groupby('orden')
+									->orderby('orden','asc')
+									->get();
+
+		$lista_periodo 			=   CONPeriodo::where('COD_ANIO','=',$anio)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('CON.PERIODO.COD_MES','>=',$periodoinicio->COD_MES)
+	    							->where('CON.PERIODO.COD_MES','<=',$periodofin->COD_MES)
+									->get();
+
+		$array_tabla_ingresos 	=	array();
+
+
+	    foreach($lista_cuentas as $index => $item){
+	    	$array_nuevo_ingreso 	=	array();
+			$contador = 0;
+			$cantidad = 0;
+
+    		$array_nuevo_ingreso = $array_nuevo_ingreso + array(
+							"item".$contador 			=> $item->nro_cuenta,
+						);
+    		$contador = $contador + 1;
+    		$cantidad = $cantidad + 1;
+
+    		$array_nuevo_ingreso = $array_nuevo_ingreso + array(
+							"item".$contador 			=> $item->nombre,
+						);
+    		$contador = $contador + 1;
+    		$cantidad = $cantidad + 1;
+
+    		$totales  =	0;
+
+
+	    	foreach($lista_periodo as $indexp => $itemp){
+
+				$total_h 				=	$suma->where('COD_PERIODO','=',$itemp->COD_PERIODO)
+											->where('nro_cuenta_'.$item->nivel,'=',$item->nro_cuenta)
+											->sum('CAN_HABER_MN');
+				$total_d 				=	$suma->where('COD_PERIODO','=',$itemp->COD_PERIODO)
+											->where('nro_cuenta_'.$item->nivel,'=',$item->nro_cuenta)
+											->sum('CAN_DEBE_MN');
+	    		$total_mes 				=  	$total_d + $total_h;
+    			$totales  				=	$totales + $total_mes;
+
+	    		$total_mes = number_format($total_mes, 2, '.', ',');
+
+	    		$array_nuevo_ingreso = $array_nuevo_ingreso + array(
+								"item".$contador 			=> $total_mes,
+							);
+
+	    		$contador = $contador + 1;
+	    		$cantidad = $cantidad + 1;
+
+	    	}
+
+	    	if($item->nivel<6){
+	    		$bg = 'bggris';
+	    	}else{
+	   			$bg = 'bgblanco';
+	    	}
+	    	if($item->nivel==2){
+	    		$negrita = 'negrita';
+	    	}else{
+	   			$negrita = '';
+	    	}
+
+
+	    	$totales = number_format($totales, 2, '.', ',');
+
+	    	$array_nuevo_ingreso = $array_nuevo_ingreso + array("bg" => $bg);
+	    	$array_nuevo_ingreso = $array_nuevo_ingreso + array("negrita" => $negrita);
+	    	$array_nuevo_ingreso = $array_nuevo_ingreso + array("totales" => $totales);
+	    	$array_nuevo_ingreso = $array_nuevo_ingreso + array("cantidadarray" => $cantidad);
+			array_push($array_tabla_ingresos,$array_nuevo_ingreso);
+
+	    }
+
+
+	    //eliminar valores
+		$r = array_filter( $array_tabla_ingresos, function( $e ) {
+		        return $e['totales'] > 0;
+		});
+
+	    return $r;
+
+    }
+
+
+
 	public function rp_crear_nombre_diario($anio,$mes){
 
 		$identificador 					=       $this->rp_identificador_fijo();

@@ -214,6 +214,7 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-buscar-balance-comprobacion', 'ReporteController@actionAjaxBuscarBalanceComprobacion');
 	Route::any('/descargar-balance-comprobacion-excel', 'ReporteController@actionDescargarBalanceComprobacionExcel');
 	Route::any('/ajax-combo-periodo-xanio-titulo', 'ReporteController@actionAjaxComboPeriodoAnioEmpresa');
+	Route::any('/ajax-combo-cuentas-xanio-titulo', 'ReporteController@actionAjaxComboCuentasAnioEmpresa');
 
 	Route::any('/gestion-situacion-financiera/{idopcion}', 'ReporteController@actionGestionSituacionFinanciera');
 	Route::any('/ajax-buscar-situacion-financiera', 'ReporteController@actionAjaxBuscarSituacionFinanciera');
@@ -223,7 +224,16 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-buscar-resultado-funcion', 'ReporteController@actionAjaxBuscarResultadoFuncion');
 	Route::any('/descargar-resultado-funcion-excel', 'ReporteController@actionResutadoFuncionExcel');
 
+	Route::any('/consulta-ingresos-mensuales/{idopcion}', 'ReporteController@actionGestionIngresosMensuales');
+	Route::any('/ajax-buscar-ingresos-mensuales', 'ReporteController@actionAjaxBuscarIngresosMensuales');
+	Route::any('/descargar-ingresos-mensuales-excel', 'ReporteController@actionIngresoMensualExcel');
 
+
+
+
+	Route::any('/gestion-resultado-naturaleza/{idopcion}', 'ReporteController@actionGestionResultadoNaturaleza');
+	Route::any('/ajax-buscar-resultado-naturaleza', 'ReporteController@actionAjaxBuscarResultadoNaturaleza');
+	Route::any('/descargar-resultado-naturaleza-excel', 'ReporteController@actionResutadoNaturalezaExcel');
 
    	Route::any('/enviocorreos', 'CorreoController@enviocorreo');
    	Route::any('/pruebaquery', 'PruebaController@pruebas');
