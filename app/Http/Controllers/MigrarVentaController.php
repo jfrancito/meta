@@ -218,7 +218,6 @@ class MigrarVentaController extends Controller
 
 		//dd($lista_ventas_migrar_anulado);
 
-		
 		$this->mv_agregar_historial_ventas($lista_ventas_migrar_emitido,$lista_ventas_migrar_anulado,$tipo_asiento);
 
 
@@ -240,6 +239,14 @@ class MigrarVentaController extends Controller
 
 	}
 
+
+
+	public function actionMigrarTotalCeros()
+	{
+		set_time_limit(0);
+		$asignar_totales_ceros 				= 	$this->mv_asignar_totales_ceros();
+		print_r("se realizo con exito");
+	}
 
 
 

@@ -27,7 +27,7 @@ trait MigrarVentaTraits
 {
 	
 	public function mv_array_empresa_venta(){
-        $array_empresas  		    = 		['IACHEM0000001339','EMP0000000000007'];
+        $array_empresas  		    = 		['EMP0000000000007'];
         return $array_empresas;
     }
 	
@@ -36,7 +36,7 @@ trait MigrarVentaTraits
 		
 		$array_empresas  		    = 		$this->mv_array_empresa_venta();
 
-		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',2022)
+		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',2023)
 											->whereIn('COD_EMPR',$array_empresas)
 											->where('COD_ESTADO','=','1')
 											->pluck('COD_PERIODO')
@@ -64,7 +64,7 @@ trait MigrarVentaTraits
 		
 		$array_empresas  		    = 		$this->mv_array_empresa_venta();
 
-		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',2022)
+		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',2023)
 											->whereIn('COD_EMPR',$array_empresas)
 											->where('COD_ESTADO','=','1')
 											->pluck('COD_PERIODO')
@@ -345,6 +345,17 @@ trait MigrarVentaTraits
 
 
 	}
+
+	private function mv_asignar_totales_ceros()
+	{
+	
+        $stmt 	= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.ASIENTOS_TOTALES_CEROS');
+        $stmt->execute();
+
+        return 1;
+
+	}
+
 
 
 	private function mv_asignar_asiento_modelo_x_fechaemision($historialmigrar,$tipo_asiento,$fechaemision)

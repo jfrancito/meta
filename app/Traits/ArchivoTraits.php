@@ -500,13 +500,19 @@ trait ArchivoTraits
 			$suma_40_16 			= 	$this->ar_suma_igv_40($item,$indicador_afecto,$tipo_documento_06);
 			$suma_40_16             = 	number_format($suma_40_16, 2, '.', '');
 			$codigo_17  			= 	'0.00';//falta
+
+
+
 			$codigo_18  			= 	'0.00';//falta
 			$codigo_19  			= 	'0.00';//falta
 			if($indicador_afecto==0){
-				$codigo_19 				= 	$item->CAN_TOTAL_DEBE;
+				$codigo_18 				= 	$item->CAN_TOTAL_DEBE;
 				//$codigo_19 				= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
-				$codigo_19              = 	number_format($codigo_19, 2, '.', '');
+				$codigo_18              = 	number_format($codigo_18, 2, '.', '');
 			}
+
+
+
 			$codigo_20  			= 	'0.00';//falta
 			$codigo_21  			= 	'0.00';//falta
 			$codigo_22  			= 	'0.00';//falta
