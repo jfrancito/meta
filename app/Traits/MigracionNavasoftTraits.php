@@ -58,6 +58,10 @@ trait MigracionNavasoftTraits
 	   		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$item->COD_PERIODO)->first();
 	   		$moneda 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_MONEDA)->first();
 
+	    	$listaasientomoviento   =   WEBAsientoMovimiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)
+	    								->where('IND_PRODUCTO','=',1)->get();
+
+
     		$fecha_emision  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
     		$tipo_documento  		= 	$categoria->CODIGO_SUNAT;
 
@@ -88,65 +92,44 @@ trait MigracionNavasoftTraits
 
 
       		$can_valor 				=	0;
-	    	foreach($lista_producto as $indexp => $itemp){
-
-	    		$can_valor 			=	$itemp->CAN_VALOR_VTA;
 
 
-	    		if($moneda->TXT_REFERENCIA == 's'){
+	    	foreach($listaasientomoviento as $indexp => $itemp){
 
-	    			$asientomovimientos		=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)
-	    										->whereRaw('(CAN_DEBE_MN + CAN_HABER_MN) = ?', [$can_valor])
-	    										->where('IND_PRODUCTO','=',1)
+
+	    		$producto 					=  	CMPDetalleProducto::where('COD_TABLA','=',$item->TXT_REFERENCIA)
+	    										->where('COD_PRODUCTO','=',$itemp->COD_PRODUCTO)
 	    										->first();
+
+
+	    		$productoempresa    		= 	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+	    										->where('producto_id','=',$itemp->COD_PRODUCTO)
+	    										->where('anio','=',$anio)
+	    										->first();
+	    		if(count($productoempresa)>0){
+	    				$codi  					= 	$productoempresa->codigo_migracion;
 	    		}else{
-	    			$asientomovimientos		=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)
-	    										->where('IND_PRODUCTO','=',1)
-	    										->whereRaw('(CAN_DEBE_ME + CAN_HABER_ME) = ?', [$can_valor])
-	    										->first();
+	    				$codi  					= 	'';	    			
 	    		}
 
-	    		$codi  						= 	'';	
-	    		if(count($asientomovimientos)>0){
-	    			$cc 					= 	WEBCuentaContable::where('id','=',$asientomovimientos->COD_CUENTA_CONTABLE)
-	    										->first();
-							
-	    			$codi  					= 	$cc->codigo_migracion;							
-	    		}
-
-
-	    		// $productoempresa    = 	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
-	    		// 						->where('producto_id','=',$itemp->COD_PRODUCTO)
-	    		// 						->where('anio','=',$anio)
-	    		// 						->first();
-
-	    		// if(count($productoempresa)>0){
-	    		// 		$codi  					= 	$productoempresa->codigo_migracion;
-	    		// }else{
-	    		// 		$codi  					= 	'';	    			
-	    		// }
-
-
-	    		$CANT 					=	$itemp->CAN_PRODUCTO;
-	    		$PREU 					= 	$itemp->CAN_PRECIO_UNIT;
-
-	    		$TOTA 					= 	$itemp->CAN_VALOR_VTA;
-	      		$TOTN 					= 	$itemp->CAN_VALOR_VENTA_IGV;
+	    		$CANT 					=	$producto->CAN_PRODUCTO;
+	    		$PREU 					= 	$producto->CAN_PRECIO_UNIT;
+	    		$TOTA 					= 	$producto->CAN_VALOR_VTA;
+	      		$TOTN 					= 	$producto->CAN_VALOR_VENTA_IGV;
 	    		$TOTI 					= 	$TOTN-$TOTA;
 	    		$TOTIVA 				= 	'-';
 
-	    		if($itemp->IND_IGV == 1){
+	    		if($producto->IND_IGV == 1){
 	    			$aigv 					= 	"'S";
 	    		}else{
 	    			$aigv 					= 	"'N";
 	    		}
 	      		
-	    		if($itemp->IND_MATERIAL_SERVICIO == 'M'){
+	    		if($producto->IND_MATERIAL_SERVICIO == 'M'){
 	    			$codvta 				= 	'01';
 	    		}else{
 	    			$codvta 				= 	'02';
 	    		}	      		
-
 
 	      		$codalm 				= 	'01';      		
 	      		$CODSCC 				= 	"'";
@@ -180,6 +163,100 @@ trait MigracionNavasoftTraits
 
 
 	    	}
+
+
+	   //  	foreach($lista_producto as $indexp => $itemp){
+
+	   //  		$can_valor 			=	$itemp->CAN_VALOR_VTA;
+
+
+	   //  		if($moneda->TXT_REFERENCIA == 's'){
+
+	   //  			$asientomovimientos		=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)
+	   //  										->whereRaw('(CAN_DEBE_MN + CAN_HABER_MN) = ?', [$can_valor])
+	   //  										->where('IND_PRODUCTO','=',1)
+	   //  										->first();
+	   //  		}else{
+	   //  			$asientomovimientos		=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)
+	   //  										->where('IND_PRODUCTO','=',1)
+	   //  										->whereRaw('(CAN_DEBE_ME + CAN_HABER_ME) = ?', [$can_valor])
+	   //  										->first();
+	   //  		}
+
+	   //  		$codi  						= 	'';	
+	   //  		// if(count($asientomovimientos)>0){
+	   //  		// 	$cc 					= 	WEBCuentaContable::where('id','=',$asientomovimientos->COD_CUENTA_CONTABLE)
+	   //  		// 								->first();
+							
+	   //  		// 	$codi  					= 	$cc->codigo_migracion;							
+	   //  		// }
+
+
+	   //  		$productoempresa    		= 	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+	   //  										->where('producto_id','=',$itemp->COD_PRODUCTO)
+	   //  										->where('anio','=',$anio)
+	   //  										->first();
+
+	   //  		if(count($productoempresa)>0){
+	   //  				$codi  					= 	$productoempresa->codigo_migracion;
+	   //  		}else{
+	   //  				$codi  					= 	'';	    			
+	   //  		}
+
+
+	   //  		$CANT 					=	$itemp->CAN_PRODUCTO;
+	   //  		$PREU 					= 	$itemp->CAN_PRECIO_UNIT;
+
+	   //  		$TOTA 					= 	$itemp->CAN_VALOR_VTA;
+	   //    		$TOTN 					= 	$itemp->CAN_VALOR_VENTA_IGV;
+	   //  		$TOTI 					= 	$TOTN-$TOTA;
+
+
+	   //  		$TOTIVA 				= 	'-';
+
+	   //  		if($itemp->IND_IGV == 1){
+	   //  			$aigv 					= 	"'S";
+	   //  		}else{
+	   //  			$aigv 					= 	"'N";
+	   //  		}
+	      		
+	   //  		if($itemp->IND_MATERIAL_SERVICIO == 'M'){
+	   //  			$codvta 				= 	'01';
+	   //  		}else{
+	   //  			$codvta 				= 	'02';
+	   //  		}	      		
+
+
+	   //    		$codalm 				= 	'01';      		
+	   //    		$CODSCC 				= 	"'";
+
+		  //   	$array_nuevo_asiento 	=	array();
+				// $array_nuevo_asiento    =	array(
+				// 	"fecha_emision" 			=> $fecha_emision,
+				// 	"tipo_documento" 			=> $tipo_documento,
+				// 	"ndoc" 						=> $ndoc,
+				// 	"nombre_cliente" 			=> $nombre_cliente,
+				// 	"ruc" 						=> $ruc,
+
+				// 	"codi" 						=> $codi,
+		  //           "MONE" 						=> $MONE,
+		  //           "TCAM" 						=> $TCAM,
+		  //           "CANT" 						=> $CANT,
+		  //           "PREU" 						=> $PREU,
+
+				// 	"TOTA" 						=> $TOTA,
+		  //           "TOTI" 						=> $TOTI,
+		  //           "TOTIVA" 					=> $TOTIVA,
+		  //           "TOTN" 						=> $TOTN,
+		  //           "aigv" 						=> $aigv,
+
+		  //           "codalm" 					=> $codalm,
+		  //           "codvta" 					=> $codvta,
+		  //           "CODSCC" 					=> $CODSCC,
+
+				// );
+				// array_push($array_detalle_asiento,$array_nuevo_asiento);
+	   //  	}
 
 	    }
 
