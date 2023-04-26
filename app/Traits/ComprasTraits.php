@@ -628,7 +628,7 @@ trait ComprasTraits
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000032')
 	    							->whereNotIn('WEB.asientos.TXT_REFERENCIA',$array_terminado_diario)
 									->select(DB::raw('WEB.asientos.*'))
-									->orderby('CMP.DOCUMENTO_CTBLE.FEC_EMISION','asc')
+									->orderby('CMP.DOCUMENTO_CTBLE.TXT_EMPR_EMISOR','asc')
 	    							->get();
 
 		return $lista_compras;

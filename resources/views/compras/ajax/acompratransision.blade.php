@@ -1,10 +1,9 @@
-<table id="nso" class="table table-striped table-borderless table-hover td-color-borde td-padding-7 listatabla">
+<table id="tran" class="table table-striped table-borderless table-hover td-color-borde td-padding-7 listatabla">
   <thead>
     <tr>
       <th>NRO SERIE</th>
       <th>NRO DOCUMENTO</th>
       <th>PROVEEDOR</th>
-
       <th>TOTAL DEBE</th>
       <th>TOTAL HABER</th>
       <th>ESTADO</th>
@@ -22,7 +21,6 @@
           <span class="cell-detail-description"><b>TIPO DOCUMENTO : </b> {{$item->TXT_CATEGORIA_TIPO_DOCUMENTO}}</span>
           <span class="cell-detail-description"><b>MONEDA : </b> {{$item->TXT_CATEGORIA_MONEDA}}</span>
         </td>
-
         <td>{{number_format($item->CAN_TOTAL_DEBE, $redondeo, '.', ',')}}</td>
         <td>{{number_format($item->CAN_TOTAL_HABER, $redondeo, '.', ',')}}</td>
         <td>            
@@ -32,7 +30,6 @@
                 <span class="badge badge-warning">{{$item->TXT_CATEGORIA_ESTADO_ASIENTO}}</span>
             @endif
         </td>        
-
         <td class="rigth">
           <div class="btn-group btn-hspace">
             <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">Acción <span class="icon-dropdown mdi mdi-chevron-down"></span></button>
@@ -47,19 +44,14 @@
                   Asiento diario compra
                 </a>
               </li>
-
               <li>
                 <a href="#" class='clickasientodiario' data_asiento_id = "{{$item->COD_ASIENTO}}">
                   Asiento diario
                 </a>
               </li>
-
-
             </ul>
           </div>
         </td>
-
-
       </tr>                    
     @endforeach
   </tbody>
