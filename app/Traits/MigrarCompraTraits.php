@@ -29,11 +29,17 @@ use PDO;
 trait MigrarCompraTraits
 {
 	
+	public function mc_array_empresa_venta(){
+        $array_empresas  		    = 		['EMP0000000000007'];
+        return $array_empresas;
+    }
+
+
 	private function mv_lista_compras_migrar_agrupado_emitido($array_empresas,$anio)
 	{
+		$array_empresas  		    = 		$this->mc_array_empresa_venta();
+		$anio  		    			= 		2023;
 
-		$array_empresas  		    = 		$array_empresas;
-		$anio  		    			= 		$anio;		
 
 		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',$anio)
 											->whereIn('COD_EMPR',$array_empresas)
@@ -98,8 +104,8 @@ trait MigrarCompraTraits
 	private function mv_lista_compras_migrar_agrupado_anulado($array_empresas,$anio)
 	{
 		
-		$array_empresas  		    = 		$array_empresas;
-		$anio  		    			= 		$anio;
+		$array_empresas  		    = 		$this->mc_array_empresa_venta();
+		$anio  		    			= 		2023;
 
 		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',$anio)
 											->whereIn('COD_EMPR',$array_empresas)
@@ -338,6 +344,17 @@ trait MigrarCompraTraits
 
 
 	}
+
+	private function mc_asignar_totales_ceros()
+	{
+	
+        $stmt 	= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.ASIENTOS_TOTALES_CEROS');
+        $stmt->execute();
+
+        return 1;
+
+	}
+
 
 	private function mv_asignar_asiento_modelo_x_fechaemision($historialmigrar,$tipo_asiento,$fechaemision,$igv)
 	{

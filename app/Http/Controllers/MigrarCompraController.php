@@ -55,6 +55,9 @@ class MigrarCompraController extends Controller
 		foreach($lista_compras as $index => $item){
 			$respuesta2 = $this->mv_asignar_asiento_modelo($item,$this->tipo_asiento);
 		}
+
+
+		//$this->mc_asignar_totales_ceros();
 		print_r("se realizo con exito");
 		return Redirect::to('/bienvenido');
 

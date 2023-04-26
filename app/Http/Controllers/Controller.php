@@ -39,7 +39,7 @@ class Controller extends BaseController
 		$this->anio 					= $anio;
 		$this->mes 						= $mes;		
 		$this->prefijomaestro			= $this->funciones->prefijomaestra();
-		$this->array_empresas			= ['IACHEM0000001339','EMP0000000000007'];
+		$this->array_empresas			= ['EMP0000000000007'];
 		$this->anio_inicio				= 2022;
 
 
