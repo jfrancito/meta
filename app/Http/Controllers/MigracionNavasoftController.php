@@ -95,6 +95,7 @@ class MigracionNavasoftController extends Controller
 	    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 	    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 	    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+
 	    							->orderby('FEC_ASIENTO','asc')
 	    							->get();
 
@@ -134,6 +135,7 @@ class MigracionNavasoftController extends Controller
 	    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 	    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    							->orderby('FEC_ASIENTO','asc')
+	    							//->where('COD_ASIENTO','=','ITBEAC0000001101')
 	    							->get();
 
 		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);

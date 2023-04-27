@@ -59,7 +59,9 @@ trait MigracionNavasoftTraits
 	   		$moneda 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_MONEDA)->first();
 
 	    	$listaasientomoviento   =   WEBAsientoMovimiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)
-	    								->where('IND_PRODUCTO','=',1)->get();
+	    								->where('IND_PRODUCTO','=',1)
+	    								->orderby('NRO_LINEA_PRODUCTO','asc')
+	    								->get();
 
 
     		$fecha_emision  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
@@ -99,8 +101,9 @@ trait MigracionNavasoftTraits
 
 	    		$producto 					=  	CMPDetalleProducto::where('COD_TABLA','=',$item->TXT_REFERENCIA)
 	    										->where('COD_PRODUCTO','=',$itemp->COD_PRODUCTO)
+	    										->where('NRO_LINEA','=',$itemp->NRO_LINEA_PRODUCTO)
+	    										->where('COD_LOTE','=',$itemp->COD_LOTE)
 	    										->first();
-
 
 	    		$productoempresa    		= 	WEBProductoEmpresa::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
 	    										->where('producto_id','=',$itemp->COD_PRODUCTO)
@@ -114,8 +117,11 @@ trait MigracionNavasoftTraits
 
 	    		$CANT 					=	$producto->CAN_PRODUCTO;
 	    		$PREU 					= 	$producto->CAN_PRECIO_UNIT;
+
+
 	    		$TOTA 					= 	$producto->CAN_VALOR_VTA;
 	      		$TOTN 					= 	$producto->CAN_VALOR_VENTA_IGV;
+
 	    		$TOTI 					= 	$TOTN-$TOTA;
 	    		$TOTIVA 				= 	'-';
 
