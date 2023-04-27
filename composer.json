@@ -11,6 +11,7 @@
         "barryvdh/laravel-dompdf": "^0.8.2",
         "elibyy/tcpdf-laravel": "5.4.*",
         "gladcodes/keygen": "~1.1",
+        "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "5.4.*",
         "laravel/homestead": "^7.20",
         "laravel/tinker": "~1.0",

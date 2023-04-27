@@ -30,6 +30,21 @@ use PDO;
 trait GeneralesTraits
 {
 
+	public function gr_is_connected($url='www.google.com',$port=80)
+	{
+		$connected = @fsockopen($url, $port); 
+		//website, port  (try 80 or 443)
+		if ($connected){
+			$is_conn = true; //action when connected
+			fclose($connected);
+		}else{
+			$is_conn = false; //action in connection failure
+		}
+		return $is_conn;
+	}
+
+
+
 	public function gn_generar_total_asientos($COD_ASIENTO)
 	{
 
