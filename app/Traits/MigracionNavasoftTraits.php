@@ -139,6 +139,7 @@ trait MigracionNavasoftTraits
 	    				$codi  					= 	'';	    			
 	    		}
 
+
 	    		//anticipo es 2
 	    		if($documento->IND_ANTICIPO == 2){
 
@@ -158,6 +159,18 @@ trait MigracionNavasoftTraits
 		    		$TOTA 					= 	$producto->CAN_VALOR_VTA;
 		      		$TOTN 					= 	$producto->CAN_VALOR_VENTA_IGV;
 		    		$TOTI 					= 	$TOTN-$TOTA;
+		    		$TOTIVA 				= 	'-';
+
+	    		}
+
+
+	    		if($item->IND_EXTORNO == 1){
+
+		    		$CANT 					=	0;
+		    		$PREU 					= 	0;
+		    		$TOTA 					= 	0;
+		      		$TOTN 					= 	0;
+		    		$TOTI 					= 	0;
 		    		$TOTIVA 				= 	'-';
 
 	    		}
