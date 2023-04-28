@@ -95,7 +95,7 @@ class MigracionNavasoftController extends Controller
 	    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 	    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 	    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
-
+	    							//->where('COD_ASIENTO','=','ITRJAC0000000912')
 	    							->orderby('FEC_ASIENTO','asc')
 	    							->get();
 

@@ -23,7 +23,7 @@ Route::group(['middleware' => ['guestaw']], function () {
 	Route::any('/acceso', 'UserController@actionAcceso');
 	Route::any('/accesobienvenido/{idempresa}', 'UserController@actionAccesoBienvenido');
 	
-}); 
+});
 
 Route::get('/cerrarsession', 'UserController@actionCerrarSesion');
 Route::get('/cambiarperfil', 'UserController@actionCambiarPerfil');

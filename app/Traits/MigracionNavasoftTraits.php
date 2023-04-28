@@ -31,6 +31,8 @@ use App\Modelos\STDEmpresa;
 
 
 
+
+
 use ZipArchive;
 use View;
 use Session;
@@ -42,6 +44,28 @@ use PDO;
 trait MigracionNavasoftTraits
 {
 	
+	public function ms_producto_ind_anticipo($asiento,$producto){
+
+		$periodo 			=	CONPeriodo::where('COD_PERIODO','=',$asiento->COD_PERIODO)->first();
+
+
+
+		$producto_anticipo 	= 	CMPReferecenciaAsoc::join('CMP.ORDEN', 'CMP.REFERENCIA_ASOC.COD_TABLA_ASOC', '=', 'CMP.ORDEN.COD_ORDEN')
+								->join('CMP.DETALLE_PRODUCTO', 'CMP.DETALLE_PRODUCTO.COD_TABLA', '=', 'CMP.ORDEN.COD_ORDEN')
+								->where('CMP.REFERENCIA_ASOC.COD_TABLA','=',$asiento->TXT_REFERENCIA)
+								->where('CMP.ORDEN.FEC_ORDEN','>=',$periodo->FEC_INICIO)
+								->where('CMP.ORDEN.FEC_ORDEN','<=',$periodo->FEC_FIN)
+								->where('CMP.DETALLE_PRODUCTO.TXT_NOMBRE_PRODUCTO','=',$producto->TXT_NOMBRE_PRODUCTO)
+								->select(DB::raw('sum(CAN_PRODUCTO) CAN_PRODUCTO,
+												sum(CAN_VALOR_VTA)/sum(CAN_PRODUCTO) CAN_PRECIO_UNIT,
+												sum(CAN_VALOR_VTA) CAN_VALOR_VTA,
+												sum(CAN_VALOR_VENTA_IGV) CAN_VALOR_VENTA_IGV'))
+								->first();
+
+		return $producto_anticipo;
+
+	}
+
 
 	public function ms_lista_migracion_navasoft($listaasiento,$anio){
 
@@ -57,12 +81,12 @@ trait MigracionNavasoftTraits
 	   		$categoria 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_TIPO_DOCUMENTO)->first();
 	   		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$item->COD_PERIODO)->first();
 	   		$moneda 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_MONEDA)->first();
+	    	$documento         		=   CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$item->TXT_REFERENCIA)->first();
 
 	    	$listaasientomoviento   =   WEBAsientoMovimiento::where('COD_ASIENTO','=',$item->COD_ASIENTO)
 	    								->where('IND_PRODUCTO','=',1)
 	    								->orderby('NRO_LINEA_PRODUCTO','asc')
 	    								->get();
-
 
     		$fecha_emision  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
     		$tipo_documento  		= 	$categoria->CODIGO_SUNAT;
@@ -115,27 +139,44 @@ trait MigracionNavasoftTraits
 	    				$codi  					= 	'';	    			
 	    		}
 
-	    		$CANT 					=	$producto->CAN_PRODUCTO;
-	    		$PREU 					= 	$producto->CAN_PRECIO_UNIT;
+	    		//anticipo es 2
+	    		if($documento->IND_ANTICIPO == 2){
+
+	    			$producto_anticipo 		=	$this->ms_producto_ind_anticipo($item,$producto);
+
+		    		$CANT 					=	$producto_anticipo->CAN_PRODUCTO;
+		    		$PREU 					= 	$producto_anticipo->CAN_PRECIO_UNIT;
+		    		$TOTA 					= 	$producto_anticipo->CAN_VALOR_VTA;
+		      		$TOTN 					= 	$producto_anticipo->CAN_VALOR_VENTA_IGV;
+		    		$TOTI 					= 	$TOTN-$TOTA;
+		    		$TOTIVA 				= 	'-';
+
+	    		}else{
+
+		    		$CANT 					=	$producto->CAN_PRODUCTO;
+		    		$PREU 					= 	$producto->CAN_PRECIO_UNIT;
+		    		$TOTA 					= 	$producto->CAN_VALOR_VTA;
+		      		$TOTN 					= 	$producto->CAN_VALOR_VENTA_IGV;
+		    		$TOTI 					= 	$TOTN-$TOTA;
+		    		$TOTIVA 				= 	'-';
+
+	    		}
 
 
-	    		$TOTA 					= 	$producto->CAN_VALOR_VTA;
-	      		$TOTN 					= 	$producto->CAN_VALOR_VENTA_IGV;
 
-	    		$TOTI 					= 	$TOTN-$TOTA;
-	    		$TOTIVA 				= 	'-';
 
 	    		if($producto->IND_IGV == 1){
 	    			$aigv 					= 	"'S";
 	    		}else{
 	    			$aigv 					= 	"'N";
 	    		}
-	      		
 	    		if($producto->IND_MATERIAL_SERVICIO == 'M'){
 	    			$codvta 				= 	'01';
 	    		}else{
 	    			$codvta 				= 	'02';
-	    		}	      		
+	    		}     		
+
+
 
 	      		$codalm 				= 	'01';      		
 	      		$CODSCC 				= 	"'";
