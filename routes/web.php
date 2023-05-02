@@ -31,7 +31,9 @@ Route::get('/migrar-ventas', 'MigrarVentaController@actionMigrarVentas');
 Route::get('/migrar-compras', 'MigrarCompraController@actionMigrarCompras');
 Route::get('/migrar-recibo-honorario', 'MigrarReciboHonorarioController@actionMigrarReciboHonorario');
 Route::get('/migrar-total-ceros', 'MigrarVentaController@actionMigrarTotalCeros');
+
 Route::get('/actualizar-tipo-cambio-sbs', 'TipoCambioController@actionActualizarTipoCambio');
+Route::get('/actualizar-tipo-cambio', 'TipoCambioController@actionActualizarTipoCambioNormal');
 
 Route::group(['middleware' => ['authaw']], function () {
 
