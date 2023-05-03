@@ -5,7 +5,7 @@
       <th>Periodo</th>
       <th>Fecha</th>
       <th>Glosa</th>
-      <th>Moneda</th>
+      <th>Moneda</th>      
       <th>T.C.</th>
       <th>Total Debe</th>
       <th>Total Haber</th>
@@ -21,7 +21,14 @@
         <td>{{$item->periodo->TXT_NOMBRE}}</td>
         <td>{{date_format(date_create($item->FEC_ASIENTO), 'd-m-Y')}}</td>
         <td>{{$item->TXT_GLOSA}}</td>
-        <td>{{$item->TXT_CATEGORIA_MONEDA}}</td>
+        <td>
+            <span class="cell-detail-description"><b>MONEDA : </b> {{$item->TXT_CATEGORIA_MONEDA}}</span>
+          @if($item->COD_CATEGORIA_MONEDA_CONVERSION == 'MON0000000000002') 
+            <span class="cell-detail-description"><b>MONEDA CONVERSION : </b> {{$item->TXT_CATEGORIA_MONEDA_CONVERSION}}</span>
+          @endif
+        </td>
+
+
         <td>{{number_format($item->CAN_TIPO_CAMBIO, $redondeo, '.', ',')}}</td>
         <td>{{number_format($item->CAN_TOTAL_DEBE, $redondeo, '.', ',')}}</td>
         <td>{{number_format($item->CAN_TOTAL_HABER, $redondeo, '.', ',')}}</td>

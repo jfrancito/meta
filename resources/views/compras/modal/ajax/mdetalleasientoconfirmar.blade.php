@@ -27,6 +27,14 @@
 	<div class="col-xs-2">
 		Total haber : {{$asiento->CAN_TOTAL_HABER}}
 	</div>
+
+    @if($asiento->COD_CATEGORIA_MONEDA_CONVERSION == 'MON0000000000002') 
+		<div class="col-xs-4">
+			Moneda conversión : {{$asiento->TXT_CATEGORIA_MONEDA_CONVERSION}}
+		</div>
+    @endif
+
+
 </div>
 <div class="modal-body" style="padding: 0px;">
 	      <div class="panel panel-default" style="margin-bottom: 0px;">
