@@ -62,6 +62,7 @@ class ComprasController extends Controller
 		$serie 					=   $request['serie'];
 		$documento 				=   $request['documento'];
 		$igv 					=   $request['igv'];
+
 		$fechaemision 			=   date_format(date_create($request['fechaemision']), 'Ymd');
 	    $asiento2 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
 	    $tipo_asiento 			= 	'TAS0000000000004';
@@ -71,7 +72,6 @@ class ComprasController extends Controller
 																	$this->fechaactual);
 
 		WEBHistorialMigrar::where('COD_REFERENCIA','=', $asiento2->TXT_REFERENCIA)->delete();
-
 
 		$lista_compras_migrar_emitido = $this->mv_lista_compras_migrar_agrupado_emitidoxdocumento($this->array_empresas,
 																								  $this->anio_inicio,
@@ -146,6 +146,11 @@ class ComprasController extends Controller
 
 		$combo_activo 			= 	array('1' => 'ACTIVO','0' => 'ELIMINAR');
 		$defecto_activo			= 	'1';
+		
+	    $asiento 					= 	WEBAsiento::where('TXT_REFERENCIA','=',$asiento2->TXT_REFERENCIA)
+	    								->where('COD_CATEGORIA_ESTADO_ASIENTO','<>','IACHTE0000000024')
+	    								->where('COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000004')
+	    								->first();
 
 
 		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',

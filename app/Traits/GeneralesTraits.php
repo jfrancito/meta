@@ -48,7 +48,7 @@ trait GeneralesTraits
 	public function gn_generar_total_asientos($COD_ASIENTO)
 	{
 
-		$asiento 								=	WEBAsiento::where('COD_ASIENTO','=',$COD_ASIENTO)->first();
+		$asiento 									=	WEBAsiento::where('COD_ASIENTO','=',$COD_ASIENTO)->first();
 
 
 		$total_debe 								=	0;
@@ -62,13 +62,13 @@ trait GeneralesTraits
 
 		foreach($listaasientomovimiento as $key => $item){
 
-			if($asiento->COD_CATEGORIA_MONEDA=='MON0000000000001'){//soles
+			//if($asiento->COD_CATEGORIA_MONEDA=='MON0000000000001'){//soles
 				$total_debe 	=	$total_debe + $item->CAN_DEBE_MN;
 				$total_haber 	=	$total_haber + $item->CAN_HABER_MN;
-			}else{//DOLARES
-				$total_debe 	=	$total_debe + $item->CAN_DEBE_ME;
-				$total_haber 	=	$total_haber + $item->CAN_HABER_ME;
-			}
+			//}else{//DOLARES
+				// $total_debe 	=	$total_debe + $item->CAN_DEBE_ME;
+				// $total_haber 	=	$total_haber + $item->CAN_HABER_ME;
+			//}
 
 		}
 

@@ -100,7 +100,7 @@
 										      <input  type="text"
 										              id="igv" 
 										              name='igv' 
-										              value="0.00"
+										              value="18.00"
 										              placeholder="0.00"
 										              autocomplete="off" 
 										              class="form-control input-sm dineroint" 
