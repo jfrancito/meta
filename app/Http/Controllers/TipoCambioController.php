@@ -80,9 +80,9 @@ class TipoCambioController extends Controller
 	    		$tipocambio->NRO_MES 					=   intval($mes);
 	    		$tipocambio->CAN_COMPRA 				=   $porciones[1];
 	    		$tipocambio->CAN_VENTA 					=   $porciones[2];
-				$tipocambio->COD_USUARIO_CREA_AUD 		=   'PHORNALL';
+				$tipocambio->COD_USUARIO_CREA_AUD 		=   'SUNAT';
 				$tipocambio->FEC_USUARIO_CREA_AUD 	 	=   $this->fechaactual;
-				$tipocambio->COD_USUARIO_MODIF_AUD 		=   'PHORNALL';
+				$tipocambio->COD_USUARIO_MODIF_AUD 		=   'SUNAT';
 				$tipocambio->FEC_USUARIO_MODIF_AUD 	 	=   $this->fechaactual;
 				$tipocambio->COD_ESTADO 	 			=   1;
 				$tipocambio->CAN_COMPRA_SBS 	 		=   NULL;
