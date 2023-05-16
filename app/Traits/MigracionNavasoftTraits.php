@@ -122,7 +122,7 @@ trait MigracionNavasoftTraits
 
 	    	foreach($listaasientomoviento as $indexp => $itemp){
 
-
+	    		$cuentacontable 			=	WEBCuentaContable::where('id','=',$itemp->COD_CUENTA_CONTABLE)->first();
 	    		$producto 					=  	CMPDetalleProducto::where('COD_TABLA','=',$item->TXT_REFERENCIA)
 	    										->where('COD_PRODUCTO','=',$itemp->COD_PRODUCTO)
 	    										->where('NRO_LINEA','=',$itemp->NRO_LINEA_PRODUCTO)
@@ -133,11 +133,23 @@ trait MigracionNavasoftTraits
 	    										->where('producto_id','=',$itemp->COD_PRODUCTO)
 	    										->where('anio','=',$anio)
 	    										->first();
-	    		if(count($productoempresa)>0){
-	    				$codi  					= 	$productoempresa->codigo_migracion;
+
+	    		//VENTA
+	    		if($item->COD_CATEGORIA_TIPO_ASIENTO =='TAS0000000000003'){
+		    		if(count($productoempresa)>0){
+		    				$codi  					= 	$productoempresa->codigo_migracion;
+		    		}else{
+		    				$codi  					= 	'';	    			
+		    		}
 	    		}else{
-	    				$codi  					= 	'';	    			
+	    			//COMPRA
+	    			if($item->COD_CATEGORIA_TIPO_ASIENTO =='TAS0000000000004'){
+	    				$codi  						= 	$cuentacontable->codigo_migracion;	
+		    		}
+
 	    		}
+
+
 
 
 	    		//anticipo es 2
