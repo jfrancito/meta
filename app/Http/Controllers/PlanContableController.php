@@ -115,11 +115,16 @@ class PlanContableController extends Controller
 			$clase_id 			= $request['clase_id'];
 			$tiposaldo_id 		= $request['tiposaldo_id'];
 			$tipocuenta_id 		= $request['tipocuenta_id'];
+			$codigo_migracion 	= $request['codigo_migracion'];
+
+
 			$cuenta_contable 	= WEBCuentaContable::where('id','=',$cuenta_contable_id)->first();
 
 			$cuenta_contable->clase_categoria_id  		 	=	$clase_id;
 			$cuenta_contable->tipo_saldo_categoria_id 		=	$tiposaldo_id;
 			$cuenta_contable->tipo_cuenta_categoria_id 		=	$tipocuenta_id;
+			$cuenta_contable->codigo_migracion 				=	$codigo_migracion;
+
 			$cuenta_contable->fecha_mod 	 				=   $this->fechaactual;
 			$cuenta_contable->usuario_mod 					=   Session::get('usuario_meta')->id;
 			$cuenta_contable->save();

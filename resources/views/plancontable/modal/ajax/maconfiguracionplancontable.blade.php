@@ -70,6 +70,30 @@
 
 
 							    </div>
+
+
+
+							    <div class="col-md-6">
+
+							    	<p class="titulo-contenedor-modal">Codigo Migracion :</p>
+
+							        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							            <div class="form-group">
+											<label class="col-sm-12 control-label labelleft negrita" >Codigo migracion: </label>
+											<div class="col-sm-12 abajocaja" >
+										      <input  type="text"
+										              id="codigo_migracion" name='codigo_migracion' 
+										              value="{{$cuenta_contable->codigo_migracion}}" 
+										              placeholder="Codigo migracion"
+										              autocomplete="off" class="form-control input-sm" data-aw="1"/>
+											</div>
+										</div>
+							        </div>
+
+							    </div>
+
+
+
 							    <div class="col-md-12" style="margin-top: 15px;text-align: right;">
 							    		  <button type="submit" data-dismiss="modal" class="btn btn-success modal-close">Guardar</button>
 							    </div>
