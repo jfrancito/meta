@@ -39,6 +39,11 @@ class MigrarCompraController extends Controller
 				
 		//buscar asiento 
 		$lista_compras_migrar_emitido 		= 	$this->mv_lista_compras_migrar_agrupado_emitido($this->array_empresas,$this->anio_inicio);
+
+
+		//dd($lista_compras_migrar_emitido);
+
+
 		$lista_compras_migrar_anulado 		= 	$this->mv_lista_compras_migrar_agrupado_anulado($this->array_empresas,$this->anio_inicio);
 
 		//dd($lista_compras_migrar_anulado);

@@ -214,6 +214,9 @@ class MigrarVentaController extends Controller
 		$tipo_asiento 						=	'TAS0000000000003';	
 		//buscar asiento 
 		$lista_ventas_migrar_emitido 		= 	$this->mv_lista_ventas_migrar_agrupado_emitido();
+
+		//dd($lista_ventas_migrar_emitido);
+
 		$lista_ventas_migrar_anulado 		= 	$this->mv_lista_ventas_migrar_agrupado_anulado();
 
 		//dd($lista_ventas_migrar_anulado);

@@ -99,18 +99,37 @@ class MigracionNavasoftController extends Controller
 	    							->orderby('FEC_ASIENTO','asc')
 	    							->get();
 
-		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);
-
-
     	$funcion 				= 	$this;
 
-		return View::make('navasoft/ajax/alistamigracionnavasoft',
-						 [
-						 	'lista_migracion'			=> $lista_migracion,					 	
-						 	'idopcion' 				=> $idopcion,
-						 	'funcion' 				=> $funcion,
-						 	'ajax' 					=> true,					 	
-						 ]);
+	    if($tipo_asiento_id == 'TAS0000000000004'){
+	    	$lista_migracion 		= 	$this->ms_lista_migracion_navasoft_compras($listaasiento,$anio);
+
+
+			return View::make('navasoft/ajax/alistamigracionnavasoftcompra',
+							 [
+							 	'lista_migracion'			=> $lista_migracion,					 	
+							 	'idopcion' 				=> $idopcion,
+							 	'funcion' 				=> $funcion,
+							 	'ajax' 					=> true,					 	
+							 ]);
+
+	    }else{
+	    	$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);
+
+			return View::make('navasoft/ajax/alistamigracionnavasoft',
+							 [
+							 	'lista_migracion'			=> $lista_migracion,					 	
+							 	'idopcion' 				=> $idopcion,
+							 	'funcion' 				=> $funcion,
+							 	'ajax' 					=> true,					 	
+							 ]);
+
+	    }
+
+
+
+
+
 	}
 
 
@@ -138,21 +157,36 @@ class MigracionNavasoftController extends Controller
 	    							//->where('COD_ASIENTO','=','ITBEAC0000001101')
 	    							->get();
 
-		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);
 
-		if($tipo_asiento_id=='TAS0000000000004'){
-			$nombre_excel = 'Compras';
-		}else{
-			$nombre_excel = 'Ventas';
-		}
+	    if($tipo_asiento_id == 'TAS0000000000004'){
+	    	$nombre_excel 			= 	'Compras';
+	    	$lista_migracion 		= 	$this->ms_lista_migracion_navasoft_compras($listaasiento,$anio);
 
-		$titulo 				=   'MstImp_'.$nombre_excel;
-		
-	    Excel::create($titulo, function($excel) use ($lista_migracion) {
-	        $excel->sheet('Hoja1', function($sheet) use ($lista_migracion) {
-	            $sheet->loadView('navasoft/excel/elistamigracionnavasoft')->with('lista_migracion',$lista_migracion);         
-	        });
-	    })->export('xls');
+			$titulo 				=   'MstImp_'.$nombre_excel;
+			
+		    Excel::create($titulo, function($excel) use ($lista_migracion) {
+		        $excel->sheet('Hoja1', function($sheet) use ($lista_migracion) {
+		            $sheet->loadView('navasoft/excel/elistamigracionnavasoftcompra')->with('lista_migracion',$lista_migracion);         
+		        });
+		    })->export('xls');
+
+
+	    }else{
+	    	$nombre_excel 			= 	'Ventas';
+	    	$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);
+
+			$titulo 				=   'MstImp_'.$nombre_excel;
+			
+		    Excel::create($titulo, function($excel) use ($lista_migracion) {
+		        $excel->sheet('Hoja1', function($sheet) use ($lista_migracion) {
+		            $sheet->loadView('navasoft/excel/elistamigracionnavasoft')->with('lista_migracion',$lista_migracion);         
+		        });
+		    })->export('xls');
+
+	    }
+
+
+
 
 	}
 
