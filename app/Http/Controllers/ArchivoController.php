@@ -61,6 +61,9 @@ class ArchivoController extends Controller
 		$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 	    $combo_tipo_asiento 	= 	$this->gn_generacion_combo_categoria_xarrayid('TIPO_ASIENTO','Seleccione tipo asiento','',$array_id_tipo_asiento);
 	    $combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+
+	    //dd($combo_periodo);
+
 		$funcion 				= 	$this;
 		$combo_tran_gratuita 	= 	$this->gn_combo_transferencia_gratuita();
 		$lista_asiento          =   array();
@@ -305,6 +308,7 @@ class ArchivoController extends Controller
 
 		    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
 		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 		    							//->where('COD_ASIENTO','=','ICCHAC0000005534')
 		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 		    							->whereIn('TXT_REFERENCIA',$array_documentos)
@@ -353,6 +357,7 @@ class ArchivoController extends Controller
 		    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
 		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 		    							->whereIn('TXT_REFERENCIA',$array_documentos)
 		    							->orderby('FEC_ASIENTO','asc')
 		    							->get();

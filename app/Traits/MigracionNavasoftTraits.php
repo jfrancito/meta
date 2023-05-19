@@ -170,14 +170,18 @@ trait MigracionNavasoftTraits
 
 	    		if($producto->IND_IGV == 1){
 	    			$aigv 					= 	"'S";
+	    			$codisunat 				= 	"'113";
 	    		}else{
 	    			$aigv 					= 	"'N";
+	    			$codisunat 				= 	"'120";
 	    		}
 	    		if($producto->IND_MATERIAL_SERVICIO == 'M'){
 	    			$codvta 				= 	'01';
 	    		}else{
 	    			$codvta 				= 	'02';
 	    		}     		
+
+
 
 
 
@@ -191,7 +195,7 @@ trait MigracionNavasoftTraits
 					"ndoc" 						=> $ndoc,
 					"nombre_cliente" 			=> "'".$nombre_cliente,
 					"ruc" 						=> "'".$ruc,
-
+					
 					"codi" 						=> $codi,
 		            "MONE" 						=> $MONE,
 		            "TCAM" 						=> $TCAM,
@@ -205,7 +209,7 @@ trait MigracionNavasoftTraits
 		            "codalm" 					=> "'".$codalm,
 		            
 		            "codvta" 					=> "'".$codvta,
-		            "CODSUN" 					=> "'120",
+		            "CODSUN" 					=> $codisunat,
 		            "CODSCC" 					=> $CODSCC,
 
 				);
