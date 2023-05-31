@@ -100,6 +100,26 @@
 
 <div class="form-group">
 
+  <label class="col-sm-3 control-label">Tipo ivap</label>
+  <div class="col-sm-6">
+    {!! Form::select( 'tipo_ivap_id', $combo_tipo_ivap, $defecto_tipo_ivap,
+                      [
+                        'class'       => 'select2 form-control control input-xs' ,
+                        'id'          => 'tipo_ivap_id',
+                        'data-aw'     => '8'
+                      ]) !!}
+
+      @include('error.erroresvalidate', [ 'id' => $errors->has('tipo_ivap_id')  , 
+                                          'error' => $errors->first('tipo_ivap_id', ':message') , 
+                                          'data' => '8'])
+
+  </div>
+</div>
+
+
+
+<div class="form-group">
+
   <label class="col-sm-3 control-label">Pago o cobro</label>
   <div class="col-sm-6">
     {!! Form::select( 'pago_cobro_id', $combo_pago_cobro, $defecto_pago_cobro,

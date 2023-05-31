@@ -246,6 +246,61 @@ trait MigrarVentaTraits
 	}
 
 
+	private function mv_lista_productos_configurados($tipo_asiento,$empresa_id,$anio)
+	{
+		
+
+		if($tipo_asiento=='TAS0000000000003'){
+
+			if($empresa_id=='IACHEM0000007086'){
+				
+				$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
+													->where('activo','=',1)
+													->where('anio','=',$anio)
+													->where('cuenta_contable_venta_relacionada_id','<>','')
+													->where('cuenta_contable_venta_tercero_id','<>','')
+													->where('cuenta_contable_venta_segunda_relacionada_id','<>','')
+													->where('cuenta_contable_venta_segunda_tercero_id','<>','')
+													->take(200)
+													->pluck('producto_id')
+													->toArray();
+			}else{
+
+				$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
+													->where('activo','=',1)
+													->where('anio','=',$anio)
+													->where('cuenta_contable_venta_relacionada_id','<>','')
+													->where('cuenta_contable_venta_tercero_id','<>','')
+													->take(200)
+													->pluck('producto_id')
+													->toArray();
+			}
+
+		}else{
+
+			$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
+												->where('activo','=',1)
+												->where('anio','=',$anio)
+												->where('cuenta_contable_compra_id','<>','')
+												->take(200)
+												->pluck('producto_id')
+												->toArray();
+
+		}
+
+		//dd($array_producto_empresas);
+
+
+		$lista_productos_sc			=		CMPDetalleProducto::whereIn('COD_PRODUCTO',$array_producto_empresas)
+											->groupBy('COD_PRODUCTO')
+											->pluck('COD_PRODUCTO')
+											->toArray();
+
+		return $lista_productos_sc;
+
+	}
+
+
 
 	private function mv_lista_productos_sin_configuracion($tipo_asiento,$empresa_id,$anio)
 	{
@@ -260,7 +315,6 @@ trait MigrarVentaTraits
 											->pluck('COD_REFERENCIA')
 											->toArray();
 
-
 		if($tipo_asiento=='TAS0000000000003'){
 
 			$array_total_producos		=		CMPDetalleProducto::whereIn('COD_TABLA',$array_ventas_con_error)
@@ -268,14 +322,30 @@ trait MigrarVentaTraits
 												->pluck('COD_PRODUCTO')
 												->toArray();
 
-			$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
-												->where('activo','=',1)
-												->where('anio','=',$anio)
-												->whereIn('producto_id',$array_total_producos)
-												->where('cuenta_contable_venta_relacionada_id','<>','')
-												->where('cuenta_contable_venta_tercero_id','<>','')
-												->pluck('producto_id')
-												->toArray();
+			if($empresa_id=='IACHEM0000007086'){
+
+				$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
+													->where('activo','=',1)
+													->where('anio','=',$anio)
+													->whereIn('producto_id',$array_total_producos)
+													->where('cuenta_contable_venta_relacionada_id','<>','')
+													->where('cuenta_contable_venta_tercero_id','<>','')
+													->where('cuenta_contable_venta_segunda_relacionada_id','<>','')
+													->where('cuenta_contable_venta_segunda_tercero_id','<>','')
+													->pluck('producto_id')
+													->toArray();
+
+			}else{
+
+				$array_producto_empresas 	=  		WEBProductoEmpresa::where('empresa_id','=',$empresa_id)
+													->where('activo','=',1)
+													->where('anio','=',$anio)
+													->whereIn('producto_id',$array_total_producos)
+													->where('cuenta_contable_venta_relacionada_id','<>','')
+													->where('cuenta_contable_venta_tercero_id','<>','')
+													->pluck('producto_id')
+													->toArray();
+			}
 
 		}else{
 

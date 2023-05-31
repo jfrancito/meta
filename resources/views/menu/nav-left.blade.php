@@ -12,8 +12,7 @@
                 @if($grupo->orden == 100)
                     <li class="divider">Reportes</li>
                 @endif
-          
-
+        
                 <li class="parent" @click="menu='4"><a href="#"><i class="icon mdi {{$grupo->icono}}"></i><span>{{$grupo->nombre}}</span></a>
                   <ul class="sub-mensu">
                     @foreach($grupo->opcion as $opcion)

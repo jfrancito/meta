@@ -72,6 +72,8 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-configuracion-producto/{idopcion}/{tipo_asiento_id}/{anio}', 'ConfiguracioProductoController@actionListarConfiguracionProducto');
 	Route::any('/gestion-configuracion-producto/{idopcion}', 'ConfiguracioProductoController@actionListarConfiguracionProductoMenu');
 
+
+
 	Route::any('/ajax-configuracion-producto', 'ConfiguracioProductoController@actionAjaxConfiguracionProducto');
 	Route::any('/ajax-modal-configuracion-producto-cuenta-contable', 'ConfiguracioProductoController@actionAjaxModalConfiguracionProductoCuentaContable');
 	Route::any('/ajax-guardar-cuenta-contable', 'ConfiguracioProductoController@actionAjaxGuardarCuentaContable');

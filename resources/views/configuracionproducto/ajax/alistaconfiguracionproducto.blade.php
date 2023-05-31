@@ -6,7 +6,12 @@
       <th colspan="3" class='center background-th-celeste'>Información </th>
 
       @if($nro_asiento != '4')
-        <th colspan="2" class='center background-th-verde'>Venta</th>
+        @if(Session::get('empresas_meta')->COD_EMPR == 'IACHEM0000007086')
+          <th colspan="4" class='center background-th-verde'>Venta</th>
+        @else
+          <th colspan="2" class='center background-th-verde'>Venta</th>
+        @endif
+        
       @endif
 
       @if($nro_asiento != '3')
@@ -22,9 +27,18 @@
       <th class='background-th-celeste'>Tipo</th>
 
       @if($nro_asiento != '4')
+        @if(Session::get('empresas_meta')->COD_EMPR == 'IACHEM0000007086')
+        <th class='background-th-verde'>CC Relacionada PV</th>
+        <th class='background-th-verde'>CC Tercero PV</th>
+        <th class='background-th-verde'>CC Relacionada SV</th>
+        <th class='background-th-verde'>CC Tercero SV</th>
+
+        @else
         <th class='background-th-verde'>CC Relacionada</th>
         <th class='background-th-verde'>CC Tercero</th>
+        @endif
       @endif
+
 
       @if($nro_asiento != '3')
         <th class='background-th-verde'>Cuenta contable</th>
@@ -67,10 +81,19 @@
             @endif
         </td>
 
+
         @if($nro_asiento != '4')
-          <td>{{$item->nombre_nro_cuenta_r}}</td>
-          <td>{{$item->nombre_nro_cuenta_t}}</td>
+          @if(Session::get('empresas_meta')->COD_EMPR == 'IACHEM0000007086')
+            <td>{{$item->nombre_nro_cuenta_r}}</td>
+            <td>{{$item->nombre_nro_cuenta_t}}</td> 
+            <td>{{$item->nombre_nro_cuenta_r_sv}}</td>
+            <td>{{$item->nombre_nro_cuenta_t_sv}}</td>
+          @else
+            <td>{{$item->nombre_nro_cuenta_r}}</td>
+            <td>{{$item->nombre_nro_cuenta_t}}</td>
+          @endif
         @endif
+
 
         @if($nro_asiento != '3')
           <td>{{$item->nombre_nro_cuenta_compra}}</td>

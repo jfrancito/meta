@@ -123,13 +123,28 @@ $(document).ready(function(){
         var cuenta_contable_ter_id    =   $('#cuenta_contable_ter_id').val();
         var cuenta_contable_compra_id =   $('#cuenta_contable_compra_id').val();
         var ind_venta_compra          =   $('#ind_venta_compra').val();
-        var anio          =   $('#anio').val();
+        var anio                      =   $('#anio').val();
+        var empresa_id                =   $('#empresa_id').val();
+
+        var cuenta_contable_rel_sv_id    =   '';
+        var cuenta_contable_ter_sv_id    =   '';
+
 
         var _token                    =   $('#token').val();
         //validacioones
         if(ind_venta_compra=='1'){
             if(cuenta_contable_rel_id  != '' && cuenta_contable_ter_id == ''){ alerterrorajax("Seleccione una cuenta contable tercero."); return false;}
             if(cuenta_contable_ter_id  != '' && cuenta_contable_rel_id == ''){ alerterrorajax("Seleccione una cuenta contable relacionada."); return false;}
+
+            if(empresa_id=='IACHEM0000007086'){
+
+                cuenta_contable_rel_sv_id    =   $('#cuenta_contable_rel_sv_id').val();
+                cuenta_contable_ter_sv_id    =   $('#cuenta_contable_ter_sv_id').val();
+                if(cuenta_contable_rel_sv_id  != '' && cuenta_contable_rel_sv_id == ''){ alerterrorajax("Seleccione una cuenta contable tercero segunda venta."); return false;}
+                if(cuenta_contable_ter_sv_id  != '' && cuenta_contable_ter_sv_id == ''){ alerterrorajax("Seleccione una cuenta contable relacionada segunda venta."); return false;}
+
+            }
+
         }
 
         //cerrar modal
@@ -137,8 +152,13 @@ $(document).ready(function(){
 
         data            =   {
                                 _token                   : _token,
+
                                 cuenta_contable_rel_id   : cuenta_contable_rel_id,
                                 cuenta_contable_ter_id   : cuenta_contable_ter_id,
+                                
+                                cuenta_contable_rel_sv_id   : cuenta_contable_rel_sv_id,
+                                cuenta_contable_ter_sv_id   : cuenta_contable_ter_sv_id,
+
                                 cuenta_contable_compra_id   : cuenta_contable_compra_id,
                                 ind_venta_compra         : ind_venta_compra,
                                 anio                     : anio,

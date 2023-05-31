@@ -35,11 +35,11 @@
                           </a>
 
 
-                          <a href="{{ url('/gestion-configuracion-producto/'.$idopcion.'/4') }}">
+                          <a href="{{ url('/gestion-configuracion-producto/'.$idopcion.'/4/'.$anio) }}">
                             <b>Productos de Compras por configurar</b>
                           </a>
 
-                          <a href="{{ url('/gestion-configuracion-producto/'.$idopcion.'/3') }}">
+                          <a href="{{ url('/gestion-configuracion-producto/'.$idopcion.'/3/'.$anio) }}">
                             <b>Productos de Ventas por configurar</b>
                           </a>
 

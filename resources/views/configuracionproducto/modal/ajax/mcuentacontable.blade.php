@@ -51,6 +51,43 @@
 							</div>
 				        </div>
 
+
+
+				        @if($empresa_id == 'IACHEM0000007086')
+
+				        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				            <div class="form-group">
+								<label class="col-sm-12 control-label labelleft negrita" >Cuenta contable relacionada SV: </label>
+								<div class="col-sm-12 abajocaja" >
+								  {!! Form::select( 'cuenta_contable_rel_sv_id', $combo_cuenta_rel_sv, $defecto_cuenta_rel_sv,
+								                    [
+								                      'class'       => 'select2 form-control control input-xs combo' ,
+								                      'id'          => 'cuenta_contable_rel_sv_id',
+								                      'data-aw'     => '1',
+								                    ]) !!}
+								</div>
+							</div>
+				        </div>
+
+				        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				            <div class="form-group">
+								<label class="col-sm-12 control-label labelleft negrita" >Cuenta contable tercero SV: </label>
+								<div class="col-sm-12 abajocaja" >
+								  {!! Form::select( 'cuenta_contable_ter_sv_id', $combo_cuenta_ter_sv, $defecto_cuenta_ter_sv,
+								                    [
+								                      'class'       => 'select2 form-control control input-xs combo' ,
+								                      'id'          => 'cuenta_contable_ter_sv_id',
+								                      'data-aw'     => '1',
+								                    ]) !!}
+								</div>
+							</div>
+				        </div>
+
+				        @endif
+
+
+
+
                     </div>
                     <div id="compras" class="tab-pane cont ">
   				        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -76,6 +113,7 @@
 
 
                 <input type="hidden" name="ind_venta_compra" id ="ind_venta_compra" value="1">
+                <input type="hidden" name="empresa_id" id ="empresa_id" value="{{$empresa_id}}">
 
 	    </div>
 	    <div class="col-md-6">

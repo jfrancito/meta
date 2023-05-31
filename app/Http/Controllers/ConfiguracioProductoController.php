@@ -35,8 +35,9 @@ class ConfiguracioProductoController extends Controller
 
 	public function actionListarConfiguracionProductoMenu($idopcion)
 	{
-		$tipo_asiento = '1';
-		return Redirect::to('/gestion-configuracion-producto/'.$idopcion.'/'.$tipo_asiento);
+		$tipo_asiento = '3';
+		$anio  		  =  $this->anio;
+		return Redirect::to('/gestion-configuracion-producto/'.$idopcion.'/'.$tipo_asiento.'/'.$anio);
 	}
 
 	public function actionListarConfiguracionProducto($idopcion,$tipo_asiento,$anio)
@@ -60,10 +61,20 @@ class ConfiguracioProductoController extends Controller
         $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 		$empresa_id 					=   Session::get('empresas_meta')->COD_EMPR;
+
+
 		$lista_productos_sc 		 	= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento,$empresa_id,$anio);
+
+		if(count($lista_productos_sc)<=0){
+			$lista_productos_sc 		 	= 	$this->mv_lista_productos_configurados($tipo_asiento,$empresa_id,$anio);
+		}
+
+		//dd($lista_productos_sc);
+
 		$array_productos_empresa    	=	ALMProducto::whereIn('COD_PRODUCTO',$lista_productos_sc)
 											->pluck('COD_PRODUCTO')
 											->toArray();
+
 		$producto_id 					=	'';									
 		$servicio_id 					=	'';
 		$material_id 					=	'';	
@@ -98,6 +109,8 @@ class ConfiguracioProductoController extends Controller
 						 	'lista_configuracion_producto' 		=> $lista_configuracion_producto,	
 						 	'nombre_asiento' 					=> $nombre_asiento,
 						 	'nro_asiento' 						=> $nro_asiento,
+						 	'empresa_id' 						=> $empresa_id,
+
 						 ]);
 	}
 
@@ -224,10 +237,18 @@ class ConfiguracioProductoController extends Controller
 
 		$combo_cuenta_rel		= 	$this->gn_generacion_combo_array('Seleccione cuenta contable relacionada', '' , $array_cuenta_pc);
 		$combo_cuenta_ter		= 	$this->gn_generacion_combo_array('Seleccione cuenta contable tercero', '' , $array_cuenta_pc);
+
+		$combo_cuenta_rel_sv	= 	$this->gn_generacion_combo_array('Seleccione cuenta contable relacionada sv', '' , $array_cuenta_pc);
+		$combo_cuenta_ter_sv	= 	$this->gn_generacion_combo_array('Seleccione cuenta contable tercero sv', '' , $array_cuenta_pc);
+
+
 		$combo_cuenta_com		= 	$this->gn_generacion_combo_array('Seleccione cuenta contable compra', '' , $array_cuenta_pc);
 
 		$defecto_cuenta_rel		= 	'';
 		$defecto_cuenta_ter		= 	'';
+		$defecto_cuenta_rel_sv	= 	'';
+		$defecto_cuenta_ter_sv	= 	'';
+
 		$defecto_cuenta_com		= 	'';
 
 
@@ -235,7 +256,7 @@ class ConfiguracioProductoController extends Controller
 		$ocultar_compra 		=	'';
 		if($nro_asiento=='4'){$ocultar_venta = 'ocultar';}
 		if($nro_asiento=='3'){$ocultar_compra = 'ocultar';}
-
+		$empresa_id 			=	Session::get('empresas_meta')->COD_EMPR;
 
 		$funcion 				= 	$this;
 
@@ -243,9 +264,19 @@ class ConfiguracioProductoController extends Controller
 						 [		 	
 						 	'combo_cuenta_rel' 		=> $combo_cuenta_rel,
 						 	'combo_cuenta_ter' 		=> $combo_cuenta_ter,
+						 	'combo_cuenta_rel_sv' 	=> $combo_cuenta_rel_sv,
+						 	'combo_cuenta_ter_sv' 	=> $combo_cuenta_ter_sv,
+
 						 	'combo_cuenta_com' 		=> $combo_cuenta_com,
+
 						 	'defecto_cuenta_rel' 	=> $defecto_cuenta_rel,
 						 	'defecto_cuenta_ter' 	=> $defecto_cuenta_ter,
+
+						 	'defecto_cuenta_rel_sv' => $defecto_cuenta_rel_sv,
+						 	'defecto_cuenta_ter_sv' => $defecto_cuenta_ter_sv,
+
+						 	'empresa_id' 			=> $empresa_id,
+
 						 	'defecto_cuenta_com' 	=> $defecto_cuenta_com,
 						 	'array_productos' 		=> $array_productos,
 						 	'nro_asiento' 			=> $nro_asiento,
@@ -280,8 +311,14 @@ class ConfiguracioProductoController extends Controller
 	{
 		
 		$array_productos 			=   json_decode($request['array_productos'],true);
+
 		$cuenta_contable_rel_id 	=   $request['cuenta_contable_rel_id'];
 		$cuenta_contable_ter_id 	=   $request['cuenta_contable_ter_id'];
+
+		$cuenta_contable_rel_sv_id 	=   $request['cuenta_contable_rel_sv_id'];
+		$cuenta_contable_ter_sv_id 	=   $request['cuenta_contable_ter_sv_id'];
+
+
 		$cuenta_contable_compra_id 	=   $request['cuenta_contable_compra_id'];
 		$ind_venta_compra 			=   $request['ind_venta_compra'];
 		$anio  						=   $request['anio'];;
@@ -304,10 +341,16 @@ class ConfiguracioProductoController extends Controller
 				if($ind_venta_compra == '1'){
 					$cabecera->cuenta_contable_venta_relacionada_id 	=   $cuenta_contable_rel_id;
 					$cabecera->cuenta_contable_venta_tercero_id 		=   $cuenta_contable_ter_id;
+					$cabecera->cuenta_contable_venta_segunda_relacionada_id 	=   $cuenta_contable_rel_sv_id;
+					$cabecera->cuenta_contable_venta_segunda_tercero_id 		=   $cuenta_contable_ter_sv_id;
+
 					$cabecera->cuenta_contable_compra_id 				=   '';
 				}else{
 					$cabecera->cuenta_contable_venta_relacionada_id 	=   '';
 					$cabecera->cuenta_contable_venta_tercero_id 		=   '';
+					$cabecera->cuenta_contable_venta_segunda_relacionada_id 	=   '';
+					$cabecera->cuenta_contable_venta_segunda_tercero_id 		=   '';
+
 					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
 				}
 
@@ -323,6 +366,9 @@ class ConfiguracioProductoController extends Controller
 				if($ind_venta_compra == '1'){
 					$cabecera->cuenta_contable_venta_relacionada_id 	=   $cuenta_contable_rel_id;
 					$cabecera->cuenta_contable_venta_tercero_id 		=   $cuenta_contable_ter_id;
+					$cabecera->cuenta_contable_venta_segunda_relacionada_id 	=   $cuenta_contable_rel_sv_id;
+					$cabecera->cuenta_contable_venta_segunda_tercero_id 		=   $cuenta_contable_ter_sv_id;
+
 				}else{
 					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
 				}
