@@ -489,11 +489,11 @@ trait MigracionNavasoftTraits
 					"fecha_emision" 			=> $fecha_emision,
 					"tipo_documento" 			=> $tipo_documento,
 					"ndoc" 						=> $ndoc,
-					"nombre_cliente" 			=> $nombre_cliente,
-					"ruc" 						=> $ruc,
+					"nombre_cliente" 			=> "'".$nombre_cliente,
+					"ruc" 						=> "'".$ruc,
 
 					"codi" 						=> $codi,
-		            "MONE" 						=> $MONE,
+		            "MONE" 						=> "'".strtoupper($MONE),
 		            "TCAM" 						=> $TCAM,
 		            "CANT" 						=> $CANT,
 		            "PREU" 						=> $PREU,
@@ -504,8 +504,8 @@ trait MigracionNavasoftTraits
 		            "TOTN" 						=> $TOTN,
 		            "aigv" 						=> $aigv,
 
-		            "codalm" 					=> $codalm,
-		            "codvta" 					=> $codvta,
+		            "codalm" 					=> "'".$codalm,
+		            "codvta" 					=> "'".$codvta,
 		            "CODSCC" 					=> $CODSCC,
 
 				);
