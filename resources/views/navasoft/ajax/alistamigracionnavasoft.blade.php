@@ -27,8 +27,8 @@
   </thead>
   <tbody>
     @foreach($lista_migracion as $index => $item)
-      <tr>
-        <td>{{$item['fecha_emision']}}</td>
+      <tr class="{{$item['cm']}}">
+        <td >{{$item['fecha_emision']}}</td>
         <td>{{$item['tipo_documento']}}</td>
         <td>{{$item['ndoc']}}</td>
         <td>{{$item['nombre_cliente']}}</td>

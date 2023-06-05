@@ -63,6 +63,9 @@ class MigracionNavasoftController extends Controller
 	    $combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
 		$funcion 				= 	$this;
 		$combo_tran_gratuita 	= 	$this->gn_combo_transferencia_gratuita();
+		$combo_estado_migracion = 	$this->gn_generacion_combo_categoria('CONTABILIDAD_ESM','Seleccione estado migración','TODO');
+	    $sel_estado_migracion 	=	'TODO';
+
 		$lista_asiento          =   array();
 
 		return View::make('navasoft/migracionnavasoft',
@@ -71,9 +74,12 @@ class MigracionNavasoftController extends Controller
 						 	'combo_anio_pc'			=> $combo_anio_pc,
 						 	'combo_periodo'			=> $combo_periodo,
 						 	'combo_tran_gratuita'	=> $combo_tran_gratuita,
+						 	'combo_estado_migracion'=> $combo_estado_migracion,
+
 						 	'anio'					=> $anio,
 						 	'sel_tipo_asiento'	 	=> $sel_tipo_asiento,
-						 	'sel_periodo'	 		=> $sel_periodo,					 	
+						 	'sel_periodo'	 		=> $sel_periodo,
+						 	'sel_estado_migracion'	=> $sel_estado_migracion,					 	
 						 	'idopcion' 				=> $idopcion,
 						 	'funcion' 				=> $funcion,
 						 	'lista_asiento' 		=> $lista_asiento,						 	
@@ -90,18 +96,31 @@ class MigracionNavasoftController extends Controller
 		$tipo_asiento_id 		=   $request['tipo_asiento_id'];
 		$periodo_id 			=   $request['periodo_id'];
 		$idopcion 				=   $request['idopcion'];
+		$estado_migracion_id 	=   $request['estado_migracion_id'];
+		$ind_migracion 			= 	-1;
+
+		if($estado_migracion_id == 'CEM0000000000001'){
+			$ind_migracion 			= 	1;
+		}else{
+			if($estado_migracion_id == 'CEM0000000000002'){
+				$ind_migracion 			= 	0;
+			}
+		}
+
 
 	    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
 	    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 	    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 	    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    							//->where('COD_ASIENTO','=','ITRJAC0000000414')
-	    							->orderby('FEC_ASIENTO','asc')
+	    							->MigracionNava($ind_migracion)
+	    							->orderby('FEC_USUARIO_MODIF_AUD','desc')
 	    							->get();
 
     	$funcion 				= 	$this;
 
 	    if($tipo_asiento_id == 'TAS0000000000004'){
+
 	    	$lista_migracion 		= 	$this->ms_lista_migracion_navasoft_compras($listaasiento,$anio);
 
 
@@ -144,10 +163,22 @@ class MigracionNavasoftController extends Controller
 		$tipo_asiento_id 		=   $request['tipo_asiento_id'];
 		$periodo_id 			=   $request['periodo_id'];
 		$idopcion 				=   $request['idopcion'];
+		$migrado 				=   $request['migrado'];
+		$excel 					=   '1';
 
 		$tipoasiento 			= 	CMPCategoria::where('COD_CATEGORIA','=',$tipo_asiento_id)->first();
 		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
 
+		$estado_migracion_id 	=   $request['estado_migracion_id'];
+		$ind_migracion 			= 	-1;
+
+		if($estado_migracion_id == 'CEM0000000000001'){
+			$ind_migracion 			= 	1;
+		}else{
+			if($estado_migracion_id == 'CEM0000000000002'){
+				$ind_migracion 			= 	0;
+			}
+		}
 
 	    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
 	    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
@@ -155,12 +186,14 @@ class MigracionNavasoftController extends Controller
 	    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    							->orderby('FEC_ASIENTO','asc')
 	    							//->where('COD_ASIENTO','=','ITBEAC0000001101')
+	    							->MigracionNava($ind_migracion)
+	    							->orderby('FEC_USUARIO_MODIF_AUD','desc')
 	    							->get();
 
 
 	    if($tipo_asiento_id == 'TAS0000000000004'){
 	    	$nombre_excel 			= 	'Compras';
-	    	$lista_migracion 		= 	$this->ms_lista_migracion_navasoft_compras($listaasiento,$anio);
+	    	$lista_migracion 		= 	$this->ms_lista_migracion_navasoft_compras($listaasiento,$anio,$migrado,$excel);
 
 			$titulo 				=   'MstImp_'.$nombre_excel;
 			
@@ -173,7 +206,7 @@ class MigracionNavasoftController extends Controller
 
 	    }else{
 	    	$nombre_excel 			= 	'Ventas';
-	    	$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);
+	    	$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio,$migrado,$excel);
 
 			$titulo 				=   'MstImp_'.$nombre_excel;
 			

@@ -96,5 +96,22 @@ class WEBAsiento extends Model
     }
 
 
+    public function scopeMigracionNava($query,$ind_migracion){
+
+        if($ind_migracion == 1){
+            $query->where('WEB.asientos.IND_MIGRACION_NAVASOFT', '=', $ind_migracion);
+        }else{
+            if($ind_migracion == 0){
+
+                    $query->where(function($xx) {
+                                $xx->whereNull('WEB.asientos.IND_MIGRACION_NAVASOFT')
+                                      ->orWhere('WEB.asientos.IND_MIGRACION_NAVASOFT', '=', 0);
+                            });
+
+            }
+        }
+
+    }
+
 
 }

@@ -26,7 +26,13 @@
                         <li>
                           <a href="#" class='descargararchivo' data_archivo = 'registrocompra'><b>Descargar excel</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
+                        <li>
+                          <a href="#" class='descargararchivomigrado' data_archivo = 'registrocompra'><b>Descargar excel y cambiar a migrado</b> <span class="mdi mdi-check-circle"></span></a>
+                        </li>
+
                       </ul>
+
+
                     </div>
 
                   </div>
@@ -86,18 +92,38 @@
                         </div>
 
 
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
+                            <div class="form-group">
+                              <label class="col-sm-12 control-label labelleft" >Estado Migración :</label>
+                              <div class="col-sm-12 abajocaja" >
+                                {!! Form::select( 'estado_migracion_id', $combo_estado_migracion, $sel_estado_migracion,
+                                                  [
+                                                    'class'       => 'select2 form-control control input-xs' ,
+                                                    'id'          => 'estado_migracion_id',
+                                                    'required'    => '',
+                                                    'data-aw'     => '1',
+                                                  ]) !!}
+                              </div>
+                            </div>
+                        </div>
+
 
                         <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
                         <input type="hidden" name="data_archivo" id='data_archivo' value=''>
-
+                        <input type="hidden" name="migrado" id='migrado' value='0'>
                       </form>
 
 
                     </div>
 
-
-
-
+                    <div class="col-xs-12 widget-chart-container">
+                      <div class="widget-chart-info">
+                        <ul class="chart-legend-horizontal">
+                          <li><span class="main-chart-color1"></span> SIN MIGRAR</li>
+                          <li><span class="main-chart-color2"></span> MIGRADO</li>
+                        </ul>
+                      </div>
+                    </div>
 
                   </div>
 

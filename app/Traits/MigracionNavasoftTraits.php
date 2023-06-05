@@ -45,7 +45,47 @@ trait MigracionNavasoftTraits
 {
 	
 
-	public function ms_lista_migracion_navasoft_compras($listaasiento,$anio){
+	public function ms_marcar_migracion_navasoft($asiento){
+
+		$asiento->IND_MIGRACION_NAVASOFT=1;
+		$asiento->save();
+
+        $referencia     =       CMPReferecenciaAsoc::where('COD_TABLA_ASOC','=',$asiento->COD_CATEGORIA_TIPO_ASIENTO)
+                                ->where('COD_TABLA','=',$asiento->COD_ASIENTO)
+                                ->where('TXT_DESCRIPCION','=','MIGRACION')
+                                ->first();
+
+        if(count($referencia)>0){
+
+        	$referencia->COD_ESTADO = 1;
+        	$referencia->FEC_USUARIO_MODIF_AUD  =   date('d-m-Y H:i:s');
+        	$referencia->COD_USUARIO_MODIF_AUD  =   Session::get('usuario_meta')->name;
+        	$referencia->save();
+        	
+        }else{
+
+	        $referenciaasoc = new CMPReferecenciaAsoc;
+	        $referenciaasoc->COD_TABLA        		=   $asiento->COD_ASIENTO;
+	        $referenciaasoc->COD_TABLA_ASOC   		=   $asiento->COD_CATEGORIA_TIPO_ASIENTO;
+	        $referenciaasoc->TXT_TABLA        		=   'WEB.asientos';
+	        $referenciaasoc->TXT_TABLA_ASOC   		=   'CMP.CATEGORIA';
+	        $referenciaasoc->CAN_AUX1         		=   0;
+	        $referenciaasoc->COD_USUARIO_CREA_AUD  	=   Session::get('usuario_meta')->name;
+	        $referenciaasoc->FEC_USUARIO_CREA_AUD  	=   date('d-m-Y H:i:s');
+	        $referenciaasoc->FEC_USUARIO_MODIF_AUD  =   date('d-m-Y H:i:s');
+	        $referenciaasoc->TXT_TIPO_REFERENCIA   	=   '';
+	        $referenciaasoc->TXT_REFERENCIA    		=   '';
+	        $referenciaasoc->TXT_DESCRIPCION    	=   'MIGRACION';
+	        $referenciaasoc->COD_ESTADO        		=   1;
+	        $referenciaasoc->save();
+
+        }
+
+	}
+
+
+
+	public function ms_lista_migracion_navasoft_compras($listaasiento,$anio,$migracion = '0',$excel = '0'){
 
 
 		//llenado de datalle
@@ -53,6 +93,18 @@ trait MigracionNavasoftTraits
 
 
 	    foreach($listaasiento as $index => $item){
+
+	    	if($migracion=='1'){
+	    		$this->ms_marcar_migracion_navasoft($item);
+	    	}
+
+	    	$colormigracion 		=	'';
+	    	if($item->IND_MIGRACION_NAVASOFT==1){
+	    		$colormigracion 		=	'color_migracion';
+	    	}
+	    	if($excel==1){
+	    		$colormigracion 		=	'';
+	    	}
 
 	    	$lista_producto         =   CMPDetalleProducto::where('COD_TABLA','=',$item->TXT_REFERENCIA)->get();
 	   		$empresa 				= 	STDEmpresa::where('COD_EMPR','=',$item->COD_EMPR_CLI)->first();
@@ -211,7 +263,7 @@ trait MigracionNavasoftTraits
 		            "codvta" 					=> "'".$codvta,
 		            "CODSUN" 					=> $codisunat,
 		            "CODSCC" 					=> $CODSCC,
-
+		            "cm" 						=> $colormigracion,
 				);
 				array_push($array_detalle_asiento,$array_nuevo_asiento);
 
@@ -345,7 +397,7 @@ trait MigracionNavasoftTraits
 	}
 
 
-	public function ms_lista_migracion_navasoft($listaasiento,$anio){
+	public function ms_lista_migracion_navasoft($listaasiento,$anio,$migracion = '0',$excel = '0'){
 
 
 		//llenado de datalle
@@ -353,6 +405,19 @@ trait MigracionNavasoftTraits
 
 
 	    foreach($listaasiento as $index => $item){
+
+
+	    	if($migracion=='1'){
+	    		$this->ms_marcar_migracion_navasoft($item);
+	    	}
+
+	    	$colormigracion 		=	'';
+	    	if($item->IND_MIGRACION_NAVASOFT==1){
+	    		$colormigracion 		=	'color_migracion';
+	    	}
+	    	if($excel==1){
+	    		$colormigracion 		=	'';
+	    	}
 
 	    	$lista_producto         =   CMPDetalleProducto::where('COD_TABLA','=',$item->TXT_REFERENCIA)->get();
 	   		$empresa 				= 	STDEmpresa::where('COD_EMPR','=',$item->COD_EMPR_CLI)->first();
@@ -507,6 +572,7 @@ trait MigracionNavasoftTraits
 		            "codalm" 					=> "'".$codalm,
 		            "codvta" 					=> "'".$codvta,
 		            "CODSCC" 					=> $CODSCC,
+		           	"cm" 						=> $colormigracion,
 
 				);
 				array_push($array_detalle_asiento,$array_nuevo_asiento);

@@ -26,8 +26,10 @@
     </tr>
   </thead>
   <tbody>
+
     @foreach($lista_migracion as $index => $item)
-      <tr>
+
+      <tr class="{{$item['cm']}}">
         <td>{{$item['fecha_emision']}}</td>
         <td>{{$item['tipo_documento']}}</td>
         <td>{{$item['ndoc']}}</td>
