@@ -28,9 +28,13 @@ Route::group(['middleware' => ['guestaw']], function () {
 Route::get('/cerrarsession', 'UserController@actionCerrarSesion');
 Route::get('/cambiarperfil', 'UserController@actionCambiarPerfil');
 Route::get('/migrar-ventas', 'MigrarVentaController@actionMigrarVentas');
+Route::get('/migrar-ventas-comercial', 'MigrarVentaComercialController@actionMigrarVentasComercial');
+
+
 Route::get('/migrar-compras', 'MigrarCompraController@actionMigrarCompras');
 Route::get('/migrar-recibo-honorario', 'MigrarReciboHonorarioController@actionMigrarReciboHonorario');
 Route::get('/migrar-total-ceros', 'MigrarVentaController@actionMigrarTotalCeros');
+
 
 Route::get('/actualizar-tipo-cambio-sbs', 'TipoCambioController@actionActualizarTipoCambio');
 Route::get('/actualizar-tipo-cambio', 'TipoCambioController@actionActualizarTipoCambioNormal');

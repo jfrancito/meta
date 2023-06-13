@@ -15,9 +15,6 @@ use App\Modelos\CMPDocumentoCtble;
 use App\Modelos\WEBHistorialMigrar;
 use App\Modelos\CMPDetalleProducto;
 use App\Modelos\WEBProductoEmpresa;
-use App\Modelos\WEBViewMigrarCompras;
-
-
 
 use View;
 use Session;
@@ -26,120 +23,78 @@ Use Nexmo;
 use Keygen;
 use PDO;
 
-trait MigrarCompraTraits
+trait MigrarVentaComercialTraits
 {
 	
-	public function mc_array_empresa_venta(){
-        $array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086'];
+	public function mv_array_empresa_venta_comercial(){
+        $array_empresas  		    = 		['IACHEM0000007086'];
         return $array_empresas;
     }
-
-
-	private function mv_lista_compras_migrar_agrupado_emitido($array_empresas,$anio)
-	{
-		$array_empresas  		    = 		$this->mc_array_empresa_venta();
-		$anio  		    			= 		2023;
-
-
-		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',$anio)
-											->whereIn('COD_EMPR',$array_empresas)
-											->where('COD_ESTADO','=','1')
-											->pluck('COD_PERIODO')
-											->toArray();
-
-
-		$lista_migrar_compras		=		WEBViewMigrarCompras::leftJoin('WEB.historialmigrar', function ($join) {
-									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
-									                 ->where('WEB.historialmigrar.IND_ASIENTO_MODELO', '=', 1);
-									        })
-											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
-											->whereIn('WEB.viewmigrarcompras.COD_PERIODO',$array_periodo)
-											->whereIn('WEB.viewmigrarcompras.COD_EMPR',$array_empresas)
-											//->where('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE','=','ISCHFC0000013747')
-											->where('WEB.viewmigrarcompras.NOM_ESTADO','=','ENVIADO')
-											->select(DB::raw('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE'))
-											->groupBy('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
-											->get();
-
-
-
-		return $lista_migrar_compras;
-
-	}
-
-
-	private function mv_lista_compras_migrar_agrupado_emitidoxdocumento($array_empresas,$anio,$cod_documento)
-	{
-
-		$array_empresas  		    = 		$array_empresas;
-		$anio  		    			= 		$anio;		
-
-		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',$anio)
-											->whereIn('COD_EMPR',$array_empresas)
-											->where('COD_ESTADO','=','1')
-											->pluck('COD_PERIODO')
-											->toArray();
-
-		$lista_migrar_compras		=		WEBViewMigrarCompras::leftJoin('WEB.historialmigrar', function ($join) {
-									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
-									                 ->where('WEB.historialmigrar.IND_ASIENTO_MODELO', '=', 1);
-									        })
-											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
-											->whereIn('WEB.viewmigrarcompras.COD_PERIODO',$array_periodo)
-											->whereIn('WEB.viewmigrarcompras.COD_EMPR',$array_empresas)
-											->where('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE','=',$cod_documento)
-											->where('WEB.viewmigrarcompras.NOM_ESTADO','=','ENVIADO')
-											->select(DB::raw('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE'))
-											->groupBy('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
-											->get();
-
-
-
-		return $lista_migrar_compras;
-
-	}
-
-
-
-	private function mv_lista_compras_migrar_agrupado_anulado($array_empresas,$anio)
+	
+	private function mv_lista_ventas_migrar_agrupado_emitido_comercial()
 	{
 		
-		$array_empresas  		    = 		$this->mc_array_empresa_venta();
-		$anio  		    			= 		2023;
+		$array_empresas  		    = 		$this->mv_array_empresa_venta_comercial();
 
-		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',$anio)
+		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',2023)
 											->whereIn('COD_EMPR',$array_empresas)
 											->where('COD_ESTADO','=','1')
 											->pluck('COD_PERIODO')
 											->toArray();
 
-		$lista_migrar_compras		=		WEBViewMigrarCompras::leftJoin('WEB.historialmigrar', function ($join) {
-									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
+		$lista_migrar_ventas		=		WEBViewMigrarVenta::leftJoin('WEB.historialmigrar', function ($join) {
+									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+									                 ->where('WEB.historialmigrar.IND_ASIENTO_MODELO', '=', 1);
+									        })
+											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
+											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
+											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
+											->where('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE','=','ISBEFC0000027934')//quitar
+											->where('WEB.viewmigrarventas.NOM_ESTADO','=','EMITIDO')
+											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
+											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+											->get();
+
+		return $lista_migrar_ventas;
+
+	}
+
+
+	private function mv_lista_ventas_migrar_agrupado_anulado_comercial()
+	{
+		
+		$array_empresas  		    = 		$this->mv_array_empresa_venta_comercial();
+
+		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',2023)
+											->whereIn('COD_EMPR',$array_empresas)
+											->where('COD_ESTADO','=','1')
+											->pluck('COD_PERIODO')
+											->toArray();
+
+		$lista_migrar_ventas		=		WEBViewMigrarVenta::leftJoin('WEB.historialmigrar', function ($join) {
+									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
 									                 ->where('WEB.historialmigrar.IND_ANULADO', '=', 1);
 									        })
 											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
-											->whereIn('WEB.viewmigrarcompras.COD_PERIODO',$array_periodo)
-											->whereIn('WEB.viewmigrarcompras.COD_EMPR',$array_empresas)
-											//->where('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE','=','ISCHFC0000013747')
-											->where('WEB.viewmigrarcompras.NOM_ESTADO','=','EXTORNADO')
-											->select(DB::raw('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE'))
-											->groupBy('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
+											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
+											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
+											//->where('WEB.viewmigrarventas.FEC_EMISION','=','2022-01-07')
+											->where('WEB.viewmigrarventas.NOM_ESTADO','=','ANULADO')
+											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
+											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
 											->get();
 
-
-		return $lista_migrar_compras;
+		return $lista_migrar_ventas;
 
 	}
 
 
 
-
-
-	private function mv_agregar_historial_compras($lista_compras_migrar_emitido,$lista_compras_migrar_anulado,$tipo_asiento)
+	private function mv_agregar_historial_ventas_comercial($lista_ventas_migrar_emitida,$lista_ventas_migrar_anulada,$tipo_asiento)
 	{
 	
 		//ver e insertar uno a uno los documentos
-		foreach($lista_compras_migrar_emitido as $index => $item){
+		foreach($lista_ventas_migrar_emitida as $index => $item){
 			
 
 			$documento_anulado 							=   1;
@@ -147,7 +102,7 @@ trait MigrarCompraTraits
 			$historialmigrar 							=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$item->COD_DOCUMENTO_CTBLE)
 															->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
 
-			if($documento_ctble->COD_CATEGORIA_ESTADO_DOC_CTBLE == 'EDC0000000000012'){
+			if($documento_ctble->COD_CATEGORIA_ESTADO_DOC_CTBLE == 'EDC0000000000002'){
 				$documento_anulado 						=   0;
 			}
 
@@ -155,8 +110,8 @@ trait MigrarCompraTraits
 				$cabecera            	 				=	new WEBHistorialMigrar;
 				$cabecera->COD_REFERENCIA 				=   $documento_ctble->COD_DOCUMENTO_CTBLE;
 				$cabecera->TXT_TIPO_REFERENCIA			=   'CMP_DOCUMENTO_CTBLE';
-				$cabecera->COD_CATEGORIA_TIPO_ASIENTO 	=   $tipo_asiento;
-				$cabecera->TXT_CATEGORIA_TIPO_ASIENTO 	=   'COMPRAS';
+				$cabecera->COD_CATEGORIA_TIPO_ASIENTO 	=   'TAS0000000000003';
+				$cabecera->TXT_CATEGORIA_TIPO_ASIENTO 	=   'VENTAS';
 				$cabecera->COD_EMPR 					=   $documento_ctble->COD_EMPR;
 				$cabecera->COD_PERIODO 					=   $documento_ctble->COD_PERIODO;
 				$cabecera->IND_ERROR 					=   -1;
@@ -181,7 +136,7 @@ trait MigrarCompraTraits
 		}
 
 		//ver e insertar uno a uno los documentos
-		foreach($lista_compras_migrar_anulado as $index => $item){
+		foreach($lista_ventas_migrar_anulada as $index => $item){
 			
 
 			$documento_anulado 							=   0;
@@ -189,12 +144,13 @@ trait MigrarCompraTraits
 			$historialmigrar 							=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$item->COD_DOCUMENTO_CTBLE)
 															->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
 
+
 			if(count($historialmigrar)<=0){
 				$cabecera            	 				=	new WEBHistorialMigrar;
 				$cabecera->COD_REFERENCIA 				=   $documento_ctble->COD_DOCUMENTO_CTBLE;
 				$cabecera->TXT_TIPO_REFERENCIA			=   'CMP_DOCUMENTO_CTBLE';
-				$cabecera->COD_CATEGORIA_TIPO_ASIENTO 	=   $tipo_asiento;
-				$cabecera->TXT_CATEGORIA_TIPO_ASIENTO 	=   'COMPRAS';
+				$cabecera->COD_CATEGORIA_TIPO_ASIENTO 	=   'TAS0000000000003';
+				$cabecera->TXT_CATEGORIA_TIPO_ASIENTO 	=   'VENTAS';
 				$cabecera->COD_EMPR 					=   $documento_ctble->COD_EMPR;
 				$cabecera->COD_PERIODO 					=   $documento_ctble->COD_PERIODO;
 				$cabecera->IND_ERROR 					=   -1;
@@ -220,7 +176,9 @@ trait MigrarCompraTraits
 	}
 
 
-	private function mv_update_historial_compras($documento_ctble_cod,$tipo_asiento)
+
+
+	private function mv_update_historial_ventas_comercial($documento_ctble_cod,$tipo_asiento)
 	{
 	
 
@@ -231,12 +189,11 @@ trait MigrarCompraTraits
 		$cod_contable 				= 		$documento_ctble->COD_DOCUMENTO_CTBLE;
 
 		$documento_anulado 			=   	1;
-		if($documento_ctble->COD_CATEGORIA_ESTADO_DOC_CTBLE == 'EDC0000000000012'){
+		if($documento_ctble->COD_CATEGORIA_ESTADO_DOC_CTBLE == 'EDC0000000000002'){
 			$documento_anulado 		=   	0;
 		}
 
-
-        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.BUSCAR_ASIENTO_MODELO 
+        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.BUSCAR_ASIENTO_MODELO_COMERCIAL 
 											@anio = ?,
 											@empresa = ?,
 											@cod_contable = ?,
@@ -284,25 +241,14 @@ trait MigrarCompraTraits
 	}
 
 
-	private function mv_lista_compras_asignar($array_empresas,$tipo_asiento)
+	private function mv_lista_ventas_asignar_comercial($tipo_asiento)
 	{
 		
+		$array_empresas  		    = 		$this->mv_array_empresa_venta_comercial();
 		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
 											->where('IND_ASIENTO_MODELO','=',0)
 											->where('IND_ERROR','<>',1)
-											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
-											->get();
-		return $lista_ventas;
-
-	}
-
-	private function mv_lista_compras_asignarxdocumento($array_empresas,$tipo_asiento,$documento)
-	{
-		
-		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
-											->where('IND_ASIENTO_MODELO','=',0)
-											->where('COD_REFERENCIA','=',$documento)
-											->where('IND_ERROR','<>',1)
+											->where('COD_REFERENCIA','=','ISBEFC0000027934')//quitar
 											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
 											->get();
 		return $lista_ventas;
@@ -310,7 +256,9 @@ trait MigrarCompraTraits
 	}
 
 
-	private function mv_asignar_asiento_modelo($historialmigrar,$tipo_asiento)
+
+
+	private function mv_asignar_asiento_modelo_comercial($historialmigrar,$tipo_asiento)
 	{
 	
 		$documento_ctble 			= 		CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$historialmigrar->COD_REFERENCIA)->first();
@@ -319,10 +267,15 @@ trait MigrarCompraTraits
 		$empresa 					= 		$documento_ctble->COD_EMPR;
 		$cod_contable 				= 		$documento_ctble->COD_DOCUMENTO_CTBLE;
 		$asiento_modelo_id 			= 		trim($historialmigrar->COD_ASIENTO_MODELO);
-		$anulado 					= 		$historialmigrar->IND_ANULADO;
+
+		if($documento_ctble->ESTADO_ELEC == 'R'){
+		    $anulado 				= 		0;
+		}else{
+			$anulado 				= 		$historialmigrar->IND_ANULADO;	
+		}
 
 
-        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO 
+        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO_COMERCIAL 
 											@anio = ?,
 											@empresa = ?,
 											@cod_contable = ?,
@@ -345,63 +298,5 @@ trait MigrarCompraTraits
 
 	}
 
-	private function mc_asignar_totales_ceros()
-	{
-	
-        $stmt 	= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.ASIENTOS_TOTALES_CEROS');
-        $stmt->execute();
-
-        return 1;
-
-	}
-
-
-	private function mv_asignar_asiento_modelo_x_fechaemision($historialmigrar,$tipo_asiento,$fechaemision,$igv)
-	{
-	
-		$documento_ctble 			= 		CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$historialmigrar->COD_REFERENCIA)->first();
-		$periodo 					= 		CONPeriodo::where('COD_PERIODO','=',$documento_ctble->COD_PERIODO)->first();
-		$anio 						= 		$periodo->COD_ANIO;
-		$empresa 					= 		$documento_ctble->COD_EMPR;
-		$cod_contable 				= 		$documento_ctble->COD_DOCUMENTO_CTBLE;
-		$asiento_modelo_id 			= 		trim($historialmigrar->COD_ASIENTO_MODELO);
-		$ind_recalcular 			= 		1;
-
-
-		if($documento_ctble->ESTADO_ELEC == 'R'){
-		    $anulado 				= 		0;
-		}else{
-			$anulado 				= 		$historialmigrar->IND_ANULADO;	
-		}
-
-
-        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO 
-											@anio = ?,
-											@empresa = ?,
-											@cod_contable = ?,
-											@cod_tipo_asiento = ?,
-											@asiento_modelo_id = ?,
-											@ind_anulado = ?,
-											@fechaemision = ?,
-											@igv = ?,
-											@ind_recalcular = ?');
-
-        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
-        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
-        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
-        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
-        $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
-        $stmt->bindParam(6, $anulado  ,PDO::PARAM_STR);
-        $stmt->bindParam(7, $fechaemision  ,PDO::PARAM_STR);
-        $stmt->bindParam(8, $igv  ,PDO::PARAM_STR);
-        $stmt->bindParam(9, $ind_recalcular  ,PDO::PARAM_STR);
-        $stmt->execute();
-
-		$historialmigrar->IND_ASIENTO_MODELO 	=   1;
-		$historialmigrar->IND_CORREO 			=   -1;
-		$historialmigrar->save();
-
-
-	}
 
 }
