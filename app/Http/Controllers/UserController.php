@@ -182,11 +182,8 @@ class UserController extends Controller
 		$lista_documento_sin_enviar 	= 	$this->al_lista_documentos_sin_enviar_agrupado(Session::get('empresas_meta')->COD_EMPR);
 		$lista_documento_correlativo 	= 	$this->al_lista_documentos_correlativos_faltante_agrupado(Session::get('empresas_meta')->COD_EMPR);
 
-
 		$lista_compras 					= 	$this->mv_lista_ventas_observadas($tipo_asiento_compra,Session::get('empresas_meta')->COD_EMPR,$anio);
 		$lista_productos_sc_comp 		= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento_compra,Session::get('empresas_meta')->COD_EMPR,$anio);
-
-		//dd($lista_productos_sc_comp);
 
         $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);

@@ -103,8 +103,7 @@ trait AlertaTraits
                                             AND TIPO_DOC.TXT_INDICADOR=1 
                                             AND DC.COD_CATEGORIA_TIPO_DOC <> 'TDO0000000000009'
                                             AND DC.IND_COMPRA_VENTA='V'
-                                            AND YEAR(DC.FEC_EMISION) >= 2022
-
+                                            AND YEAR(DC.FEC_EMISION) >= 2023
                                             GROUP by DC.TXT_EMPR_EMISOR,DC.COD_EMPR,TD.NOM_CATEGORIA,TD.COD_CATEGORIA,DC.NRO_SERIE
                                             HAVING ((CAST(MAX(DC.NRO_DOC) AS INT) - CAST(MIN(DC.NRO_DOC) AS INT) + 1) -  COUNT(DC.NRO_DOC)) >0");
 
