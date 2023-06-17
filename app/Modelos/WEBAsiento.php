@@ -114,4 +114,13 @@ class WEBAsiento extends Model
     }
 
 
+
+    public function scopeTransGratuita($query,$trangratuita){
+        if(trim($trangratuita) != 'TODOS'){
+            $query->where('IND_GRATUITO', '=', $trangratuita);
+        }
+    }
+
+
+
 }

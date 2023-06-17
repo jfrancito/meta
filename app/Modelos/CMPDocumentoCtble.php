@@ -35,7 +35,7 @@ class CMPDocumentoCtble extends Model
 
     public function scopeTransGratuita($query,$trangratuita){
         if(trim($trangratuita) != 'TODOS'){
-            $query->where('IND_GRATUITO', '=', $trangratuita);
+            $query->where('CMP.DOCUMENTO_CTBLE.IND_GRATUITO', '=', $trangratuita);
         }
     }
 

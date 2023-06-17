@@ -486,6 +486,7 @@ trait ArchivoTraits
 
 
 			$nombre_cliente_12  	= 	$txt_anulado.$empresa->NOM_EMPR;
+
 			$v_f_e_13  				= 	'0.00';//falta
 
 			//suma de las 70
@@ -498,8 +499,10 @@ trait ArchivoTraits
 
 			$codigo_15  			= 	'0.00';//falta
 			$suma_40_16 			= 	$this->ar_suma_igv_40($item,$indicador_afecto,$tipo_documento_06);
+
 			$suma_40_16             = 	number_format($suma_40_16, 2, '.', '');
 			$codigo_17  			= 	'0.00';//falta
+
 
 
 
@@ -510,7 +513,6 @@ trait ArchivoTraits
 				//$codigo_19 				= 	$this->ar_suma_subtotal_7($item,$tipo_documento_06);
 				$codigo_18              = 	number_format($codigo_18, 2, '.', '');
 			}
-
 
 
 			$codigo_20  			= 	'0.00';//falta

@@ -32,7 +32,7 @@ class AlertaCotroller extends Controller
 
 		$lista_documento_sin_enviar 	= 	$this->al_lista_documentos_sin_enviar_detallado($empresa_id);
 
-		dd($lista_documento_sin_enviar);
+		//dd($lista_documento_sin_enviar);
 
 		return View::make('alerta.modal.ajax.mlistadetalledocumentosinenviarsunat',
 						 [

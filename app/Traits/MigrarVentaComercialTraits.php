@@ -49,7 +49,7 @@ trait MigrarVentaComercialTraits
 											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
 											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
 											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
-											->where('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE','=','ISBEFC0000027934')//quitar
+											//->where('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE','=','ISBEFC0000028081')//quitar
 											->where('WEB.viewmigrarventas.NOM_ESTADO','=','EMITIDO')
 											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
 											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
@@ -248,7 +248,7 @@ trait MigrarVentaComercialTraits
 		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
 											->where('IND_ASIENTO_MODELO','=',0)
 											->where('IND_ERROR','<>',1)
-											->where('COD_REFERENCIA','=','ISBEFC0000027934')//quitar
+											//->where('COD_REFERENCIA','=','ISBEFC0000028081')//quitar
 											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
 											->get();
 		return $lista_ventas;

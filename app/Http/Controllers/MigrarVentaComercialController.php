@@ -38,6 +38,9 @@ class MigrarVentaComercialController extends Controller
 		$tipo_asiento 						=	'TAS0000000000003';	
 		//buscar asiento 
 		$lista_ventas_migrar_emitido 		= 	$this->mv_lista_ventas_migrar_agrupado_emitido_comercial();
+
+		//dd($lista_ventas_migrar_emitido);
+
 		$lista_ventas_migrar_anulado 		= 	$this->mv_lista_ventas_migrar_agrupado_anulado_comercial();
 		//dd($lista_ventas_migrar_emitido);
 		//dd($lista_ventas_migrar_emitido);

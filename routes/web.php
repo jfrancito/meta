@@ -121,6 +121,14 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');
 
 
+	Route::any('/gestion-reporte-registro-ventas/{idopcion}', 'ReporteVentasController@actionGestionReporteRegistroVenta');
+	Route::any('/ajax-buscar-reporte-registro-venta', 'ReporteVentasController@actionAjaxBuscarReporteRegistroVenta');
+	Route::any('/descargar-registro-venta-excel', 'ReporteVentasController@actionDescargarRegistroVentaExcel');
+	/*Route::any('/registro-ventas-txt', 'ArchivoController@actionRegistroVentasTxt');
+	Route::any('/archivo-ple-excel/{anio}/{tipo_asiento_id}/{periodo_id}/{documento}', 'ArchivoController@actionDescargarArchivoPleExcel');
+	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');*/
+
+
 	Route::any('/gestion-migracion-erp-navasoft/{idopcion}', 'MigracionNavasoftController@actionGestionMigracionNavasoft');
 	Route::any('/descargar-archivo-migrar-navasoft', 'MigracionNavasoftController@actionDescargarArchivoMigrarNavasoft');
 	Route::any('/ajax-buscar-lista-navasotf', 'MigracionNavasoftController@actionAjaxBuscarListaNavasoft');

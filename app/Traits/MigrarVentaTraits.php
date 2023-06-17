@@ -310,10 +310,15 @@ trait MigrarVentaTraits
 											->where('CON.PERIODO.COD_ANIO','=',$anio)
 											->where('IND_ASIENTO_MODELO','=',-1)
 											->where('IND_ERROR','=',1)
+
 											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
 											->where('TXT_ERROR','=','Hay productos que no tienen asociados cuenta contable')
 											->pluck('COD_REFERENCIA')
+											->take(1500)
 											->toArray();
+
+		//dd($array_ventas_con_error);
+
 
 		if($tipo_asiento=='TAS0000000000003'){
 

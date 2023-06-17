@@ -295,29 +295,34 @@ class ArchivoController extends Controller
 	    if($tipo_asiento_id == 'TAS0000000000003'){
 
 	    	//array de documentos
-		    $array_asientos 		= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
-		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->pluck('TXT_REFERENCIA')
-                                        ->toArray();
+		    // $array_asientos 		= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+		    // 							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    // 							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    // 							->pluck('TXT_REFERENCIA')
+      //                                   ->toArray();
 
-		    $array_documentos 		= 	CMPDocumentoCtble::whereIn('COD_DOCUMENTO_CTBLE',$array_asientos)
+                        
+		    // $array_documentos 		= 	CMPDocumentoCtble::whereIn('COD_DOCUMENTO_CTBLE',$array_asientos)
+		    // 							->TransGratuita($documento)
+		    // 							->pluck('COD_DOCUMENTO_CTBLE')
+      //                                   ->toArray();
+
+		    $listaasiento 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE', '=', 'WEB.asientos.TXT_REFERENCIA')
 		    							->TransGratuita($documento)
-		    							->pluck('COD_DOCUMENTO_CTBLE')
-                                        ->toArray();
-
-		    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
-		    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-		    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+		    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+		    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 		    							//->where('COD_ASIENTO','=','ICCHAC0000005534')
-		    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->whereIn('TXT_REFERENCIA',$array_documentos)
-		    							->orderby('FEC_ASIENTO','asc')
+		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    							//->whereIn('TXT_REFERENCIA',$array_documentos)
+		    							->orderby('WEB.asientos.FEC_ASIENTO','asc')
 		    							->get();
 
 			$nombre = $this->ar_crear_nombre_venta($anio,$mes).'.txt';
 			$path = storage_path('ventas/'.$nombre);
 	    	$lista_asiento = $this->archivo_ple_ventas($anio,$mes,$listaasiento,$nombre,$path);
+
+
 	    	$funcion 				= 	$this;
 
 			return View::make('archivople/ajax/alistaregistrodiarioventas',

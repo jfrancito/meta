@@ -774,7 +774,9 @@ trait GeneralesTraits
 		$array 						= 	CONPeriodo::where('COD_ESTADO','=',1)
 										->where('COD_ANIO','=',$anio)
 										->where('COD_EMPR','=',$cod_empresa)
+										->orderBy('COD_MES','DESC')
 		        						->pluck('TXT_NOMBRE','COD_PERIODO')
+		        						
 										->toArray();
 
 		if($todo=='TODO'){
