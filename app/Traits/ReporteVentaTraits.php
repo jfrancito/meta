@@ -109,8 +109,11 @@ trait ReporteVentaTraits
 				}
 
 				if($item->tipo_ivap_id == 'CTV0000000000001'){
-					$codigo_19  			=  	$this->rv_suma_subtotal_7_tt($detallelistaasiento,$tipo_documento_06,$item->COD_ASIENTO);
-					$codigo_20  			=  	$this->rv_suma_ivap_40_tt($detallelistaasiento,$tipo_documento_06,$item->COD_ASIENTO);
+					// $codigo_19  			=  	$this->rv_suma_subtotal_7_tt($detallelistaasiento,$tipo_documento_06,$item->COD_ASIENTO);
+					// $codigo_20  			=  	$this->rv_suma_ivap_40_tt($detallelistaasiento,$tipo_documento_06,$item->COD_ASIENTO);
+					$codigo_19				=	$item->SIETE_CAN_HABER_MN;
+					$codigo_20				=	$item->IVAP_CAN_HABER_MN;
+
 				}
 			}
 

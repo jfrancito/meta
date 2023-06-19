@@ -97,35 +97,53 @@ class ReporteVentasController extends Controller
 		    $listaasiento 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE', '=', 'WEB.asientos.TXT_REFERENCIA')
 		    							->join('WEB.historialmigrar', 'WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.asientos.TXT_REFERENCIA')
 		    							->join('WEB.asientomodelos', 'WEB.asientomodelos.id', '=', 'WEB.historialmigrar.COD_ASIENTO_MODELO')
+										->leftJoin(
+											        DB::raw("
+											            (select COD_ASIENTO, (SUM(CAN_DEBE_MN) + SUM(CAN_HABER_MN)) SIETE_CAN_HABER_MN  
+															from WEB.asientomovimientos where IND_PRODUCTO = 1 
+															GROUP BY COD_ASIENTO) siete
+											        "), 'WEB.asientos.COD_ASIENTO', '=', 'siete.COD_ASIENTO'
+										    		)
+										->leftJoin(
+											        DB::raw("
+											            (select COD_ASIENTO, (SUM(CAN_DEBE_MN) + SUM(CAN_HABER_MN)) IVAP_CAN_HABER_MN  
+															from WEB.asientomovimientos where TXT_CUENTA_CONTABLE like '4%'
+															GROUP BY COD_ASIENTO) IVAP
+											        "), 'WEB.asientos.COD_ASIENTO', '=', 'IVAP.COD_ASIENTO'
+										    		)
 		    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
 		    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 		    							//->where('COD_ASIENTO','=','ICCHAC0000005534')
 		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id')
-		    							->orderby('WEB.asientos.FEC_ASIENTO','asc')
+		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id','siete.SIETE_CAN_HABER_MN','IVAP.IVAP_CAN_HABER_MN')
+		    							//->with('asientomovimiento:COD_ASIENTO,CAN_DEBE_MN,CAN_HABER_MN')
+		    							//->where('WEB.asientos.COD_ASIENTO','=','ISRJAC0000000001')
+		    							//->orderby('WEB.asientos.FEC_ASIENTO','asc')
 		    							->get();
 
-		    $detallelistaasiento 	= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
-		    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
-		    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
-		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->select('WEB.asientomovimientos.*','')
-		    							->select(DB::raw("WEB.asientomovimientos.* , 
-		    												(CAN_DEBE_MN + CAN_HABER_MN) as CAN_DB_T,
-															CASE WHEN TXT_CUENTA_CONTABLE LIKE '4%' THEN '1' 
-															     ELSE '0' 
-															     END 
-															AS ind_ivap
-		    												"))
-		    							->get()
-		    							->toArray();
 
-		    //dd($detallelistaasiento);
 
+
+		    // $detallelistaasiento 	= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+		    // 							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+		    // 							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    // 							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+		    // 							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    // 							//->select('WEB.asientomovimientos.*','')
+		    // 							->select(DB::raw("WEB.asientomovimientos.* , 
+		    // 												(CAN_DEBE_MN + CAN_HABER_MN) as CAN_DB_T,
+						// 									CASE WHEN TXT_CUENTA_CONTABLE LIKE '4%' THEN '1' 
+						// 									     ELSE '0' 
+						// 									     END 
+						// 									AS ind_ivap
+		    // 												"))
+		    // 							->get()
+		    // 							->toArray();
+
+		    $detallelistaasiento 	=	array();
 		  	$detcoleccion 			= 	collect($detallelistaasiento);
-
+		    //dd($listaasiento);
 			// $detcoleccion 			= 	$detcoleccion->where('COD_ASIENTO', 'ISLMAC0000016754')
 			// 					 		->where('COD_ESTADO','=',1)
 			// 					 		->where('IND_PRODUCTO', '=', 1)->sum('CAN_DB_T');
@@ -178,30 +196,48 @@ class ReporteVentasController extends Controller
 		    $listaasiento 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE', '=', 'WEB.asientos.TXT_REFERENCIA')
 		    							->join('WEB.historialmigrar', 'WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.asientos.TXT_REFERENCIA')
 		    							->join('WEB.asientomodelos', 'WEB.asientomodelos.id', '=', 'WEB.historialmigrar.COD_ASIENTO_MODELO')
+										->leftJoin(
+											        DB::raw("
+											            (select COD_ASIENTO, (SUM(CAN_DEBE_MN) + SUM(CAN_HABER_MN)) SIETE_CAN_HABER_MN  
+															from WEB.asientomovimientos where IND_PRODUCTO = 1 
+															GROUP BY COD_ASIENTO) siete
+											        "), 'WEB.asientos.COD_ASIENTO', '=', 'siete.COD_ASIENTO'
+										    		)
+										->leftJoin(
+											        DB::raw("
+											            (select COD_ASIENTO, (SUM(CAN_DEBE_MN) + SUM(CAN_HABER_MN)) IVAP_CAN_HABER_MN  
+															from WEB.asientomovimientos where TXT_CUENTA_CONTABLE like '4%'
+															GROUP BY COD_ASIENTO) IVAP
+											        "), 'WEB.asientos.COD_ASIENTO', '=', 'IVAP.COD_ASIENTO'
+										    		)
 		    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
 		    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 		    							//->where('COD_ASIENTO','=','ICCHAC0000005534')
 		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id')
-		    							->orderby('WEB.asientos.FEC_ASIENTO','asc')
+		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id','siete.SIETE_CAN_HABER_MN','IVAP.IVAP_CAN_HABER_MN')
+		    							//->with('asientomovimiento:COD_ASIENTO,CAN_DEBE_MN,CAN_HABER_MN')
+		    							//->where('WEB.asientos.COD_ASIENTO','=','ISRJAC0000000001')
+		    							//->orderby('WEB.asientos.FEC_ASIENTO','asc')
 		    							->get();
 
-		    $detallelistaasiento 	= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
-		    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
-		    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
-		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->select('WEB.asientomovimientos.*','')
-		    							->select(DB::raw("WEB.asientomovimientos.* , 
-		    												(CAN_DEBE_MN + CAN_HABER_MN) as CAN_DB_T,
-															CASE WHEN TXT_CUENTA_CONTABLE LIKE '4%' THEN '1' 
-															     ELSE '0' 
-															     END 
-															AS ind_ivap
-		    												"))
-		    							->get()
-		    							->toArray();
+		    $detallelistaasiento 	=	array();
+
+		    // $detallelistaasiento 	= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+		    // 							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+		    // 							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    // 							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+		    // 							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+		    // 							->select('WEB.asientomovimientos.*','')
+		    // 							->select(DB::raw("WEB.asientomovimientos.* , 
+		    // 												(CAN_DEBE_MN + CAN_HABER_MN) as CAN_DB_T,
+						// 									CASE WHEN TXT_CUENTA_CONTABLE LIKE '4%' THEN '1' 
+						// 									     ELSE '0' 
+						// 									     END 
+						// 									AS ind_ivap
+		    // 												"))
+		    // 							->get()
+		    // 							->toArray();
 
 		  	$detcoleccion 			= 	collect($detallelistaasiento);
 
