@@ -65,6 +65,10 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/guardar-compras-cuenta-contable/{idopcion}', 'PlanContableController@actionGuardarComprasPlanContable');
 
 
+
+	Route::any('/gestion-segunda-ventas/{idopcion}', 'SegundaVentaController@actionListarSegundaVenta');
+
+
 	Route::any('/gestion-asiento-modelo/{idopcion}', 'AsientoModeloController@actionListarAsientoModelo');
 	Route::any('/ajax-asiento-modelo', 'AsientoModeloController@actionAjaxListarAsientoModelo');
 	Route::any('/agregar-asiento-modelo/{idopcion}', 'AsientoModeloController@actionAgregarAsientoModelo');
@@ -124,9 +128,7 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-reporte-registro-ventas/{idopcion}', 'ReporteVentasController@actionGestionReporteRegistroVenta');
 	Route::any('/ajax-buscar-reporte-registro-venta', 'ReporteVentasController@actionAjaxBuscarReporteRegistroVenta');
 	Route::any('/descargar-registro-venta-excel', 'ReporteVentasController@actionDescargarRegistroVentaExcel');
-	/*Route::any('/registro-ventas-txt', 'ArchivoController@actionRegistroVentasTxt');
-	Route::any('/archivo-ple-excel/{anio}/{tipo_asiento_id}/{periodo_id}/{documento}', 'ArchivoController@actionDescargarArchivoPleExcel');
-	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');*/
+
 
 
 	Route::any('/gestion-migracion-erp-navasoft/{idopcion}', 'MigracionNavasoftController@actionGestionMigracionNavasoft');

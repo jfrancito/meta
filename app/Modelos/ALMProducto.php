@@ -13,7 +13,10 @@ class ALMProducto extends Model
     public $incrementing = false;
     public $keyType = 'string';
 
-
+    public function inventariosegundaventa()
+    {
+        return $this->hasMany('App\Modelos\WEBInventarioSegundaVenta', 'COD_PERIODO', 'id');
+    }
 
     public function scopeCodProducto($query,$producto_id){
         if(trim($producto_id) != ''){

@@ -17,7 +17,6 @@ class CONPeriodo extends Model
         return $this->hasMany('App\Modelos\WEBAsiento', 'COD_PERIODO', 'id');
     }
 
-
     public function migrar_venta()
     {
         return $this->hasMany('App\Modelos\WEBHistorialMigrar', 'COD_PERIODO', 'COD_PERIODO');
@@ -26,6 +25,11 @@ class CONPeriodo extends Model
     public function documento_ctble()
     {
         return $this->hasMany('App\Modelos\CMPDocumentoCtble', 'COD_PERIODO', 'COD_PERIODO');
+    }
+
+    public function inventariosegundaventa()
+    {
+        return $this->hasMany('App\Modelos\WEBInventarioSegundaVenta', 'COD_PERIODO', 'id');
     }
 
 

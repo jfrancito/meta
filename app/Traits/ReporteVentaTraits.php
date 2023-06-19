@@ -151,7 +151,7 @@ trait ReporteVentaTraits
 
 	    	$array_nuevo_asiento 	=	array();
 			$array_nuevo_asiento    =	array(
-				"tipo_venta_00" 			=> '',
+				"tipo_venta_00" 			=> $item->alias,
 				"periodo_01" 				=> $periodo_01,
 				"correlativo_02" 			=> $correlativo_02,
 				"codigo_03" 				=> $codigo_03,
