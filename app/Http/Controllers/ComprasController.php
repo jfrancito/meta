@@ -19,6 +19,8 @@ use App\Modelos\WEBCuentaDetraccion;
 use App\Modelos\CONPeriodo;
 use App\Modelos\STDEmpresa;
 use App\Modelos\WEBHistorialMigrar;
+use App\Modelos\SGDUsuario;
+
 
 
 use App\Traits\GeneralesTraits;
@@ -1627,6 +1629,9 @@ class ComprasController extends Controller
 		$combo_activo 			= 	array('1' => 'ACTIVO','0' => 'ELIMINAR');
 		$defecto_activo			= 	'1';
 
+		//usuario registro factura
+	    $usuario 				= 	SGDUsuario::where('COD_USUARIO','=',$asiento->COD_USUARIO_CREA_AUD)->first();
+
 
 
 		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
@@ -1648,16 +1653,16 @@ class ComprasController extends Controller
 						 	'serie'						=> $serie,
 						 	'documento'					=> $documento,
 
-
-						 	'combo_nivel_pc' 		=> $combo_nivel_pc,
-						 	'combo_cuenta' 			=> $combo_cuenta,
-						 	'combo_partida' 		=> $combo_partida,
-						 	'defecto_nivel' 		=> $defecto_nivel,
-						 	'defecto_cuenta' 		=> $defecto_cuenta,
-						 	'defecto_partida' 		=> $defecto_partida,
-						 	'combo_activo' 			=> $combo_activo,
-						 	'defecto_activo' 		=> $defecto_activo,
-						 	'ruta' 					=> $ruta,
+						 	'combo_nivel_pc' 			=> $combo_nivel_pc,
+						 	'combo_cuenta' 				=> $combo_cuenta,
+						 	'combo_partida' 			=> $combo_partida,
+						 	'defecto_nivel' 			=> $defecto_nivel,
+						 	'defecto_cuenta' 			=> $defecto_cuenta,
+						 	'defecto_partida' 			=> $defecto_partida,
+						 	'combo_activo' 				=> $combo_activo,
+						 	'defecto_activo' 			=> $defecto_activo,
+						 	'ruta' 						=> $ruta,
+						 	'usuario' 					=> $usuario,
 
 						 	'ajax' 						=> true,						 	
 						 ]);

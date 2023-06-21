@@ -34,6 +34,10 @@
 		</div>
     @endif
 
+	<div class="col-xs-4">
+		Usuario de osiris registro: {{$usuario->NOM_TRABAJADOR}}
+	</div>
+
 
 </div>
 <div class="modal-body" style="padding: 0px;">
