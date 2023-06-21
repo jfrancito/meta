@@ -51,7 +51,9 @@ $(document).ready(function(){
     $(".movilidad").on('click','.enviardata', function() {
 
         event.preventDefault();
-        var anio                    =   $('#anio').val();
+        var agregarinventario       =   $('#agregarinventario').val();
+
+        
         var periodo_id              =   $('#periodo_id').val();
         var enviardata              =   $(this).attr('data_archivo');
         var idopcion                =   $('#idopcion').val();

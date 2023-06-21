@@ -15,8 +15,8 @@
               <div class="panel panel-default panel-border-color panel-border-color-success">
                 <div class="panel-heading">Segunda Venta
                   <div class="tools tooltiptop">
-                    <a href="#" class="tooltipcss opciones buscarplancontable">
-                      <span class="tooltiptext">Buscar Plan Contable</span>
+                    <a href="#" class="tooltipcss opciones buscarinventario">
+                      <span class="tooltiptext">Buscar inventario</span>
                       <span class="icon mdi mdi-search"></span>
                     </a>
                   </div>
@@ -62,6 +62,12 @@
 
 @section('script')
 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.extensions.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.numeric.extensions.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/inputmask.date.extensions.js') }}" type="text/javascript"></script> 
+  <script src="{{ asset('public/js/general/inputmask/jquery.inputmask.js') }}" type="text/javascript"></script>
+
 
   <script src="{{ asset('public/lib/datatables/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
   <script src="{{ asset('public/lib/datatables/js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
@@ -102,6 +108,13 @@
       App.dataTables();
       $('[data-toggle="tooltip"]').tooltip();
       $('form').parsley();
+
+      $('.dinero').inputmask({ 'alias': 'numeric', 
+      'groupSeparator': ',', 'autoGroup': true, 'digits': 4, 
+      'digitsOptional': false, 
+      'prefix': '', 
+      'placeholder': '0'});
+
 
     });
 

@@ -1,9 +1,9 @@
 
 <!-- Configuracion-->
-<div id="modal-configuracion-plan-contable" class="modal-container colored-header colored-header-primary modal-effect-8">
+<div id="modal-configuracion-segunda-venta" class="modal-container colored-header colored-header-primary modal-effect-8">
   <div class="modal-content ">
 
-	<div class='modal-configuracion-plan-contable-container'>
+	<div class='modal-configuracion-segunda-venta-container'>
 
 	</div>
 

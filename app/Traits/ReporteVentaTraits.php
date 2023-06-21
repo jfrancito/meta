@@ -148,10 +148,17 @@ trait ReporteVentaTraits
 			}
 
 
+			$alias 					=	$item->alias;
+			if($item->IND_GRATUITO==1){
+				$alias 					=	$alias.' - TRANSFERENCIA GRATUITA';
+			}
+			if($item->ind_boni>0){
+				$alias 					=	$alias.' - BONIFICACION';
+			}
 
 	    	$array_nuevo_asiento 	=	array();
 			$array_nuevo_asiento    =	array(
-				"tipo_venta_00" 			=> $item->alias,
+				"tipo_venta_00" 			=> $alias,
 				"periodo_01" 				=> $periodo_01,
 				"correlativo_02" 			=> $correlativo_02,
 				"codigo_03" 				=> $codigo_03,

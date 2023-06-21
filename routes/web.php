@@ -30,11 +30,9 @@ Route::get('/cambiarperfil', 'UserController@actionCambiarPerfil');
 Route::get('/migrar-ventas', 'MigrarVentaController@actionMigrarVentas');
 Route::get('/migrar-ventas-comercial', 'MigrarVentaComercialController@actionMigrarVentasComercial');
 
-
 Route::get('/migrar-compras', 'MigrarCompraController@actionMigrarCompras');
 Route::get('/migrar-recibo-honorario', 'MigrarReciboHonorarioController@actionMigrarReciboHonorario');
 Route::get('/migrar-total-ceros', 'MigrarVentaController@actionMigrarTotalCeros');
-
 
 Route::get('/actualizar-tipo-cambio-sbs', 'TipoCambioController@actionActualizarTipoCambio');
 Route::get('/actualizar-tipo-cambio', 'TipoCambioController@actionActualizarTipoCambioNormal');
@@ -64,9 +62,11 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-combo-cuentacontable-xnivel', 'PlanContableController@actionAjaxComboCuentaContableNivel');
 	Route::any('/guardar-compras-cuenta-contable/{idopcion}', 'PlanContableController@actionGuardarComprasPlanContable');
 
-
-
 	Route::any('/gestion-segunda-ventas/{idopcion}', 'SegundaVentaController@actionListarSegundaVenta');
+	Route::any('/ajax-segunda-ventas', 'SegundaVentaController@actionAjaxSegundaVenta');
+	Route::any('/ajax-modal-configuracion-segunda-venta', 'SegundaVentaController@actionAjaxModalConfiguracionSV');
+	Route::any('/guardar-configuracio-segunda-venta/{idopcion}', 'SegundaVentaController@actionGuardarConfiguracionSV');
+
 
 
 	Route::any('/gestion-asiento-modelo/{idopcion}', 'AsientoModeloController@actionListarAsientoModelo');

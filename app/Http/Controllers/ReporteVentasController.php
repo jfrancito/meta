@@ -19,11 +19,15 @@ use App\Modelos\WEBAsiento;
 use App\Modelos\WEBAsientoMovimiento;
 use App\Modelos\CMPDocumentoCtble;
 use App\Modelos\CONPeriodo;
+use App\Modelos\WEBInventarioSegundaVenta;
+
 
 use App\Traits\GeneralesTraits;
 use App\Traits\AsientoModeloTraits;
 use App\Traits\PlanContableTraits;
 use App\Traits\ReporteVentaTraits;
+
+
 
 use View;
 use Session;
@@ -41,6 +45,10 @@ class ReporteVentasController extends Controller
 	use AsientoModeloTraits;
 	use PlanContableTraits;
 	use ReporteVentaTraits;
+
+
+
+
 
 	public function actionGestionReporteRegistroVenta($idopcion)
 	{
@@ -88,6 +96,8 @@ class ReporteVentasController extends Controller
 		$tipo_asiento_id 		=   $request['tipo_asiento_id'];
 		$periodo_id 			=   $request['periodo_id'];
 		$idopcion 				=   $request['idopcion'];
+	    $empresa_id 			=	Session::get('empresas_meta')->COD_EMPR;
+		$tipo_asiento_id 		=   'TAS0000000000003';
 
 		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
 	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT);
@@ -111,19 +121,39 @@ class ReporteVentasController extends Controller
 															GROUP BY COD_ASIENTO) IVAP
 											        "), 'WEB.asientos.COD_ASIENTO', '=', 'IVAP.COD_ASIENTO'
 										    		)
+
+										->leftJoin(
+											        DB::raw("
+											            (
+															select count(dd.COD_TABLA) ind_boni,dd.COD_TABLA from WEB.asientos asi
+															inner join CMP.DETALLE_PRODUCTO dd on asi.TXT_REFERENCIA = dd.COD_TABLA
+															where asi.COD_EMPR = '".$empresa_id."'
+															and asi.COD_CATEGORIA_TIPO_ASIENTO = '".$tipo_asiento_id."'
+															and asi.COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000025'
+															and asi.COD_PERIODO = '".$periodo_id."'
+															and dd.COD_OPERACION_AUX = 1
+															group by dd.COD_TABLA
+														) boni
+											        "), 'WEB.asientos.TXT_REFERENCIA', '=', 'boni.COD_TABLA'
+										    		)
 		    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
 		    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 		    							//->where('COD_ASIENTO','=','ICCHAC0000005534')
 		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id','WEB.asientomodelos.alias','siete.SIETE_CAN_HABER_MN','IVAP.IVAP_CAN_HABER_MN')
+		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id',
+		    										'WEB.asientomodelos.alias',
+		    										'siete.SIETE_CAN_HABER_MN',
+		    										'IVAP.IVAP_CAN_HABER_MN',
+		    										'CMP.DOCUMENTO_CTBLE.IND_GRATUITO',
+		    										'boni.ind_boni')
 		    							//->with('asientomovimiento:COD_ASIENTO,CAN_DEBE_MN,CAN_HABER_MN')
 		    							//->where('WEB.asientos.COD_ASIENTO','=','ISRJAC0000000001')
 		    							//->orderby('WEB.asientos.FEC_ASIENTO','asc')
 		    							->get();
 
 
-
+		   	//dd($listaasiento);
 
 		    // $detallelistaasiento 	= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
 		    // 							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
@@ -185,6 +215,9 @@ class ReporteVentasController extends Controller
 		$tipo_asiento_id 		=   $request['tipo_asiento_id'];
 		$data_archivo 			=   $request['data_archivo'];
 
+	    $empresa_id 			=	Session::get('empresas_meta')->COD_EMPR;
+		$tipo_asiento_id 		=   'TAS0000000000003';
+
 		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
 	   	$mes 					= 	str_pad($periodo->COD_MES, 2, "0", STR_PAD_LEFT); 
 
@@ -193,6 +226,7 @@ class ReporteVentasController extends Controller
 
 
 	    	//ARCHIVO PLE
+
 		    $listaasiento 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE', '=', 'WEB.asientos.TXT_REFERENCIA')
 		    							->join('WEB.historialmigrar', 'WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.asientos.TXT_REFERENCIA')
 		    							->join('WEB.asientomodelos', 'WEB.asientomodelos.id', '=', 'WEB.historialmigrar.COD_ASIENTO_MODELO')
@@ -210,12 +244,32 @@ class ReporteVentasController extends Controller
 															GROUP BY COD_ASIENTO) IVAP
 											        "), 'WEB.asientos.COD_ASIENTO', '=', 'IVAP.COD_ASIENTO'
 										    		)
+
+										->leftJoin(
+											        DB::raw("
+											            (
+															select count(dd.COD_TABLA) ind_boni,dd.COD_TABLA from WEB.asientos asi
+															inner join CMP.DETALLE_PRODUCTO dd on asi.TXT_REFERENCIA = dd.COD_TABLA
+															where asi.COD_EMPR = '".$empresa_id."'
+															and asi.COD_CATEGORIA_TIPO_ASIENTO = '".$tipo_asiento_id."'
+															and asi.COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000025'
+															and asi.COD_PERIODO = '".$periodo_id."'
+															and dd.COD_OPERACION_AUX = 1
+															group by dd.COD_TABLA
+														) boni
+											        "), 'WEB.asientos.TXT_REFERENCIA', '=', 'boni.COD_TABLA'
+										    		)
 		    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
 		    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 		    							//->where('COD_ASIENTO','=','ICCHAC0000005534')
 		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id','WEB.asientomodelos.alias','siete.SIETE_CAN_HABER_MN','IVAP.IVAP_CAN_HABER_MN')
+		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id',
+		    										'WEB.asientomodelos.alias',
+		    										'siete.SIETE_CAN_HABER_MN',
+		    										'IVAP.IVAP_CAN_HABER_MN',
+		    										'CMP.DOCUMENTO_CTBLE.IND_GRATUITO',
+		    										'boni.ind_boni')
 		    							//->with('asientomovimiento:COD_ASIENTO,CAN_DEBE_MN,CAN_HABER_MN')
 		    							//->where('WEB.asientos.COD_ASIENTO','=','ISRJAC0000000001')
 		    							//->orderby('WEB.asientos.FEC_ASIENTO','asc')
