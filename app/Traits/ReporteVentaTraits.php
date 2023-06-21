@@ -114,12 +114,22 @@ trait ReporteVentaTraits
 					$codigo_19				=	$item->SIETE_CAN_HABER_MN;
 					$codigo_20				=	$item->IVAP_CAN_HABER_MN;
 
+					if($tipo_documento_06=='07'){
+						$codigo_19 = $codigo_19 * -1;
+						$codigo_20 = $codigo_20 * -1;
+					}	
+
+
 				}
 			}
 
 
 			$importe_total_21 				= 	$importe_total;
 			$importe_total_21       		= 	number_format($importe_total_21, 2, '.', '');
+			if($tipo_documento_06=='07'){
+				$importe_total_21 = $importe_total_21 * -1;
+			}	
+
 			$tipo_cambio_22 				= 	$item->CAN_TIPO_CAMBIO;
 			$tipo_cambio_22       			= 	number_format($tipo_cambio_22, 3, '.', '');
 
