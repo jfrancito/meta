@@ -146,6 +146,7 @@ class ReporteVentasController extends Controller
 		    										'siete.SIETE_CAN_HABER_MN',
 		    										'IVAP.IVAP_CAN_HABER_MN',
 		    										'CMP.DOCUMENTO_CTBLE.IND_GRATUITO',
+		    										'CMP.DOCUMENTO_CTBLE.IND_ANTICIPO',
 		    										'boni.ind_boni')
 		    							//->with('asientomovimiento:COD_ASIENTO,CAN_DEBE_MN,CAN_HABER_MN')
 		    							//->where('WEB.asientos.COD_ASIENTO','=','ISRJAC0000000001')

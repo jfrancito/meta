@@ -166,6 +166,15 @@ trait ReporteVentaTraits
 				$alias 					=	$alias.' - BONIFICACION';
 			}
 
+
+			if($item->IND_ANTICIPO == 1 and $tipo_documento_06=='07'){
+				$alias 					=	'Ventas inafectas - Anticipos Notas de Credito';
+			}
+			if($item->IND_ANTICIPO == 1 and $tipo_documento_06=='01'){
+				$alias 					=	'Ventas inafectas - Anticipos Facturas';
+			}
+
+
 	    	$array_nuevo_asiento 	=	array();
 			$array_nuevo_asiento    =	array(
 				"tipo_venta_00" 			=> $alias,
