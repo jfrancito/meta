@@ -67,8 +67,8 @@ class MigrarVentaComercialController extends Controller
 		}
 		//$this->mv_asignar_totales_ceros();
 
-		print_r("se realizo con exito");
-		//return Redirect::to('/bienvenido');
+		//print_r("se realizo con exito");
+		return Redirect::to('/bienvenido');
 
 	}
 

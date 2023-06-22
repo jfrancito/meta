@@ -188,6 +188,9 @@ class UserController extends Controller
         $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 
+		$empresa_id 					= 	Session::get('empresas_meta')->COD_EMPR;
+
+
 		return View::make('bienvenido',
 						 [
 						 	'lista_ventas' 		 			=> $lista_ventas,
@@ -198,6 +201,7 @@ class UserController extends Controller
 						 	'lista_productos_sc_comp' 		=> $lista_productos_sc_comp,
 						 	'anio' 				 			=> $anio,
 						 	'combo_anio_pc' 				=> $combo_anio_pc,
+						 	'empresa_id' 					=> $empresa_id,
 
 						 ]);
 	}

@@ -16,11 +16,21 @@
         <span class="badge badge-primary">{{count($lista_ventas)}}</span>
         </a>
       </td>
+
       <td class="actions">
+
+        @if($empresa_id == 'EMP0000000000007')
         <a href="{{ url('/migrar-ventas') }}" class='cargando'>
+        @else
+        <a href="{{ url('/migrar-ventas-comercial') }}" class='cargando'>
+        @endif
+        
         <span class="badge badge-primary">migrar</span>
         </a>
       </td>
+
+
+
     </tr>
 
     <tr>
