@@ -103,9 +103,19 @@ trait ReporteVentaTraits
 				//EXONERADA
 				if($item->tipo_ivap_id == 'CTV0000000000003'){
 					$codigo_17  			=  $item->CAN_TOTAL_DEBE;
+
+					if($tipo_documento_06=='07'){
+						$codigo_17 = $codigo_17 * -1;
+					}	
+
 				}
 				if($item->tipo_ivap_id == 'CTV0000000000002'){
 					$codigo_18  			=  $item->CAN_TOTAL_DEBE;
+
+					if($tipo_documento_06=='07'){
+						$codigo_18 = $codigo_18 * -1;
+					}
+					
 				}
 
 				if($item->tipo_ivap_id == 'CTV0000000000001'){
