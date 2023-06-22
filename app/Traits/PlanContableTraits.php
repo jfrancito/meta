@@ -286,10 +286,17 @@ trait PlanContableTraits
 
 	private function pc_lista_cuentas_contable($empresa_id, $anio)
 	{
-	    $listacuentacontable 	= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
-									->where('anio','=',$anio)
-									->where('activo','=',1)
-									->orderBy('orden', 'asc')
+
+	    $listacuentacontable 	= 	WEBCuentaContable::leftJoin('CMP.CATEGORIA as clase','clase.COD_CATEGORIA','=','WEB.cuentacontables.clase_categoria_id')
+	    							->leftJoin('CMP.CATEGORIA as tiposaldo','tiposaldo.COD_CATEGORIA','=','WEB.cuentacontables.tipo_saldo_categoria_id')
+	    							->leftJoin('CMP.CATEGORIA as tipocuenta','tipocuenta.COD_CATEGORIA','=','WEB.cuentacontables.tipo_cuenta_categoria_id')
+	    							->where('WEB.cuentacontables.empresa_id','=',$empresa_id)
+									->where('WEB.cuentacontables.anio','=',$anio)
+									->where('WEB.cuentacontables.activo','=',1)
+									->select('WEB.cuentacontables.*','clase.NOM_CATEGORIA as nclase',
+											'tiposaldo.NOM_CATEGORIA as ntiposaldo',
+											'tipocuenta.NOM_CATEGORIA as ntipocuenta')
+									->orderBy('WEB.cuentacontables.orden', 'asc')
 			    					->get();
 
 		return $listacuentacontable;

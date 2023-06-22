@@ -18,7 +18,7 @@
         class='dobleclickpc seleccionar {{$funcion->gn_background_fila_ind_extorno($item->IND_EXTORNO)}}'
         style="cursor: pointer;">
         <td>{{$index + 1}}</td>
-        <td>{{$item->periodo->TXT_NOMBRE}}</td>
+        <td>{{$item->TXT_NOMBRE}}</td>
         <td>{{date_format(date_create($item->FEC_ASIENTO), 'd-m-Y')}}</td>
         <td>{{$item->TXT_GLOSA}}</td>
         <td>
