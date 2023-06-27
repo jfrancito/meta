@@ -13,6 +13,9 @@ use App\Modelos\ALMProducto;
 use App\Modelos\CONPeriodo;
 use App\Modelos\WEBInventarioSegundaVenta;
 use App\Modelos\WEBDetalleSegundaVenta;
+use App\Modelos\WEBProductoEmpresa;
+use App\Modelos\CMPDetalleProducto;
+use App\Modelos\WEBAsientoModelo;
 
 
 use App\Traits\GeneralesTraits;
@@ -49,6 +52,29 @@ class SegundaVentaController extends Controller
 									->where('periodo_id','=',$periodo_id)
 									->first();
 
+		$empresa_id				=	Session::get('empresas_meta')->COD_EMPR;
+
+		foreach($data_archivo as $key => $obj){
+			$asiento_id 		=   $obj['asiento_id'];
+			$asiento            =	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
+			$detproducto        =	CMPDetalleProducto::where('COD_TABLA','=',$asiento->TXT_REFERENCIA)->first();
+			$proempresa        	=	WEBProductoEmpresa::where('producto_id','=',$detproducto->COD_PRODUCTO)
+									->where('anio','=',$anio)
+									->where('empresa_id','=',$empresa_id)								
+									->first();
+
+			if($proempresa->cuenta_contable_venta_segunda_relacionada_id == '' or 
+			   $proempresa->cuenta_contable_venta_segunda_tercero_id == ''){
+
+				return Redirect::back()->withInput()->with('errorbd', 'Este producto '.$detproducto->TXT_NOMBRE_PRODUCTO.' no tiene cuenta configurado');
+
+			}
+
+
+
+		}
+
+
 		if(count($inventariosegunda)>0){
 
 			$inventariosegunda->cantidad_compra =   $inventariosegunda->cantidad_compra + $agregarinventario;
@@ -82,17 +108,38 @@ class SegundaVentaController extends Controller
 									->where('periodo_id','=',$periodo_id)
 									->first();
 		$tipo_asiento 						=	'TAS0000000000003';	
+
+		$nro_cuenta_sv  	= 	'';
+
 		//dd($data_archivo);
 		foreach($data_archivo as $key => $obj){
+
 			$asiento_id 		=   $obj['asiento_id'];
+			$nro_cuenta_sv  	= 	'';
 
 			$asiento            =	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
+			$asientomodelo      =	WEBAsientoModelo::where('id','=',$asiento->COD_ASIENTO_MODELO)->first();
+			$detproducto        =	CMPDetalleProducto::where('COD_TABLA','=',$asiento->TXT_REFERENCIA)->first();
+			$proempresa        	=	WEBProductoEmpresa::where('producto_id','=',$detproducto->COD_PRODUCTO)
+									->where('anio','=',$anio)
+									->where('empresa_id','=',$empresa_id)								
+									->first();
+
+			if($asientomodelo->tipo_cliente==0){
+				$cc 				=	WEBCuentaContable::where('id','=',$proempresa->cuenta_contable_venta_segunda_tercero_id)->first();
+				$nro_cuenta_sv  	= 	$cc->nro_cuenta;
+			}else{
+				$cc 				=	WEBCuentaContable::where('id','=',$proempresa->cuenta_contable_venta_segunda_relacionada_id)->first();
+				$nro_cuenta_sv  	= 	$cc->nro_cuenta;
+			}
+
 			$respuesta 			= 	$this->mv_update_historial_segundaventas_comercial($asiento,$tipo_asiento);
 			//eliminar asiento
 			$asiento->COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000024';
 			$asiento->TXT_CATEGORIA_ESTADO_ASIENTO = 'EXTORNADO';
 			$asiento->save();
-			$respuesta2 		= 	$this->mv_asignar_asiento_modelo_comercial_sv($asiento,$tipo_asiento);
+
+			$respuesta2 		= 	$this->mv_asignar_asiento_modelo_comercial_sv($asiento,$tipo_asiento,$nro_cuenta_sv);
 			$asiento_nuevo      =	WEBAsiento::where('TXT_REFERENCIA','=',$asiento->TXT_REFERENCIA)
 									->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 									->first();
@@ -214,12 +261,13 @@ class SegundaVentaController extends Controller
 																GROUP BY COD_ASIENTO
 																) GROUP BY das.COD_ASIENTO
 														HAVING COUNT(das.COD_ASIENTO) = 1
-														AND SUM(det.CAN_PRODUCTO) <= ".$data_monto."
+														AND SUM(det.CAN_PESO_PRODUCTO*det.CAN_PRODUCTO) <= ".$data_monto."
 													) tt
 										        "), 'WEB.asientos.COD_ASIENTO', '=', 'tt.COD_ASIENTO'
 									    		)
 	    							->where('WEB.asientos.COD_PERIODO','=',$data_periodo)
 	    							->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+	    							->where('tt.CD','<>',0)
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 	    							->whereNotIn('WEB.asientos.COD_ASIENTO',$array_asientos)

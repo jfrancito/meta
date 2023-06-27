@@ -66,10 +66,6 @@ trait SegundaVentaTraits
 			array_push($array_detalle_asiento,$array_nuevo_asiento);
 	    }
 
-
-
-
-
 		return $array_detalle_asiento;
 
 	}

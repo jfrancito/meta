@@ -818,6 +818,7 @@ trait GeneralesTraits
 		$listaperiodo 				= 	CONPeriodo::where('COD_ESTADO','=',1)
 										->where('COD_ANIO','=',$anio)
 										->where('COD_EMPR','=',$cod_empresa)
+										->orderby('COD_MES','desc')
 										->get();
 
 	 	return  $listaperiodo;	

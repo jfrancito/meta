@@ -352,7 +352,7 @@ trait MigrarVentaComercialTraits
 	}
 
 
-	private function mv_asignar_asiento_modelo_comercial_sv($asiento,$tipo_asiento)
+	private function mv_asignar_asiento_modelo_comercial_sv($asiento,$tipo_asiento,$nro_cuenta_sv)
 	{
 	
 		$documento_ctble 			= 		CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$asiento->TXT_REFERENCIA)->first();
@@ -378,7 +378,8 @@ trait MigrarVentaComercialTraits
 											@cod_contable = ?,
 											@cod_tipo_asiento = ?,
 											@asiento_modelo_id = ?,
-											@ind_anulado = ?');
+											@ind_anulado = ?,
+											@nro_cuenta_sv = ?');
 
         $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
         $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
@@ -386,6 +387,7 @@ trait MigrarVentaComercialTraits
         $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
         $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
         $stmt->bindParam(6, $anulado  ,PDO::PARAM_STR);
+        $stmt->bindParam(7, $nro_cuenta_sv  ,PDO::PARAM_STR);
         $stmt->execute();
 
 	}

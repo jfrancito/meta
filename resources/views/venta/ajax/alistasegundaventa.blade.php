@@ -1,4 +1,4 @@
-<table id="nso" class="table table-striped table-borderless table-hover td-color-borde td-padding-7">
+<table id="nsv" class="table table-striped table-borderless table-hover td-color-borde td-padding-7">
   <thead>
     <tr>
       <th rowspan="2">Año</th>

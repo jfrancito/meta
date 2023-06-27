@@ -348,18 +348,18 @@ class ReporteVentasController extends Controller
                 	$sheet->setCellValue('S1', "Base imponible de la operacion gravada");
 		        	$sheet->mergeCells('T1:T2');
                 	$sheet->setCellValue('T1', "IVAP");
+		        	$sheet->mergeCells('U1:U2');
+                	$sheet->setCellValue('U1', "Importe total del comprobante de pago");
 		        	$sheet->mergeCells('V1:V2');
-                	$sheet->setCellValue('V1', "Importe total del comprobante de pago");
-		        	$sheet->mergeCells('W1:W2');
-                	$sheet->setCellValue('W1', "Tipo de cambio");
+                	$sheet->setCellValue('V1', "Tipo de cambio");
 
 
-                	$sheet->mergeCells('X1:AA1');
-                	$sheet->setCellValue('X1', "REFERENCIA DEL COMPROBANTE DE PAGO O DOCUMENTO ORIGINAL QUE SE MODIFICA");
-					$sheet->setCellValue('X2', "Fecha");
-					$sheet->setCellValue('Y2', "Tipo");
-					$sheet->setCellValue('Z2', "Serie");
-					$sheet->setCellValue('AA2', "Nro comprobante");
+                	$sheet->mergeCells('W1:Z1');
+                	$sheet->setCellValue('W1', "REFERENCIA DEL COMPROBANTE DE PAGO O DOCUMENTO ORIGINAL QUE SE MODIFICA");
+					$sheet->setCellValue('W2', "Fecha");
+					$sheet->setCellValue('X2', "Tipo");
+					$sheet->setCellValue('Y2', "Serie");
+					$sheet->setCellValue('Z2', "Nro comprobante");
 
 
 					$sheet->cell('A1:AA1',function($cell){

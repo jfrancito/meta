@@ -29,7 +29,7 @@ class MigrarVentaComercialController extends Controller
 	use GeneralesTraits;
 	use PlanContableTraits;
 	use ConfiguracionProductoTraits;
-	use MigrarVentaComercialTraits;	
+	use MigrarVentaComercialTraits;
 
 
 	public function actionMigrarVentasComercial()

@@ -85,6 +85,12 @@ trait ReporteVentaTraits
 			$codigo_20  			= 	'0.00';
 			$importe_total_21 		= 	'0.00';
 
+			$importe_total_21 				= 	$importe_total;
+			$importe_total_21       		= 	number_format($importe_total_21, 2, '.', '');
+			if($tipo_documento_06=='07'){
+				$importe_total_21 = $importe_total_21 * -1;
+			}	
+
 
 			if($item->COD_EMPR == 'EMP0000000000007'){
 				if($indicador_afecto==1){
@@ -124,6 +130,12 @@ trait ReporteVentaTraits
 					$codigo_19				=	$item->SIETE_CAN_HABER_MN;
 					$codigo_20				=	$item->IVAP_CAN_HABER_MN;
 
+					$sumaivasub				= 	$codigo_19+$codigo_20;
+
+					if(($sumaivasub-$importe_total_21) == 0.01){
+						$codigo_19			=	$codigo_19 - 0.01;
+					}
+
 					if($tipo_documento_06=='07'){
 						$codigo_19 = $codigo_19 * -1;
 						$codigo_20 = $codigo_20 * -1;
@@ -134,11 +146,7 @@ trait ReporteVentaTraits
 			}
 
 
-			$importe_total_21 				= 	$importe_total;
-			$importe_total_21       		= 	number_format($importe_total_21, 2, '.', '');
-			if($tipo_documento_06=='07'){
-				$importe_total_21 = $importe_total_21 * -1;
-			}	
+
 
 			$tipo_cambio_22 				= 	$item->CAN_TIPO_CAMBIO;
 			$tipo_cambio_22       			= 	number_format($tipo_cambio_22, 3, '.', '');

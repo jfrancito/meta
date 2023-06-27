@@ -26,6 +26,22 @@ var App = (function () {
     });
 
 
+    $("#nsv").dataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf'
+        ],
+        scrollX: true,
+        "lengthMenu": [[500, 1000, -1], [500, 1000, "All"]],
+        columnDefs:[{
+            targets: "_all",
+            sortable: false
+        }]
+    });
+
+
+
+
     $("#tran").dataTable({
         dom: 'Bfrtip',
         buttons: [

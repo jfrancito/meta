@@ -91,6 +91,9 @@ trait ReporteTraits
 	    							->get();
 
 
+
+
+
 		$lista_cuentas 			=   WEBCuentaContable::where('anio','=',$anio)
 									->where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
 	    							->where('nro_cuenta','>=',strval($cuentainicio->nro_cuenta))
