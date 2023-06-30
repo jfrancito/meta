@@ -532,7 +532,7 @@ class ComprasController extends Controller
 
 		$combo_activo 			= 	array('1' => 'ACTIVO','0' => 'ELIMINAR');
 		$defecto_activo			= 	'1';
-
+	    $usuario 				= 	SGDUsuario::where('COD_USUARIO','=',$asiento->COD_USUARIO_CREA_AUD)->first();
 
 
 		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
@@ -557,14 +557,14 @@ class ComprasController extends Controller
 						 	'combo_nivel_pc' 			=> $combo_nivel_pc,
 						 	'combo_cuenta' 				=> $combo_cuenta,
 						 	'combo_partida' 			=> $combo_partida,
-						 	'combo_activo' 			=> $combo_activo,
+						 	'combo_activo' 				=> $combo_activo,
 
 						 	'defecto_nivel' 			=> $defecto_nivel,
 						 	'defecto_cuenta' 			=> $defecto_cuenta,
 						 	'defecto_partida' 			=> $defecto_partida,
 						 	'defecto_activo' 			=> $defecto_activo,
 						 	'ruta' 						=> $ruta,
-
+						 	'usuario' 					=> $usuario,
 
 						 	'ajax' 						=> true,						 	
 						 ]);

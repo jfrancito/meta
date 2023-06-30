@@ -97,7 +97,7 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-registro-diario/{idopcion}', 'RegistroDiarioController@actionListarRegistroDiario');
 	Route::any('/ajax-combo-periodo-xanio-xempresa', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresa');
 	Route::any('/ajax-registro-diario', 'RegistroDiarioController@actionAjaxRegistroDiario');
-	Route::any('/ajax-modal-detalle-asiento', 'RegistroDiarioController@actionAjaxModalDetalleAsiento');
+	Route::any('/ajax-modal-detalle-asiento-rd', 'RegistroDiarioController@actionAjaxModalDetalleAsiento');
 	Route::any('/descargar-asientos-contable-excel', 'RegistroDiarioController@actionAjaxDescargarAsientoContable');
 	Route::any('/asiento-contable-excel-xasiento/{cod_asiento}', 'RegistroDiarioController@actionAsientoContableExcelXAsiento');
 

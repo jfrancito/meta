@@ -42,7 +42,7 @@
                       <form method="POST"
                       id="formdescargar"
                       target="_blank"
-                      action="{{ url('/descargar-asientos-contable-excel') }}" 
+                      action="{{ url('/descargar-asientos-contable-excel-rd') }}" 
                       style="border-radius: 0px;" 
                       >
                         {{ csrf_field() }}
