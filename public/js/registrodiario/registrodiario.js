@@ -76,7 +76,7 @@ $(document).ready(function(){
                                             asiento_id              : asiento_id,
                                             idopcion                : idopcion,
                                         };
-        ajax_modal(data,"/ajax-modal-detalle-asiento",
+        ajax_modal(data,"/ajax-modal-detalle-asiento-rd",
                   "modal-detalle-asiento","modal-detalle-asiento-container");
 
     });
