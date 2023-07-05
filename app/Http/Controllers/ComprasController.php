@@ -1925,21 +1925,19 @@ class ComprasController extends Controller
 	    $empresa_id = Session::get('empresas_meta')->COD_EMPR;
 
 		if(Session::has('periodo_id_confirmar')){
+
 			$sel_periodo 			=	Session::get('periodo_id_confirmar');
 			$sel_serie 				=	Session::get('nro_serie_confirmar');
 			$sel_nrodoc 			=	Session::get('nro_doc_confirmar');
 			$anio 					=	Session::get('anio_confirmar');
 
 			$array_terminado_diario =   $this->co_array_terminado_diario($sel_periodo,$empresa_id);
-
         	$listacompras     		= 	$this->co_lista_compras_asiento($anio,$sel_periodo,Session::get('empresas_meta')->COD_EMPR,$sel_serie,$sel_nrodoc,$array_terminado_diario);
-
         	$listacomprasterminado  = 	$this->co_lista_compras_terminado_asiento($anio,$sel_periodo,Session::get('empresas_meta')->COD_EMPR,$sel_serie,$sel_nrodoc,$array_terminado_diario);
-
         	$listadiariosterminado  = 	$this->co_lista_diarios_terminado_asiento($anio,$sel_periodo,Session::get('empresas_meta')->COD_EMPR,$sel_serie,$sel_nrodoc,$array_terminado_diario);
 
-
 		}else{
+
 			$sel_periodo 			=	'';
 			$sel_serie 				=	'';
 			$sel_nrodoc 			=	'';
@@ -1947,8 +1945,7 @@ class ComprasController extends Controller
 	    	$listacompras 			= 	array();
 	    	$listacomprasterminado 	= 	array();
 	    	$listadiariosterminado 	= 	array();
-
-
+	    	
 		}
 
         $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);

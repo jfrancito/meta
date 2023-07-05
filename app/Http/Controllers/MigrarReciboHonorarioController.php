@@ -40,18 +40,12 @@ class MigrarReciboHonorarioController extends Controller
 		//buscar asiento 
 		$lista_compras_migrar_emitido 		= 	$this->mrh_lista_compras_migrar_agrupado_emitido($this->array_empresas,$this->anio_inicio);
 		$lista_compras_migrar_anulado 		= 	array();
-
 		$this->mrh_agregar_historial_compras($lista_compras_migrar_emitido,$lista_compras_migrar_anulado,$this->tipo_asiento);
-
-
 		foreach($lista_compras_migrar_emitido as $index => $item){
 			$respuesta = $this->mrh_update_historial_compras($item->COD_DOCUMENTO_CTBLE,$this->tipo_asiento);
 		}
-
 		//asignar asiento
 		$lista_compras 				= 	$this->mrh_lista_compras_asignar($this->array_empresas,$this->tipo_asiento);
-
-
 		foreach($lista_compras as $index => $item){
 			$respuesta2 = $this->mrh_asignar_asiento_modelo($item,$this->tipo_asiento);
 		}

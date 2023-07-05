@@ -16,6 +16,8 @@ use App\Modelos\WEBHistorialMigrar;
 use App\Modelos\CMPDetalleProducto;
 use App\Modelos\WEBProductoEmpresa;
 use App\Modelos\WEBViewMigrarCompras;
+use App\Modelos\WEBViewMigrarLiquidacionCompra;
+
 
 
 
@@ -31,12 +33,11 @@ trait MigrarCompraTraits
 	
 	public function mc_array_empresa_venta(){
 
-        $array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086'];
-        //$array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086','IACHEM0000010394'];
+        //$array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086'];
+        $array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086','IACHEM0000010394'];
 
         return $array_empresas;
     }
-
 
 	private function mv_lista_compras_migrar_agrupado_emitido($array_empresas,$anio)
 	{

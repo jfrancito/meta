@@ -78,7 +78,6 @@ trait MigrarReciboHonorarioTraits
 				$documento_anulado 						=   0;
 			}
 
-
 			if(count($historialmigrar)<=0){
 				$cabecera            	 				=	new WEBHistorialMigrar;
 				$cabecera->COD_REFERENCIA 				=   $documento_ctble->COD_DOCUMENTO_CTBLE;

@@ -22,6 +22,8 @@ use App\Traits\GeneralesTraits;
 use App\Traits\PlanContableTraits;
 use App\Traits\ConfiguracionProductoTraits;
 use App\Traits\MigrarCompraTraits;
+use App\Traits\MigrarCompraLiquidacionTraits;
+
 
 class MigrarCompraController extends Controller
 {
@@ -30,6 +32,8 @@ class MigrarCompraController extends Controller
 	use PlanContableTraits;
 	use ConfiguracionProductoTraits;
 	use MigrarCompraTraits;
+	use MigrarCompraLiquidacionTraits;
+
 	public $tipo_asiento = 'TAS0000000000004';
 
 	public function actionMigrarCompras()
@@ -39,18 +43,8 @@ class MigrarCompraController extends Controller
 				
 		//buscar asiento 
 		$lista_compras_migrar_emitido 		= 	$this->mv_lista_compras_migrar_agrupado_emitido($this->array_empresas,$this->anio_inicio);
-
-
-		//dd($lista_compras_migrar_emitido);
-
-
 		$lista_compras_migrar_anulado 		= 	$this->mv_lista_compras_migrar_agrupado_anulado($this->array_empresas,$this->anio_inicio);
-
-		//dd($lista_compras_migrar_anulado);
-
 		$this->mv_agregar_historial_compras($lista_compras_migrar_emitido,$lista_compras_migrar_anulado,$this->tipo_asiento);
-
-
 
 		foreach($lista_compras_migrar_emitido as $index => $item){
 			$respuesta = $this->mv_update_historial_compras($item->COD_DOCUMENTO_CTBLE,$this->tipo_asiento);
@@ -72,6 +66,25 @@ class MigrarCompraController extends Controller
 		return Redirect::to('/bienvenido');
 
 	}
+
+
+	public function actionMigrarLiquidacionCompras()
+	{
+
+		set_time_limit(0);
+				
+		//buscar asiento 
+		$lista_compras_liquidacion_migra 	= 	$this->mvl_lista_compras_liquidacion_migrar_agrupado();
+		foreach($lista_compras_liquidacion_migra as $index => $item){
+			$respuesta2 = $this->mvl_asignar_asiento_liquidacion_compra($item,$this->tipo_asiento);
+		}
+
+		//$this->mc_asignar_totales_ceros();
+		print_r("se realizo con exito");
+		//return Redirect::to('/bienvenido');
+
+	}
+
 
 
 

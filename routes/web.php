@@ -29,8 +29,12 @@ Route::get('/cerrarsession', 'UserController@actionCerrarSesion');
 Route::get('/cambiarperfil', 'UserController@actionCambiarPerfil');
 Route::get('/migrar-ventas', 'MigrarVentaController@actionMigrarVentas');
 Route::get('/migrar-ventas-comercial', 'MigrarVentaComercialController@actionMigrarVentasComercial');
+Route::get('/migrar-ventas-internacional', 'MigrarVentaInternacionalController@actionMigrarVentasInternacional');
 
 Route::get('/migrar-compras', 'MigrarCompraController@actionMigrarCompras');
+Route::get('/migrar-liquidacion-compras', 'MigrarCompraController@actionMigrarLiquidacionCompras');
+
+
 Route::get('/migrar-recibo-honorario', 'MigrarReciboHonorarioController@actionMigrarReciboHonorario');
 Route::get('/migrar-total-ceros', 'MigrarVentaController@actionMigrarTotalCeros');
 
@@ -207,7 +211,9 @@ Route::group(['middleware' => ['authaw']], function () {
 
 	Route::any('/gestion-planilla-movilidad/{idopcion}', 'MovilidadController@actionListarMovilidad');
 	Route::any('/ajax-registro-movilidad', 'MovilidadController@actionAjaxRegistroMovilidad');
+
 	Route::any('/mobilidad-guardar-data', 'MovilidadController@actionMobilidadGuardarData');
+
 	Route::any('/ajax-modal-configuracion-movilidad-cuenta-contable', 'MovilidadController@actionAjaxModalConfiguracionMovilidadCuentaContable');
 	Route::any('/mobilidad-guardar-data/{idopcion}', 'MovilidadController@actionGuardarMovilidadCuentaContable');
 

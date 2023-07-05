@@ -718,9 +718,6 @@ trait ComprasTraits
 									->orderby('FEC_USUARIO_MODIF_AUD','asc')
 	    							->get();
 
-	    
-
-
 		return $lista_compras;
 
 	}

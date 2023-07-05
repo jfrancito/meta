@@ -46,7 +46,6 @@ class MovilidadController extends Controller
 	public function actionGuardarMovilidadCuentaContable($idopcion,Request $request)
 	{
 
-
 		$cabecera 				=   json_decode($request['cabecera'],false);
 		$detalle 				=   json_decode($request['detalle'],false);
 		$periodo_id 			=   $request['periodog_id'];
