@@ -33,8 +33,8 @@ trait MigrarCompraTraits
 	
 	public function mc_array_empresa_venta(){
 
-        //$array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086'];
-        $array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086','IACHEM0000010394'];
+        $array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086'];
+        //$array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086','IACHEM0000010394'];
 
         return $array_empresas;
     }

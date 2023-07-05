@@ -44,8 +44,8 @@ class Controller extends BaseController
 		$this->dia 						= $dia;		
 		$this->prefijomaestro			= $this->funciones->prefijomaestra();
 
-		//$this->array_empresas			= ['EMP0000000000007','IACHEM0000007086'];
-		$this->array_empresas			= ['EMP0000000000007','IACHEM0000007086','IACHEM0000010394'];
+		$this->array_empresas			= ['EMP0000000000007','IACHEM0000007086'];
+		//$this->array_empresas			= ['EMP0000000000007','IACHEM0000007086','IACHEM0000010394'];
 		
 		$this->anio_inicio				= 2022;
 
