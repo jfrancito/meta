@@ -140,8 +140,8 @@ $(document).ready(function(){
 
                 cuenta_contable_rel_sv_id    =   $('#cuenta_contable_rel_sv_id').val();
                 cuenta_contable_ter_sv_id    =   $('#cuenta_contable_ter_sv_id').val();
-                if(cuenta_contable_rel_sv_id  != '' && cuenta_contable_rel_sv_id == ''){ alerterrorajax("Seleccione una cuenta contable tercero segunda venta."); return false;}
-                if(cuenta_contable_ter_sv_id  != '' && cuenta_contable_ter_sv_id == ''){ alerterrorajax("Seleccione una cuenta contable relacionada segunda venta."); return false;}
+                if(cuenta_contable_rel_sv_id  != '' && cuenta_contable_ter_sv_id == ''){ alerterrorajax("Seleccione una cuenta contable tercero segunda venta."); return false;}
+                if(cuenta_contable_ter_sv_id  != '' && cuenta_contable_rel_sv_id == ''){ alerterrorajax("Seleccione una cuenta contable relacionada segunda venta."); return false;}
 
             }
 
@@ -168,6 +168,79 @@ $(document).ready(function(){
         ajax_normal_guardar_lista(data,"/ajax-guardar-cuenta-contable","buscarproducto");                 
 
     });
+
+
+    $(".configuracionproducto").on('click','.btn-guardar-configuracion-inter', function() {
+
+        var array_productos           =   $('#array_productos').val();
+
+        var cuenta_contable_rel_id                      =   $('#cuenta_contable_rel_id').val();
+        var cuenta_contable_ter_id                      =   $('#cuenta_contable_ter_id').val();
+        var cuenta_contable_rel_sv_id                   =   $('#cuenta_contable_rel_sv_id').val();
+        var cuenta_contable_ter_sv_id                   =   $('#cuenta_contable_ter_sv_id').val();
+
+        var cuenta_contable_venta_aigv_relacionada_id   =   $('#cuenta_contable_venta_aigv_relacionada_id').val();
+        var cuenta_contable_venta_aigv_tercero_id       =   $('#cuenta_contable_venta_aigv_tercero_id').val();
+
+        var cuenta_contable_compra_id                   =   $('#cuenta_contable_compra_id').val();
+
+        var ind_venta_compra          =   $('#ind_venta_compra').val();
+        var anio                      =   $('#anio').val();
+        var empresa_id                =   $('#empresa_id').val();
+        var _token                    =   $('#token').val();
+        var swivap                    =   '0';
+        var swigv                     =   '0';        
+        //validacioones1
+        if(ind_venta_compra=='1'){
+
+            if(cuenta_contable_rel_id != '' || cuenta_contable_ter_id != '' || cuenta_contable_rel_sv_id != '' || cuenta_contable_ter_sv_id != ''){
+                swivap                    =   '1';
+            }
+            if(cuenta_contable_venta_aigv_relacionada_id != '' || cuenta_contable_venta_aigv_tercero_id != ''){
+                swigv                    =   '1';
+            }
+
+            if(swivap=='1' && swigv=='1'){
+                alerterrorajax("Solo seleccione una configuracion ya sea para IVAP o AFECTA, INAFECTA."); return false;
+            }
+            if(swivap=='1'){
+                if(cuenta_contable_rel_id  != '' && cuenta_contable_ter_id == ''){ alerterrorajax("Seleccione una cuenta contable tercero."); return false;}
+                if(cuenta_contable_ter_id  != '' && cuenta_contable_rel_id == ''){ alerterrorajax("Seleccione una cuenta contable relacionada."); return false;}
+                if(cuenta_contable_rel_sv_id  != '' && cuenta_contable_ter_sv_id == ''){ alerterrorajax("Seleccione una cuenta contable tercero segunda venta."); return false;}
+                if(cuenta_contable_ter_sv_id  != '' && cuenta_contable_rel_sv_id == ''){ alerterrorajax("Seleccione una cuenta contable relacionada segunda venta."); return false;}
+            }
+ 
+            if(swigv=='1'){
+                if(cuenta_contable_venta_aigv_relacionada_id  != '' && cuenta_contable_venta_aigv_tercero_id == ''){ alerterrorajax("Seleccione una cuenta contable tercero."); return false;}
+                if(cuenta_contable_venta_aigv_tercero_id  != '' && cuenta_contable_venta_aigv_relacionada_id == ''){ alerterrorajax("Seleccione una cuenta contable relacionada."); return false;}
+            }
+
+        }
+
+        //cerrar modal
+        $('#modal-configuracion-producto-cuenta-contable').niftyModal('hide');
+
+        data            =   {
+                                _token                      : _token,
+                                cuenta_contable_rel_id      : cuenta_contable_rel_id,
+                                cuenta_contable_ter_id      : cuenta_contable_ter_id,
+                                cuenta_contable_rel_sv_id   : cuenta_contable_rel_sv_id,
+                                cuenta_contable_ter_sv_id   : cuenta_contable_ter_sv_id,
+                                cuenta_contable_venta_aigv_relacionada_id   : cuenta_contable_venta_aigv_relacionada_id,
+                                cuenta_contable_venta_aigv_tercero_id   : cuenta_contable_venta_aigv_tercero_id,
+
+                                cuenta_contable_compra_id   : cuenta_contable_compra_id,
+                                ind_venta_compra         : ind_venta_compra,
+                                anio                     : anio,
+                                array_productos          : array_productos,
+                            };
+
+        ajax_normal_guardar_lista(data,"/ajax-guardar-cuenta-contable-inter","buscarproducto");                 
+
+    });
+
+
+
 
 
     $(".configuracionproducto").on('click','.btn-guardar-configuracion-cm', function() {

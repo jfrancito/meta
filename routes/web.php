@@ -34,7 +34,6 @@ Route::get('/migrar-ventas-internacional', 'MigrarVentaInternacionalController@a
 Route::get('/migrar-compras', 'MigrarCompraController@actionMigrarCompras');
 Route::get('/migrar-liquidacion-compras', 'MigrarCompraController@actionMigrarLiquidacionCompras');
 
-
 Route::get('/migrar-recibo-honorario', 'MigrarReciboHonorarioController@actionMigrarReciboHonorario');
 Route::get('/migrar-total-ceros', 'MigrarVentaController@actionMigrarTotalCeros');
 
@@ -92,6 +91,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-combo-servicio-material-xcategoria-producto', 'ConfiguracioProductoController@actionAjaxComboServicioMaterial');
 	Route::any('/ajax-modal-configuracion-producto-codigo-migracion', 'ConfiguracioProductoController@actionAjaxModalConfiguracionProductoCodigoMigracion');
 	Route::any('/ajax-guardar-codigo-migracion', 'ConfiguracioProductoController@actionAjaxGuardarCodigoMigracion');
+	Route::any('/ajax-guardar-cuenta-contable-inter', 'ConfiguracioProductoController@actionAjaxGuardarCuentaContableInter');
+
+
 
 	Route::any('/gestion-configuracion-tipo-cambio/{idopcion}', 'ConfiguracioTipoCambioController@actionListarTipoCambio');
 	Route::any('/ajax-tipo-cambio', 'ConfiguracioTipoCambioController@actionAjaxListarTipoCambio');

@@ -22,7 +22,11 @@
         @if($empresa_id == 'EMP0000000000007')
         <a href="{{ url('/migrar-ventas') }}" class='cargando'>
         @else
-        <a href="{{ url('/migrar-ventas-comercial') }}" class='cargando'>
+          @if($empresa_id == 'IACHEM0000010394')
+          <a href="{{ url('/migrar-ventas-internacional') }}" class='cargando'>
+          @else
+          <a href="{{ url('/migrar-ventas-comercial') }}" class='cargando'>
+          @endif
         @endif
         
         <span class="badge badge-primary">migrar</span>

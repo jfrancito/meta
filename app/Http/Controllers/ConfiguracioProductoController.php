@@ -260,6 +260,7 @@ class ConfiguracioProductoController extends Controller
 
 		$funcion 				= 	$this;
 
+
 		return View::make('configuracionproducto/modal/ajax/mcuentacontable',
 						 [		 	
 						 	'combo_cuenta_rel' 		=> $combo_cuenta_rel,
@@ -285,6 +286,9 @@ class ConfiguracioProductoController extends Controller
 						 	'funcion' 				=> $funcion,
 						 	'ajax' 					=> true,						 	
 						 ]);
+
+
+
 	}
 
 
@@ -368,6 +372,104 @@ class ConfiguracioProductoController extends Controller
 					$cabecera->cuenta_contable_venta_tercero_id 		=   $cuenta_contable_ter_id;
 					$cabecera->cuenta_contable_venta_segunda_relacionada_id 	=   $cuenta_contable_rel_sv_id;
 					$cabecera->cuenta_contable_venta_segunda_tercero_id 		=   $cuenta_contable_ter_sv_id;
+
+				}else{
+					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
+				}
+				$cabecera->activo 								=   1;
+				$cabecera->empresa_id 	 						=   Session::get('empresas_meta')->COD_EMPR;
+				$cabecera->fecha_mod 	 						=   $this->fechaactual;
+				$cabecera->usuario_mod 							=   Session::get('usuario_meta')->id;
+				$cabecera->save();	
+
+            }
+
+		}
+		echo('Registro de cuenta contable modificada con exito');
+
+	}
+
+
+	public function actionAjaxGuardarCuentaContableInter(Request $request)
+	{
+		
+		$array_productos 			=   json_decode($request['array_productos'],true);
+
+
+		$cuenta_contable_rel_id 	=   $request['cuenta_contable_rel_id'];
+		$cuenta_contable_ter_id 	=   $request['cuenta_contable_ter_id'];
+		$cuenta_contable_rel_sv_id 	=   $request['cuenta_contable_rel_sv_id'];
+		$cuenta_contable_ter_sv_id 	=   $request['cuenta_contable_ter_sv_id'];
+		$cuenta_contable_venta_aigv_relacionada_id 	=   $request['cuenta_contable_venta_aigv_relacionada_id'];
+		$cuenta_contable_venta_aigv_tercero_id 	=   $request['cuenta_contable_venta_aigv_tercero_id'];
+		$cuenta_contable_compra_id 	=   $request['cuenta_contable_compra_id'];
+		$ind_venta_compra 			=   $request['ind_venta_compra'];
+		$anio  						=   $request['anio'];;
+
+		if(is_null($cuenta_contable_rel_id)){ $cuenta_contable_rel_id = '';}
+		if(is_null($cuenta_contable_ter_id)){ $cuenta_contable_ter_id = '';}
+		if(is_null($cuenta_contable_rel_sv_id)){ $cuenta_contable_rel_sv_id = '';}
+		if(is_null($cuenta_contable_ter_sv_id)){ $cuenta_contable_ter_sv_id = '';}
+		if(is_null($cuenta_contable_venta_aigv_relacionada_id)){ $cuenta_contable_venta_aigv_relacionada_id = '';}
+		if(is_null($cuenta_contable_venta_aigv_tercero_id)){ $cuenta_contable_venta_aigv_tercero_id = '';}
+		if(is_null($cuenta_contable_compra_id)){ $cuenta_contable_compra_id = '';}
+
+		//dd($anio);
+
+		foreach ($array_productos as $key => $item) {
+
+			$cabecera 			= 	WEBProductoEmpresa::where('producto_id','=',$item['producto_id'])
+									->where('anio','=',$anio)
+									->where('WEB.productoempresas.empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+									->first();
+
+            if (count($cabecera)<=0) {
+
+				$idproductoempresa 								=   $this->funciones->getCreateIdMaestra('web.productoempresas');
+				$cabecera            	 						=	new WEBProductoEmpresa;
+				$cabecera->id 	     	 						=   $idproductoempresa;
+
+				if($ind_venta_compra == '1'){
+
+					$cabecera->cuenta_contable_venta_relacionada_id 			=   $cuenta_contable_rel_id;
+					$cabecera->cuenta_contable_venta_tercero_id 				=   $cuenta_contable_ter_id;
+					$cabecera->cuenta_contable_venta_segunda_relacionada_id 	=   $cuenta_contable_rel_sv_id;
+					$cabecera->cuenta_contable_venta_segunda_tercero_id 		=   $cuenta_contable_ter_sv_id;
+					$cabecera->cuenta_contable_venta_aigv_relacionada_id 		=   $cuenta_contable_venta_aigv_relacionada_id;
+					$cabecera->cuenta_contable_venta_aigv_tercero_id 			=   $cuenta_contable_venta_aigv_tercero_id;
+
+					$cabecera->cuenta_contable_compra_id 				=   '';
+
+				}else{
+
+					$cabecera->cuenta_contable_venta_relacionada_id 	=   '';
+					$cabecera->cuenta_contable_venta_tercero_id 		=   '';
+					$cabecera->cuenta_contable_venta_segunda_relacionada_id 	=   '';
+					$cabecera->cuenta_contable_venta_segunda_tercero_id 		=   '';
+					$cabecera->cuenta_contable_venta_aigv_relacionada_id 	=   '';
+					$cabecera->cuenta_contable_venta_aigv_tercero_id 		=   '';
+
+					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
+
+				}
+
+				$cabecera->anio 								=  	$anio;
+				$cabecera->producto_id 							=   $item['producto_id'];
+				$cabecera->empresa_id 	 						=   Session::get('empresas_meta')->COD_EMPR;
+				$cabecera->fecha_crea 	 						=   $this->fechaactual;
+				$cabecera->usuario_crea 						=   Session::get('usuario_meta')->id;
+				$cabecera->save();
+
+            }else{
+            	
+				if($ind_venta_compra == '1'){
+					$cabecera->cuenta_contable_venta_relacionada_id 	=   $cuenta_contable_rel_id;
+					$cabecera->cuenta_contable_venta_tercero_id 		=   $cuenta_contable_ter_id;
+					$cabecera->cuenta_contable_venta_segunda_relacionada_id 	=   $cuenta_contable_rel_sv_id;
+					$cabecera->cuenta_contable_venta_segunda_tercero_id 		=   $cuenta_contable_ter_sv_id;
+					$cabecera->cuenta_contable_venta_aigv_relacionada_id 	=   $cuenta_contable_venta_aigv_relacionada_id;
+					$cabecera->cuenta_contable_venta_aigv_tercero_id 		=   $cuenta_contable_venta_aigv_tercero_id;
+
 
 				}else{
 					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
