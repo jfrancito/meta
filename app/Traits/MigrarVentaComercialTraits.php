@@ -241,6 +241,57 @@ trait MigrarVentaComercialTraits
 	}
 
 
+	private function mv_update_historial_segundaventas_internacional($asiento,$tipo_asiento)
+	{
+	
+
+		$documento_ctble 			= 		CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$asiento->TXT_REFERENCIA)->first();
+		$periodo 					= 		CONPeriodo::where('COD_PERIODO','=',$asiento->COD_PERIODO)->first();
+		$anio 						= 		$periodo->COD_ANIO;
+		$empresa 					= 		$documento_ctble->COD_EMPR;
+		$cod_contable 				= 		$documento_ctble->COD_DOCUMENTO_CTBLE;
+		$tipo_igv_id_sv				=		'CTV0000000000002';
+		$documento_anulado 			=   	1;
+		if($documento_ctble->COD_CATEGORIA_ESTADO_DOC_CTBLE == 'EDC0000000000002'){
+			$documento_anulado 		=   	0;
+		}
+        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.BUSCAR_ASIENTO_MODELO_COMERCIAL 
+											@anio = ?,
+											@empresa = ?,
+											@cod_contable = ?,
+											@cod_tipo_asiento = ?,
+											@ind_anulado = ?,
+											@tipo_igv_id_sv = ?');
+
+        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
+        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
+        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
+        $stmt->bindParam(5, $documento_anulado  ,PDO::PARAM_STR);
+        $stmt->bindParam(6, $tipo_igv_id_sv  ,PDO::PARAM_STR);
+        $stmt->execute();
+
+      	while ($row = $stmt->fetch()){
+      		$codigo = $row['codigo'];
+      		$mensaje = $row['mensaje'];
+      		$asiento_modelo_id = $row['asiento_modelo_id'];
+
+      		$historialmigrar 						=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$asiento->TXT_REFERENCIA)
+      													->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
+			
+      		if($codigo=='1'){
+				$historialmigrar->COD_ASIENTO_MODELO 	=   $asiento_modelo_id;
+				$historialmigrar->save();
+
+      		}
+
+      	}
+
+      	return "se realizo con exito";
+
+	}
+
+
 	private function mv_update_historial_segundaventas_comercial($asiento,$tipo_asiento)
 	{
 	

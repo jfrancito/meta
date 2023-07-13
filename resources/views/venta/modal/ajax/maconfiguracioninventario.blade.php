@@ -5,7 +5,9 @@
 			{{$producto->NOM_PRODUCTO}} <br>
 			<small>Cantidad Compra : <strong>({{number_format($data_monto, $redondeo, '.', ',')}})</strong></small>
 			<small>Cantidad Asocida : <strong>({{number_format($data_asociada, $redondeo, '.', ',')}})</strong></small>
-			<small>Cantidad x Asociar : <strong>({{number_format($monto_por_asociar, $redondeo, '.', ',')}})</strong></small>
+			<small>Cantidad x Asociar : <strong>({{number_format($monto_por_asociar, $redondeo, '.', ',')}})</strong></small><br>
+
+			<small>Contador item: <strong class='contitem'>0.00</strong></small>
 		</h3>
 </div>
 	<div class="modal-body" style="padding: 12px 20px 20px;">
@@ -66,7 +68,7 @@
 							              	<td>
 							                  	<div class="text-center be-checkbox be-checkbox-sm has-primary">
 								                    <input  type="checkbox"
-								                      class="{{$item->COD_ASIENTO}} input_asignar"
+								                      class="{{$item->COD_ASIENTO}} input_asignar selectcheck"
 								                      id="{{$item->COD_ASIENTO}}" 
 								                      data_cantidad = '{{$item->CD}}'>
 								                    <label  for="{{$item->COD_ASIENTO}}"

@@ -70,8 +70,6 @@ class SegundaVentaController extends Controller
 
 			}
 
-
-
 		}
 
 
@@ -133,13 +131,18 @@ class SegundaVentaController extends Controller
 				$nro_cuenta_sv  	= 	$cc->nro_cuenta;
 			}
 
-			$respuesta 			= 	$this->mv_update_historial_segundaventas_comercial($asiento,$tipo_asiento);
+
+
+			$respuesta 			= 	$this->mv_update_historial_segundaventas_internacional($asiento,$tipo_asiento);
+
 			//eliminar asiento
 			$asiento->COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000024';
 			$asiento->TXT_CATEGORIA_ESTADO_ASIENTO = 'EXTORNADO';
 			$asiento->save();
 
 			$respuesta2 		= 	$this->mv_asignar_asiento_modelo_comercial_sv($asiento,$tipo_asiento,$nro_cuenta_sv);
+
+			
 			$asiento_nuevo      =	WEBAsiento::where('TXT_REFERENCIA','=',$asiento->TXT_REFERENCIA)
 									->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 									->first();
@@ -271,7 +274,9 @@ class SegundaVentaController extends Controller
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 	    							->whereNotIn('WEB.asientos.COD_ASIENTO',$array_asientos)
+	    							->whereIn('WEB.asientos.COD_CATEGORIA_TIPO_DOCUMENTO',['TDO0000000000001','TDO0000000000003'])
 	    							->select('WEB.asientos.*','tt.CD')
+	    							->orderby('WEB.asientos.FEC_ASIENTO','desc')
 	    							->get();
 
 	    $producto 				=	ALMProducto::where('COD_PRODUCTO','=',$data_producto)->first();

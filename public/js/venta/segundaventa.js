@@ -2,6 +2,22 @@ $(document).ready(function(){
 
     var carpeta = $("#carpeta").val();
 
+
+
+
+    $(".segundaventa").on('click','.selectcheck', function() {
+
+        var data_cantidad       =   $(this).attr('data_cantidad');
+        var check               =   $(this).val();
+        var contitem            =   $('.contitem').html();
+
+        var total               =   contadortotal();
+
+        $('.contitem').html(total);
+
+    });
+
+
     $(".segundaventa").on('click','.buscarinventario', function() {
 
         event.preventDefault();
@@ -90,6 +106,18 @@ function dataenviar(){
 
     });
     return data;
+}
+
+function contadortotal(){
+    var total = 0;
+    $(".listatabla tr").each(function(){
+            cantidad            = parseFloat($(this).find('.input_asignar').attr('data_cantidad'));
+            check               = $(this).find('.input_asignar');
+            if($(check).is(':checked')){
+                total = total + cantidad;
+            }
+    });
+    return total;
 }
 
 
