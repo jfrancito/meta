@@ -66,14 +66,16 @@ class KardexController extends Controller
 	{
 
 		$tipo_producto_id 		=   $request['tipo_producto_id'];
-
+	    $anio  					=   $this->anio;
 		$idopcion 				=   $request['idopcion'];
 	    $listasaldoinicial 		= 	$this->kd_lista_saldo_inicial(Session::get('empresas_meta')->COD_EMPR,$tipo_producto_id);
 		$funcion 				= 	$this;
 
 		return View::make('kardex/ajax/alistasaldoinicial',
 						 [
-						 	'listasaldoinicial' 	=> $listasaldoinicial,					 	
+						 	'listasaldoinicial' 	=> $listasaldoinicial,
+						 	'tipo_producto_id' 		=> $tipo_producto_id,
+						 	'anio' 					=> $anio,					 	
 						 	'idopcion' 				=> $idopcion,
 						 	'funcion' 				=> $funcion,
 						 	'ajax' 					=> true,						 	

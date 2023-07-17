@@ -19,17 +19,15 @@
       <div id="ventas" class="tab-pane cont">
         @include('kardex.ajax.aventas')
       </div>
-      <div id="compras" class="tab-pane">
+      <div id="compras" class="tab-pane cont">
         @include('kardex.ajax.acompras')
       </div>
-      <div id="inventariofinalc" >
+      <div id="inventariofinalc" class="tab-pane cont">
         @include('kardex.ajax.ainventariofinalcosto')
       </div>
-
       <div id="ventasc" class="tab-pane cont">
         @include('kardex.ajax.aventascosto')
       </div>
-
       <div id="comprasc" class="tab-pane cont">
         @include('kardex.ajax.acomprascosto')
       </div>

@@ -41,11 +41,8 @@ class MigrarVentaInternacionalController extends Controller
 		//buscar asiento 
 		$lista_ventas_migrar_emitido 		= 	$this->mvi_lista_ventas_migrar_agrupado_emitido_internacional();
 		//dd($lista_ventas_migrar_emitido);
-
 		$lista_ventas_migrar_anulado 		= 	$this->mvi_lista_ventas_migrar_agrupado_anulado_internacional();
 		//dd($lista_ventas_migrar_anulado);
-
-
 		$this->mv_agregar_historial_ventas_internacional($lista_ventas_migrar_emitido,$lista_ventas_migrar_anulado,$tipo_asiento);
 
 		foreach($lista_ventas_migrar_emitido as $index => $item){
@@ -54,16 +51,13 @@ class MigrarVentaInternacionalController extends Controller
 		foreach($lista_ventas_migrar_anulado as $index => $item){
 			$respuesta = $this->mv_update_historial_ventas_internacional($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
 		}	
-		
 		//asignar asiento
 		$lista_ventas 				= 	$this->mv_lista_ventas_asignar_internacional($tipo_asiento);
-		
 		//dd($lista_ventas);
 		foreach($lista_ventas as $index => $item){
 			$respuesta2 = $this->mv_asignar_asiento_modelo_internacional($item,$tipo_asiento);
 		}
 		//$this->mv_asignar_totales_ceros();
-
 		print_r("se realizo con exito");
 		//return Redirect::to('/bienvenido');
 
