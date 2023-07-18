@@ -105,6 +105,8 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-registro-diario', 'RegistroDiarioController@actionAjaxRegistroDiario');
 	Route::any('/ajax-modal-detalle-asiento-rd', 'RegistroDiarioController@actionAjaxModalDetalleAsiento');
 	Route::any('/descargar-asientos-contable-excel', 'RegistroDiarioController@actionAjaxDescargarAsientoContable');
+	Route::any('/descargar-asientos-contable-excel-rd', 'RegistroDiarioController@actionAjaxDescargarAsientoContableRD');
+
 	Route::any('/asiento-contable-excel-xasiento/{cod_asiento}', 'RegistroDiarioController@actionAsientoContableExcelXAsiento');
 
 
@@ -115,6 +117,7 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-asiento-alterado-compras/{idopcion}', 'ReporteComprasController@actionListarAsientoAlteradoCompra');
 	Route::any('/ajax-asiento-alterado-compras', 'ReporteComprasController@actionAjaxListarAsientoAlteradoCompra');
 	Route::any('/descargar-asiento-alterado-excel', 'ReporteComprasController@actionAjaxDescargarAsientoAlterado');
+
 
 
 
