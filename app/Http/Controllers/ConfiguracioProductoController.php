@@ -85,6 +85,7 @@ class ConfiguracioProductoController extends Controller
 
 
 
+
 		$defecto_producto				= 	'';
 
 		$sel_categoria_producto 		=	'';

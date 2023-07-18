@@ -56,6 +56,8 @@ trait ConfiguracionProductoTraits
 																WEB.productoempresas.codigo_migracion"))
 											->get();
 
+		//dd($lista_configuracion_producto);
+
 		return $lista_configuracion_producto;
 
 	}

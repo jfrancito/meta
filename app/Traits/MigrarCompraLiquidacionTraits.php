@@ -185,6 +185,9 @@ trait MigrarCompraLiquidacionTraits
 												$IND_AFECTO);
 
     		$linea 	=	1;
+    		$suma_de_60 = 0;
+    		$sobrante = 0;
+
 
 			foreach($detalle as $index => $item){
 
@@ -217,7 +220,10 @@ trait MigrarCompraLiquidacionTraits
 				$COD_PRODUCTO =  $item->COD_PRODUCTO;
 				$TXT_NOMBRE_PRODUCTO =  $item->TXT_NOMBRE_PRODUCTO;
 				$COD_LOTE =  $item->COD_LOTE;
-				$NRO_LINEA_PRODUCTO =  $item->NRO_LINEA;			
+				$NRO_LINEA_PRODUCTO =  $item->NRO_LINEA;
+
+				$suma_de_60 = $suma_de_60 + $item->CAN_IMPORTE;
+
 
 	    		$detalle     	= 	$this->mcl_crear_detalle_asiento_contable(	$IND_TIPO_OPERACION,
 															$COD_ASIENTO_MOVIMIENTO,
@@ -253,6 +259,24 @@ trait MigrarCompraLiquidacionTraits
 
 	    		$linea = $linea + 1;
 			}	
+
+
+			//completar los centimos
+
+			$sobrante = $doc->CAN_TOTAL - $suma_de_60;
+			$valor_total = 0;
+
+			if($sobrante>0){
+
+				$asientomovimientocompletar 	= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$COD_ASIENTO)
+													->where('IND_PRODUCTO','=',1)
+													->first();
+				$valor_total = $asientomovimientocompletar->CAN_DEBE_MN + $sobrante;
+				$asientomovimientocompletar->CAN_DEBE_MN = $valor_total;
+				$asientomovimientocompletar->CAN_DEBE_ME = $valor_total/$CAN_TIPO_CAMBIO;
+				$asientomovimientocompletar->save(); 
+
+			}
 
 			//CUENTA 42
 			$cuenta_contable 	=	WEBCuentaContable::where('nro_cuenta','=','421203')->where('anio','=',$anio)

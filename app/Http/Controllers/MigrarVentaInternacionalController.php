@@ -58,8 +58,8 @@ class MigrarVentaInternacionalController extends Controller
 			$respuesta2 = $this->mv_asignar_asiento_modelo_internacional($item,$tipo_asiento);
 		}
 		//$this->mv_asignar_totales_ceros();
-		print_r("se realizo con exito");
-		//return Redirect::to('/bienvenido');
+		//print_r("se realizo con exito");
+		return Redirect::to('/bienvenido');
 
 	}
 
