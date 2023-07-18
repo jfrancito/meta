@@ -72,6 +72,7 @@ class RegistroDiarioController extends Controller
 		$idopcion 				=   $request['idopcion'];
 
 	    $listaasiento 			= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->leftJoin('STD.EMPRESA', 'STD.EMPRESA.COD_EMPR', '=', 'WEB.asientos.COD_EMPR_CLI')
 	    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
 	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
@@ -79,6 +80,10 @@ class RegistroDiarioController extends Controller
 	    							->orderby('WEB.asientos.COD_ASIENTO','asc')
 	    							->orderby('WEB.asientomovimientos.NRO_LINEA','asc')
 	    							->get();					
+
+
+
+
 
 	    $funcion 				= 	$this;
 		$titulo 				=   'ASIENTO-CONTABLE-'.Session::get('empresas_meta')->NOM_EMPR;

@@ -72,6 +72,8 @@
       <th class= 'center tablaho'>Haber ME</th>
       <th class= 'center tablaho'>Asiento</th>
       <th class= 'center tablaho'>Nomref</th>
+      <th class= 'center tablaho'>RUC/DNI</th>
+
       <th class= 'center tablaho'>Fecha</th>
       <th class= 'center tablaho'>Tipo Documento</th>
       <th class= 'center tablaho'>Documento</th>
@@ -90,6 +92,7 @@
         <td width="12">{{number_format($item->CAN_HABER_ME, $redondeo, '.', '')}}</td>
         <td width="12">{{$item->TXT_CATEGORIA_TIPO_ASIENTO}}</td>
         <td width="35">{{$item->TXT_EMPR_CLI}}</td>
+        <td width="35">{{$item->NRO_DOCUMENTO}}</td>
         <td width="12">{{$item->FEC_ASIENTO}}</td>
         <td width="25">{{$item->TXT_CATEGORIA_TIPO_DOCUMENTO}}</td>
         <td width="18">{{$item->NRO_SERIE}}-{{$item->NRO_DOC}}</td>

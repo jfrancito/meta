@@ -142,6 +142,14 @@ trait GeneralesTraits
 
 				$contadorpro = $cont_detalle_asiento;
 				$partida_id = 'COP0000000000001';
+
+				if($asiento->COD_CATEGORIA_TIPO_DOCUMENTO=='TDO0000000000007'){
+					$partida_id = 'COP0000000000002';			
+				}
+
+
+
+
 				if($partida_id == 'COP0000000000001')
 					{
 						if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001')
@@ -265,6 +273,11 @@ trait GeneralesTraits
 
 				$contadorpro = $cont_detalle_asiento;
 				$partida_id = 'COP0000000000001';
+
+				if($asiento->COD_CATEGORIA_TIPO_DOCUMENTO=='TDO0000000000007'){
+					$partida_id = 'COP0000000000002';			
+				}
+
 				if($partida_id == 'COP0000000000001')
 					{
 						if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001')
@@ -387,6 +400,11 @@ trait GeneralesTraits
 
 				$contadorpro = $cont_detalle_asiento;
 				$partida_id = 'COP0000000000002';
+				if($asiento->COD_CATEGORIA_TIPO_DOCUMENTO=='TDO0000000000007'){
+					$partida_id = 'COP0000000000001';			
+				}
+
+
 				if($partida_id == 'COP0000000000001')
 					{
 						if($asiento->COD_CATEGORIA_MONEDA == 'MON0000000000001')

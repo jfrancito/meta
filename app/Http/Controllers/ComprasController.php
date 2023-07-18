@@ -155,6 +155,8 @@ class ComprasController extends Controller
 	    								->first();
 
 
+	    $usuario 				= 	SGDUsuario::where('COD_USUARIO','=',$asiento->COD_USUARIO_CREA_AUD)->first();
+
 		return View::make('compras/modal/ajax/mdetalleasientoconfirmar',
 						 [
 						 	'asiento'					=> $asiento,
@@ -184,6 +186,7 @@ class ComprasController extends Controller
 						 	'defecto_partida' 			=> $defecto_partida,
 						 	'defecto_activo' 			=> $defecto_activo,
 						 	'ruta' 						=> $ruta,
+						 	'usuario' 					=> $usuario,
 
 
 						 	'ajax' 						=> true,						 	
@@ -206,6 +209,8 @@ class ComprasController extends Controller
 		$serie 									=   $request['serie'];
 		$documento 								=   $request['documento'];
 		$ruta 									=   $request['ruta'];
+
+		//dd($asiento);
 
 
 		if($accion == 'editar'){
@@ -532,6 +537,7 @@ class ComprasController extends Controller
 
 		$combo_activo 			= 	array('1' => 'ACTIVO','0' => 'ELIMINAR');
 		$defecto_activo			= 	'1';
+
 	    $usuario 				= 	SGDUsuario::where('COD_USUARIO','=',$asiento->COD_USUARIO_CREA_AUD)->first();
 
 
@@ -1628,6 +1634,7 @@ class ComprasController extends Controller
 
 		$combo_activo 			= 	array('1' => 'ACTIVO','0' => 'ELIMINAR');
 		$defecto_activo			= 	'1';
+
 
 		//usuario registro factura
 	    $usuario 				= 	SGDUsuario::where('COD_USUARIO','=',$asiento->COD_USUARIO_CREA_AUD)->first();
