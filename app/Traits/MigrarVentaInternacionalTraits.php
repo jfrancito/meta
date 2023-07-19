@@ -50,7 +50,7 @@ trait MigrarVentaInternacionalTraits
 											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
 											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
 											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
-											//->where('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE','=','IIRJFC0000006572')//quitar
+											->where('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE','=','IICHBL0000088937')//quitar
 											->where('WEB.viewmigrarventas.NOM_ESTADO','=','EMITIDO')
 											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
 											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
@@ -285,15 +285,63 @@ trait MigrarVentaInternacionalTraits
 		}else{
 
 
-	      		$historialmigrar 						=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$documento_ctble_cod)
-	      													->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
+		        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.BUSCAR_ASIENTO_MODELO_INTERNACIONAL_COMBINADO 
+													@anio = ?,
+													@empresa = ?,
+													@cod_contable = ?,
+													@cod_tipo_asiento = ?,
+													@ind_anulado = ?');
 
-      			$historialmigrar->IND_ERROR 			=   1;
-				$historialmigrar->IND_ASIENTO_MODELO 	=   -1;
-				$historialmigrar->COD_ASIENTO_MODELO 	=   '';
-				$historialmigrar->TXT_ERROR 			=   'Docuemento con item con IVAP y Afecto';
-				$historialmigrar->IND_CORREO 			=   0;
-				$historialmigrar->save();
+		        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
+		        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
+		        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
+		        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
+		        $stmt->bindParam(5, $documento_anulado  ,PDO::PARAM_STR);
+		        $stmt->execute();
+
+
+		      	while ($row = $stmt->fetch()){
+		      		$codigo = $row['codigo'];
+		      		$mensaje = $row['mensaje'];
+		      		$asiento_modelo_id = $row['asiento_modelo_id'];
+
+		      		$historialmigrar 						=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$documento_ctble_cod)
+		      													->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
+					
+		      		if($codigo=='1'){
+
+						$historialmigrar->IND_ERROR 			=   -1;
+						$historialmigrar->IND_ASIENTO_MODELO 	=   0;
+						$historialmigrar->COD_ASIENTO_MODELO 	=   $asiento_modelo_id;
+						$historialmigrar->IND_CORREO 			=   -1;
+						$historialmigrar->save();
+
+		      		}else{
+
+		      			$historialmigrar->IND_ERROR 			=   1;
+						$historialmigrar->IND_ASIENTO_MODELO 	=   -1;
+						$historialmigrar->COD_ASIENTO_MODELO 	=   '';
+						$historialmigrar->TXT_ERROR 			=   $mensaje;
+						$historialmigrar->IND_CORREO 			=   0;
+						$historialmigrar->save();
+
+		      		}
+
+		      	}
+
+
+
+
+
+	   //    		$historialmigrar 						=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$documento_ctble_cod)
+	   //    													->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
+
+    //   			$historialmigrar->IND_ERROR 			=   1;
+				// $historialmigrar->IND_ASIENTO_MODELO 	=   -1;
+				// $historialmigrar->COD_ASIENTO_MODELO 	=   '';
+				// $historialmigrar->TXT_ERROR 			=   'Docuemento con item con IVAP y Afecto';
+				// $historialmigrar->IND_CORREO 			=   0;
+				// $historialmigrar->save();
 
 
 		}
@@ -313,7 +361,7 @@ trait MigrarVentaInternacionalTraits
 		$lista_ventas				=		WEBHistorialMigrar::whereIn('COD_EMPR',$array_empresas)
 											->where('IND_ASIENTO_MODELO','=',0)
 											->where('IND_ERROR','<>',1)
-											//->where('COD_REFERENCIA','=','ISBEFC0000028081')//quitar
+											->where('COD_REFERENCIA','=','IICHBL0000088937')//quitar
 											->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)
 											->get();
 		return $lista_ventas;
@@ -330,6 +378,7 @@ trait MigrarVentaInternacionalTraits
 		$empresa 					= 		$documento_ctble->COD_EMPR;
 		$cod_contable 				= 		$documento_ctble->COD_DOCUMENTO_CTBLE;
 		$asiento_modelo_id 			= 		trim($historialmigrar->COD_ASIENTO_MODELO);
+		$asiento_modelo02_id 		= 		trim($historialmigrar->COD_ASIENTO_MODELO02);
 
 		if($documento_ctble->ESTADO_ELEC == 'R'){
 		    $anulado 				= 		0;
@@ -339,49 +388,81 @@ trait MigrarVentaInternacionalTraits
 
 		$sw 						=		'IGV';
 		$asientomodelo 				= 		WEBAsientoModelo::where('id','=',$historialmigrar->COD_ASIENTO_MODELO)->first();
+
 		if($asientomodelo->tipo_ivap_id <> ''){
 			$sw 						=		'IVAP';	
 		}
 
 
-		if($sw=='IVAP'){
+		if($historialmigrar->IND_COMBINADO == 1){
 
-	        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO_COMERCIAL 
-												@anio = ?,
-												@empresa = ?,
-												@cod_contable = ?,
-												@cod_tipo_asiento = ?,
-												@asiento_modelo_id = ?,
-												@ind_anulado = ?');
 
-	        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
-	        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
-	        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
-	        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
-	        $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
-	        $stmt->bindParam(6, $anulado  ,PDO::PARAM_STR);
-	        $stmt->execute();
+		        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO_INTERNACIONAL_COMBINADO
+													@anio = ?,
+													@empresa = ?,
+													@cod_contable = ?,
+													@cod_tipo_asiento = ?,
+													@asiento_modelo_id = ?,
+													@ind_anulado = ?,
+													@asiento_modelo02_id = ?');
+
+		        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
+		        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
+		        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
+		        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
+		        $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
+		        $stmt->bindParam(6, $anulado  ,PDO::PARAM_STR);
+		        $stmt->bindParam(7, $asiento_modelo02_id  ,PDO::PARAM_STR);
+		        $stmt->execute();
 
 
 		}else{
 
-	        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO_INTERNACIONAL
-												@anio = ?,
-												@empresa = ?,
-												@cod_contable = ?,
-												@cod_tipo_asiento = ?,
-												@asiento_modelo_id = ?,
-												@ind_anulado = ?');
 
-	        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
-	        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
-	        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
-	        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
-	        $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
-	        $stmt->bindParam(6, $anulado  ,PDO::PARAM_STR);
-	        $stmt->execute();	
+			if($sw=='IVAP'){
+
+		        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO_COMERCIAL 
+													@anio = ?,
+													@empresa = ?,
+													@cod_contable = ?,
+													@cod_tipo_asiento = ?,
+													@asiento_modelo_id = ?,
+													@ind_anulado = ?');
+
+		        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
+		        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
+		        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
+		        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
+		        $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
+		        $stmt->bindParam(6, $anulado  ,PDO::PARAM_STR);
+		        $stmt->execute();
+
+
+			}else{
+
+		        $stmt 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_ASIENTO_MODELO_INTERNACIONAL
+													@anio = ?,
+													@empresa = ?,
+													@cod_contable = ?,
+													@cod_tipo_asiento = ?,
+													@asiento_modelo_id = ?,
+													@ind_anulado = ?');
+
+		        $stmt->bindParam(1, $anio ,PDO::PARAM_STR);                   
+		        $stmt->bindParam(2, $empresa  ,PDO::PARAM_STR);
+		        $stmt->bindParam(3, $cod_contable  ,PDO::PARAM_STR);
+		        $stmt->bindParam(4, $tipo_asiento  ,PDO::PARAM_STR);
+		        $stmt->bindParam(5, $asiento_modelo_id  ,PDO::PARAM_STR);
+		        $stmt->bindParam(6, $anulado  ,PDO::PARAM_STR);
+		        $stmt->execute();	
+
+			}
+
 
 		}
+
+
+
 
 		$historialmigrar->IND_ASIENTO_MODELO 	=   1;
 		$historialmigrar->IND_CORREO 			=   -1;

@@ -16,6 +16,8 @@ use App\Modelos\WEBDetalleSegundaVenta;
 use App\Modelos\WEBProductoEmpresa;
 use App\Modelos\CMPDetalleProducto;
 use App\Modelos\WEBAsientoModelo;
+use App\Modelos\CMPDocumentoCtble;
+
 
 
 use App\Traits\GeneralesTraits;
@@ -24,6 +26,8 @@ use Session;
 use Hashids;
 Use Nexmo;
 use Keygen;
+use PDO;
+
 
 use App\Traits\SegundaVentaTraits;
 use App\Traits\PlanContableTraits;
@@ -46,13 +50,18 @@ class SegundaVentaController extends Controller
 		$agregarinventario 		=   floatval(str_replace(",","",$request['agregarinventario']));
 		$cantidad_documento 	=   floatval($request['cantidad_documento']);
 		$anio 					=   $request['anio'];
+		$empresa_id				=	Session::get('empresas_meta')->COD_EMPR;
 
-		$producto 				=   WEBInventarioSegundaVenta::where('producto_id','=',$producto_id)->first();
-		$inventariosegunda 		=   WEBInventarioSegundaVenta::where('producto_id','=',$producto_id)
-									->where('periodo_id','=',$periodo_id)
+		$producto 				=   WEBInventarioSegundaVenta::where('producto_id','=',$producto_id)
+									->where('empresa_id','=',$empresa_id)
 									->first();
 
-		$empresa_id				=	Session::get('empresas_meta')->COD_EMPR;
+		$inventariosegunda 		=   WEBInventarioSegundaVenta::where('producto_id','=',$producto_id)
+									->where('periodo_id','=',$periodo_id)
+									->where('empresa_id','=',$empresa_id)
+									->first();
+
+
 
 		foreach($data_archivo as $key => $obj){
 			$asiento_id 		=   $obj['asiento_id'];
@@ -104,10 +113,12 @@ class SegundaVentaController extends Controller
 
 		$inventariosegunda 		=   WEBInventarioSegundaVenta::where('producto_id','=',$producto_id)
 									->where('periodo_id','=',$periodo_id)
+									->where('empresa_id','=',$empresa_id)
 									->first();
 		$tipo_asiento 						=	'TAS0000000000003';	
 
-		$nro_cuenta_sv  	= 	'';
+		$nro_cuenta_sv  		= 	'';
+		$COD_DOCUMENTO_REAL	  	= 	'';
 
 		//dd($data_archivo);
 		foreach($data_archivo as $key => $obj){
@@ -115,6 +126,9 @@ class SegundaVentaController extends Controller
 			$asiento_id 		=   $obj['asiento_id'];
 			$nro_cuenta_sv  	= 	'';
 
+
+
+			//nueva asiento de la factura segunda venta
 			$asiento            =	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
 			$asientomodelo      =	WEBAsientoModelo::where('id','=',$asiento->COD_ASIENTO_MODELO)->first();
 			$detproducto        =	CMPDetalleProducto::where('COD_TABLA','=',$asiento->TXT_REFERENCIA)->first();
@@ -122,6 +136,8 @@ class SegundaVentaController extends Controller
 									->where('anio','=',$anio)
 									->where('empresa_id','=',$empresa_id)								
 									->first();
+
+			$COD_DOCUMENTO_REAL	= 	$asiento->TXT_REFERENCIA;
 
 			if($asientomodelo->tipo_cliente==0){
 				$cc 				=	WEBCuentaContable::where('id','=',$proempresa->cuenta_contable_venta_segunda_tercero_id)->first();
@@ -141,26 +157,88 @@ class SegundaVentaController extends Controller
 			$asiento->save();
 
 			$respuesta2 		= 	$this->mv_asignar_asiento_modelo_comercial_sv($asiento,$tipo_asiento,$nro_cuenta_sv);
-
-			
+					
 			$asiento_nuevo      =	WEBAsiento::where('TXT_REFERENCIA','=',$asiento->TXT_REFERENCIA)
 									->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 									->first();
+			$cod_asiento_nuevo  =   $asiento_nuevo->COD_ASIENTO;
 
-			$cantidad 			=   $obj['cantidad'];
-			$id_det 					=   $this->funciones->getCreateIdMaestra('WEB.detallesegundaventas');
-			$anio  						=   $this->anio;
-			$detalle            	 	=	new WEBDetalleSegundaVenta;
-			$detalle->id 	     	 	=   $id_det;
+
+			$cantidad 									=   $obj['cantidad'];
+			$id_det 									=   $this->funciones->getCreateIdMaestra('WEB.detallesegundaventas');
+			$anio  										=   $this->anio;
+
+			$detalle            	 					=	new WEBDetalleSegundaVenta;
+			$detalle->id 	     	 					=   $id_det;
 			$detalle->inventariosegundaventa_id 	   	=   $inventariosegunda->id;
-			$detalle->asiento_id 		=   $asiento_nuevo->COD_ASIENTO;
-			$detalle->cantidad_descargo=   $cantidad;
-			$detalle->empresa_id 	 	=   Session::get('empresas_meta')->COD_EMPR;
-			$detalle->fecha_crea 	 	=   $this->fechaactual;
-			$detalle->usuario_crea 	=   Session::get('usuario_meta')->id;
+			$detalle->asiento_id 						=   $asiento_nuevo->COD_ASIENTO;
+			$detalle->cantidad_descargo 				=   $cantidad;
+			$detalle->empresa_id 	 					=   Session::get('empresas_meta')->COD_EMPR;
+			$detalle->fecha_crea 	 					=   $this->fechaactual;
+			$detalle->usuario_crea 						=   Session::get('usuario_meta')->id;
 			$detalle->save();
 
 
+			//si tienes nota de credito
+			$asientoNC            =	WEBAsiento::where('COD_CATEGORIA_TIPO_DOCUMENTO','=','TDO0000000000007')
+									->where('COD_EMPR','=',$asiento->COD_EMPR)
+									->where('COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000003')
+									->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+									->where('NRO_SERIE_REF','=',$asiento->NRO_SERIE)
+									->where('NRO_DOC_REF','=',$asiento->NRO_DOC)
+									->first();
+
+			if(count($asientoNC)>0){
+
+				$asientomodelo      =	WEBAsientoModelo::where('id','=',$asientoNC->COD_ASIENTO_MODELO)->first();
+				$detproducto        =	CMPDetalleProducto::where('COD_TABLA','=',$asientoNC->TXT_REFERENCIA)->first();
+				$proempresa        	=	WEBProductoEmpresa::where('producto_id','=',$detproducto->COD_PRODUCTO)
+										->where('anio','=',$anio)
+										->where('empresa_id','=',$empresa_id)								
+										->first();
+
+				if($asientomodelo->tipo_cliente==0){
+					$cc 				=	WEBCuentaContable::where('id','=',$proempresa->cuenta_contable_venta_segunda_tercero_id)->first();
+					$nro_cuenta_sv  	= 	$cc->nro_cuenta;
+				}else{
+					$cc 				=	WEBCuentaContable::where('id','=',$proempresa->cuenta_contable_venta_segunda_relacionada_id)->first();
+					$nro_cuenta_sv  	= 	$cc->nro_cuenta;
+				}
+
+
+				$respuesta 			= 	$this->mv_update_historial_segundaventas_internacional($asientoNC,$tipo_asiento);
+				//eliminar asiento
+				$asientoNC->COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000024';
+				$asientoNC->TXT_CATEGORIA_ESTADO_ASIENTO = 'EXTORNADO';
+				$asientoNC->save();
+
+				$respuesta2 		= 	$this->mv_asignar_asiento_modelo_comercial_sv($asientoNC,$tipo_asiento,$nro_cuenta_sv);
+
+			}
+
+
+			//si tiene trasferencia gratuita
+			$documento  = 	CMPDocumentoCtble::where('COD_DOCUMENTO_CTBLE','=',$COD_DOCUMENTO_REAL)
+							->where('IND_GRATUITO','=',1)->first();
+							
+			if(count($documento)>0){
+				$asientotg            =	WEBAsiento::where('COD_EMPR','=',$asiento->COD_EMPR)
+										->where('COD_CATEGORIA_TIPO_ASIENTO','=','TAS0000000000007')
+										->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+										->where('TXT_REFERENCIA','=',$asiento->COD_ASIENTO)
+										->first();
+				if(count($asientotg)>0){
+
+					$asientotg->COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000024';
+					$asientotg->TXT_CATEGORIA_ESTADO_ASIENTO = 'EXTORNADO';
+					$asientotg->save();
+
+			        $stmt2 						= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.APLICAR_REVERSION_TG_ASIENTO_MODELO_SV 
+														@cod_asiento = ?');
+			        $stmt2->bindParam(1, $cod_asiento_nuevo ,PDO::PARAM_STR);                   
+			        $stmt2->execute();
+				}
+			}
 
 		}	
 		return Redirect::to('/gestion-segunda-ventas/'.$idopcion)->with('bienhecho', 'Asociacion exitosa');
