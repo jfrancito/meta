@@ -145,6 +145,8 @@ function ajax_normal_guardar_lista(data,link,btnclick) {
         url     :   carpeta+link,
         data    :   data,
         success: function (data) {
+            //$('#nso').html(data)
+            console.log(data);
             cerrarcargando();
             location.reload();
         },

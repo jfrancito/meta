@@ -394,8 +394,8 @@ class ConfiguracioProductoController extends Controller
 	public function actionAjaxGuardarCuentaContableInter(Request $request)
 	{
 		
-		$array_productos 			=   json_decode($request['array_productos'],true);
 
+		$array_productos 			=   json_decode($request['array_productos'],true);
 
 		$cuenta_contable_rel_id 	=   $request['cuenta_contable_rel_id'];
 		$cuenta_contable_ter_id 	=   $request['cuenta_contable_ter_id'];
@@ -406,6 +406,8 @@ class ConfiguracioProductoController extends Controller
 		$cuenta_contable_compra_id 	=   $request['cuenta_contable_compra_id'];
 		$ind_venta_compra 			=   $request['ind_venta_compra'];
 		$anio  						=   $request['anio'];;
+
+
 
 		if(is_null($cuenta_contable_rel_id)){ $cuenta_contable_rel_id = '';}
 		if(is_null($cuenta_contable_ter_id)){ $cuenta_contable_ter_id = '';}
@@ -430,6 +432,7 @@ class ConfiguracioProductoController extends Controller
 				$cabecera            	 						=	new WEBProductoEmpresa;
 				$cabecera->id 	     	 						=   $idproductoempresa;
 
+
 				if($ind_venta_compra == '1'){
 
 					$cabecera->cuenta_contable_venta_relacionada_id 			=   $cuenta_contable_rel_id;
@@ -438,8 +441,7 @@ class ConfiguracioProductoController extends Controller
 					$cabecera->cuenta_contable_venta_segunda_tercero_id 		=   $cuenta_contable_ter_sv_id;
 					$cabecera->cuenta_contable_venta_aigv_relacionada_id 		=   $cuenta_contable_venta_aigv_relacionada_id;
 					$cabecera->cuenta_contable_venta_aigv_tercero_id 			=   $cuenta_contable_venta_aigv_tercero_id;
-
-					$cabecera->cuenta_contable_compra_id 				=   '';
+					$cabecera->cuenta_contable_compra_id 						=   '';
 
 				}else{
 
@@ -449,7 +451,6 @@ class ConfiguracioProductoController extends Controller
 					$cabecera->cuenta_contable_venta_segunda_tercero_id 		=   '';
 					$cabecera->cuenta_contable_venta_aigv_relacionada_id 	=   '';
 					$cabecera->cuenta_contable_venta_aigv_tercero_id 		=   '';
-
 					$cabecera->cuenta_contable_compra_id 				=   $cuenta_contable_compra_id;
 
 				}

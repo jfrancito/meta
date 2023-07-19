@@ -217,6 +217,8 @@ $(document).ready(function(){
 
         }
 
+
+
         //cerrar modal
         $('#modal-configuracion-producto-cuenta-contable').niftyModal('hide');
 
@@ -235,7 +237,10 @@ $(document).ready(function(){
                                 array_productos          : array_productos,
                             };
 
-        ajax_normal_guardar_lista(data,"/ajax-guardar-cuenta-contable-inter","buscarproducto");                 
+                          
+
+
+        ajax_normal_guardar_lista(data,"/ajax-guardar-cuenta-contable-inter","buscarproducto");                
 
     });
 
