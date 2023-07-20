@@ -43,7 +43,7 @@ class MigrarVentaComercialController extends Controller
 
 		$lista_ventas_migrar_anulado 		= 	$this->mv_lista_ventas_migrar_agrupado_anulado_comercial();
 		//dd($lista_ventas_migrar_emitido);
-		//dd($lista_ventas_migrar_emitido);
+		//dd($lista_ventas_migrar_anulado);
 
 		$this->mv_agregar_historial_ventas_comercial($lista_ventas_migrar_emitido,$lista_ventas_migrar_anulado,$tipo_asiento);
 		//dd('llego');

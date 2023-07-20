@@ -316,10 +316,12 @@ trait MovilidadTraits
                 "cuenta_id"                 => $cuentacontable->id,
                 "cuenta_nrocuenta"          => $cuentacontable->nro_cuenta,
                 "glosa"                     => $cuentacontable->nombre,
+
                 "fecha"                     => substr($periodo->FEC_FIN, 0, 10),
                 "empresa_id"                => $empresa_id,
                 "moneda_id"                 => $moneda_id,
                 "moneda"                    => $moneda,
+                
                 "total_debe"                => $monto_total_debe,
                 "total_haber"               => $monto_total_haber,
                 "total_debe_dolar"          => $monto_total_dolar_debe,

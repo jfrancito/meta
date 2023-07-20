@@ -45,17 +45,18 @@
   <tfoot>
       <tr>
         <td></td>
-
+          @php $cmes      =   count($listaperido) ; @endphp
           @for ($i = 0; $i < count($listaperido); $i++)
               <td 
                   class="dobleclickac seleccionar"
                   data_tipo_producto_id = "{{$tipo_producto_id}}"
                   monto_total = "{{$array_totales[$i]}}"
-                  periodo = "{{$i+1}}"
+                  periodo = "{{$cmes}}"
                   data_anio = "{{$anio}}"
                   >
                 <b>{{number_format($array_totales[$i], 2, '.', ',')}}</b>
               </td>
+              @php $cmes      =   $cmes - 1 ; @endphp
           @endfor
       </tr>                    
   </tfoot>

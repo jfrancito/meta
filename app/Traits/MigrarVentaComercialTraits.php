@@ -78,7 +78,7 @@ trait MigrarVentaComercialTraits
 											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
 											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
 											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
-											//->where('WEB.viewmigrarventas.FEC_EMISION','=','2022-01-07')
+											//->where('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE','=','ISLMBL0000327682')
 											->where('WEB.viewmigrarventas.NOM_ESTADO','=','ANULADO')
 											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
 											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')

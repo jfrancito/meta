@@ -14,13 +14,15 @@ use App\Modelos\WEBAsientoModeloReferencia;
 use App\Modelos\ALMProducto;
 use App\Modelos\CONPeriodo;
 use App\Modelos\CMPCategoria;
-
+use App\Modelos\WEBKardexTransferencia;
 
 
 
 use App\Traits\PlanContableTraits;
 use App\Traits\GeneralesTraits;
 use App\Traits\KardexTraits;
+use App\Traits\MovilidadTraits;
+
 
 use Maatwebsite\Excel\Facades\Excel;
 use View;
@@ -36,6 +38,307 @@ class KardexController extends Controller
 	use GeneralesTraits;
 	use KardexTraits;
 	use PlanContableTraits;
+	use MovilidadTraits;
+
+	public function actionGuardarKardexCuentaContable($idopcion,Request $request)
+	{
+
+		$cabecera 				=   json_decode($request['cabecera'],false);
+		$detalle 				=   json_decode($request['detalle'],false);
+		$periodo_id 			=   $request['periodog_id'];
+		$empresa_id 			=	Session::get('empresas_meta')->COD_EMPR;
+		$centro_id 				=	'CEN0000000000001';
+		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
+		$tipo_asiento_id		=	'TAS0000000000007';
+		$tipo_referencia		=	'TAS0000000000007';
+
+		//CABECERA
+		foreach($cabecera as $index => $item){
+
+
+			$IND_TIPO_OPERACION = 'I';
+			$COD_ASIENTO = '';
+			$COD_EMPR = $empresa_id;
+			$COD_CENTRO = $centro_id;
+			$COD_PERIODO = $periodo->COD_PERIODO;
+			$COD_CATEGORIA_TIPO_ASIENTO = 'TAS0000000000007';
+			$TXT_CATEGORIA_TIPO_ASIENTO = 'DIARIO';
+			$NRO_ASIENTO = '';
+			$FEC_ASIENTO = substr($periodo->FEC_FIN, 0, 10);
+			$TXT_GLOSA = $item->glosa;
+
+			$COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000025';
+			$TXT_CATEGORIA_ESTADO_ASIENTO = 'CONFIRMADO';
+			$COD_CATEGORIA_MONEDA = $item->moneda_id;
+			$TXT_CATEGORIA_MONEDA = $item->moneda;
+			$CAN_TIPO_CAMBIO = $item->tipo_cambio;
+			$CAN_TOTAL_DEBE = $item->total_debe;
+			$CAN_TOTAL_HABER = $item->total_haber;
+			$COD_ASIENTO_EXTORNO = '';
+			$COD_ASIENTO_EXTORNADO = '';
+			$IND_EXTORNO = '0';
+
+			$COD_ASIENTO_MODELO = '';
+			$TXT_TIPO_REFERENCIA = $item->tipo_referencia;
+			$TXT_REFERENCIA = '';
+			$COD_ESTADO = '1';
+			$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
+			$COD_MOTIVO_EXTORNO = '';
+			$GLOSA_EXTORNO = '';
+			$COD_EMPR_CLI = '';
+			$TXT_EMPR_CLI = '';
+			$COD_CATEGORIA_TIPO_DOCUMENTO = '';
+
+			$TXT_CATEGORIA_TIPO_DOCUMENTO = '';
+			$NRO_SERIE = '';
+			$NRO_DOC = '';
+			$FEC_DETRACCION = '';
+			$NRO_DETRACCION = '';
+			$CAN_DESCUENTO_DETRACCION = '0';
+			$CAN_TOTAL_DETRACCION = '0';
+			$COD_CATEGORIA_TIPO_DOCUMENTO_REF = '';
+			$TXT_CATEGORIA_TIPO_DOCUMENTO_REF = '';
+			$NRO_SERIE_REF = '';
+			$NRO_DOC_REF = '';
+			$FEC_VENCIMIENTO = '';
+			$IND_AFECTO = '0';
+
+			$asiento_id				=   $this->gn_encontrar_cod_asiento($empresa_id, $centro_id, 
+														$periodo_id, $tipo_asiento_id,$item->tipo_referencia);
+
+			$anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
+																		Session::get('usuario_meta')->name,$this->fechaactual);
+
+
+
+    		$asientocontable     	= 	$this->gn_crear_asiento_contable($IND_TIPO_OPERACION,
+												$COD_ASIENTO,
+												$COD_EMPR,
+												$COD_CENTRO,
+												$COD_PERIODO,
+												$COD_CATEGORIA_TIPO_ASIENTO,
+												$TXT_CATEGORIA_TIPO_ASIENTO,
+												$NRO_ASIENTO,
+												$FEC_ASIENTO,
+												$TXT_GLOSA,
+												
+												$COD_CATEGORIA_ESTADO_ASIENTO,
+												$TXT_CATEGORIA_ESTADO_ASIENTO,
+												$COD_CATEGORIA_MONEDA,
+												$TXT_CATEGORIA_MONEDA,
+												$CAN_TIPO_CAMBIO,
+												$CAN_TOTAL_DEBE,
+												$CAN_TOTAL_HABER,
+												$COD_ASIENTO_EXTORNO,
+												$COD_ASIENTO_EXTORNADO,
+												$IND_EXTORNO,
+
+												$COD_ASIENTO_MODELO,
+												$TXT_TIPO_REFERENCIA,
+												$TXT_REFERENCIA,
+												$COD_ESTADO,
+												$COD_USUARIO_REGISTRO,
+												$COD_MOTIVO_EXTORNO,
+												$GLOSA_EXTORNO,
+												$COD_EMPR_CLI,
+												$TXT_EMPR_CLI,
+												$COD_CATEGORIA_TIPO_DOCUMENTO,
+
+												$TXT_CATEGORIA_TIPO_DOCUMENTO,
+												$NRO_SERIE,
+												$NRO_DOC,
+												$FEC_DETRACCION,
+												$NRO_DETRACCION,
+												$CAN_DESCUENTO_DETRACCION,
+												$CAN_TOTAL_DETRACCION,
+												$COD_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$TXT_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$NRO_SERIE_REF,
+
+												$NRO_DOC_REF,
+												$FEC_VENCIMIENTO,
+												$IND_AFECTO);
+
+		}
+
+
+		//DETALLE
+
+		foreach($detalle as $index => $item){
+
+			$IND_TIPO_OPERACION = 'I';
+			$COD_ASIENTO_MOVIMIENTO = '';
+			$COD_EMPR = $empresa_id;
+			$COD_CENTRO = $centro_id;
+			$COD_ASIENTO = $asientocontable;
+			$COD_CUENTA_CONTABLE = $item->cuenta_id;
+			$TXT_CUENTA_CONTABLE = $item->glosa;
+			$TXT_GLOSA = $item->glosa;
+			$CAN_DEBE_MN = $item->total_debe;
+			$CAN_HABER_MN = $item->total_haber;
+
+			$CAN_DEBE_ME = $item->total_debe_dolar;
+			$CAN_HABER_ME = $item->total_haber_dolar;
+			$NRO_LINEA = $item->linea;
+			$COD_CUO = '';
+			$IND_EXTORNO = '0';
+			$TXT_TIPO_REFERENCIA = '';
+			$TXT_REFERENCIA = '';
+			$COD_ESTADO = '1';
+			$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
+			$COD_DOC_CTBLE_REF = '';
+
+			$COD_ORDEN_REF = '';
+
+    		$detalle     	= 	$this->gn_crear_detalle_asiento_contable(	$IND_TIPO_OPERACION,
+														$COD_ASIENTO_MOVIMIENTO,
+														$COD_EMPR,
+														$COD_CENTRO,
+														$COD_ASIENTO,
+														$COD_CUENTA_CONTABLE,
+														$TXT_CUENTA_CONTABLE,
+														$TXT_GLOSA,
+														$CAN_DEBE_MN,
+														$CAN_HABER_MN,
+
+														$CAN_DEBE_ME,
+														$CAN_HABER_ME,
+														$NRO_LINEA,
+														$COD_CUO,
+														$IND_EXTORNO,
+														$TXT_TIPO_REFERENCIA,
+														$TXT_REFERENCIA,
+														$COD_ESTADO,
+														$COD_USUARIO_REGISTRO,
+														$COD_DOC_CTBLE_REF,
+
+														$COD_ORDEN_REF);
+
+		}	
+
+
+		return Redirect::to('/gestion-movimiento-kardex/'.$idopcion)->with('bienhecho', 'Registro cuenta contable exitoso');
+
+	}
+
+
+
+
+	public function actionConfigurarTransferenciaProducto($idopcion,Request $request)
+	{
+
+		if($_POST)
+		{
+
+
+			$producto_salida_id 	 		= 	$request['producto_salida_id'];
+			$producto_ingreso_id 	 		= 	$request['producto_ingreso_id'];
+			$fecha 	 	 					= 	$request['fecha'];
+			$cantidad 	 					= 	$request['cantidad'];
+
+			$codigo 						= 	$this->funciones->generar_codigo('web.kardextransferencias',8);
+			$producto 						=	ALMProducto::where('COD_PRODUCTO','=',$producto_salida_id)->first();
+
+			$id 										=   $this->funciones->getCreateIdMaestra('web.kardextransferencias');
+			$cabecera            	 					=	new WEBKardexTransferencia;
+			$cabecera->id 	     	 					=   $id;
+			$cabecera->codigo 	     	 				=   $codigo;
+
+			$cabecera->producto_id 	   					=   $producto_salida_id;
+			$cabecera->producto_nombre 					=   $producto->NOM_PRODUCTO;
+			$cabecera->ingreso_salida 					=   'SALIDA';
+			$cabecera->cantidad 						=   $cantidad;
+			$cabecera->fecha 	   						=   $fecha;
+			$cabecera->empresa_id 	 					=   Session::get('empresas_meta')->COD_EMPR;
+			$cabecera->fecha_crea 	 					=   $this->fechaactual;
+			$cabecera->usuario_crea 					=   Session::get('usuario_meta')->id;
+			$cabecera->save();
+
+
+			$productoi 									=	ALMProducto::where('COD_PRODUCTO','=',$producto_ingreso_id)->first();
+			$id 										=   $this->funciones->getCreateIdMaestra('web.kardextransferencias');
+			$cabecera            	 					=	new WEBKardexTransferencia;
+			$cabecera->id 	     	 					=   $id;
+			$cabecera->codigo 	     	 				=   $codigo;
+			
+			$cabecera->producto_id 	   					=   $producto_ingreso_id;
+			$cabecera->producto_nombre 					=   $productoi->NOM_PRODUCTO;
+			$cabecera->ingreso_salida 					=   'INGRESO';
+			$cabecera->cantidad 						=   $cantidad;
+			$cabecera->fecha 	   						=   $fecha;
+			$cabecera->empresa_id 	 					=   Session::get('empresas_meta')->COD_EMPR;
+			$cabecera->fecha_crea 	 					=   $this->fechaactual;
+			$cabecera->usuario_crea 					=   Session::get('usuario_meta')->id;
+			$cabecera->save();
+
+ 			return Redirect::to('/gestion-transferencia-cantidades-productos/'.$idopcion)->with('bienhecho', 'Transferencia '.$producto->NOM_PRODUCTO.' al '.$productoi->NOM_PRODUCTO.' creado con éxito');
+
+ 		}
+	}
+
+
+	public function actionAjaxModalConfiguracionTranferenciaPorducto(Request $request)
+	{
+
+		$idopcion 				=   $request['idopcion'];
+		$anio  					=   $this->anio;
+		$funcion 				= 	$this;
+		$combo_producto 		=   $this->gn_generacion_combo_producto_kardex('Seleccione producto','');
+
+		return View::make('kardex/modal/ajax/aconfiguracionkardex',
+						 [		 	
+						 	'combo_producto' 		=> $combo_producto,
+						 	'idopcion' 				=> $idopcion,
+						 	'funcion' 				=> $funcion,
+						 	'anio' 					=> $anio,
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
+
+
+	public function actionTransferenciaCantidadesProductos($idopcion,Request $request)
+	{
+
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Ver');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+	    View::share('titulo','Transferencia de Cantidad Productos');
+
+	    $listatranferencia  	=	WEBKardexTransferencia::where('activo','=','1')->get();
+
+        return View::make('kardex/transferenciacantidad', 
+        				[
+        					'idopcion'  			=> $idopcion,
+        					'listatranferencia'  	=> $listatranferencia,
+        				]);
+
+
+        return View::make('asientomodelo/modificarasientomodelo', 
+        				[
+        					'combo_moneda'  		=> $combo_moneda,
+        					'combo_tipo_asiento'  	=> $combo_tipo_asiento,
+        					'combo_tipo_cliente'  	=> $combo_tipo_cliente,
+							'combo_tipo_documento'  => $combo_tipo_documento,
+							'combo_tipo_igv'  		=> $combo_tipo_igv,
+							'combo_tipo_ivap'  		=> $combo_tipo_ivap,
+							'combo_pago_cobro'  	=> $combo_pago_cobro,
+        					'asientomodelo'  		=> $asientomodelo,
+        					'defecto_tipo_asiento'  => $defecto_tipo_asiento,
+        					'defecto_moneda'  		=> $defecto_moneda,
+        					'defecto_tipo_cliente'  => $defecto_tipo_cliente,
+	        				'defecto_tipo_documento'=> $defecto_tipo_documento,	
+	        				'defecto_tipo_igv' 		=> $defecto_tipo_igv,
+	        				'defecto_tipo_ivap' 	=> $defecto_tipo_ivap,
+
+	        				'defecto_pago_cobro' 	=> $defecto_pago_cobro,		
+				  			'idopcion' 				=> $idopcion
+        				]);
+
+	}
+
+
 
 	public function actionListarSaldoInicial($idopcion)
 	{
@@ -226,17 +529,20 @@ class KardexController extends Controller
 									->first();
 		$tipoproducto 			= 	CMPCategoria::where('COD_CATEGORIA','=',$data_tipo_producto_id)->first();
 		$empresa_id 			=   Session::get('empresas_meta')->COD_EMPR;
-	    $cabecera_asiento 		= 	$this->kd_cabecera_asiento($periodo,$empresa_id,$monto_total,$tipoproducto);
-	    $detalle_asiento 		= 	$this->kd_detalle_asiento($periodo,$empresa_id,$monto_total,$data_anio,$tipoproducto);
 
+		$fecha_cambio			=   date_format(date_create(substr($periodo->FEC_FIN, 0, 10)), 'Ymd');
+		$tipo_cambio 			=	$this->gn_tipo_cambio($fecha_cambio);
 
-
+		$tipo_referencia   		=	'KARDEX_ENVASES';
+	    $cabecera 				= 	$this->kd_cabecera_asiento($periodo,$empresa_id,$monto_total,$tipoproducto,$tipo_referencia,$tipo_cambio);
+	    $detalle 				= 	$this->kd_detalle_asiento($periodo,$empresa_id,$monto_total,$data_anio,$tipoproducto,$tipo_cambio);
+		//dd($detalle);
 		return View::make('kardex/modal/ajax/adetalleasientocontable',
 						 [
 						 	'periodo' 	=> $periodo,
 						 	'tipoproducto' 	=> $tipoproducto,
-						 	'cabecera_asiento' 	=> $cabecera_asiento,	
-						 	'detalle_asiento' 	=> $detalle_asiento,					 	
+						 	'cabecera' 	=> $cabecera,	
+						 	'detalle' 	=> $detalle,					 	
 						 	'idopcion' 				=> $idopcion,
 						 	'ajax' 					=> true,						 	
 						 ]);

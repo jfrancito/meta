@@ -15,6 +15,23 @@ class Funcion{
 	  	return $prefijo;
 	}
 
+	public function generar_codigo($basedatos,$cantidad) {
+
+	  		// maximo valor de la tabla referente
+			$tabla = DB::table($basedatos)
+            ->select(DB::raw('max(codigo) as codigo'))
+            ->get();
+
+            //conversion a string y suma uno para el siguiente id
+            $idsuma = (int)$tabla[0]->codigo + 1;
+
+		  	//concatenar con ceros
+		  	$correlativocompleta = str_pad($idsuma, $cantidad, "0", STR_PAD_LEFT); 
+
+	  		return $correlativocompleta;
+
+	}
+
 	public function color_empresa($empresa_id) {
 
 		$color 		= '';

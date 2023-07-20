@@ -15,25 +15,27 @@
 		<table class="table table-condensed table-striped">
 		    <thead>
 		      <tr>
-		        <th>PERIODO</th>
-		        <th>FECHA</th>
-		        <th>GLOSA</th>
-		        <th>MONEDA</th>
-		        <th>TOTAL DEBE</th>
-		        <th>TOTAL HABER</th>
+                  <th>Periodo</th>
+                  <th>Fecha</th>
+                  <th>Glosa</th>
+                  <th>Moneda</th>
+                  <th>T.C.</th>
+                  <th>Total Debe</th>
+                  <th>Total Haber</th>
 		      </tr>
 		    </thead>
 
 		    <tbody>
-		    @foreach($cabecera_asiento as $index => $item)
+		    @foreach($cabecera as $index => $item)
 		      	<tr>
 			       <td>{{$item['nombre_periodo']}}</td>
 			       <td>{{date_format(date_create($item['fecha']), 'd-m-Y')}}</td>
 			       <td>{{$item['glosa']}}</td>
 			       <td>{{$item['moneda']}}</td>
+			       <td>{{$item['tipo_cambio']}}</td>
 			       <td>{{number_format($item['total_debe'], 2, '.', ',')}}</td>
 			       <td>{{number_format($item['total_haber'], 2, '.', ',')}}</td>
-		      	</tr>                  
+		      	</tr>                   
 		    @endforeach
 		    </tbody>
 		</table>
@@ -42,34 +44,65 @@
 	<table class="table table-condensed table-striped">
 		    <thead>
 		      <tr>
-		        <th>LINEA</th>
-		        <th>CUENTA</th>
-		        <th>GLOSA</th>
-		        <th>DEBE</th>
-		        <th>HABER</th>
+	              <th>Linea</th>
+	              <th>Cuenta</th>
+	              <th>Glosa</th>
+	              <th>Debe MN</th>
+	              <th>Haber MN</th>
+	              <th>Debe ME</th>
+	              <th>Haber ME</th>
 		      </tr>
 		    </thead>
-
 		    <tbody>
-		    @foreach($detalle_asiento as $index => $item)
+		    @foreach($detalle as $index => $item)
 		      	<tr>
-			       <td>{{$item['linea']}}</td>
-			       <td>{{$item['cuenta_nrocuenta']}}</td>
-			       <td>{{$item['glosa']}}</td>
-			       <td>{{number_format($item['total_debe'], 2, '.', ',')}}</td>
-			       <td>{{number_format($item['total_haber'], 2, '.', ',')}}</td>
+                  <td>{{$item['linea']}}</td>
+                  <td>{{$item['cuenta_nrocuenta']}}</td>
+                  <td>{{$item['glosa']}}</td>
+                  <td>{{number_format($item['total_debe'], $redondeo, '.', ',')}}</td>
+                  <td>{{number_format($item['total_haber'], $redondeo, '.', ',')}}</td>
+                  <td>{{number_format($item['total_debe_dolar'], $redondeo, '.', ',')}}</td>
+                  <td>{{number_format($item['total_haber_dolar'], $redondeo, '.', ',')}}</td>
 		      	</tr>                  
 		    @endforeach
 		    </tbody>
+
+	        <tfoot>
+	            <tr>
+	              <th colspan="3">Totales</th>
+	              <th>{{number_format(array_sum(array_column($detalle,'total_debe')), $redondeo, '.', ',')}}</th>
+	              <th>{{number_format(array_sum(array_column($detalle,'total_haber')), $redondeo, '.', ',')}}</th>
+	              <th>{{number_format(array_sum(array_column($detalle,'total_debe_dolar')), $redondeo, '.', ',')}}</th>
+	              <th>{{number_format(array_sum(array_column($detalle,'total_haber_dolar')), $redondeo, '.', ',')}}</th>
+	            </tr>
+	        </tfoot>
 		</table>
 
 	</div>
 </div>
 
-<div class="modal-footer">
-<button type="button" data-dismiss="modal" class="btn btn-default btn-space modal-close">Cerrar</button>
+	<form method="POST"
+	id="formguardar"
+	action="{{ url('/kardex-guardar-data/'.$idopcion) }}" 
+	style="border-radius: 0px;" 
+	>
+		{{ csrf_field() }}
+		<input type="hidden" name="cabecera" id='cabecera' value='{{json_encode($cabecera)}}'>
+		<input type="hidden" name="detalle" id='detalle' value='{{json_encode($detalle)}}'>
+		<input type="hidden" name="periodog_id" id='periodog_id' value='{{$periodo->COD_PERIODO}}'>
 
-</div>
+	<div class="modal-footer">
+
+
+
+			<button type="button" data-dismiss="modal" class="btn btn-default btn-space modal-close">Cerrar</button>
+			<button type="submit" data-dismiss="modal" class="btn btn-success btn-guardar-configuracion">Guardar</button>
+
+
+
+	</div>
+	</form>
+
 
 @if(isset($ajax))
   <script type="text/javascript">

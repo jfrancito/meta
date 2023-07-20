@@ -651,6 +651,26 @@ trait GeneralesTraits
 	}
 
 
+	private function gn_generacion_combo_producto_kardex($titulo,$todo) {
+		
+		$empresa_id 				=   Session::get('empresas_meta')->COD_EMPR;
+
+		$array 						= 	DB::table('WEB.kardexproductos')
+										->join('ALM.PRODUCTO', 'ALM.PRODUCTO.COD_PRODUCTO', '=', 'WEB.kardexproductos.producto_id')
+        								->where('WEB.kardexproductos.empresa_id','=',$empresa_id)
+        								->where('WEB.kardexproductos.activo','=',1)
+		        						->pluck('ALM.PRODUCTO.NOM_PRODUCTO','ALM.PRODUCTO.COD_PRODUCTO')
+										->toArray();
+
+		if($todo=='TODO'){
+			$combo  				= 	array('' => $titulo , $todo => $todo) + $array;
+		}else{
+			$combo  				= 	array('' => $titulo) + $array;
+		}
+
+	 	return  $combo;					 			
+	}
+
 	private function gn_generacion_combo_categoria($txt_grupo,$titulo,$todo) {
 		
 		$array 						= 	DB::table('CMP.CATEGORIA')

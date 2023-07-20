@@ -548,13 +548,13 @@ trait KardexTraits
 
 
 
-	public function kd_cabecera_asiento($periodo,$empresa_id,$monto_total,$tipoproducto){
+	public function kd_cabecera_asiento($periodo,$empresa_id,$monto_total,$tipoproducto,$tipo_referencia,$tipo_cambio){
 
 		$array_detalle_asiento 		=	array();
 
 		$glosa 						= 	"";
 		if($tipoproducto->COD_CATEGORIA =='TPK0000000000001'){
-			$glosa 						= 	"COSTO DE ENVASES";
+			$glosa 						= 	"ENVASES : COSTO DE ENVASES / ".$periodo->TXT_NOMBRE;
 		}
 
 		if($tipoproducto->COD_CATEGORIA =='TPK0000000000002'){
@@ -568,9 +568,12 @@ trait KardexTraits
 			"nombre_periodo" 			=> $periodo->TXT_NOMBRE,
 			"fecha" 					=> substr($periodo->FEC_FIN, 0, 10),
 			"empresa_id" 				=> $empresa_id,
+            "tipo_referencia"           => $tipo_referencia,
 			"glosa" 					=> $glosa,
+            "tipo_cambio"               => $tipo_cambio->CAN_COMPRA_SBS,
 			"moneda_id" 				=> "MON0000000000001",
 			"moneda" 					=> "SOLES",
+
 			"total_debe" 				=> $monto_total,
 			"total_haber" 				=> $monto_total,
 
@@ -581,12 +584,16 @@ trait KardexTraits
     }
 
 
-	public function kd_detalle_asiento($periodo,$empresa_id,$monto_total,$data_anio,$tipoproducto){
+	public function kd_detalle_asiento($periodo,$empresa_id,$monto_total,$data_anio,$tipoproducto,$tipo_cambio){
 
 		$array_detalle_asiento 		=	array();
 
+
+        $monto_total_dolar_debe = $monto_total/$tipo_cambio->CAN_COMPRA_SBS;
+
 		//ENVASES
 		if($tipoproducto->COD_CATEGORIA =='TPK0000000000001'){
+
 		    $cuentacontable 			= 	WEBCuentaContable::where('empresa_id','=',$empresa_id)
 											->where('anio','=',$data_anio)
 											->where('nro_cuenta','=','691111')
@@ -599,11 +606,17 @@ trait KardexTraits
 				"cuenta_nrocuenta" 			=> $cuentacontable->nro_cuenta,
 				"glosa" 					=> $cuentacontable->nombre,
 				"fecha" 					=> substr($periodo->FEC_FIN, 0, 10),
+
 				"empresa_id" 				=> $empresa_id,
 				"moneda_id" 				=> "MON0000000000001",
 				"moneda" 					=> "SOLES",
+
 				"total_debe" 				=> $monto_total,
 				"total_haber" 				=> 0,
+
+                "total_debe_dolar"          => $monto_total_dolar_debe,
+                "total_haber_dolar"         => 0
+
 
 			);
 
@@ -627,6 +640,9 @@ trait KardexTraits
 				"moneda" 					=> "SOLES",
 				"total_debe" 				=> 0,
 				"total_haber" 				=> $monto_total,
+                "total_debe_dolar"          => 0,
+                "total_haber_dolar"         => $monto_total_dolar_debe
+
 
 			);
 

@@ -80,6 +80,12 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-configuracion-producto/{idopcion}/{tipo_asiento_id}/{anio}', 'ConfiguracioProductoController@actionListarConfiguracionProducto');
 	Route::any('/gestion-configuracion-producto/{idopcion}', 'ConfiguracioProductoController@actionListarConfiguracionProductoMenu');
 
+	//transfrencia entre productos
+
+	Route::any('/gestion-transferencia-cantidades-productos/{idopcion}', 'KardexController@actionTransferenciaCantidadesProductos');
+	Route::any('/ajax-modal-configuracion-transferencia-producto', 'KardexController@actionAjaxModalConfiguracionTranferenciaPorducto');
+	Route::any('/configurar-transferencia-producto/{idopcion}', 'KardexController@actionConfigurarTransferenciaProducto');
+
 
 
 	Route::any('/ajax-configuracion-producto', 'ConfiguracioProductoController@actionAjaxConfiguracionProducto');
@@ -210,6 +216,10 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-detalle-producto-kardex', 'KardexController@actionAjaxModalDetalleKardex');
 	Route::any('/ajax-modal-detalle-producto-total-kardex', 'KardexController@actionAjaxModalDetalleTotalKardex');
 	Route::any('/ajax-modal-asiento-contable-kardex', 'KardexController@actionAjaxModalAsientoContableKardex');
+
+	Route::any('/kardex-guardar-data/{idopcion}', 'KardexController@actionGuardarKardexCuentaContable');
+
+
 
 	Route::any('/gestion-planilla-movilidad/{idopcion}', 'MovilidadController@actionListarMovilidad');
 	Route::any('/ajax-registro-movilidad', 'MovilidadController@actionAjaxRegistroMovilidad');

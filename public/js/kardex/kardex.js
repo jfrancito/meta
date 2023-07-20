@@ -2,6 +2,22 @@ $(document).ready(function(){
 
     var carpeta = $("#carpeta").val();
 
+    $(".kardex").on('click','.agregartranferenciaproducto', function() {
+
+        var _token                  =   $('#token').val();
+        var idopcion                =   $('#idopcion').val();
+
+        data                        =   {
+                                            _token                  : _token,
+                                            idopcion                : idopcion
+                                        };
+
+        ajax_modal(data,"/ajax-modal-configuracion-transferencia-producto",
+                  "modal-detalle-producto-kardex-configuracion","modal-detalle-producto-kardex-configuracion-container");
+
+    });
+
+
     $(".kardex").on('click','.buscarsaldoinicial', function() {
 
         event.preventDefault();
