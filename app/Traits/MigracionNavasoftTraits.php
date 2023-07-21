@@ -119,7 +119,7 @@ trait MigracionNavasoftTraits
 	    		$TOTA 					= 	$producto->CAN_VALOR_VTA;
 	      		$TOTN 					= 	$producto->CAN_VALOR_VENTA_IGV;
 	    		$TOTI 					= 	$TOTN-$TOTA;
-	    		$TOTIVA 				= 	'-';
+	    		$TOTIVA 				= 	0;
 
     		}
 
@@ -151,14 +151,14 @@ trait MigracionNavasoftTraits
 
 
 
-    		if($item->IND_EXTORNO == 1){
+    		if($item->IND_EXTORNO_ANULADO == 1){
 
 	    		$CANT 					=	0;
 	    		$PREU 					= 	0;
 	    		$TOTA 					= 	0;
 	      		$TOTN 					= 	0;
 	    		$TOTI 					= 	0;
-	    		$TOTIVA 				= 	'-';
+	    		$TOTIVA 				= 	0;
 
     		}
 

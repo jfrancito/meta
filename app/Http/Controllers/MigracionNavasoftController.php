@@ -167,7 +167,8 @@ class MigracionNavasoftController extends Controller
 		    										'CMP.DOCUMENTO_CTBLE.IND_ANTICIPO',
 		    										'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE',
 		    										'WEB.productoempresas.codigo_migracion',
-		    										'WEB.asientomovimientos.*')
+		    										'WEB.asientomovimientos.*',
+		    										'WEB.asientos.IND_EXTORNO as IND_EXTORNO_ANULADO')
 		    							->orderby('WEB.asientos.COD_ASIENTO','ASC')
 		    							->get();
 
@@ -289,7 +290,8 @@ class MigracionNavasoftController extends Controller
 		    										'CMP.DOCUMENTO_CTBLE.IND_ANTICIPO',
 		    										'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE',
 		    										'WEB.productoempresas.codigo_migracion',
-		    										'WEB.asientomovimientos.*')
+		    										'WEB.asientomovimientos.*',
+		    										'WEB.asientos.IND_EXTORNO as IND_EXTORNO_ANULADO')
 		    							->orderby('WEB.asientos.COD_ASIENTO','ASC')
 		    							->get();
 
