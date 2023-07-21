@@ -71,7 +71,9 @@ trait MigracionNavasoftTraits
     		$fecha_emision  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
     		$tipo_documento  		= 	$categoria->CODIGO_SUNAT;
     		$ndoc  					= 	$item->NRO_SERIE.'-'.$item->NRO_DOC;
+
     		$ruc  					= 	$empresa->NRO_DOCUMENTO;
+
     		$codi  					= 	$item->codigo_migracion;
 	   		$moneda 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_MONEDA)->first();
     		$MONE                   = 	$moneda->TXT_REFERENCIA;
@@ -125,6 +127,18 @@ trait MigracionNavasoftTraits
 	    		$TOTN 					= 	number_format($CANT*$PREU, 2, '.', '');
     		}
 
+
+    		if($producto->IND_IGV == 1){
+    			$aigv 					= 	"'S";
+    		}else{
+    			$aigv 					= 	"'N";
+    		}
+    		if($producto->IND_MATERIAL_SERVICIO == 'M'){
+    			$codvta 				= 	'01';
+    		}else{
+    			$codvta 				= 	'02';
+    		}     
+    		
     		if($item->tipo_ivap_id == 'CTV0000000000001'){
 
 	    		$TOTA 					= 	number_format($TOTN/1.04, 2, '.', '');
@@ -148,16 +162,7 @@ trait MigracionNavasoftTraits
 
     		}
 
-    		if($producto->IND_IGV == 1){
-    			$aigv 					= 	"'S";
-    		}else{
-    			$aigv 					= 	"'N";
-    		}
-    		if($producto->IND_MATERIAL_SERVICIO == 'M'){
-    			$codvta 				= 	'01';
-    		}else{
-    			$codvta 				= 	'02';
-    		}     		
+		
 
 
 

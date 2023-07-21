@@ -75,10 +75,14 @@ trait MigrarVentaComercialTraits
 									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
 									                 ->where('WEB.historialmigrar.IND_ANULADO', '=', 1);
 									        })
-											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
+											->join("WEB.asientos","WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE", "=", "WEB.asientos.TXT_REFERENCIA")
+											->where('WEB.asientos.IND_EXTORNO','<>','1')
+											->whereIn('WEB.asientos.COD_EMPR',$array_empresas)
+
+											//->whereNull('WEB.historialmigrar.COD_REFERENCIA')
 											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
 											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
-											//->where('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE','=','ISLMBL0000327682')
+											//->where('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE','=','ISBEBL0000036961')
 											->where('WEB.viewmigrarventas.NOM_ESTADO','=','ANULADO')
 											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
 											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
