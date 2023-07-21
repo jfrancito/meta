@@ -103,12 +103,23 @@ trait MigracionNavasoftTraits
     		//anticipo es 2
     		if($item->IND_ANTICIPO == 2){
 
-    			$producto_anticipo 		=	$this->ms_producto_ind_anticipo($item,$producto);
+    			// $producto_anticipo 		=	$this->ms_producto_ind_anticipo($item,$producto);
 
-	    		$CANT 					=	$producto_anticipo->CAN_PRODUCTO;
+	    		$producto_anticipo 		=  	CMPDetalleProducto::where('COD_TABLA','=',$item->COD_DOCUMENTO_CTBLE)
+	    									->where('COD_PRODUCTO','=',$item->COD_PRODUCTO)
+	    									->first();
+
 	    		$PREU 					= 	$producto_anticipo->CAN_PRECIO_UNIT;
-	    		$TOTA 					= 	$producto_anticipo->CAN_VALOR_VTA;
-	      		$TOTN 					= 	$producto_anticipo->CAN_VALOR_VENTA_IGV;
+	    		if($item->tipo_ivap_id == 'CTV0000000000001'){
+	    			$TOTA 					= 	($item->CAN_DEBE_MN + $item->CAN_HABER_MN)*1.04;
+	    		}else{
+	    			$TOTA 					= 	($item->CAN_DEBE_MN + $item->CAN_HABER_MN);
+	    		}
+	    		$TOTA 					=	number_format($TOTA, 2, '.', '');
+
+
+	    		$CANT 					=	number_format($TOTA/$PREU, 2, '.', '');
+	      		$TOTN 					= 	$TOTA;
 	    		$TOTI 					= 	$TOTN-$TOTA;
 	    		$TOTIVA 				= 	'-';
 

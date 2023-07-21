@@ -614,6 +614,8 @@ class KardexController extends Controller
 	    																	$producto,
 	    																	$periodo_enero);
 
+	    // dd($listakardexif);
+
 
 		return View::make('kardex/modal/ajax/adetallekardexif',
 						 [

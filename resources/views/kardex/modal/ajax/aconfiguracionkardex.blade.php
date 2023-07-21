@@ -40,7 +40,7 @@
 		              </div>
 		        </div>
 
-		        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+		        <div class="col-xs-6 col-sm-6 col-md-12 col-lg-9">
 					<div class="form-group">
 					  	<label class="col-sm-12 control-label">
 					  		<label class="col-sm-12 control-label labelleft negrita" >Fecha Transferencia :</label>
@@ -65,6 +65,11 @@
 					</div>
 				</div>
 
+		        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+		        	<div class="col-sm-12" style="margin-top: 35px;">
+					<button type="button" data-dismiss="modal" class="btn btn-success btn_calcular_cu">CU</button>
+					</div>
+				</div>
 
 
 
@@ -76,6 +81,38 @@
 					      <input  type="text"
 					              id="cantidad" name='cantidad' 
 					              value="0" 
+					              placeholder="Orden"
+					              autocomplete="off" class="form-control input-sm importe" data-aw="1"/>
+
+					  </div>
+					</div>
+				</div>
+
+		        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+					<div class="form-group">
+					  <label class="col-sm-12 control-label labelleft negrita" >CU :</label>
+					  <div class="col-sm-12">
+
+					      <input  type="text"
+					              id="cu" name='cu' 
+					              value="0"
+					              readonly = 'readonly'
+					              placeholder="Orden"
+					              autocomplete="off" class="form-control input-sm importe" data-aw="1"/>
+
+					  </div>
+					</div>
+				</div>
+
+		        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+					<div class="form-group">
+					  <label class="col-sm-12 control-label labelleft negrita" >Importe :</label>
+					  <div class="col-sm-12">
+
+					      <input  type="text"
+					              id="importe" name='importe' 
+					              value="0"
+					              readonly = 'readonly'
 					              placeholder="Orden"
 					              autocomplete="off" class="form-control input-sm importe" data-aw="1"/>
 

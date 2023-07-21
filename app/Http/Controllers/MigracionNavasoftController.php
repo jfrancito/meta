@@ -159,6 +159,7 @@ class MigracionNavasoftController extends Controller
 		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 		    							->where('WEB.asientomovimientos.IND_PRODUCTO','=',1)
+		    							//->where('WEB.asientos.COD_ASIENTO','=','ISLMAC0000025024')
 		    							->MigracionNava($ind_migracion)
 		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id',
 		    										'WEB.asientomodelos.alias',
