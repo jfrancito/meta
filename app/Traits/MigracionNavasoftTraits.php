@@ -45,6 +45,163 @@ trait MigracionNavasoftTraits
 {
 	
 
+
+	public function ms_lista_migracion_navasoft_comerciales($listaasiento,$anio,$migracion = '0',$excel = '0'){
+
+
+		//llenado de datalle
+		$array_detalle_asiento 		=	array();
+
+	    foreach($listaasiento as $index => $item){
+
+	    	$colormigracion 		=	'';
+	    	if($item->IND_MIGRACION_NAVASOFT==1){
+	    		$colormigracion 		=	'color_migracion';
+	    	}
+	    	if($excel==1){
+	    		$colormigracion 		=	'';
+	    	}
+	    	if($migracion=='1'){
+	    		$this->ms_marcar_migracion_navasoft($item);
+	    	}
+
+	   		$categoria 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_TIPO_DOCUMENTO)->first();
+	   		$empresa 				= 	STDEmpresa::where('COD_EMPR','=',$item->COD_EMPR_CLI)->first();
+    		$nombre_cliente  		= 	$empresa->NOM_EMPR;
+    		$fecha_emision  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
+    		$tipo_documento  		= 	$categoria->CODIGO_SUNAT;
+    		$ndoc  					= 	$item->NRO_SERIE.'-'.$item->NRO_DOC;
+    		$ruc  					= 	$empresa->NRO_DOCUMENTO;
+    		$codi  					= 	$item->codigo_migracion;
+	   		$moneda 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_MONEDA)->first();
+    		$MONE                   = 	$moneda->TXT_REFERENCIA;
+    		$TCAM 					=   $item->CAN_TIPO_CAMBIO;
+
+    		$CANT 					=	'';
+    		$PREU 					= 	'';
+
+    		$TOTA 					= 	0;
+    		$TOTI 					= 	0;
+    		$TOTIVA 				= 	0;
+      		$TOTN 					= 	0;
+      		$aigv 					= 	'';
+
+      		$codalm 				= 	'';      		
+      		$codvta 				= 	'';
+      		$CODSCC 				= 	'';
+
+    		$producto 					=  	CMPDetalleProducto::where('COD_TABLA','=',$item->COD_DOCUMENTO_CTBLE)
+    										->where('COD_PRODUCTO','=',$item->COD_PRODUCTO)
+    										->where('NRO_LINEA','=',$item->NRO_LINEA_PRODUCTO)
+    										->where('COD_LOTE','=',$item->COD_LOTE)
+    										->first();
+
+      		$can_valor 				=	0;
+
+    		//anticipo es 2
+    		if($item->IND_ANTICIPO == 2){
+
+    			$producto_anticipo 		=	$this->ms_producto_ind_anticipo($item,$producto);
+
+	    		$CANT 					=	$producto_anticipo->CAN_PRODUCTO;
+	    		$PREU 					= 	$producto_anticipo->CAN_PRECIO_UNIT;
+	    		$TOTA 					= 	$producto_anticipo->CAN_VALOR_VTA;
+	      		$TOTN 					= 	$producto_anticipo->CAN_VALOR_VENTA_IGV;
+	    		$TOTI 					= 	$TOTN-$TOTA;
+	    		$TOTIVA 				= 	'-';
+
+    		}else{
+
+	    		$CANT 					=	$producto->CAN_PRODUCTO;
+	    		$PREU 					= 	$producto->CAN_PRECIO_UNIT;
+	    		$TOTA 					= 	$producto->CAN_VALOR_VTA;
+	      		$TOTN 					= 	$producto->CAN_VALOR_VENTA_IGV;
+	    		$TOTI 					= 	$TOTN-$TOTA;
+	    		$TOTIVA 				= 	'-';
+
+    		}
+
+    		if($producto->COD_OPERACION_AUX == 1){
+	    		$TOTN 					= 	number_format($CANT*$PREU, 2, '.', '');
+    		}
+
+    		if($item->tipo_ivap_id == 'CTV0000000000001'){
+
+	    		$TOTA 					= 	number_format($TOTN/1.04, 2, '.', '');
+	    		$TOTIVA 				= 	number_format($TOTA*0.04, 2, '.', '');
+    			$aigv 					= 	"'S";
+
+    		}
+
+
+
+
+
+    		if($item->IND_EXTORNO == 1){
+
+	    		$CANT 					=	0;
+	    		$PREU 					= 	0;
+	    		$TOTA 					= 	0;
+	      		$TOTN 					= 	0;
+	    		$TOTI 					= 	0;
+	    		$TOTIVA 				= 	'-';
+
+    		}
+
+    		if($producto->IND_IGV == 1){
+    			$aigv 					= 	"'S";
+    		}else{
+    			$aigv 					= 	"'N";
+    		}
+    		if($producto->IND_MATERIAL_SERVICIO == 'M'){
+    			$codvta 				= 	'01';
+    		}else{
+    			$codvta 				= 	'02';
+    		}     		
+
+
+
+      		$codalm 				= 	'01';      		
+      		$CODSCC 				= 	"'";
+
+	    	$array_nuevo_asiento 	=	array();
+			$array_nuevo_asiento    =	array(
+				"fecha_emision" 			=> $fecha_emision,
+				"tipo_documento" 			=> $tipo_documento,
+				"ndoc" 						=> $ndoc,
+				"nombre_cliente" 			=> "'".$nombre_cliente,
+				"ruc" 						=> "'".$ruc,
+
+				"codi" 						=> $codi,
+	            "MONE" 						=> "'".strtoupper($MONE),
+
+	            "TCAM" 						=> $TCAM,
+	            "CANT" 						=> $CANT,
+	            "PREU" 						=> $PREU,
+
+				"TOTA" 						=> $TOTA,
+	            "TOTI" 						=> $TOTI,
+	            "TOTIVA" 					=> $TOTIVA,
+	            "TOTN" 						=> $TOTN,
+	            "aigv" 						=> $aigv,
+
+	            "codalm" 					=> "'".$codalm,
+	            "codvta" 					=> "'".$codvta,
+	            "CODSCC" 					=> $CODSCC,
+	           	"cm" 						=> $colormigracion,
+
+			);
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+		}
+
+	    return $array_detalle_asiento;
+
+    }
+
+
+
+
 	public function ms_marcar_migracion_navasoft($asiento){
 
 		$asiento->IND_MIGRACION_NAVASOFT=1;
@@ -431,7 +588,7 @@ trait MigracionNavasoftTraits
 	    								->orderby('NRO_LINEA_PRODUCTO','asc')
 	    								->get();
 
-    		$fecha_emision  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
+
     		$tipo_documento  		= 	$categoria->CODIGO_SUNAT;
 
     		if($item->COD_CATEGORIA_TIPO_ASIENTO == 'TAS0000000000004'){
@@ -548,6 +705,9 @@ trait MigracionNavasoftTraits
 
 	      		$codalm 				= 	'01';      		
 	      		$CODSCC 				= 	"'";
+
+    			$fecha_emision  		= 	date_format(date_create($item->FEC_ASIENTO), 'd/m/Y');
+
 
 		    	$array_nuevo_asiento 	=	array();
 				$array_nuevo_asiento    =	array(
