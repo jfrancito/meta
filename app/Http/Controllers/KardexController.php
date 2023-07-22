@@ -40,6 +40,105 @@ class KardexController extends Controller
 	use PlanContableTraits;
 	use MovilidadTraits;
 
+
+	public function actionAjaxCalcularUltimoCU(Request $request)
+	{
+		$idopcion 				=   $request['idopcion'];
+		$producto_salida_id 	=   $request['producto_salida_id'];
+		$fecha 					=   $request['fecha'];				
+		$tipo_producto_id 		=	'TPK0000000000001';
+
+
+
+	    $fechaSegundos = strtotime($fecha);
+	    $dia = date( "j", $fechaSegundos);
+	    $mes = date("n", $fechaSegundos);
+	    $anio =  date("Y", $fechaSegundos);
+	    $data_tipo_asiento_id = '';
+	    $data_periodo_id='';
+	    $fecha 					= date_format(date_create($fecha), 'Y-m-d');
+		$periodo_enero 			= 	CONPeriodo::where('COD_ANIO','=',$anio)
+									->where('COD_MES','=',1)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+									->first();
+
+		$producto 				= 	ALMProducto::where('COD_PRODUCTO','=',$producto_salida_id)->first();
+	    $saldoinicial 			= 	$this->kd_saldo_inicial_producto_id(Session::get('empresas_meta')->COD_EMPR,
+	    																	$tipo_producto_id,
+	    																	$producto_salida_id);
+
+	    $listadetalleproducto 	= 	$this->kd_lista_producto_periodo_view(Session::get('empresas_meta')->COD_EMPR, 
+			    															$anio,
+			    															$data_tipo_asiento_id,
+			    															$producto_salida_id,
+			    															$data_periodo_id);
+
+	    $listakardexif 			= 	$this->kd_lista_kardex_inventario_final(Session::get('empresas_meta')->COD_EMPR, 
+	    																	$saldoinicial,
+	    																	$listadetalleproducto,
+	    																	$producto,
+	    																	$periodo_enero);
+	    $cu = -1;
+		foreach($listakardexif as $item){
+			$fechal = $item['fecha'];
+			if($fechal == $fecha){
+	    		$cu = $item['saldo_cu'];				
+			}
+		}
+		print_r($cu);
+	}
+
+
+	public function actionAjaxModalDetalleTotalKardex(Request $request)
+	{
+
+		set_time_limit(0);
+		$data_producto_id 		=   $request['data_producto_id'];
+		$data_periodo_id 		=   $request['data_periodo_id'];
+		$data_anio 				=   $request['data_anio'];
+		$data_tipo_asiento_id 	=   $request['data_tipo_asiento_id'];
+		$tipo_producto_id 		=   $request['tipo_producto_id'];
+
+
+		$producto 				= 	ALMProducto::where('COD_PRODUCTO','=',$data_producto_id)->first();
+		$periodo_enero 			= 	CONPeriodo::where('COD_ANIO','=',$data_anio)
+									->where('COD_MES','=',1)
+									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+									->first();
+
+		$idopcion 				=   $request['idopcion'];
+
+		$funcion 				= 	$this;
+
+	    $saldoinicial 			= 	$this->kd_saldo_inicial_producto_id(Session::get('empresas_meta')->COD_EMPR,
+	    																	$tipo_producto_id,
+	    																	$data_producto_id);
+
+	    $listadetalleproducto 	= 	$this->kd_lista_producto_periodo_view(Session::get('empresas_meta')->COD_EMPR, 
+			    															$data_anio, 
+			    															$data_tipo_asiento_id,
+			    															$data_producto_id,
+			    															$data_periodo_id);
+
+	    $listakardexif 			= 	$this->kd_lista_kardex_inventario_final(Session::get('empresas_meta')->COD_EMPR, 
+	    																	$saldoinicial,
+	    																	$listadetalleproducto,
+	    																	$producto,
+	    																	$periodo_enero);
+
+	    // dd($listakardexif);
+
+
+		return View::make('kardex/modal/ajax/adetallekardexif',
+						 [
+						 	'listakardexif' 	=> $listakardexif,
+						 	'producto' 			=> $producto,
+						 	'periodo_enero' 	=> $periodo_enero,					 	
+						 	'idopcion' 			=> $idopcion,
+						 	'ajax' 				=> true,						 	
+						 ]);
+	}
+
 	public function actionGuardarKardexCuentaContable($idopcion,Request $request)
 	{
 
@@ -234,20 +333,45 @@ class KardexController extends Controller
 			$producto_salida_id 	 		= 	$request['producto_salida_id'];
 			$producto_ingreso_id 	 		= 	$request['producto_ingreso_id'];
 			$fecha 	 	 					= 	$request['fecha'];
-			$cantidad 	 					= 	$request['cantidad'];
+
+			$cantidad 	 					= 	floatval(str_replace(",", "", $request['cantidad']));
+			$cu 	 						= 	floatval(str_replace(",", "", $request['cu']));
+			$importe 	 					= 	floatval(str_replace(",", "", $request['importe']));
 
 			$codigo 						= 	$this->funciones->generar_codigo('web.kardextransferencias',8);
 			$producto 						=	ALMProducto::where('COD_PRODUCTO','=',$producto_salida_id)->first();
+
+		    $fechaSegundos = strtotime($fecha);
+		    $dia = date( "j", $fechaSegundos);
+		    $mes = date("n", $fechaSegundos);
+		    $anio =  date("Y", $fechaSegundos);
+
+		    $periodo 						=	CONPeriodo::where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+		    									->where('COD_ANIO','=',$anio)
+		    									->where('COD_MES','=',$mes)
+		    									->first();
+
+
 
 			$id 										=   $this->funciones->getCreateIdMaestra('web.kardextransferencias');
 			$cabecera            	 					=	new WEBKardexTransferencia;
 			$cabecera->id 	     	 					=   $id;
 			$cabecera->codigo 	     	 				=   $codigo;
 
+			$cabecera->COD_PERIODO 	     	 			=   $periodo->COD_PERIODO;
+			$cabecera->NOMBRE_PERIODO 	     	 		=   $periodo->TXT_NOMBRE;
+			$cabecera->TXT_CATEGORIA_TIPO_DOCUMENTO 	=   'TRANSFERENCIA';
+			$cabecera->COD_CATEGORIA_TIPO_ASIENTO 		=   'TAS0000000000003';			
+			$cabecera->TXT_CATEGORIA_TIPO_ASIENTO 		=   'VENTAS';
+
 			$cabecera->producto_id 	   					=   $producto_salida_id;
 			$cabecera->producto_nombre 					=   $producto->NOM_PRODUCTO;
 			$cabecera->ingreso_salida 					=   'SALIDA';
 			$cabecera->cantidad 						=   $cantidad;
+
+			$cabecera->cu 								=   $cu;
+			$cabecera->importe 							=   $importe;
+
 			$cabecera->fecha 	   						=   $fecha;
 			$cabecera->empresa_id 	 					=   Session::get('empresas_meta')->COD_EMPR;
 			$cabecera->fecha_crea 	 					=   $this->fechaactual;
@@ -261,10 +385,19 @@ class KardexController extends Controller
 			$cabecera->id 	     	 					=   $id;
 			$cabecera->codigo 	     	 				=   $codigo;
 			
+			$cabecera->COD_PERIODO 	     	 			=   $periodo->COD_PERIODO;
+			$cabecera->NOMBRE_PERIODO 	     	 		=   $periodo->TXT_NOMBRE;
+			$cabecera->TXT_CATEGORIA_TIPO_DOCUMENTO 	=   'TRANSFERENCIA';
+			$cabecera->COD_CATEGORIA_TIPO_ASIENTO 		=   'TAS0000000000004';			
+			$cabecera->TXT_CATEGORIA_TIPO_ASIENTO 		=   'COMPRAS';			
+
 			$cabecera->producto_id 	   					=   $producto_ingreso_id;
 			$cabecera->producto_nombre 					=   $productoi->NOM_PRODUCTO;
 			$cabecera->ingreso_salida 					=   'INGRESO';
 			$cabecera->cantidad 						=   $cantidad;
+			$cabecera->cu 								=   $cu;
+			$cabecera->importe 							=   $importe;
+
 			$cabecera->fecha 	   						=   $fecha;
 			$cabecera->empresa_id 	 					=   Session::get('empresas_meta')->COD_EMPR;
 			$cabecera->fecha_crea 	 					=   $this->fechaactual;
@@ -576,56 +709,6 @@ class KardexController extends Controller
 	}
 
 
-	public function actionAjaxModalDetalleTotalKardex(Request $request)
-	{
-
-
-		set_time_limit(0);
-		$data_producto_id 		=   $request['data_producto_id'];
-		$data_periodo_id 		=   $request['data_periodo_id'];
-		$data_anio 				=   $request['data_anio'];
-		$data_tipo_asiento_id 	=   $request['data_tipo_asiento_id'];
-		$tipo_producto_id 		=   $request['tipo_producto_id'];
-
-
-		$producto 				= 	ALMProducto::where('COD_PRODUCTO','=',$data_producto_id)->first();
-		$periodo_enero 			= 	CONPeriodo::where('COD_ANIO','=',$data_anio)
-									->where('COD_MES','=',1)
-									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-									->first();
-
-		$idopcion 				=   $request['idopcion'];
-
-		$funcion 				= 	$this;
-
-	    $saldoinicial 			= 	$this->kd_saldo_inicial_producto_id(Session::get('empresas_meta')->COD_EMPR,
-	    																	$tipo_producto_id,
-	    																	$data_producto_id);
-
-	    $listadetalleproducto 	= 	$this->kd_lista_producto_periodo_view(Session::get('empresas_meta')->COD_EMPR, 
-			    															$data_anio, 
-			    															$data_tipo_asiento_id,
-			    															$data_producto_id,
-			    															$data_periodo_id);
-
-	    $listakardexif 			= 	$this->kd_lista_kardex_inventario_final(Session::get('empresas_meta')->COD_EMPR, 
-	    																	$saldoinicial,
-	    																	$listadetalleproducto,
-	    																	$producto,
-	    																	$periodo_enero);
-
-	    // dd($listakardexif);
-
-
-		return View::make('kardex/modal/ajax/adetallekardexif',
-						 [
-						 	'listakardexif' 	=> $listakardexif,
-						 	'producto' 			=> $producto,
-						 	'periodo_enero' 	=> $periodo_enero,					 	
-						 	'idopcion' 			=> $idopcion,
-						 	'ajax' 				=> true,						 	
-						 ]);
-	}
 
 
 	public function actionDescargarExcelKardex(Request $request)

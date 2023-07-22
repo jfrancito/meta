@@ -22,16 +22,64 @@ $(document).ready(function(){
 
         var _token                  =   $('#token').val();
         var idopcion                =   $('#idopcion').val();
+        var producto_salida_id      =   $('#producto_salida_id').val();
+        var fecha                   =   $('#fecha').val();
+
+        if(producto_salida_id ==''){ alerterrorajax("Seleccione producto de salida."); return false;}
+        if(fecha ==''){ alerterrorajax("Seleccione una fecha."); return false;}
 
         data                        =   {
                                             _token                  : _token,
-                                            idopcion                : idopcion
+                                            idopcion                : idopcion,
+                                            producto_salida_id      : producto_salida_id,
+                                            fecha                   : fecha,
                                         };
+        abrircargando();
+        $.ajax({
+            type    :   "POST",
+            url     :   carpeta+'/ajax-calcular-ultimo-cu',
+            data    :   data,
+            success: function (data) {
+                cerrarcargando();
 
-        ajax_modal(data,"/ajax-modal-configuracion-transferencia-producto",
-                  "modal-detalle-producto-kardex-configuracion","modal-detalle-producto-kardex-configuracion-container");
+                $('#cu').val(data);      
+                var cantidad                =   $('#cantidad').val();
+                var cantidad                =   cantidad.replace(",", "");
+                var cu                      =   $('#cu').val();
+                var cu                      =   cu.replace(",", "");
+                $('#importe').val(cantidad*cu);
+
+
+                //$('.cu').html(data);
+
+            },
+            error: function (data) {
+                cerrarcargando();
+                error500(data);
+            }
+        });
 
     });
+
+    $(".kardex").on('click','.btn-guardar-configuracion', function() {
+
+        var producto_salida_id      =   $('#producto_salida_id').val();
+        var fecha                   =   $('#fecha').val();
+        var producto_ingreso_id     =   $('#producto_ingreso_id').val();
+        var cantidad                =   $('#cantidad').val();
+        var cu                      =   $('#cu').val();
+        var importe                 =   $('#importe').val();
+
+        if(producto_salida_id ==''){ alerterrorajax("Seleccione producto de salida."); return false;}
+        if(fecha ==''){ alerterrorajax("Seleccione una fecha."); return false;}
+        if(producto_salida_id ==''){ alerterrorajax("Seleccione producto de ingreso."); return false;}
+        if(cantidad  <0){ alerterrorajax("Ingrese cantidad."); return false;}
+        if(cu < 0){ alerterrorajax("Ingrese CU."); return false;}
+        if(importe < 0){ alerterrorajax("Ingrese importe."); return false;}
+        return true;
+
+    });
+
 
 
 

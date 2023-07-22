@@ -67,7 +67,7 @@
 
 		        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 		        	<div class="col-sm-12" style="margin-top: 35px;">
-					<button type="button" data-dismiss="modal" class="btn btn-success btn_calcular_cu">CU</button>
+					<button type="button" data-dismiss="modal" class="btn btn-success btn_calcular_cu">Calcular</button>
 					</div>
 				</div>
 
@@ -95,7 +95,7 @@
 
 					      <input  type="text"
 					              id="cu" name='cu' 
-					              value="0"
+					              value="-1"
 					              readonly = 'readonly'
 					              placeholder="Orden"
 					              autocomplete="off" class="form-control input-sm importe" data-aw="1"/>
@@ -111,7 +111,7 @@
 
 					      <input  type="text"
 					              id="importe" name='importe' 
-					              value="0"
+					              value="-1"
 					              readonly = 'readonly'
 					              placeholder="Orden"
 					              autocomplete="off" class="form-control input-sm importe" data-aw="1"/>
@@ -123,9 +123,11 @@
 
 
 		    </div>
-		    <div class="col-md-6">
+		    <div class="col-md-6 cu">
 
 		    </div>
+
+
 
 		</div>
 	</div>

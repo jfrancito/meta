@@ -218,6 +218,8 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-asiento-contable-kardex', 'KardexController@actionAjaxModalAsientoContableKardex');
 
 	Route::any('/kardex-guardar-data/{idopcion}', 'KardexController@actionGuardarKardexCuentaContable');
+	Route::any('/ajax-calcular-ultimo-cu', 'KardexController@actionAjaxCalcularUltimoCU');
+
 
 
 

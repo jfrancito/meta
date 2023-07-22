@@ -468,10 +468,14 @@ trait KardexTraits
 				$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV']*$tipo_cambio_cp->CAN_VENTA_SBS;
 				$entrada_cu           	=   $entrada_importe/$entrada_cantidad;
 
+				if($row['NRO_SERIE']=='INGRESO'){
+					$entrada_cantidad   =   $row['CAN_PRODUCTO'];
+					$entrada_cu    		=   $row['cu'];
+					$entrada_importe    =   $row['CAN_VALOR_VENTA_IGV'];					
+				}
+
 				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
 				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;
-
-
 				if($saldo_cantidad==0){
 					$saldo_cu           	=   0;
 				}else{
@@ -489,14 +493,21 @@ trait KardexTraits
 				$salida_cu           	=   $cu_antes;
 				$salida_importe         =   $salida_cantidad*$salida_cu;
 
+				if($row['NRO_SERIE']=='SALIDA'){
+					$salida_cantidad        =   $row['CAN_PRODUCTO'];
+					$salida_cu           	=   $row['cu'];
+					$salida_importe         =   $row['CAN_VALOR_VENTA_IGV'];					
+				}
+
 				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
 				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;
-
 				if($saldo_cantidad==0){
 					$saldo_cu           	=   0;
 				}else{
 					$saldo_cu           	=   $saldo_importe/$saldo_cantidad;
 				}
+
+
 				$cantidad_antes    		= 	$saldo_cantidad;
 				$cu_antes    			= 	$saldo_cu;
 				$importe_antes    		= 	$saldo_importe;
