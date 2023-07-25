@@ -292,8 +292,6 @@ trait ComprasTraits
 		return $existe;
 	}
 
-
-
 	private function co_buscar_asiento_diario_compra($anio,$empresa,$cod_contable,$tipo_asiento,$documento_anulado)
 	{
 

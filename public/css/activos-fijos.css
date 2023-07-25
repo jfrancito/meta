@@ -1,0 +1,232 @@
+#activos-fijos .card, #activos-fijos label{
+    color: #333333;
+}
+
+#activos-fijos .container{
+    max-width: 1560px;
+    width: auto;
+}
+
+#activos-fijos .form-group{
+    padding: 12px 14px;
+}
+
+#activos-fijos .form-group label{
+    font-weight: bold;
+    line-height: 2.5;
+}
+
+#activos-fijos .input-sm, #activos-fijos .select2-container--default, #activos-fijos .select2-selection--single{
+    height: 50px;
+    font-weight: normal;
+    border-radius: 4px;
+}
+
+#activos-fijos .datetimepicker{
+    margin-top: -4px;
+}
+
+#activos-fijos .nav-tabs > li a{
+    font-size: 15px;
+}
+
+#activos-fijos .active a{
+    font-weight: bold;
+    background-color: #b15e5e;
+    color: #FFFFFF;
+    border-bottom: #333333;
+}
+
+#activos-fijos .nav-tabs > li a:hover{
+    color: #b15e5e;
+
+}
+#activos-fijos .active a:hover{
+    color: #FFFFFF !important;
+}
+
+#activos-fijos li.info-depreciacion {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    float: right;
+}
+
+#activos-fijos li.info-depreciacion a, #activos-fijos li.info-depreciacion a:hover{
+    color: #3c763d;
+    font-weight: bold;
+} 
+
+#activos-fijos li.info-baja {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    float: right;
+}
+
+#activos-fijos li.info-baja a, #activos-fijos li.info-baja a:hover{
+    color: #721c24;
+    font-weight: bold;
+} 
+
+#activos-fijos button, #activos-fijos .btn-primary{
+    background-color: #b15e5e;
+    color: #FFFFFF;
+    border-color: #b15e5e ;
+}
+
+#activos-fijos button:hover{
+    background-color: #8d4e4e;
+    color: #FFFFFF;
+    border-color: #8d4e4e !important;
+}
+
+#activos-fijos .tooltipfr{
+    border-bottom-style: none;
+}
+
+#activos-fijos a.action-row{
+    color: #FFFFFF;
+    background-color: #b15e5e;
+    padding: 4px 6px;
+    font-size: 15px;
+    border-radius: 4px;
+}
+
+#activos-fijos a.action-row:hover{
+    color: #FFFFFF;
+    background-color: #8d4e4e;
+}
+
+#activos-fijos .alert{
+    font-size: 16px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+#activos-fijos .alert-success{
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+#activos-fijos .alert-danger{
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+#activos-fijos .close{
+    float: right;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    background: none;
+}
+#activos-fijos .close:hover{
+    background: none;
+}
+
+#activos-fijos .close span:hover{
+color: #000000;
+}
+
+#activos-fijos .alert-dismissible .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1.25rem 1.25rem;
+    color: inherit;
+}
+
+#activos-fijos .be-radio label, #activos-fijos .be-checkbox label {
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.3;
+    min-width: 190px;
+}
+
+#activos-fijos .be-radio, #activos-fijos .be-checkbox {
+    padding-top: 12px;
+}
+
+#activos-fijos .asientos-depreciacion{
+    margin-top: 32px;
+}
+
+#activos-fijos .asientos-depreciacion th{
+    font-weight: bold;
+}
+
+.info-card {
+    color: #b15e5e;
+    border-radius: 50%;
+    padding: 5px 6px;
+    text-align: center;
+    vertical-align: middle;
+    margin-top: 15px;
+    font-size: 20px;
+}
+
+.card {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: rgb(236, 236, 236);
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 4px;    
+}
+
+.card-body {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+    padding-left: 0.5rem;
+}
+
+.card-icon {
+    -webkit-box-flex: 1;
+    padding: 1.5rem 0.5rem;
+    padding-left: 1rem;
+}
+
+.card-title {
+    margin-bottom: 0.75rem;
+    font-weight: bold;
+}
+
+.activos-en-obra{
+    border: solid 1px;
+}
+
+.activos-en-obra thead{
+    background-color: #EFEFEF;
+}
+
+.activos-en-obra th:nth-child(1), .activos-en-obra th:nth-child(3){
+    width: 20%;
+}
+
+.activos-en-obra th:nth-child(2){
+    width: 60%;
+}
+
+@media only screen and (min-width: 600px) {
+    body, label, h5, .card-title, .card-body, .control-label {
+      font-size: 16px;
+    }
+}

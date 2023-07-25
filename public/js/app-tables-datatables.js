@@ -131,6 +131,19 @@ var App = (function () {
         order : [[ 0, "asc" ]]
     });
 
+    $("#tableactivo").dataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf'
+        ],
+        "lengthMenu": [[500, 1000, -1], [500, 1000, "All"]],
+        order : [[ 0, "asc" ]],
+        "scrollX": true
+    });
+
+
+
+
     //Remove search & paging dropdown
     $("#table2").dataTable({
       pageLength: 6,

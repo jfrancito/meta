@@ -48,6 +48,7 @@ class AsientoModeloController extends Controller
 	    $combo_tipo_asiento 	= 	$this->gn_generacion_combo_categoria('TIPO_ASIENTO','Seleccione tipo asiento','TODO');
 	    $listamodeloasiento 	= 	$this->am_lista_asiento_modelo(Session::get('empresas_meta')->COD_EMPR,$sel_tipo_asiento,$anio);
 
+
 		$funcion 				= 	$this;
 		
 		return View::make('asientomodelo/listaasientomodelo',

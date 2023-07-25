@@ -67,8 +67,6 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-configuracion-segunda-venta', 'SegundaVentaController@actionAjaxModalConfiguracionSV');
 	Route::any('/guardar-configuracio-segunda-venta/{idopcion}', 'SegundaVentaController@actionGuardarConfiguracionSV');
 
-
-
 	Route::any('/gestion-asiento-modelo/{idopcion}', 'AsientoModeloController@actionListarAsientoModelo');
 	Route::any('/ajax-asiento-modelo', 'AsientoModeloController@actionAjaxListarAsientoModelo');
 	Route::any('/agregar-asiento-modelo/{idopcion}', 'AsientoModeloController@actionAgregarAsientoModelo');
@@ -86,8 +84,6 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-configuracion-transferencia-producto', 'KardexController@actionAjaxModalConfiguracionTranferenciaPorducto');
 	Route::any('/configurar-transferencia-producto/{idopcion}', 'KardexController@actionConfigurarTransferenciaProducto');
 
-
-
 	Route::any('/ajax-configuracion-producto', 'ConfiguracioProductoController@actionAjaxConfiguracionProducto');
 	Route::any('/ajax-modal-configuracion-producto-cuenta-contable', 'ConfiguracioProductoController@actionAjaxModalConfiguracionProductoCuentaContable');
 	Route::any('/ajax-guardar-cuenta-contable', 'ConfiguracioProductoController@actionAjaxGuardarCuentaContable');
@@ -96,12 +92,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-guardar-codigo-migracion', 'ConfiguracioProductoController@actionAjaxGuardarCodigoMigracion');
 	Route::any('/ajax-guardar-cuenta-contable-inter', 'ConfiguracioProductoController@actionAjaxGuardarCuentaContableInter');
 
-
-
 	Route::any('/gestion-configuracion-tipo-cambio/{idopcion}', 'ConfiguracioTipoCambioController@actionListarTipoCambio');
 	Route::any('/ajax-tipo-cambio', 'ConfiguracioTipoCambioController@actionAjaxListarTipoCambio');
 	Route::any('/ajax-guardar-configuracion-tipo-cambio', 'ConfiguracioTipoCambioController@actionAjaxGuardarTipoCambio');
-
 
 	Route::any('/gestion-registro-diario/{idopcion}', 'RegistroDiarioController@actionListarRegistroDiario');
 	Route::any('/ajax-combo-periodo-xanio-xempresa', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresa');
@@ -112,7 +105,6 @@ Route::group(['middleware' => ['authaw']], function () {
 
 	Route::any('/asiento-contable-excel-xasiento/{cod_asiento}', 'RegistroDiarioController@actionAsientoContableExcelXAsiento');
 
-
 	Route::any('/gestion-estado-comprobantes-compras/{idopcion}', 'ReporteComprasController@actionListarEstadoComprobanteCompra');
 	Route::any('/ajax-estado-comprobantes-compras', 'ReporteComprasController@actionAjaxListarEstadoComprobanteCompra');
 	Route::any('/descargar-estado-comprobante-excel', 'ReporteComprasController@actionAjaxDescargarAsientoContable');
@@ -120,9 +112,6 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-asiento-alterado-compras/{idopcion}', 'ReporteComprasController@actionListarAsientoAlteradoCompra');
 	Route::any('/ajax-asiento-alterado-compras', 'ReporteComprasController@actionAjaxListarAsientoAlteradoCompra');
 	Route::any('/descargar-asiento-alterado-excel', 'ReporteComprasController@actionAjaxDescargarAsientoAlterado');
-
-
-
 
 	Route::any('/ajax-combo-periodo-xanio-xempresa-gc', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresaGC');
 	Route::any('/gestion-observacion-documentos/{tipo_asiento_id}/{anio}', 'MigrarVentaController@actionListarObservacionDocumentos');
@@ -136,12 +125,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/archivo-ple-excel/{anio}/{tipo_asiento_id}/{periodo_id}/{documento}', 'ArchivoController@actionDescargarArchivoPleExcel');
 	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');
 
-
 	Route::any('/gestion-reporte-registro-ventas/{idopcion}', 'ReporteVentasController@actionGestionReporteRegistroVenta');
 	Route::any('/ajax-buscar-reporte-registro-venta', 'ReporteVentasController@actionAjaxBuscarReporteRegistroVenta');
 	Route::any('/descargar-registro-venta-excel', 'ReporteVentasController@actionDescargarRegistroVentaExcel');
-
-
 
 	Route::any('/gestion-migracion-erp-navasoft/{idopcion}', 'MigracionNavasoftController@actionGestionMigracionNavasoft');
 	Route::any('/descargar-archivo-migrar-navasoft', 'MigracionNavasoftController@actionDescargarArchivoMigrarNavasoft');
@@ -153,8 +139,6 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/asiento-contables-confirmado-rh-configuracion-xdocumentos/{idopcion}/{idasiento}', 'ReciboHonorarioController@actionGonfirmarConfiguracionAsientoRHContablesXDocumentos');
 	Route::any('/ajax-modal-detalle-rh-asiento-transicion', 'ReciboHonorarioController@actionAjaxModalDetalleAsientoRHTransicion');
 	Route::any('/asiento-contables-transicion-configuracion-rh-xdocumentos/{idopcion}/{idasiento}', 'ReciboHonorarioController@actionTransicionConfiguracionAsientoContablesRHXDocumentos');
-
-
 
 	Route::any('/gestion-listado-compras/{idopcion}', 'ComprasController@actionListarCompras');
 	Route::any('/ajax-combo-periodo-xanio-xempresa', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresa');
@@ -172,8 +156,6 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-detalle-asiento-diario-reversion', 'ComprasController@actionAjaxModalDetalleAsientoDiarioReversion');
 	Route::any('/ajax-modal-crear-detalle-asiento-diario', 'ComprasController@actionAjaxModalCrearDetalleAsientoDiario');
 	Route::any('/ajax-editar-asiento-contable-movimiento', 'ComprasController@actionAjaxEditarAsientoContableMovimiento');
-
-
 
 	Route::any('/popup-detalle-asiento-diario-compra/{anio}/{asiento_compra_id}', 'ComprasController@actionPopUpDetalleAsientoDiarioCompra');
 
@@ -271,7 +253,20 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-buscar-ingresos-mensuales', 'ReporteController@actionAjaxBuscarIngresosMensuales');
 	Route::any('/descargar-ingresos-mensuales-excel', 'ReporteController@actionIngresoMensualExcel');
 
+	Route::any('/gestion-almacen-activos/{idopcion}', 'AlmacenActivoFijoController@actionListarActivosFijos');
+	Route::any('/registrar-activo-fijo/{idproducto}/{iddocumento}', 'ActivoFijoController@registrarActivoFijo');
+	Route::any('/gestion-almacen-activos-transferidos/{idopcion}', 'AlmacenActivoFijoTransferidoController@actionListarActivosFijosTransferidos');
+	Route::any('/modificar-activo-fijo/{idactivofijo}', 'ActivoFijoController@modificarActivoFijo');
+	Route::any('/modificar-obra/{idactivofijo}', 'ActivoFijoController@modificarObra');
+	Route::any('/depreciacion-activo-fijo/{idopcion}', 'DepreciacionActivoFijoController@index');
+	Route::any('/catalogo-activos-fijos/{idopcion}', 'ActivoFijoController@catalogoActivosFijos');	
+	Route::any('/registrar-obra-activo-fijo', 'ActivoFijoController@registrarObraActivoFijo');	
+	Route::any('/reporte-formato-contable/{idopcion}', 'ExportarFormatoIatrController@reporteFormatoIATR');	 
+	Route::any('/reporte-formato-iach/{idopcion}', 'ExportarFormatoIachController@reporteFormatoIACH');	 
+	Route::any('/exportar-formato-iatr', 'ExportarFormatoIatrController@exportarFormatoIATR');	 
+	Route::any('/exportar-formato-iach', 'ExportarFormatoIachController@exportarFormatoIACH');	 
 
+	Route::any('/importar-asientos-activos-fijos', 'ImportadorAsientosActivosFijos@index');	 
 
 
 	Route::any('/gestion-resultado-naturaleza/{idopcion}', 'ReporteController@actionGestionResultadoNaturaleza');

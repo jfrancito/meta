@@ -5,10 +5,158 @@ use Illuminate\Support\Facades\DB;
 use Hashids,Session,Redirect,table;
 use App\Modelos\WEBRolOpcion,App\Modelos\WEBUserEmpresaCentro;
 use App\User;
+use App\Modelos\WEBCategoriaActivoFijo;
+use App\Modelos\WEBActivoFijo;
 use Keygen;
 use PDO;
 
 class Funcion{
+  public function getCreateIdDepreciacionActivoFijo($tabla)
+  {
+	$id="";
+	$id = DB::table($tabla)
+			  ->select(DB::raw('max(SUBSTRING(id,5,8)) as id'))
+			  ->get();
+	$idsuma = (int)$id[0]->id + 1;
+	$idopcioncompleta = str_pad($idsuma, 8, "0", STR_PAD_LEFT);
+	$prefijo = 'DEPR';
+	$idopcioncompleta = $prefijo.$idopcioncompleta;
+	return $idopcioncompleta;	
+  }
+
+  function diasAnio($year){
+	if(date('L',mktime(1,1,1,1,1,$year))){
+		$dias_anio = 366;
+	} else {
+		$dias_anio = 365;
+	}
+	return $dias_anio;
+  }
+  public function compararFechas($fecha_inicio, $fecha_fin){
+	$fechai=date_create($fecha_inicio);
+	$fechaf=date_create($fecha_fin);
+	$diff=date_diff($fechai,$fechaf);
+	return $diff->format("%R%a");	
+  }
+  public function combo_mes() 
+  {
+	$meses = array(1=>'Enero', 2=>'Febrero', 3=>'Marzo', 4=>'Abril', 5=>'Mayo', 6=>'Junio', 7=>'Julio', 8=>'Agosto',
+					9=>'Setiembre', 10=>'Octubre', 11=>'Noviembre', 12=>'Diciembre');
+	return $meses;
+  }
+  public function dias_mes($mes){
+	return cal_days_in_month(CAL_GREGORIAN, $mes, date("Y"));
+  }
+
+  public function getCreateIdActivoFijo($tabla) {
+	$id="";
+	$id = DB::table($tabla)
+			  ->select(DB::raw('max(SUBSTRING(id,5,8)) as id'))
+			  ->get();
+	$idsuma = (int)$id[0]->id + 1;
+	$idopcioncompleta = str_pad($idsuma, 8, "0", STR_PAD_LEFT);
+	$prefijo = 'ACTF';
+	$idopcioncompleta = $prefijo.$idopcioncompleta;
+	return $idopcioncompleta;	
+  }
+
+  public function combo_estado_conservacion_activo_fijo($estado_conservacion = '')
+  {
+	$estados = array('BUENO' => 'BUENO', 'REGULAR' => 'REGULAR', 'MALO' => 'MALO');
+	if($estado_conservacion != ''){
+		$estado_conservacion_sel = array($estado_conservacion => $estado_conservacion);
+		$estados = $estado_conservacion_sel + $estados;
+	}
+	return $estados;
+  }
+
+  public function combo_estado_activo_fijo($estado = '')
+  {
+	$estados = array('OPERATIVO' => 'OPERATIVO', 'BAJA' => 'BAJA');
+	if($estado != ''){
+		$estado_sel = array($estado => $estado);
+		$estados = $estado_sel + $estados;
+	}
+	return $estados;
+  }
+
+  public function combo_tipo_activo_fijo($tipo='')
+  {
+	$estados = array('INDIVIDUAL' => 'INDIVIDUAL', 'COMPUESTO' => 'COMPUESTO');
+	if($tipo != ''){
+		$tipo_sel = array($tipo => $tipo);
+		$estados = $tipo_sel + $estados;
+	}
+	return $estados;
+  }
+
+  public function getCreateItemPle($tabla, $cantidad=1)
+  {
+	$iditemplearr = array();
+	$id="";
+	$id = DB::table($tabla)
+			  ->select(DB::raw('max(SUBSTRING(item_ple,3,7)) as item_ple'))
+			  ->get();
+	for ($i=1; $i <= $cantidad; $i++) { 
+		$idsuma = (int)$id[0]->item_ple + $i;
+		$iditemple = str_pad($idsuma, 7, "0", STR_PAD_LEFT);
+		$prefijo = 'IM';
+		$iditemplearr[] = $prefijo.$iditemple;
+	}
+	return $iditemplearr;	
+  }  
+
+  public function combo_categoria_activo_fijo($id_categoria='')
+  {
+	$combo_categorias_activos_fijos = WEBCategoriaActivoFijo::all()->pluck('nombre','id');
+	if($id_categoria!=''){
+		$categoria_sel = WEBCategoriaActivoFijo::find($id_categoria);
+		$combo_categorias_activos_fijos = array($categoria_sel->id => $categoria_sel->nombre) + $combo_categorias_activos_fijos->toArray();
+	}
+	return $combo_categorias_activos_fijos;
+  }
+  
+  public function combo_producto($id_producto='') 
+  {
+	$productos = ALMProducto::all()->pluck('NOM_PRODUCTO','COD_PRODUCTO');
+	if($id_producto!=''){
+		$producto_sel = ALMProducto::find($id_producto);
+		$productos = array($producto_sel->COD_PRODUCTO => $producto_sel->NOM_PRODUCTO) + $productos->toArray();
+	}
+	return $productos;
+  }
+
+  public function combo_obra($id_obra='') 
+  {
+	$empresa_id = Session::get('empresas_meta')->COD_EMPR;
+	//$centro_id = Session::get('centros')->COD_CENTRO;
+
+	$obras = WEBActivoFijo::where('modalidad_adquisicion','=','OBRA')
+							->where('cod_empresa','=',$empresa_id)
+							//->where('cod_centro','=',$centro_id)
+							->pluck('nombre','id');
+	if($id_obra!=''){
+		$obra_sel = WEBActivoFijo::find($id_obra);
+		$obras = array($obra_sel->id => $obra_sel->nombre) + $obras->toArray();
+	}
+	return $obras;
+  }
+
+  public function combo_activo_fijo() 
+  {
+	$empresa_id = Session::get('empresas_meta')->COD_EMPR;
+	$activosfijos =  DB::table('WEB.activosfijos')
+						  ->where('WEB.activosfijos.estado_depreciacion','<>','DEPRECIADO')
+						  ->where('WEB.activosfijos.estado','<>','BAJA')
+						  ->where('WEB.activosfijos.tipo_activo','<>','COMPUESTO')
+						  ->where('WEB.activosfijos.cod_empresa','=',$empresa_id)
+                          ->select('id', DB::raw("CONCAT(item_ple, ' - ', nombre) AS nom_activo"))
+                          ->get()
+						  ->pluck('nom_activo','id')
+						  ->toArray();
+	return $activosfijos;
+  }
+
 
 	public function prefijomaestra() {
 		$prefijo = '1CIX';

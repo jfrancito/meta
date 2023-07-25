@@ -465,7 +465,9 @@ trait KardexTraits
 				$tipo_cambio_cp   		=   $this->kd_tipo_cambio(date_format(date_create(substr($row['FEC_ASIENTO'], 0, 10)), 'd-m-Y'));
 
 				$entrada_cantidad       =   $row['CAN_PRODUCTO'];
-				$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV']*$tipo_cambio_cp->CAN_VENTA_SBS;
+				//$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV']*$tipo_cambio_cp->CAN_VENTA_SBS;
+				$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV'];
+
 				$entrada_cu           	=   $entrada_importe/$entrada_cantidad;
 
 				if($row['NRO_SERIE']=='INGRESO'){
