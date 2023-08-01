@@ -142,44 +142,59 @@ class MigracionNavasoftController extends Controller
 
 	    	$empresa_id = Session::get('empresas_meta')->COD_EMPR;
 
-		    $listaasiento 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE', '=', 'WEB.asientos.TXT_REFERENCIA')
-		    							->join('WEB.historialmigrar', 'WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.asientos.TXT_REFERENCIA')
-		    							->join('WEB.asientomodelos', 'WEB.asientomodelos.id', '=', 'WEB.historialmigrar.COD_ASIENTO_MODELO')
-		    							->join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
-		    							->leftJoin('WEB.productoempresas', function($join) use ($anio, $empresa_id)
-				                         {
-				                             $join->on('WEB.productoempresas.producto_id', '=', 'WEB.asientomovimientos.COD_PRODUCTO')
-				                             ->where('WEB.productoempresas.anio','=',$anio)
-				                              ->where('WEB.productoempresas.empresa_id','=',$empresa_id);
-				                         })
-			                            ->where('WEB.productoempresas.anio','=',$anio)
-			                             ->where('WEB.productoempresas.empresa_id','=',$empresa_id)
-		    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
-		    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
-		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->where('WEB.asientomovimientos.IND_PRODUCTO','=',1)
-		    							//->where('WEB.asientos.COD_ASIENTO','=','ISLMAC0000025024')
-		    							->MigracionNava($ind_migracion)
-		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id',
-		    										'WEB.asientomodelos.alias',
-		    										'WEB.asientomodelos.tipo_ivap_id',
-		    										'CMP.DOCUMENTO_CTBLE.IND_GRATUITO',
-		    										'CMP.DOCUMENTO_CTBLE.IND_ANTICIPO',
-		    										'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE',
-		    										'WEB.productoempresas.codigo_migracion',
-		    										'WEB.asientomovimientos.*',
-		    										'WEB.asientos.IND_EXTORNO as IND_EXTORNO_ANULADO')
-		    							->orderby('WEB.asientos.COD_ASIENTO','ASC')
-		    							->get();
+
 
 
 
 	    	$nombre_excel 			= 	'Ventas';
 
 	    	if( $empresa_id == 'EMP0000000000007'){
+
+			    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+			    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+			    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+			    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+			    							//->where('COD_ASIENTO','=','ITRJAC0000000414')
+			    							->MigracionNava($ind_migracion)
+			    							->orderby('FEC_USUARIO_MODIF_AUD','desc')
+			    							->get();
+	    		
 	    		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio);
 	    	}else{
+
+
+			    $listaasiento 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE', '=', 'WEB.asientos.TXT_REFERENCIA')
+			    							->join('WEB.historialmigrar', 'WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.asientos.TXT_REFERENCIA')
+			    							->join('WEB.asientomodelos', 'WEB.asientomodelos.id', '=', 'WEB.historialmigrar.COD_ASIENTO_MODELO')
+			    							->join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+			    							->leftJoin('WEB.productoempresas', function($join) use ($anio, $empresa_id)
+					                         {
+					                             $join->on('WEB.productoempresas.producto_id', '=', 'WEB.asientomovimientos.COD_PRODUCTO')
+					                             ->where('WEB.productoempresas.anio','=',$anio)
+					                              ->where('WEB.productoempresas.empresa_id','=',$empresa_id);
+					                         })
+				                            ->where('WEB.productoempresas.anio','=',$anio)
+				                             ->where('WEB.productoempresas.empresa_id','=',$empresa_id)
+			    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+			    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+			    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+			    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+			    							->where('WEB.asientomovimientos.IND_PRODUCTO','=',1)
+			    							//->where('WEB.asientos.COD_ASIENTO','=','ISLMAC0000025024')
+			    							->MigracionNava($ind_migracion)
+			    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id',
+			    										'WEB.asientomodelos.alias',
+			    										'WEB.asientomodelos.tipo_ivap_id',
+			    										'CMP.DOCUMENTO_CTBLE.IND_GRATUITO',
+			    										'CMP.DOCUMENTO_CTBLE.IND_ANTICIPO',
+			    										'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE',
+			    										'WEB.productoempresas.codigo_migracion',
+			    										'WEB.asientomovimientos.*',
+			    										'WEB.asientos.IND_EXTORNO as IND_EXTORNO_ANULADO')
+			    							->orderby('WEB.asientos.COD_ASIENTO','ASC')
+			    							->get();
+
+
 	    		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft_comerciales($listaasiento,$anio);
 	    	}
 
@@ -266,43 +281,57 @@ class MigracionNavasoftController extends Controller
 
 	    	$empresa_id = Session::get('empresas_meta')->COD_EMPR;
 
-		    $listaasiento 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE', '=', 'WEB.asientos.TXT_REFERENCIA')
-		    							->join('WEB.historialmigrar', 'WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.asientos.TXT_REFERENCIA')
-		    							->join('WEB.asientomodelos', 'WEB.asientomodelos.id', '=', 'WEB.historialmigrar.COD_ASIENTO_MODELO')
-		    							->join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
-		    							->leftJoin('WEB.productoempresas', function($join) use ($anio, $empresa_id)
-				                         {
-				                             $join->on('WEB.productoempresas.producto_id', '=', 'WEB.asientomovimientos.COD_PRODUCTO')
-				                             ->where('WEB.productoempresas.anio','=',$anio)
-				                              ->where('WEB.productoempresas.empresa_id','=',$empresa_id);
-				                         })
-			                            ->where('WEB.productoempresas.anio','=',$anio)
-			                             ->where('WEB.productoempresas.empresa_id','=',$empresa_id)
-		    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
-		    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
-		    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
-		    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
-		    							->where('WEB.asientomovimientos.IND_PRODUCTO','=',1)
-		    							->MigracionNava($ind_migracion)
-		    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id',
-		    										'WEB.asientomodelos.alias',
-		    										'WEB.asientomodelos.tipo_ivap_id',
-		    										'CMP.DOCUMENTO_CTBLE.IND_GRATUITO',
-		    										'CMP.DOCUMENTO_CTBLE.IND_ANTICIPO',
-		    										'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE',
-		    										'WEB.productoempresas.codigo_migracion',
-		    										'WEB.asientomovimientos.*',
-		    										'WEB.asientos.IND_EXTORNO as IND_EXTORNO_ANULADO')
-		    							->orderby('WEB.asientos.COD_ASIENTO','ASC')
-		    							->get();
-
-
 
 	    	$nombre_excel 			= 	'Ventas';
 
 	    	if( $empresa_id == 'EMP0000000000007'){
+
+
+			    $listaasiento 			= 	WEBAsiento::where('COD_PERIODO','=',$periodo_id)
+			    							->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+			    							->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+			    							->where('COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+			    							->orderby('FEC_ASIENTO','asc')
+			    							//->where('COD_ASIENTO','=','ITBEAC0000001101')
+			    							->MigracionNava($ind_migracion)
+			    							->orderby('FEC_USUARIO_MODIF_AUD','desc')
+			    							->get();
+
+
 	    		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft($listaasiento,$anio,$migrado,$excel);
 	    	}else{
+
+
+			    $listaasiento 			= 	WEBAsiento::join('CMP.DOCUMENTO_CTBLE', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE', '=', 'WEB.asientos.TXT_REFERENCIA')
+			    							->join('WEB.historialmigrar', 'WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.asientos.TXT_REFERENCIA')
+			    							->join('WEB.asientomodelos', 'WEB.asientomodelos.id', '=', 'WEB.historialmigrar.COD_ASIENTO_MODELO')
+			    							->join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+			    							->leftJoin('WEB.productoempresas', function($join) use ($anio, $empresa_id)
+					                         {
+					                             $join->on('WEB.productoempresas.producto_id', '=', 'WEB.asientomovimientos.COD_PRODUCTO')
+					                             ->where('WEB.productoempresas.anio','=',$anio)
+					                              ->where('WEB.productoempresas.empresa_id','=',$empresa_id);
+					                         })
+				                            ->where('WEB.productoempresas.anio','=',$anio)
+				                             ->where('WEB.productoempresas.empresa_id','=',$empresa_id)
+			    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+			    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+			    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+			    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+			    							->where('WEB.asientomovimientos.IND_PRODUCTO','=',1)
+			    							->MigracionNava($ind_migracion)
+			    							->select('WEB.asientos.*','WEB.asientomodelos.tipo_ivap_id',
+			    										'WEB.asientomodelos.alias',
+			    										'WEB.asientomodelos.tipo_ivap_id',
+			    										'CMP.DOCUMENTO_CTBLE.IND_GRATUITO',
+			    										'CMP.DOCUMENTO_CTBLE.IND_ANTICIPO',
+			    										'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE',
+			    										'WEB.productoempresas.codigo_migracion',
+			    										'WEB.asientomovimientos.*',
+			    										'WEB.asientos.IND_EXTORNO as IND_EXTORNO_ANULADO')
+			    							->orderby('WEB.asientos.COD_ASIENTO','ASC')
+			    							->get();
+
 	    		$lista_migracion 		= 	$this->ms_lista_migracion_navasoft_comerciales($listaasiento,$anio,$migrado,$excel);
 	    	}
 

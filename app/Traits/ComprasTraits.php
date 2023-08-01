@@ -404,9 +404,14 @@ trait ComprasTraits
 	   		}
 	   		$tipo_operacion 	= 	$item['tipo_operacion'];
 
-	   		$periodo 			=   $item['periodo'];;
+	   		$periodo 			=   $item['periodo'];
+
+
 	   		$nro_serie 			= 	$item['nro_serie'];
 	   		$nro_correlativo 	= 	$item['nro_correlativo'];
+            $tipo_documento     =   $item['tipo_documento'];
+
+
 
 			fwrite($datos, $tipo_documento_pro);
 	      	fwrite($datos, $nro_documento);
@@ -417,7 +422,10 @@ trait ComprasTraits
 	      	fwrite($datos, $importe);
 	      	fwrite($datos, $tipo_operacion);
 	      	fwrite($datos, $periodo);
-	      	fwrite($datos, $nro_serie);
+
+            fwrite($datos, $tipo_documento);
+            fwrite($datos, $nro_serie);            
+
 	      	fwrite($datos, $nro_correlativo.PHP_EOL);
 
 	    }
@@ -490,7 +498,7 @@ trait ComprasTraits
 	   			$nro_cuenta 		=   str_pad($nro_cuenta, 11, "0", STR_PAD_LEFT);
 	   		}
 	   		$codigobienservicio =   str_pad($codigobienservicio, 2, "0", STR_PAD_LEFT);
-	   		$tipo_operacion 	=   str_pad($codigobienservicio, 4, "0", STR_PAD_LEFT);
+	   		$tipo_operacion 	=   str_pad($tipo_operacion, 4, "0", STR_PAD_LEFT);
 	   		$tipo_documento 	=   str_pad($tipo_documento, 2, "0", STR_PAD_LEFT);
 	   		$nro_correlativo 	=   str_pad($nro_correlativo, 8, "0", STR_PAD_LEFT);
 

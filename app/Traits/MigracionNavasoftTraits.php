@@ -666,7 +666,7 @@ trait MigracionNavasoftTraits
 	    		}
 
 
-
+	    		//dd($itemp);
 
 	    		//anticipo es 2
 	    		if($documento->IND_ANTICIPO == 2){
