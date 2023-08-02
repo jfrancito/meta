@@ -72,12 +72,15 @@ trait ReporteTraits
 									->pluck('id')->toArray();
 
 
+
+
 	    $suma 					= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
 	    							->join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.asientos.COD_PERIODO')
 	    							->join('WEB.cuentacontables', 'WEB.cuentacontables.id', '=', 'WEB.asientomovimientos.COD_CUENTA_CONTABLE')
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    							->where('WEB.asientos.COD_ESTADO','=','1')
 	    							->where('WEB.asientomovimientos.COD_ESTADO ','=','1')
+	    							//->where('WEB.cuentacontables.nro_cuenta','=','621112')
 	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 	    							->whereIn('CON.PERIODO.COD_PERIODO', $periodo_array)
 	    							->whereIn('WEB.asientomovimientos.COD_CUENTA_CONTABLE', $cuentas_array)
@@ -90,7 +93,7 @@ trait ReporteTraits
 	    										 SUBSTRING(nro_cuenta, 1, 6) as nro_cuenta_6')
 	    							->get();
 
-
+	    // dd($suma);
 
 
 
@@ -98,6 +101,7 @@ trait ReporteTraits
 									->where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
 	    							->where('nro_cuenta','>=',strval($cuentainicio->nro_cuenta))
 	    							->where('nro_cuenta','<',strval($cuentafin->nro_cuenta+1))
+	    							//->where('nro_cuenta','=','621112')
 	    							->select('nro_cuenta','nombre','orden','nivel')
 	    							->groupby('nro_cuenta')
 	    							->groupby('nivel')
@@ -105,6 +109,8 @@ trait ReporteTraits
 	    							->groupby('orden')
 									->orderby('orden','asc')
 									->get();
+
+									//dd($lista_cuentas);
 
 		$lista_periodo 			=   CONPeriodo::where('COD_ANIO','=',$anio)
 									->where('COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
@@ -140,9 +146,11 @@ trait ReporteTraits
 				$total_h 				=	$suma->where('COD_PERIODO','=',$itemp->COD_PERIODO)
 											->where('nro_cuenta_'.$item->nivel,'=',$item->nro_cuenta)
 											->sum('CAN_HABER_MN');
+
 				$total_d 				=	$suma->where('COD_PERIODO','=',$itemp->COD_PERIODO)
 											->where('nro_cuenta_'.$item->nivel,'=',$item->nro_cuenta)
 											->sum('CAN_DEBE_MN');
+
 	    		$total_mes 				=  	$total_d + $total_h;
     			$totales  				=	$totales + $total_mes;
 

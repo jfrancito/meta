@@ -301,7 +301,7 @@ trait MigracionNavasoftTraits
     		}
 
     		$nombre_cliente  		= 	$empresa->NOM_EMPR;
-    		$ruc  					= 	$empresa->NRO_DOCUMENTO;
+    		$ruc  					= 	str_pad($empresa->NRO_DOCUMENTO ,11, "0", STR_PAD_LEFT);
 
     		$codi  					= 	'';
     		$MONE                   = 	$moneda->TXT_REFERENCIA;
