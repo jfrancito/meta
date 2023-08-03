@@ -9,6 +9,8 @@
       <th>Cantidad</th>
       <th>CU</th>
       <th>Importe</th>
+      <th>Eliminar</th>
+
     </tr>
   </thead>
   <tbody>
@@ -16,15 +18,18 @@
       <tr >
         <td>{{$index + 1}}</td>
         <td>{{$item->codigo}}</td>
-
         <td>{{$item->fecha}}</td>
         <td>{{$item->producto_nombre}}</td>
         <td>{{$item->ingreso_salida}}</td>
-
         <td>{{$item->cantidad}}</td>
         <td>{{$item->cu}}</td>  
         <td>{{$item->importe}}</td>
-
+        <td>
+            <a href="{{url('/gestion-eliminar-item-kardex/'.$idopcion.'/'.$item->codigo)}}" type="button"
+             class="btn btn-default btn-xs">
+              <i class="icon mdi mdi-delete" style="color: #eb6357;" ></i>
+            </a>
+        </td>
       </tr>                    
     @endforeach
   </tbody>

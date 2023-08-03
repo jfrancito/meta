@@ -41,6 +41,20 @@ class KardexController extends Controller
 	use MovilidadTraits;
 
 
+
+	public function actionConfigurarELiminarItemKardex($idopcion,$codigo,Request $request)
+	{
+
+		WEBKardexTransferencia::where('codigo','=',$codigo)
+								->update([	'activo' => 0,
+											'fecha_mod' 	=> $this->fechaactual,
+											'usuario_mod' 	=> Session::get('usuario_meta')->id
+										 ]);
+		return Redirect::to('/gestion-transferencia-cantidades-productos/'.$idopcion)->with('bienhecho', 'Transferencia ('.$codigo.') elminado con exito');
+
+	}
+
+
 	public function actionAjaxCalcularUltimoCU(Request $request)
 	{
 		$idopcion 				=   $request['idopcion'];
@@ -439,34 +453,13 @@ class KardexController extends Controller
 	    /******************************************************/
 	    View::share('titulo','Transferencia de Cantidad Productos');
 
-	    $listatranferencia  	=	WEBKardexTransferencia::where('activo','=','1')->get();
+	    $listatranferencia  	=	WEBKardexTransferencia::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('activo','=','1')->get();
 
         return View::make('kardex/transferenciacantidad', 
         				[
         					'idopcion'  			=> $idopcion,
         					'listatranferencia'  	=> $listatranferencia,
-        				]);
-
-
-        return View::make('asientomodelo/modificarasientomodelo', 
-        				[
-        					'combo_moneda'  		=> $combo_moneda,
-        					'combo_tipo_asiento'  	=> $combo_tipo_asiento,
-        					'combo_tipo_cliente'  	=> $combo_tipo_cliente,
-							'combo_tipo_documento'  => $combo_tipo_documento,
-							'combo_tipo_igv'  		=> $combo_tipo_igv,
-							'combo_tipo_ivap'  		=> $combo_tipo_ivap,
-							'combo_pago_cobro'  	=> $combo_pago_cobro,
-        					'asientomodelo'  		=> $asientomodelo,
-        					'defecto_tipo_asiento'  => $defecto_tipo_asiento,
-        					'defecto_moneda'  		=> $defecto_moneda,
-        					'defecto_tipo_cliente'  => $defecto_tipo_cliente,
-	        				'defecto_tipo_documento'=> $defecto_tipo_documento,	
-	        				'defecto_tipo_igv' 		=> $defecto_tipo_igv,
-	        				'defecto_tipo_ivap' 	=> $defecto_tipo_ivap,
-
-	        				'defecto_pago_cobro' 	=> $defecto_pago_cobro,		
-				  			'idopcion' 				=> $idopcion
         				]);
 
 	}

@@ -83,6 +83,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-transferencia-cantidades-productos/{idopcion}', 'KardexController@actionTransferenciaCantidadesProductos');
 	Route::any('/ajax-modal-configuracion-transferencia-producto', 'KardexController@actionAjaxModalConfiguracionTranferenciaPorducto');
 	Route::any('/configurar-transferencia-producto/{idopcion}', 'KardexController@actionConfigurarTransferenciaProducto');
+	Route::any('/gestion-eliminar-item-kardex/{idopcion}/{codigo}', 'KardexController@actionConfigurarELiminarItemKardex');
+
+
 
 	Route::any('/ajax-configuracion-producto', 'ConfiguracioProductoController@actionAjaxConfiguracionProducto');
 	Route::any('/ajax-modal-configuracion-producto-cuenta-contable', 'ConfiguracioProductoController@actionAjaxModalConfiguracionProductoCuentaContable');

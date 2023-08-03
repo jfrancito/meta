@@ -210,7 +210,6 @@ class ComprasController extends Controller
 		$documento 								=   $request['documento'];
 		$ruta 									=   $request['ruta'];
 
-		//dd($asiento);
 
 
 		if($accion == 'editar'){
@@ -337,12 +336,16 @@ class ComprasController extends Controller
 				$cuentacontable_seleccionado            	=   WEBCuentaContable::where('id','=',$cuenta_contable_id)
 										    					->first();
 
+				$nrocuentadebe 								=	trim($cuentacontable_seleccionado->cuenta_contable_transferencia_debe);
+				$nrocuentahaber 							=	trim($cuentacontable_seleccionado->cuenta_contable_transferencia_haber);
+
+
 
 				foreach($listaasientomovimientocc as $key => $item){
 
 
 
-					if($cuentacontable_seleccionado->cuenta_contable_transferencia_debe <> '' and $cuentacontable_seleccionado->cuenta_contable_transferencia_haber <>''){
+					if($nrocuentadebe <> '' and $nrocuentahaber <>''){
 						
 
 						$monto = $item->CAN_DEBE_MN+$item->CAN_HABER_MN;
@@ -351,7 +354,7 @@ class ComprasController extends Controller
 
 							$cuentacontable_debe            =   WEBCuentaContable::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
 																->where('anio','=',$periodo->COD_ANIO)
-																->where('nro_cuenta','=',$cuentacontable_seleccionado->cuenta_contable_transferencia_debe)
+																->where('nro_cuenta','=',$nrocuentadebe)
 										    					->first();
 
 							$item->COD_CUENTA_CONTABLE 		= 	$cuentacontable_debe->id;
@@ -373,8 +376,8 @@ class ComprasController extends Controller
 						if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_haber and $monto_original = $monto and $sw_destino_haber == 0 ){
 
 							$cuentacontable_haber            =   WEBCuentaContable::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
-																->where('anio','=',$periodo->COD_ANIO)
-																->where('nro_cuenta','=',$cuentacontable_seleccionado->cuenta_contable_transferencia_haber)
+																->where('aniow','=',$periodo->COD_ANIO)
+																->where('nro_cuenta','=',$nrocuentahaber)
 										    					->first();
 
 							$item->COD_CUENTA_CONTABLE 		= 	$cuentacontable_haber->id;
@@ -401,6 +404,9 @@ class ComprasController extends Controller
 					}
 				}
 			}
+
+
+
 
 			$listaasientomovimientolinea 				=	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asientomovimiento->COD_ASIENTO)
 															->where('COD_ESTADO','=','1')

@@ -93,6 +93,35 @@ trait MigrarVentaComercialTraits
 	}
 
 
+	private function mv_lista_ventas_migrar_agrupado_anulado_nuevo_comercial()
+	{
+		
+		$array_empresas  		    = 		$this->mv_array_empresa_venta_comercial();
+
+		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',2023)
+											->whereIn('COD_EMPR',$array_empresas)
+											->where('COD_ESTADO','=','1')
+											->pluck('COD_PERIODO')
+											->toArray();
+
+		$lista_migrar_ventas		=		WEBViewMigrarVenta::leftJoin('WEB.historialmigrar', function ($join) {
+									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+									                 ->where('WEB.historialmigrar.IND_ANULADO', '=', 1);
+									        })
+											->where('WEB.historialmigrar.IND_ERROR','=','1')
+											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
+											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
+											//->where('WEB.viewmigrarventas.FEC_EMISION','=','2022-01-07')
+											->where('WEB.viewmigrarventas.NOM_ESTADO','=','ANULADO')
+											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
+											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+											->get();
+
+
+		return $lista_migrar_ventas;
+
+	}
+
 
 	private function mv_agregar_historial_ventas_comercial($lista_ventas_migrar_emitida,$lista_ventas_migrar_anulada,$tipo_asiento)
 	{

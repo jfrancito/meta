@@ -581,6 +581,8 @@ trait GeneralesTraits
 										->where('activo','=',1)
 										->first();
 
+			dd($cuentacontable->id);								
+
 		$array 						= 	DB::table('WEB.cuentacontables')
         								->where('activo','=',1)
         								->where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
