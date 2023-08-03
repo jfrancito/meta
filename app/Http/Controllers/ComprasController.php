@@ -376,7 +376,7 @@ class ComprasController extends Controller
 						if($item->TXT_CUENTA_CONTABLE==$cuenta_destino_haber and $monto_original = $monto and $sw_destino_haber == 0 ){
 
 							$cuentacontable_haber            =   WEBCuentaContable::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
-																->where('aniow','=',$periodo->COD_ANIO)
+																->where('anio','=',$periodo->COD_ANIO)
 																->where('nro_cuenta','=',$nrocuentahaber)
 										    					->first();
 
