@@ -232,6 +232,11 @@ class ComprasController extends Controller
 
 			$COD_ORDEN_REF = '';
 
+			$COD_EMPR_CLI_REF = $item->COD_EMPR_CLI_REF;
+			$TXT_EMPR_CLI_REF = $item->TXT_EMPR_CLI_REF;
+			$DOCUMENTO_REF = $item->DOCUMENTO_REF;
+
+
     		$detalle     	= 	$this->gn_crear_detalle_asiento_contable(	$IND_TIPO_OPERACION,
 														$COD_ASIENTO_MOVIMIENTO,
 														$COD_EMPR,
@@ -254,7 +259,12 @@ class ComprasController extends Controller
 														$COD_USUARIO_REGISTRO,
 														$COD_DOC_CTBLE_REF,
 
-														$COD_ORDEN_REF);
+														$COD_ORDEN_REF,
+
+														$COD_EMPR_CLI_REF,
+														$TXT_EMPR_CLI_REF,
+														$DOCUMENTO_REF
+													);
 
 		}	
 

@@ -128,6 +128,11 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/archivo-ple-excel/{anio}/{tipo_asiento_id}/{periodo_id}/{documento}', 'ArchivoController@actionDescargarArchivoPleExcel');
 	Route::any('/ajax-buscar-lista-ple', 'ArchivoController@actionAjaxBuscarListaPle');
 
+
+	Route::any('/gestion-ple-kardex-envases/{idopcion}', 'KardexController@actionGestionKardexEnvasesPle');
+
+
+
 	Route::any('/gestion-reporte-registro-ventas/{idopcion}', 'ReporteVentasController@actionGestionReporteRegistroVenta');
 	Route::any('/ajax-buscar-reporte-registro-venta', 'ReporteVentasController@actionAjaxBuscarReporteRegistroVenta');
 	Route::any('/descargar-registro-venta-excel', 'ReporteVentasController@actionDescargarRegistroVentaExcel');
@@ -278,6 +283,40 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/gestion-resultado-naturaleza/{idopcion}', 'ReporteController@actionGestionResultadoNaturaleza');
 	Route::any('/ajax-buscar-resultado-naturaleza', 'ReporteController@actionAjaxBuscarResultadoNaturaleza');
 	Route::any('/descargar-resultado-naturaleza-excel', 'ReporteController@actionResutadoNaturalezaExcel');
+
+	Route::any('/gestion-pago-itf/{idopcion}', 'ItfController@actionListarItf');
+	Route::any('/ajax-registro-itf', 'ItfController@actionAjaxRegistroItf');
+	Route::any('/ajax-modal-configuracion-itf-cuenta-contable', 'ItfController@actionAjaxModalConfiguracionItfCuentaContable');
+	Route::any('/itf-guardar-data', 'ItfController@actionItfGuardarData');
+	Route::any('/itf-guardar-data/{idopcion}', 'ItfController@actionGuardarItfCuentaContable');
+
+	Route::any('/gestion-pago-comisiones/{idopcion}', 'ComisionesController@actionListarComisiones');
+	Route::any('/ajax-registro-comisiones', 'ComisionesController@actionAjaxRegistroComisiones');
+	Route::any('/ajax-modal-configuracion-comisiones-cuenta-contable', 'ComisionesController@actionAjaxModalConfiguracionComisionesCuentaContable');
+	Route::any('/comisiones-guardar-data', 'ComisionesController@actionComisionesGuardarData');
+	Route::any('/comisiones-guardar-data/{idopcion}', 'ComisionesController@actionGuardarComisionesCuentaContable');
+
+	Route::any('/gestion-pago-intereses-prestamo/{idopcion}', 'InteresesPrestamoController@actionListarInteresesPrestamo');
+	Route::any('/ajax-registro-intereses-prestamo', 'InteresesPrestamoController@actionAjaxRegistroInteresesPrestamo');
+	Route::any('/ajax-modal-configuracion-intereses-prestamo-cuenta-contable', 'InteresesPrestamoController@actionAjaxModalConfiguracionInteresesPrestamoCuentaContable');
+	Route::any('/intereses-prestamo-guardar-data', 'InteresesPrestamoController@actionInteresesPrestamoGuardarData');
+	Route::any('/intereses-prestamo-guardar-data/{idopcion}', 'InteresesPrestamoController@actionGuardarInteresesPrestamoCuentaContable');
+	Route::any('/detalle-intereses-prestamo/{idopcion}', 'InteresesPrestamoController@actionDetalleInteresesPrestamo');
+
+
+	Route::any('/gestion-pago-leasing/{idopcion}', 'LeasingController@actionListarLeasing');
+	Route::any('/ajax-registro-leasing', 'LeasingController@actionAjaxRegistroLeasing');
+	Route::any('/ajax-modal-configuracion-leasing-cuenta-contable', 'LeasingController@actionAjaxModalConfiguracionLeasingCuentaContable');
+	Route::any('/leasing-guardar-data', 'LeasingController@actionLeasingGuardarData');
+	Route::any('/leasing-guardar-data/{idopcion}', 'LeasingController@actionGuardarLeasingCuentaContable');
+
+	Route::any('/gestion-pago-multa-sunat/{idopcion}', 'MultaSunatController@actionListarMultaSunat');
+	Route::any('/ajax-registro-multa-sunat', 'MultaSunatController@actionAjaxRegistroMultaSunat');
+	Route::any('/ajax-modal-configuracion-multa-sunat-cuenta-contable', 'MultaSunatController@actionAjaxModalConfiguracionMultaSunatCuentaContable');
+	Route::any('/multa-sunat-guardar-data', 'MultaSunatController@actionMultaSunatGuardarData');
+	Route::any('/multa-sunat-guardar-data/{idopcion}', 'MultaSunatController@actionGuardarMultaSunatCuentaContable');
+
+
 
    	Route::any('/enviocorreos', 'CorreoController@enviocorreo');
    	Route::any('/pruebaquery', 'PruebaController@pruebas');

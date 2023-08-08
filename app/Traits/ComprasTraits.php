@@ -64,7 +64,13 @@ trait ComprasTraits
             "asientoreversion_id"       => '',
             "asientoreversiondetalle_id"=> '',
 
+            "COD_EMPR_CLI_REF"       => '',
+            "TXT_EMPR_CLI_REF"=> '',
+            "DOCUMENTO_REF"=> '',          
+
         );
+
+
 
         array_push($array_detalle_asiento,$array_nuevo_asiento);
 
@@ -101,6 +107,11 @@ trait ComprasTraits
                 "asientoreversion_id"       => '',
                 "asientoreversiondetalle_id"=> '',
 
+                "COD_EMPR_CLI_REF"       => '',
+                "TXT_EMPR_CLI_REF"=> '',
+                "DOCUMENTO_REF"=> '',
+
+
             );
 
             array_push($array_detalle_asiento,$array_nuevo_asiento);
@@ -131,6 +142,12 @@ trait ComprasTraits
                                                 ->first();
 
             $CAN_TOTAL                      =   $itema->CAN_TOTAL_DEBE;
+
+            $COD_EMPR_CLI_REF               =   $itema->COD_EMPR_CLI;
+            $TXT_EMPR_CLI_REF               =   $itema->TXT_EMPR_CLI;
+            $DOCUMENTO_REF                  =   $itema->NRO_SERIE.'-'.$itema->NRO_DOC;
+
+
             $monto_total_igv                =   ($detallemovimient_igv->CAN_DEBE_MN + $detallemovimient_igv->CAN_HABER_MN);
             $monto_total_sum                =   0;
 
@@ -200,6 +217,11 @@ trait ComprasTraits
                     "total_haber_dolar"         => $monto_total_dola_haber,
                     "asientoreversion_id"       => $itema->COD_ASIENTO,
                     "asientoreversiondetalle_id"=> $item->COD_ASIENTO_MOVIMIENTO,
+
+                    "COD_EMPR_CLI_REF"          => $COD_EMPR_CLI_REF,
+                    "TXT_EMPR_CLI_REF"          => $TXT_EMPR_CLI_REF,
+                    "DOCUMENTO_REF"             => $DOCUMENTO_REF,
+
                 );
 
                 array_push($array_detalle_asiento,$array_nuevo_asiento);

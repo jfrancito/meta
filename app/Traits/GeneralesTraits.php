@@ -17,7 +17,7 @@ use App\Modelos\WEBCuentaDetraccion;
 use App\Modelos\CMPTipoCambio;
 use App\Modelos\WEBAsiento;
 use App\Modelos\WEBAsientoMovimiento;
-
+use App\Modelos\TESCajaBanco;
 use View;
 use Session;
 use Hashids;
@@ -29,6 +29,19 @@ use PDO;
 
 trait GeneralesTraits
 {
+
+	private function gn_array_bancos($empresa_id)
+	{
+	    $array_banco_pc 			= 	TESCajaBanco::where('COD_EMPR','=',$empresa_id)
+									->where('COD_ESTADO','=',1)
+									->where('COD_BANCO','!=','')
+									->groupBy('COD_BANCO','TXT_BANCO')
+									->pluck('TXT_BANCO','COD_BANCO')
+									->toArray();
+
+		return $array_banco_pc;
+
+	}
 
 	public function gr_is_connected($url='www.google.com',$port=80)
 	{
@@ -1132,7 +1145,14 @@ trait GeneralesTraits
 														$COD_USUARIO_REGISTRO,
 														$COD_DOC_CTBLE_REF,
 
-														$COD_ORDEN_REF)
+														$COD_ORDEN_REF,
+
+
+														$COD_EMPR_CLI_REF='',
+														$TXT_EMPR_CLI_REF='',
+														$DOCUMENTO_REF=''
+
+													)
 	{
 
 
@@ -1156,10 +1176,17 @@ trait GeneralesTraits
 							@TXT_TIPO_REFERENCIA = ?,
 							@TXT_REFERENCIA = ?,
 							@COD_ESTADO = ?,
+
+
 							@COD_USUARIO_REGISTRO = ?,
 							@COD_DOC_CTBLE_REF = ?,
+							@COD_ORDEN_REF = ?,
 
-							@COD_ORDEN_REF = ?
+
+							@COD_EMPR_CLI_REF = ?,
+							@TXT_EMPR_CLI_REF = ?,
+							@DOCUMENTO_REF = ?
+
 
 							');
 
@@ -1184,8 +1211,13 @@ trait GeneralesTraits
         $stmt->bindParam(18, $COD_ESTADO  ,PDO::PARAM_STR);
         $stmt->bindParam(19, $COD_USUARIO_REGISTRO  ,PDO::PARAM_STR);
         $stmt->bindParam(20, $COD_DOC_CTBLE_REF  ,PDO::PARAM_STR);
+        $stmt->bindParam(21, $COD_ORDEN_REF ,PDO::PARAM_STR);  
 
-        $stmt->bindParam(21, $COD_ORDEN_REF ,PDO::PARAM_STR);                   
+        $stmt->bindParam(22, $COD_EMPR_CLI_REF  ,PDO::PARAM_STR);
+        $stmt->bindParam(23, $TXT_EMPR_CLI_REF  ,PDO::PARAM_STR);
+        $stmt->bindParam(24, $DOCUMENTO_REF ,PDO::PARAM_STR); 
+
+
         $stmt->execute();
 
         $cod = $stmt->fetch();

@@ -71,6 +71,7 @@
       <th class= 'center tablaho'>Debe ME</th>
       <th class= 'center tablaho'>Haber ME</th>
       <th class= 'center tablaho'>Asiento</th>
+      
       <th class= 'center tablaho'>Nomref</th>
       <th class= 'center tablaho'>RUC/DNI</th>
 
@@ -91,11 +92,22 @@
         <td width="12">{{number_format($item->CAN_DEBE_ME, $redondeo, '.', '')}}</td>
         <td width="12">{{number_format($item->CAN_HABER_ME, $redondeo, '.', '')}}</td>
         <td width="12">{{$item->TXT_CATEGORIA_TIPO_ASIENTO}}</td>
+
+
         <td width="35">{{$item->TXT_EMPR_CLI}}</td>
         <td width="35">{{$item->NRO_DOCUMENTO}}</td>
+
         <td width="12">{{$item->FEC_ASIENTO}}</td>
         <td width="25">{{$item->TXT_CATEGORIA_TIPO_DOCUMENTO}}</td>
-        <td width="18">{{$item->NRO_SERIE}}-{{$item->NRO_DOC}}</td>
+
+        <td width="18">
+          @if($item->TXT_TIPO_REFERENCIA_CAB == 'REVERSION_IGV_COMPRA')
+            {{$item->DOCUMENTO_REF}}
+          @else
+            {{$item->NRO_SERIE}}-{{$item->NRO_DOC}}
+          @endif
+        </td>
+
         <td width="12">{{$item->TXT_CATEGORIA_MONEDA}}</td>
       </tr>                    
     @endforeach

@@ -41,6 +41,39 @@ class KardexController extends Controller
 	use MovilidadTraits;
 
 
+	public function actionGestionKardexEnvasesPle($idopcion)
+	{
+
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Ver');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+	    View::share('titulo','Kardex envases - PLE');
+	    $sel_tipo_asiento 		=	'';
+	    $sel_periodo 			=	'';
+
+	    $anio  					=   $this->anio;
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+		$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+	    $combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$funcion 				= 	$this;
+
+		$lista_kardex           =   array();
+
+		return View::make('kardex/descargararchivopleenvase',
+						 [
+						 	'combo_anio_pc'			=> $combo_anio_pc,
+						 	'combo_periodo'			=> $combo_periodo,
+						 	'anio'					=> $anio,
+						 	'sel_periodo'	 		=> $sel_periodo,					 	
+						 	'idopcion' 				=> $idopcion,
+						 	'funcion' 				=> $funcion,
+						 	'lista_kardex' 		=> $lista_kardex,						 	
+						 ]);
+	}
+
+
+
 
 	public function actionConfigurarELiminarItemKardex($idopcion,$codigo,Request $request)
 	{
