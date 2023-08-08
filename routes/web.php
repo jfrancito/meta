@@ -172,7 +172,7 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/agregar-cuenta-detraccion/{idopcion}', 'ComprasController@actionAgregarCuentaDetraccion');
 	Route::any('/modificar-cuenta-detraccion/{idopcion}/{documento}', 'ComprasController@actionModificarCuentaDetraccion');
 	Route::any('/diario-reversion-guardar-data/{idopcion}', 'ComprasController@actionGuardarDiarioReversionCuentaContable');
-
+	Route::any('/ajax-reversion-diario', 'ComprasController@actionAjaxReversionDiario');
 
 
 	Route::any('/ajax-modal-detalle-documento-sin-enviar-sunat', 'AlertaCotroller@actionAjaxModalDetalleDocumentoSinEnviarSunat');
@@ -210,11 +210,14 @@ Route::group(['middleware' => ['authaw']], function () {
 
 	Route::any('/gestion-planilla-movilidad/{idopcion}', 'MovilidadController@actionListarMovilidad');
 	Route::any('/ajax-registro-movilidad', 'MovilidadController@actionAjaxRegistroMovilidad');
-
 	Route::any('/mobilidad-guardar-data', 'MovilidadController@actionMobilidadGuardarData');
-
 	Route::any('/ajax-modal-configuracion-movilidad-cuenta-contable', 'MovilidadController@actionAjaxModalConfiguracionMovilidadCuentaContable');
 	Route::any('/mobilidad-guardar-data/{idopcion}', 'MovilidadController@actionGuardarMovilidadCuentaContable');
+
+	Route::any('/gestion-reversion-igv/{idopcion}', 'ComprasController@actionListarReversionIgv');
+	Route::any('/ajax-modal-reversion-cuenta-contable', 'ComprasController@actionAjaxModalReversionCuentaContable');
+	Route::any('/reversion-guardar-data', 'ComprasController@actionReversionGuardarData');
+	Route::any('/reversion-guardar-data/{idopcion}', 'ComprasController@actionGuardarReversionCuentaContable');
 
 
 	Route::any('/gestion-asiento/{idopcion}', 'AsientoController@actionGestionarAsiento');

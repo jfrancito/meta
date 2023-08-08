@@ -180,6 +180,18 @@ class Funcion{
 
 	}
 
+	public function generar_codigo_transferencia($codigo,$cantidad) {
+
+            //conversion a string y suma uno para el siguiente id
+            $idsuma = (int)$codigo + 1;
+		  	//concatenar con ceros
+		  	$correlativocompleta = str_pad($idsuma, $cantidad, "0", STR_PAD_LEFT); 
+
+	  		return $correlativocompleta;
+
+	}
+
+
 	public function color_empresa($empresa_id) {
 
 		$color 		= '';

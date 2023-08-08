@@ -39,11 +39,10 @@ class RegistroDiarioController extends Controller
 	public function actionAsientoContableExcelXAsiento($cod_asiento,Request $request)
 	{
 
-
 		set_time_limit(0);
 
-
 	    $listaasiento 			= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    							->orderBy('NRO_LINEA', 'asc')
 	    							->where('WEB.asientos.COD_ASIENTO','=',$cod_asiento)
 	    							->get();					
 

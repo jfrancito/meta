@@ -2,6 +2,72 @@ $(document).ready(function(){
 
     var carpeta = $("#carpeta").val();
 
+    $(".compras").on('click','.cargando', function() {
+        abrircargando();
+    });
+
+
+    $(".compras").on('dblclick','.dobleclickpc', function(e) {
+
+        var _token                  =   $('#token').val();
+        var asiento_id              =   $(this).attr('data_asiento_id');
+        var idopcion                =   $('#idopcion').val();
+
+        data                        =   {
+                                            _token                  : _token,
+                                            asiento_id              : asiento_id,
+                                            idopcion                : idopcion,
+                                        };
+        ajax_modal(data,"/ajax-modal-detalle-asiento-rd",
+                  "modal-detalle-asiento","modal-detalle-asiento-container");
+
+    });
+
+    $(".compras").on('click','.buscarreversion', function() {
+
+        event.preventDefault();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();
+        var idopcion                =   $('#idopcion').val();
+        var _token                  =   $('#token').val();
+
+        if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
+        if(periodo_id ==''){ alerterrorajax("Seleccione un periodo."); return false;}
+
+        data            =   {
+                                _token                  : _token,
+                                anio                    : anio,
+                                periodo_id              : periodo_id,
+                                idopcion                : idopcion,
+                            };
+        ajax_normal(data,"/ajax-reversion-diario");
+
+    });
+
+
+
+    $(".compras").on('click','.agregacuentacontable', function() {
+
+        var _token                  =   $('#token').val();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();        
+        var idopcion                =   $('#idopcion').val();
+        if(anio ==''){ alerterrorajax("Seleccione un anio."); return false;}
+        if(periodo_id ==''){ alerterrorajax("Seleccione un periodo."); return false;}
+
+        data                        =   {
+                                            _token                  : _token,
+                                            anio                    : anio,
+                                            periodo_id              : periodo_id,
+                                            idopcion                : idopcion
+                                        };
+
+        ajax_modal(data,"/ajax-modal-reversion-cuenta-contable",
+                  "modal-configuracion-reversion-cuenta-contable","modal-configuracion-reversion-cuenta-contable-container");
+
+    });
+
+
 
     $(".compras").on('click','.btn-regresar-lista', function(e) {
         $('.tablageneral').toggle("slow");

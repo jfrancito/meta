@@ -29,6 +29,265 @@ use PDO;
 trait ComprasTraits
 {
 
+
+    public function co_detalle_asiento_reversion($cuentas_id,$asientos_igv,$periodo,$empresa_id,$moneda_id,$moneda,$monto_total,$tipo_cambio,$cuenta_igv_rev,$monto_total_nc){
+
+        $array_detalle_asiento      =   array();
+        $linea                      =   1;
+        $cuentacontable             =   WEBCuentaContable::where('empresa_id','=',$empresa_id)
+                                        ->where('anio','=',$periodo->COD_ANIO)
+                                        ->where('nro_cuenta','=',$cuenta_igv_rev)
+                                        ->where('activo','=',1)
+                                        ->first();
+
+        $monto_total_debe           = 0;
+        $monto_total_haber          = $monto_total;
+        $monto_total_dolar_debe     = 0;
+        $monto_total_dola_haber     = $monto_total*$tipo_cambio->CAN_COMPRA_SBS;
+
+
+        $array_nuevo_asiento        =   array();
+        $array_nuevo_asiento        =   array(
+            "linea"                     => $linea,
+            "cuenta_id"                 => $cuentacontable->id,
+            "cuenta_nrocuenta"          => $cuentacontable->nro_cuenta,
+            "glosa"                     => $cuentacontable->nombre,
+            "fecha"                     => substr($periodo->FEC_FIN, 0, 10),
+            "empresa_id"                => $empresa_id,
+            "moneda_id"                 => $moneda_id,
+            "moneda"                    => $moneda,
+            
+            "total_debe"                => $monto_total_debe,
+            "total_haber"               => $monto_total_haber,
+            "total_debe_dolar"          => $monto_total_dolar_debe,
+            "total_haber_dolar"         => $monto_total_dola_haber,
+            "asientoreversion_id"       => '',
+            "asientoreversiondetalle_id"=> '',
+
+        );
+
+        array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+        if($monto_total_nc>0){
+
+            $linea                          =   $linea +1;
+            $cuentacontable             =   WEBCuentaContable::where('empresa_id','=',$empresa_id)
+                                            ->where('anio','=',$periodo->COD_ANIO)
+                                            ->where('nro_cuenta','=',$cuenta_igv_rev)
+                                            ->where('activo','=',1)
+                                            ->first();
+
+            $monto_total_debe           = $monto_total_nc;
+            $monto_total_haber          = 0;
+            $monto_total_dolar_debe     = $monto_total_nc*$tipo_cambio->CAN_COMPRA_SBS;
+            $monto_total_dola_haber     = 0;
+
+            $array_nuevo_asiento        =   array();
+            $array_nuevo_asiento        =   array(
+                "linea"                     => $linea,
+                "cuenta_id"                 => $cuentacontable->id,
+                "cuenta_nrocuenta"          => $cuentacontable->nro_cuenta,
+                "glosa"                     => $cuentacontable->nombre,
+                "fecha"                     => substr($periodo->FEC_FIN, 0, 10),
+                "empresa_id"                => $empresa_id,
+                "moneda_id"                 => $moneda_id,
+                "moneda"                    => $moneda,
+                
+                "total_debe"                => $monto_total_debe,
+                "total_haber"               => $monto_total_haber,
+                "total_debe_dolar"          => $monto_total_dolar_debe,
+                "total_haber_dolar"         => $monto_total_dola_haber,
+                "asientoreversion_id"       => '',
+                "asientoreversiondetalle_id"=> '',
+
+            );
+
+            array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+        }
+
+
+
+        $listacuentas                   =   WEBAsiento::whereIn('COD_ASIENTO', $asientos_igv)
+                                            ->orderby('COD_ASIENTO','asc')
+                                            ->get();
+
+        $linea                          =   $linea +1;
+        $CAN_TOTAL                      =   0;
+
+        foreach($listacuentas as $indexa => $itema){
+
+            $listacuentasdetallle           =   WEBAsientoMovimiento::where('COD_ASIENTO','=', $itema->COD_ASIENTO)
+                                                ->where('COD_ESTADO','=',1)
+                                                ->whereNotIn('COD_CUENTA_CONTABLE', $cuentas_id)
+                                                ->where('TXT_CUENTA_CONTABLE','not like','4%')
+                                                ->where('IND_PRODUCTO','<>','2')
+                                                ->orderby('COD_ASIENTO','asc')
+                                                ->orderby('NRO_LINEA','asc')
+                                                ->get();
+            $detallemovimient_igv           =   WEBAsientoMovimiento::where('COD_ASIENTO','=', $itema->COD_ASIENTO)
+                                                ->whereIn('COD_CUENTA_CONTABLE', $cuentas_id)
+                                                ->first();
+
+            $CAN_TOTAL                      =   $itema->CAN_TOTAL_DEBE;
+            $monto_total_igv                =   ($detallemovimient_igv->CAN_DEBE_MN + $detallemovimient_igv->CAN_HABER_MN);
+            $monto_total_sum                =   0;
+
+            foreach($listacuentasdetallle as $index => $item){
+
+                $monto_total                =   0;
+                $monto_total_dolar          =   0;
+                $partida                    =   'H';
+
+                if(count($detallemovimient_igv)>0){
+                    $monto_total            =   number_format((($item->CAN_DEBE_MN + $item->CAN_HABER_MN)*0.18), 4, '.', '');
+                    $monto_total_sum        =   $monto_total_sum + $monto_total;
+
+                }
+
+                if(count($listacuentasdetallle)==($index+1)){
+                    if($monto_total_igv <> $monto_total_sum){
+                        if($monto_total_igv>$monto_total_sum){
+                            $monto_total = $monto_total + ($monto_total_igv-$monto_total_sum);
+                        }
+                        if($monto_total_igv<$monto_total_sum){
+                            $monto_total = $monto_total - ($monto_total_sum-$monto_total_igv);
+                        }
+
+                    }
+                }
+
+                $cuentacontable             =   WEBCuentaContable::where('empresa_id','=',$empresa_id)
+                                                ->where('anio','=',$periodo->COD_ANIO)
+                                                ->where('nro_cuenta','=',$item->TXT_CUENTA_CONTABLE)
+                                                ->where('activo','=',1)
+                                                ->first();
+
+                $glosa                          =   trim($itema->TXT_CATEGORIA_TIPO_DOCUMENTO).' ('.$itema->NRO_SERIE.'-'.$itema->NRO_DOC.' ) // '.$item->TXT_GLOSA;
+
+                if($item->CAN_DEBE_MN > 0){
+                    $partida                    =   'D';
+                }                               
+
+                if($partida == 'D'){
+                    $monto_total_debe = $monto_total;
+                    $monto_total_haber = 0;
+                    $monto_total_dolar_debe = $monto_total*$tipo_cambio->CAN_COMPRA_SBS;
+                    $monto_total_dola_haber = 0;
+
+                }else{
+                    $monto_total_debe = 0;
+                    $monto_total_haber = $monto_total;
+                    $monto_total_dolar_debe = 0;
+                    $monto_total_dola_haber = $monto_total*$tipo_cambio->CAN_COMPRA_SBS;
+
+                }
+
+                $array_nuevo_asiento        =   array();
+                $array_nuevo_asiento        =   array(
+                    "linea"                     => $linea,
+                    "cuenta_id"                 => $cuentacontable->id,
+                    "cuenta_nrocuenta"          => $cuentacontable->nro_cuenta,
+                    "glosa"                     => $glosa,
+                    "fecha"                     => substr($periodo->FEC_FIN, 0, 10),
+                    "empresa_id"                => $empresa_id,
+                    "moneda_id"                 => $moneda_id,
+                    "moneda"                    => $moneda,
+                    "total_debe"                => $monto_total_debe,
+                    "total_haber"               => $monto_total_haber,
+                    "total_debe_dolar"          => $monto_total_dolar_debe,
+                    "total_haber_dolar"         => $monto_total_dola_haber,
+                    "asientoreversion_id"       => $itema->COD_ASIENTO,
+                    "asientoreversiondetalle_id"=> $item->COD_ASIENTO_MOVIMIENTO,
+                );
+
+                array_push($array_detalle_asiento,$array_nuevo_asiento);
+                $linea                           =   $linea + 1;
+
+            }
+
+        }
+                   
+        return $array_detalle_asiento;
+
+    }
+
+
+
+    private function co_array_cuentas_asiento_reversion_igv($anio, $empresa_id)
+    {
+
+        $array_cuentas          =       WEBCuentaContable::where('empresa_id','=',$empresa_id)
+                                        ->where('anio','=',$anio)
+                                        ->whereIn('nro_cuenta', ['401111','401161'])
+                                        ->pluck('id')
+                                        ->toArray();
+        return  $array_cuentas;          
+
+    }
+
+
+    private function co_array_asientos_igv_reversion_igv($anio, $empresa_id, $periodo_id, $cuentas_id)
+    {
+        
+        $array_asientos          =       WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientos.COD_ASIENTO', '=', 'WEB.asientomovimientos.COD_ASIENTO')
+                                        ->where('WEB.asientos.COD_EMPR', '=', $empresa_id)
+                                        ->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO', '=', 'TAS0000000000004')
+                                        ->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO', '=', 'IACHTE0000000025')
+                                        ->where('WEB.asientomovimientos.COD_ESTADO', '=', '1')
+                                        ->where('WEB.asientos.COD_PERIODO', '=', $periodo_id)
+                                        ->whereIn('WEB.asientomovimientos.COD_CUENTA_CONTABLE', $cuentas_id)
+                                        ->groupBy('WEB.asientomovimientos.COD_ASIENTO')
+                                        ->select('WEB.asientomovimientos.COD_ASIENTO')
+                                        ->pluck('COD_ASIENTO')
+                                        ->toArray();
+        return  $array_asientos;          
+    }
+
+    private function co_reversion_monto_total_asiento($cuentas_id, $asientos_igv)
+    {
+        $monto_total = 0;
+
+        $l_monto_total          =       WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientos.COD_ASIENTO', '=', 'WEB.asientomovimientos.COD_ASIENTO')
+                                        ->whereIn('WEB.asientomovimientos.COD_ASIENTO', $asientos_igv)
+                                        ->whereIn('WEB.asientomovimientos.COD_CUENTA_CONTABLE', $cuentas_id)
+                                        ->where('WEB.asientomovimientos.COD_ESTADO','=','1')
+                                        ->where('WEB.asientos.COD_CATEGORIA_TIPO_DOCUMENTO','<>','TDO0000000000007')
+                                        ->select(DB::raw('  SUM(WEB.asientomovimientos.CAN_DEBE_MN) AS CAN_DEBE_MN,
+                                                            SUM(WEB.asientomovimientos.CAN_HABER_MN) AS CAN_HABER_MN'))
+                                        ->first();
+
+        if(count($monto_total)>0){
+            $monto_total = $l_monto_total->CAN_DEBE_MN+$l_monto_total->CAN_HABER_MN;
+        }
+
+        return  $monto_total;
+
+    }
+
+    private function co_reversion_monto_total_nc_asiento($cuentas_id, $asientos_igv)
+    {
+        $monto_total = 0;
+
+        $l_monto_total          =       WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientos.COD_ASIENTO', '=', 'WEB.asientomovimientos.COD_ASIENTO')
+                                        ->whereIn('WEB.asientomovimientos.COD_ASIENTO', $asientos_igv)
+                                        ->whereIn('WEB.asientomovimientos.COD_CUENTA_CONTABLE', $cuentas_id)
+                                        ->where('WEB.asientomovimientos.COD_ESTADO','=','1')
+                                        ->where('WEB.asientos.COD_CATEGORIA_TIPO_DOCUMENTO','=','TDO0000000000007')
+                                        ->select(DB::raw('  SUM(WEB.asientomovimientos.CAN_DEBE_MN) AS CAN_DEBE_MN,
+                                                            SUM(WEB.asientomovimientos.CAN_HABER_MN) AS CAN_HABER_MN'))
+                                        ->first();
+
+        if(count($monto_total)>0){
+            $monto_total = $l_monto_total->CAN_DEBE_MN+$l_monto_total->CAN_HABER_MN;
+        }
+
+        return  $monto_total;
+
+    }
+
+
     public function co_existe_asiento_reversion($empresa_id,$asiento){
 
         $ind_existe      =   0;

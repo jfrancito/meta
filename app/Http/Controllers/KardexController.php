@@ -15,7 +15,7 @@ use App\Modelos\ALMProducto;
 use App\Modelos\CONPeriodo;
 use App\Modelos\CMPCategoria;
 use App\Modelos\WEBKardexTransferencia;
-
+use App\Modelos\WEBKardexProducto;
 
 
 use App\Traits\PlanContableTraits;
@@ -47,6 +47,9 @@ class KardexController extends Controller
 
 		WEBKardexTransferencia::where('codigo','=',$codigo)
 								->update([	'activo' => 0,
+											'cu' => 0,
+											'cantidad' => 0,
+											'importe' => 0,
 											'fecha_mod' 	=> $this->fechaactual,
 											'usuario_mod' 	=> Session::get('usuario_meta')->id
 										 ]);
@@ -347,6 +350,7 @@ class KardexController extends Controller
 			$producto_salida_id 	 		= 	$request['producto_salida_id'];
 			$producto_ingreso_id 	 		= 	$request['producto_ingreso_id'];
 			$fecha 	 	 					= 	$request['fecha'];
+			$empresa_id 					= 	Session::get('empresas_meta')->COD_EMPR;
 
 			$cantidad 	 					= 	floatval(str_replace(",", "", $request['cantidad']));
 			$cu 	 						= 	floatval(str_replace(",", "", $request['cu']));
@@ -365,13 +369,17 @@ class KardexController extends Controller
 		    									->where('COD_MES','=',$mes)
 		    									->first();
 
-
+			$kardexproducto 				=	WEBKardexProducto::where('producto_id','=',$producto->COD_PRODUCTO)
+												->where('empresa_id','=',$empresa_id)
+												->first();
+			$correlativo 					= 	$this->funciones->generar_codigo_transferencia($kardexproducto->correlativosalida,7);
+			$kardexproducto->correlativosalida = $correlativo;
+			$kardexproducto->save();
 
 			$id 										=   $this->funciones->getCreateIdMaestra('web.kardextransferencias');
 			$cabecera            	 					=	new WEBKardexTransferencia;
 			$cabecera->id 	     	 					=   $id;
 			$cabecera->codigo 	     	 				=   $codigo;
-
 			$cabecera->COD_PERIODO 	     	 			=   $periodo->COD_PERIODO;
 			$cabecera->NOMBRE_PERIODO 	     	 		=   $periodo->TXT_NOMBRE;
 			$cabecera->TXT_CATEGORIA_TIPO_DOCUMENTO 	=   'TRANSFERENCIA';
@@ -382,6 +390,11 @@ class KardexController extends Controller
 			$cabecera->producto_nombre 					=   $producto->NOM_PRODUCTO;
 			$cabecera->ingreso_salida 					=   'SALIDA';
 			$cabecera->cantidad 						=   $cantidad;
+
+			$cabecera->serie 							=   $kardexproducto->seriesalida;
+			$cabecera->correlativo 						=   $correlativo;
+			$cabecera->ruc 								=   $kardexproducto->ruc;
+
 
 			$cabecera->cu 								=   $cu;
 			$cabecera->importe 							=   $importe;
@@ -394,6 +407,14 @@ class KardexController extends Controller
 
 
 			$productoi 									=	ALMProducto::where('COD_PRODUCTO','=',$producto_ingreso_id)->first();
+			$kardexproducto 							=	WEBKardexProducto::where('producto_id','=',$productoi->COD_PRODUCTO)
+															->where('empresa_id','=',$empresa_id)
+															->first();
+			$correlativo 								= 	$this->funciones->generar_codigo_transferencia($kardexproducto->correlativoingreso,7);
+			$kardexproducto->correlativoingreso 		= 	$correlativo;
+			$kardexproducto->save();
+
+
 			$id 										=   $this->funciones->getCreateIdMaestra('web.kardextransferencias');
 			$cabecera            	 					=	new WEBKardexTransferencia;
 			$cabecera->id 	     	 					=   $id;
@@ -409,6 +430,11 @@ class KardexController extends Controller
 			$cabecera->producto_nombre 					=   $productoi->NOM_PRODUCTO;
 			$cabecera->ingreso_salida 					=   'INGRESO';
 			$cabecera->cantidad 						=   $cantidad;
+
+			$cabecera->serie 							=   $kardexproducto->serieingreso;
+			$cabecera->correlativo 						=   $correlativo;
+			$cabecera->ruc 								=   $kardexproducto->ruc;
+
 			$cabecera->cu 								=   $cu;
 			$cabecera->importe 							=   $importe;
 

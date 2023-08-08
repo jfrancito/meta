@@ -51,6 +51,330 @@ class ComprasController extends Controller
 	use MigrarCompraTraits;
 
 
+	public function actionAjaxReversionDiario(Request $request)
+	{
+
+
+		$tipo_asiento_id 		=   'TAS0000000000007';
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+
+	    $listaasiento 			= 	WEBAsiento::join('CON.PERIODO as PER','PER.COD_PERIODO','=','WEB.asientos.COD_PERIODO')
+	    							->where('WEB.asientos.COD_PERIODO','=',$periodo_id)
+	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
+	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    							->where('WEB.asientos.TXT_TIPO_REFERENCIA','=','REVERSION_IGV_COMPRA')
+	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+	    							->select('WEB.asientos.*','PER.TXT_NOMBRE')
+	    							->OrdFecha($tipo_asiento_id)
+	    							->get();
+	    //dd($listaasiento);
+		$funcion 				= 	$this;
+		
+		return View::make('registrodiario/ajax/alistaregistrodiario',
+						 [
+
+						 	'listaasiento'			=> $listaasiento,
+						 	'funcion'				=> $funcion,			 	
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
+
+
+	public function actionGuardarReversionCuentaContable($idopcion,Request $request)
+	{
+
+		$cabecera 				=   json_decode($request['cabecera'],false);
+		$detalle 				=   json_decode($request['detalle'],false);
+		$periodo_id 			=   $request['periodog_id'];
+		$empresa_id 			=	Session::get('empresas_meta')->COD_EMPR;
+		$centro_id 				=	'CEN0000000000001';
+		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
+		$tipo_asiento_id		=	'TAS0000000000007';
+		$tipo_referencia		=	'REVERSION_IGV_COMPRA';
+
+		//dd($detalle);
+
+		//CABECERA
+		foreach($cabecera as $index => $item){
+
+
+			$IND_TIPO_OPERACION = 'I';
+			$COD_ASIENTO = '';
+			$COD_EMPR = $empresa_id;
+			$COD_CENTRO = $centro_id;
+			$COD_PERIODO = $periodo->COD_PERIODO;
+			$COD_CATEGORIA_TIPO_ASIENTO = 'TAS0000000000007';
+			$TXT_CATEGORIA_TIPO_ASIENTO = 'DIARIO';
+			$NRO_ASIENTO = '';
+			$FEC_ASIENTO = substr($periodo->FEC_FIN, 0, 10);
+			$TXT_GLOSA = $item->glosa;
+
+			$COD_CATEGORIA_ESTADO_ASIENTO = 'IACHTE0000000025';
+			$TXT_CATEGORIA_ESTADO_ASIENTO = 'CONFIRMADO';
+			$COD_CATEGORIA_MONEDA = $item->moneda_id;
+			$TXT_CATEGORIA_MONEDA = $item->moneda;
+			$CAN_TIPO_CAMBIO = $item->tipo_cambio;
+			$CAN_TOTAL_DEBE = $item->total_debe;
+			$CAN_TOTAL_HABER = $item->total_haber;
+			$COD_ASIENTO_EXTORNO = '';
+			$COD_ASIENTO_EXTORNADO = '';
+			$IND_EXTORNO = '0';
+
+			$COD_ASIENTO_MODELO = '';
+			$TXT_TIPO_REFERENCIA = $item->tipo_referencia;
+			$TXT_REFERENCIA = '';
+			$COD_ESTADO = '1';
+			$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
+			$COD_MOTIVO_EXTORNO = '';
+			$GLOSA_EXTORNO = '';
+			$COD_EMPR_CLI = '';
+			$TXT_EMPR_CLI = '';
+			$COD_CATEGORIA_TIPO_DOCUMENTO = '';
+
+			$TXT_CATEGORIA_TIPO_DOCUMENTO = '';
+			$NRO_SERIE = '';
+			$NRO_DOC = '';
+			$FEC_DETRACCION = '';
+			$NRO_DETRACCION = '';
+			$CAN_DESCUENTO_DETRACCION = '0';
+			$CAN_TOTAL_DETRACCION = '0';
+			$COD_CATEGORIA_TIPO_DOCUMENTO_REF = '';
+			$TXT_CATEGORIA_TIPO_DOCUMENTO_REF = '';
+			$NRO_SERIE_REF = '';
+			$NRO_DOC_REF = '';
+			$FEC_VENCIMIENTO = '';
+			$IND_AFECTO = '0';
+
+			$asiento_id				=   $this->gn_encontrar_cod_asiento($empresa_id, $centro_id, 
+														$periodo_id, $tipo_asiento_id,$item->tipo_referencia);
+
+			$anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
+																		Session::get('usuario_meta')->name,$this->fechaactual);
+
+    		$asientocontable     	= 	$this->gn_crear_asiento_contable($IND_TIPO_OPERACION,
+												$COD_ASIENTO,
+												$COD_EMPR,
+												$COD_CENTRO,
+												$COD_PERIODO,
+												$COD_CATEGORIA_TIPO_ASIENTO,
+												$TXT_CATEGORIA_TIPO_ASIENTO,
+												$NRO_ASIENTO,
+												$FEC_ASIENTO,
+												$TXT_GLOSA,
+												
+												$COD_CATEGORIA_ESTADO_ASIENTO,
+												$TXT_CATEGORIA_ESTADO_ASIENTO,
+												$COD_CATEGORIA_MONEDA,
+												$TXT_CATEGORIA_MONEDA,
+												$CAN_TIPO_CAMBIO,
+												$CAN_TOTAL_DEBE,
+												$CAN_TOTAL_HABER,
+												$COD_ASIENTO_EXTORNO,
+												$COD_ASIENTO_EXTORNADO,
+												$IND_EXTORNO,
+
+												$COD_ASIENTO_MODELO,
+												$TXT_TIPO_REFERENCIA,
+												$TXT_REFERENCIA,
+												$COD_ESTADO,
+												$COD_USUARIO_REGISTRO,
+												$COD_MOTIVO_EXTORNO,
+												$GLOSA_EXTORNO,
+												$COD_EMPR_CLI,
+												$TXT_EMPR_CLI,
+												$COD_CATEGORIA_TIPO_DOCUMENTO,
+
+												$TXT_CATEGORIA_TIPO_DOCUMENTO,
+												$NRO_SERIE,
+												$NRO_DOC,
+												$FEC_DETRACCION,
+												$NRO_DETRACCION,
+												$CAN_DESCUENTO_DETRACCION,
+												$CAN_TOTAL_DETRACCION,
+												$COD_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$TXT_CATEGORIA_TIPO_DOCUMENTO_REF,
+												$NRO_SERIE_REF,
+
+												$NRO_DOC_REF,
+												$FEC_VENCIMIENTO,
+												$IND_AFECTO);
+
+		}
+
+
+		//DETALLE
+
+		foreach($detalle as $index => $item){
+
+			$IND_TIPO_OPERACION = 'I';
+			$COD_ASIENTO_MOVIMIENTO = '';
+			$COD_EMPR = $empresa_id;
+			$COD_CENTRO = $centro_id;
+			$COD_ASIENTO = $asientocontable;
+			$COD_CUENTA_CONTABLE = $item->cuenta_id;
+			$TXT_CUENTA_CONTABLE = $item->cuenta_nrocuenta;
+			$TXT_GLOSA = $item->glosa;
+			$CAN_DEBE_MN = $item->total_debe;
+			$CAN_HABER_MN = $item->total_haber;
+
+			$CAN_DEBE_ME = $item->total_debe_dolar;
+			$CAN_HABER_ME = $item->total_haber_dolar;
+			$NRO_LINEA = $item->linea;
+			$COD_CUO = '';
+			$IND_EXTORNO = '0';
+			$TXT_TIPO_REFERENCIA = 'web.asientomovimientos';
+			$TXT_REFERENCIA = $item->asientoreversiondetalle_id;
+			$COD_ESTADO = '1';
+			$COD_USUARIO_REGISTRO = Session::get('usuario_meta')->id;
+			$COD_DOC_CTBLE_REF = '';
+
+			$COD_ORDEN_REF = '';
+
+    		$detalle     	= 	$this->gn_crear_detalle_asiento_contable(	$IND_TIPO_OPERACION,
+														$COD_ASIENTO_MOVIMIENTO,
+														$COD_EMPR,
+														$COD_CENTRO,
+														$COD_ASIENTO,
+														$COD_CUENTA_CONTABLE,
+														$TXT_CUENTA_CONTABLE,
+														$TXT_GLOSA,
+														$CAN_DEBE_MN,
+														$CAN_HABER_MN,
+
+														$CAN_DEBE_ME,
+														$CAN_HABER_ME,
+														$NRO_LINEA,
+														$COD_CUO,
+														$IND_EXTORNO,
+														$TXT_TIPO_REFERENCIA,
+														$TXT_REFERENCIA,
+														$COD_ESTADO,
+														$COD_USUARIO_REGISTRO,
+														$COD_DOC_CTBLE_REF,
+
+														$COD_ORDEN_REF);
+
+		}	
+
+
+	    $asiento 					= 	WEBAsiento::where('COD_ASIENTO','=',$asientocontable)
+	    								->first();
+
+	    $listaasientomovimientodes 	= 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento->COD_ASIENTO)
+	    								->where('COD_ESTADO','=','1')
+	    								->where('IND_PRODUCTO','<>','2')
+	    								->orderBy('NRO_LINEA', 'asc')
+	    								->get();
+
+		$periodo 					= 	CONPeriodo::where('COD_PERIODO','=',$asiento->COD_PERIODO)->first();
+	    $anio  						=   $periodo->COD_ANIO;
+
+		foreach($listaasientomovimientodes as $index => $item){
+			$this->gn_crear_asiento_destino($asiento->COD_ASIENTO,$item->COD_ASIENTO_MOVIMIENTO,$anio);
+		}
+
+
+
+		Session::flash('periodo_id_confirmar', $periodo->COD_PERIODO);
+		return Redirect::to('/gestion-reversion-igv/'.$idopcion)->with('bienhecho', 'Registro cuenta contable exitoso');
+
+	}
+
+
+
+	public function actionListarReversionIgv($idopcion)
+	{
+
+		/******************* validar url **********************/
+		$validarurl = $this->funciones->getUrl($idopcion,'Ver');
+	    if($validarurl <> 'true'){return $validarurl;}
+	    /******************************************************/
+	    View::share('titulo','Lista de reversion de igv');
+
+	    $empresa_id 				= 	Session::get('empresas_meta')->COD_EMPR;
+		if(Session::has('periodo_id_confirmar')){
+			//$sel_periodo 			=	Session::get('periodo_id_confirmar');
+			$sel_periodo 			=	'';
+
+		}else{
+			$sel_periodo 			=	'';
+		}
+
+	    $anio  					=   $this->anio;
+        $array_anio_pc     		= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
+		$combo_anio_pc  		= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
+	    $combo_periodo 			= 	$this->gn_combo_periodo_xanio_xempresa($anio,Session::get('empresas_meta')->COD_EMPR,'','Seleccione periodo');
+		$funcion 				= 	$this;
+		
+		return View::make('compras/listareversion',
+						 [
+
+
+						 	'combo_anio_pc'			=> $combo_anio_pc,
+						 	'combo_periodo'			=> $combo_periodo,
+						 	'anio'					=> $anio,
+						 	'sel_periodo'	 		=> $sel_periodo,
+
+						 	'periodo_id'			=> $sel_periodo,
+						 							 	
+						 	'idopcion' 				=> $idopcion,
+						 	'funcion' 				=> $funcion,						 	
+						 ]);
+	}
+
+	public function actionAjaxModalReversionCuentaContable(Request $request)
+	{
+		
+		$anio 					=   $request['anio'];
+		$periodo_id 			=   $request['periodo_id'];
+		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_id)->first();
+		$empresa_id 			=	Session::get('empresas_meta')->COD_EMPR;
+    	$idopcion 				=   $request['idopcion'];
+
+		$cuentas_id 			=	$this->co_array_cuentas_asiento_reversion_igv($anio, $empresa_id);
+		//asientos 401111 - 406111
+		$asientos_igv 			=	$this->co_array_asientos_igv_reversion_igv($anio, $empresa_id, $periodo_id, $cuentas_id);
+		$monto_total 			=   $this->co_reversion_monto_total_asiento($cuentas_id,$asientos_igv);
+
+		$monto_total_nc 		=   $this->co_reversion_monto_total_nc_asiento($cuentas_id,$asientos_igv);
+
+		$fecha_cambio			=   date_format(date_create(substr($periodo->FEC_FIN, 0, 10)), 'Ymd');
+		$tipo_cambio 			=	$this->gn_tipo_cambio($fecha_cambio);
+
+		$glosa   				=	'REVERSION IGV COMPRA: PERIODO '.$periodo->TXT_CODIGO;
+		$tipo_referencia   		=	'REVERSION_IGV_COMPRA';
+		$moneda_id   			=	'MON0000000000001';
+		$moneda   				=	'SOLES';
+
+		if($empresa_id == 'EMP0000000000007'){ $cuenta_igv_rev = '406111'; }else{ $cuenta_igv_rev = '401111'; }
+
+
+		$cabecera 				=   $this->movilidad_cabecera_asiento($periodo,$empresa_id,($monto_total+$monto_total_nc),$glosa,$moneda_id,$moneda,$tipo_cambio,$tipo_referencia);
+		$detalle 				=   $this->co_detalle_asiento_reversion($cuentas_id,$asientos_igv,$periodo,$empresa_id,$moneda_id,$moneda,$monto_total,$tipo_cambio,$cuenta_igv_rev,$monto_total_nc);
+
+		$funcion 				= 	$this;
+
+
+
+
+		return View::make('compras/modal/ajax/amreversioncc',
+						 [		 	
+						 	'cabecera' 				=> $cabecera,
+						 	'detalle' 				=> $detalle,
+						 	'periodo' 				=> $periodo,
+						 	'glosa' 				=> $glosa,
+						 	'funcion' 				=> $funcion,
+						 	'idopcion' 				=> $idopcion,
+						 	'ajax' 					=> true,						 	
+						 ]);
+	}
+
+
+
+
+
 
 	public function actionAjaxModalCambiarAsientoFechaEmision(Request $request)
 	{

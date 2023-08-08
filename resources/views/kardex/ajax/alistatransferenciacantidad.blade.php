@@ -3,6 +3,13 @@
     <tr>
       <th>Item</th>
       <th>Codigo</th>
+
+
+      <th>Serie</th>
+      <th>Correlativo</th>
+      <th>Ruc</th>
+
+
       <th>Fecha</th>
       <th>Producto</th>
       <th>Ingreso/Salida</th>
@@ -18,6 +25,11 @@
       <tr >
         <td>{{$index + 1}}</td>
         <td>{{$item->codigo}}</td>
+
+        <td>{{$item->serie}}</td>
+        <td>{{$item->correlativo}}</td>
+        <td>{{$item->ruc}}</td>
+        
         <td>{{$item->fecha}}</td>
         <td>{{$item->producto_nombre}}</td>
         <td>{{$item->ingreso_salida}}</td>

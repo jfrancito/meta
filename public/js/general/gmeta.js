@@ -9,7 +9,6 @@ $(".bienvenido").on('click','.cargando', function() {
 
 
 
-
 $(".be-content").on('click','.checkbox_asignar', function() {
 
     var input   = $(this).siblings('.input_asignar');
