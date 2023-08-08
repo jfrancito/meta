@@ -1847,9 +1847,9 @@ class ComprasController extends Controller
 			$asiento->CAN_TOTAL_DETRACCION 			=   $total_detraccion;
 			$asiento->save();
 
-			sleep(1);
+			/*sleep(1);
 			$reversion = $this->co_reversion_compra($idasiento);
-			sleep(4);
+			sleep(4);*/
 
 
 			Session::flash('periodo_id_confirmar', $periodo_id_confirmar);
