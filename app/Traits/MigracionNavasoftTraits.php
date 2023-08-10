@@ -72,7 +72,8 @@ trait MigracionNavasoftTraits
     		$tipo_documento  		= 	$categoria->CODIGO_SUNAT;
     		$ndoc  					= 	$item->NRO_SERIE.'-'.$item->NRO_DOC;
 
-    		$ruc  					= 	$empresa->NRO_DOCUMENTO;
+    		// $ruc  					= 	$empresa->NRO_DOCUMENTO;
+    		$ruc  					= 	str_pad($empresa->NRO_DOCUMENTO ,11, "DNI", STR_PAD_LEFT);
 
     		$codi  					= 	$item->codigo_migracion;
 	   		$moneda 				= 	CMPCategoria::where('COD_CATEGORIA','=',$item->COD_CATEGORIA_MONEDA)->first();
@@ -301,7 +302,9 @@ trait MigracionNavasoftTraits
     		}
 
     		$nombre_cliente  		= 	$empresa->NOM_EMPR;
-    		$ruc  					= 	str_pad($empresa->NRO_DOCUMENTO ,11, "0", STR_PAD_LEFT);
+    		$ruc  					= 	str_pad($empresa->NRO_DOCUMENTO ,11, "DNI", STR_PAD_LEFT);
+
+
 
     		$codi  					= 	'';
     		$MONE                   = 	$moneda->TXT_REFERENCIA;
@@ -614,8 +617,14 @@ trait MigracionNavasoftTraits
     		}
 
     		$nombre_cliente  		= 	$empresa->NOM_EMPR;
-    		$ruc  					= 	$empresa->NRO_DOCUMENTO;
+    		// $ruc  					= 	$empresa->NRO_DOCUMENTO;
 
+    		// $ruc  					= 	$empresa->NRO_DOCUMENTO;
+
+    		// if(count($ruc)<11){
+    		// 	$ruc  				= 	"DNI".$empresa->NRO_DOCUMENTO;
+    		// }
+    		$ruc  					= 	str_pad($empresa->NRO_DOCUMENTO ,11, "DNI", STR_PAD_LEFT);
     		$codi  					= 	'';
     		$MONE                   = 	$moneda->TXT_REFERENCIA;
     		$TCAM 					=   $item->CAN_TIPO_CAMBIO;

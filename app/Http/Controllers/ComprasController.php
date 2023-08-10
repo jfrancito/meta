@@ -358,7 +358,7 @@ class ComprasController extends Controller
 		$moneda_id   			=	'MON0000000000001';
 		$moneda   				=	'SOLES';
 
-		if($empresa_id == 'EMP0000000000007'){ $cuenta_igv_rev = '406111'; }else{ $cuenta_igv_rev = '401111'; }
+		if($empresa_id == 'EMP0000000000007'){ $cuenta_igv_rev = '406111'; }else{ $cuenta_igv_rev = '401161'; }
 
 
 		$cabecera 				=   $this->movilidad_cabecera_asiento($periodo,$empresa_id,($monto_total+$monto_total_nc),$glosa,$moneda_id,$moneda,$tipo_cambio,$tipo_referencia);
