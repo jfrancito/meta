@@ -548,6 +548,7 @@ class ComprasController extends Controller
 
 		if($accion == 'editar'){
 
+			$glosa_editar 							=	'';
 			$asientomovimiento 						=	WEBAsientoMovimiento::where('COD_ASIENTO_MOVIMIENTO','=',$asiento_movimiento_id)->first();
 			$cuentacontable 						=	WEBCuentaContable::where('id','=',$cuenta_contable_id)->first();
 			$asiento 								=	WEBAsiento::where('COD_ASIENTO','=',$asientomovimiento->COD_ASIENTO)->first();
@@ -581,16 +582,20 @@ class ComprasController extends Controller
 				}
 			}
 
+			$glosa_editar 			=	$cuentacontable->nombre;
+			if($asientomovimiento->IND_PRODUCTO == '1'){
+				$glosa_editar 		=	$asientomovimiento->TXT_GLOSA;
+			}
+
+
 
 			$asientomovimiento->COD_CUENTA_CONTABLE 	= 	$cuentacontable->id;
 			$asientomovimiento->TXT_CUENTA_CONTABLE 	= 	$cuentacontable->nro_cuenta;
-			$asientomovimiento->TXT_GLOSA 				= 	$cuentacontable->nombre;
-
+			$asientomovimiento->TXT_GLOSA 				= 	$glosa_editar;
 			$asientomovimiento->CAN_DEBE_MN 			= 	$m_debe_mn;
 			$asientomovimiento->CAN_HABER_MN 			= 	$m_haber_mn;
 			$asientomovimiento->CAN_DEBE_ME 			= 	$m_debe_me;				
 			$asientomovimiento->CAN_HABER_ME 			= 	$m_haber_me;
-
 			$asientomovimiento->COD_ESTADO 				=   $activo;
 			$asientomovimiento->FEC_USUARIO_MODIF_AUD 	=   $this->fechaactual;
 			$asientomovimiento->COD_USUARIO_MODIF_AUD 	=   Session::get('usuario_meta')->id;

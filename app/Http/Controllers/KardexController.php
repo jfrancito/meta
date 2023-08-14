@@ -670,13 +670,16 @@ class KardexController extends Controller
 		}
 
 
-		$tipo_asiento_id    	=   'TAS0000000000003';
+
+
+		$empresa_id 	=	Session::get('empresas_meta')->COD_EMPR;
+		//insertar envases ;
+		$this->kd_insertar_envases_saldoinicial_kardex($empresa_id,$tipo_producto_id);
+
 
 	    $listasaldoinicial 		= 	$this->kd_lista_saldo_inicial(Session::get('empresas_meta')->COD_EMPR,$tipo_producto_id);
-
+		$tipo_asiento_id    	=   'TAS0000000000003';
 		$listamovimiento 		= 	$this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
-
-
 		$tipo_asiento_id    	=   'TAS0000000000004';
 		$listamovimientocommpra = 	$this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
 

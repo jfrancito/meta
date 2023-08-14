@@ -142,8 +142,6 @@ $(document).ready(function(){
         var documento               =   $('#documento_configuracion').val();
 
 
-        debugger;
-
         $('#modal-detalle-asiento-confirmar').niftyModal('hide');
 
         if(monto == '' || monto == '0.0000'){alerterrorajax("Ingrese un monto");return false;}

@@ -33,6 +33,57 @@ use PDO;
 trait KardexTraits
 {
 
+	public function kd_insertar_envases_saldoinicial_kardex($empresa_id,$tipo_producto_id)
+	{
+
+	    $listaproductoenv 	= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
+	    						->join('ALM.PRODUCTO', 'WEB.asientomovimientos.COD_PRODUCTO', '=', 'ALM.PRODUCTO.COD_PRODUCTO')
+	    						->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+	    						->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
+	    						->whereIn('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO',['TAS0000000000003','TAS0000000000004'])
+	    						->where('WEB.asientomovimientos.IND_PRODUCTO','=','1')
+	    						->where('ALM.PRODUCTO.NOM_PRODUCTO','like','%ENVASE%')
+	    						->select(DB::raw("ALM.PRODUCTO.COD_PRODUCTO,
+												ALM.PRODUCTO.NOM_PRODUCTO,
+												MAX(YEAR(WEB.asientos.FEC_ASIENTO)) ANIO"))
+	    						->groupBy('ALM.PRODUCTO.COD_PRODUCTO')
+	    						->groupBy('ALM.PRODUCTO.NOM_PRODUCTO')
+								->get();
+
+		foreach($listaproductoenv as $index => $item){
+		    $kardexproducto 	= 	WEBKardexProducto::where('empresa_id','=',$empresa_id)
+		    							->where('tipo_producto_id','=',$tipo_producto_id)
+		    							->where('producto_id','=',$item->COD_PRODUCTO)
+				    					->first();
+			if(count($kardexproducto)<=0){
+
+				$idkardex 			=   $this->funciones->getCreateIdMaestra('WEB.kardexproductos');
+				$fecha_saldo  		=   $item->ANIO.'-01-01';
+
+				$cabecera            	 	=	new WEBKardexProducto;
+				$cabecera->id 	     	 	=   $idkardex;
+				$cabecera->unidades 	   	=   0;
+				$cabecera->cu_soles 	   	=   0;
+				$cabecera->inicial_soles 	=   0;
+				$cabecera->fecha_saldo_inicial 	=   $fecha_saldo;
+				$cabecera->fecha_crea 	 	=   date('Ymd H:i:s');
+				$cabecera->usuario_crea 	=   Session::get('usuario_meta')->id;
+				$cabecera->producto_id 		=   $item->COD_PRODUCTO;
+				$cabecera->tipo_producto_id =   $tipo_producto_id;
+				$cabecera->empresa_id 	 	=   Session::get('empresas_meta')->COD_EMPR;
+				$cabecera->serieingreso 	=   '';
+				$cabecera->seriesalida 	   	=   '';
+				$cabecera->correlativoingreso 	=   '0000000';
+				$cabecera->correlativosalida 	=   '0000000';
+				$cabecera->ruc 	=   '';
+				$cabecera->save();
+
+			}
+		}
+
+	}
+
+
 
 
 	public function kd_monto_producto_material_auxiliar($listarequerimiento,$periodo,$producto_id)
