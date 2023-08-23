@@ -86,7 +86,7 @@
       <tr>
         <td width="6">{{$item->NRO_LINEA}}</td>
         <td width="10">{{$item->TXT_CUENTA_CONTABLE}}</td>
-        <td width="60">{{$item->TXT_GLOSA}}</td>
+        <td width="60">{{$item->GLOSA}}</td>
         <td width="12">{{number_format($item->CAN_DEBE_MN, $redondeo, '.', '')}}</td>
         <td width="12">{{number_format($item->CAN_HABER_MN, $redondeo, '.', '')}}</td>
         <td width="12">{{number_format($item->CAN_DEBE_ME, $redondeo, '.', '')}}</td>

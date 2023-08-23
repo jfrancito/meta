@@ -19,8 +19,6 @@ use App\Modelos\CMPTipoCambio;
 use App\Modelos\STDEmpresa;
 use App\Modelos\CMPOrden;
 
-
-
 use View;
 use Session;
 use Hashids;
@@ -28,10 +26,194 @@ Use Nexmo;
 use Keygen;
 use PDO;
 
-
-
 trait KardexTraits
 {
+
+	public function kd_archivo_ple_kardex($anio,$mes,$listasaldoinicial,$nombre,$path,$tipo_producto_id){
+
+
+	    if (file_exists($path)) {
+	        unlink("storage/kardex/ple/".$nombre);
+	    } 
+		$datos = fopen("storage/kardex/ple/".$nombre, "a");
+		$empresa_id 			=	Session::get('empresas_meta')->COD_EMPR;
+		$periodosel 			=	$anio.$mes;
+
+		//llenado de datalle
+		$array_detalle_asiento 		=	array();
+
+
+		foreach($listasaldoinicial as $index => $item){
+
+        	$saldoinicial 			= 	$this->kd_saldo_inicial_producto_id($empresa_id,$tipo_producto_id,$item->producto_id);
+	    	$listadetalleproducto 	= 	$this->kd_lista_producto_periodo_view($empresa_id, 
+	    																 $anio, 
+	    																 '',
+	    																 $item->producto_id,
+	    																 '');
+			$producto 				= 	ALMProducto::where('COD_PRODUCTO','=',$item->producto_id)->first();
+			$periodo_enero 			= 	CONPeriodo::where('COD_ANIO','=',$anio)
+										->where('COD_MES','=',1)
+										->where('COD_EMPR','=',$empresa_id)
+										->first();
+
+		    $listakardexif 			= 	$this->kd_lista_kardex_inventario_final($empresa_id, 
+		    																		$saldoinicial,
+		    																		$listadetalleproducto,
+		    																		$producto,
+		    																		$periodo_enero);
+
+		    foreach($listakardexif as $index => $item){
+
+		    	$fecha 					=	$item["fecha"];
+		    	$periodo                = 	$anio.substr($fecha, 5, 2);
+
+		    	if($periodosel == $periodo){
+
+			    	$periodo_01  			= 	$periodo."00";
+			    	$cu  					= 	"";//falta
+			    	$correlativo_02  		= 	str_pad($index+1, 9, "0", STR_PAD_LEFT);
+			    	$codigo_03  			= 	'M'.$correlativo_02;
+			    	$codigo_estable_04  	= 	'0000001';
+			    	$codigo_catalogo_05  	= 	'9';
+			    	$tipo_existencia_06  	= 	'01';
+			    	$codigo_existencia_07  	= 	'';//falta
+			    	$codigo_catalogo_08  	= 	'';
+			    	$codigo_cubso_09  		= 	'';
+
+			    	$comp_fecha_10  		= 	date_format(date_create($item["fecha"]), 'd/m/Y');
+			    	$comp_tipo_11  			= 	'';//falta
+			    	$comp_serie_12  		= 	$item['serie'];
+			    	$comp_numero_13  		= 	$item['correlativo'];
+
+			    	$tipo_op_efectu_14  	= 	'';//falta
+
+			    	$exis_descrip_15  		= 	$item['nombre_producto'];
+			    	$unidad_medida_16  		= 	'NIU';
+			    	$metodo_valuacion_17  	= 	'1';
+
+			    	$entrada_cantidad  		= 	number_format($item['entrada_cantidad'], 2, '.','');
+			    	$entrada_cu  			= 	number_format($item['entrada_cu'], 2, '.', '');
+			    	$entrada_importe  		= 	number_format($item['entrada_importe'], 2, '.', '');
+
+			    	$salida_cantidad  		= 	number_format($item['salida_cantidad'], 2, '.','');
+			    	$salida_cu  			= 	number_format($item['salida_cu'], 2, '.', '');
+			    	$salida_importe  		= 	number_format($item['salida_importe'], 2, '.', '');
+
+			    	$saldo_cantidad  		= 	number_format($item['saldo_cantidad'], 2, '.','');
+			    	$saldo_cu  				= 	number_format($item['saldo_cu'], 2, '.', '');
+			    	$saldo_importe  		= 	number_format($item['saldo_importe'], 2, '.', '');
+
+			    	$estado  				= 	'1';
+			    	$libre  				= 	'-';
+
+			      	fwrite($datos, $periodo_01."|");
+			      	fwrite($datos, $cu."|");
+			      	fwrite($datos, $codigo_03."|");
+			      	fwrite($datos, $codigo_estable_04."|");
+			      	fwrite($datos, $codigo_catalogo_05."|");
+
+			      	fwrite($datos, $tipo_existencia_06."|");
+			      	fwrite($datos, $codigo_existencia_07."|");
+			      	fwrite($datos, $codigo_catalogo_08."|");
+			      	fwrite($datos, $codigo_cubso_09."|");
+			      	fwrite($datos, $comp_fecha_10."|");
+
+			      	fwrite($datos, $comp_tipo_11."|");
+			      	fwrite($datos, $comp_serie_12."|");
+			      	fwrite($datos, $comp_numero_13."|");
+			      	fwrite($datos, $tipo_op_efectu_14."|");
+			      	fwrite($datos, $exis_descrip_15."|");
+			      	fwrite($datos, $unidad_medida_16."|");
+			      	fwrite($datos, $metodo_valuacion_17."|");
+
+
+			      	fwrite($datos, $entrada_cantidad."|");
+			      	fwrite($datos, $entrada_cu."|");
+			      	fwrite($datos, $entrada_importe."|");
+
+			      	fwrite($datos, $salida_cantidad."|");
+			      	fwrite($datos, $salida_cu."|");
+			      	fwrite($datos, $salida_importe."|");
+
+			      	fwrite($datos, $saldo_cantidad."|");
+			      	fwrite($datos, $saldo_cu."|");
+			      	fwrite($datos, $saldo_importe."|");
+
+			      	fwrite($datos, $estado."|");
+			      	fwrite($datos, $libre.PHP_EOL);
+
+			    	$array_nuevo_asiento 	=	array();
+					$array_nuevo_asiento    =	array(
+						"periodo_01" 					=> $periodo_01,
+						"cu" 							=> $cu,
+						"codigo_03" 					=> $codigo_03,
+						"codigo_estable_04" 			=> $codigo_estable_04,
+
+						"codigo_catalogo_05" 			=> $codigo_catalogo_05,
+						"tipo_existencia_06" 			=> $tipo_existencia_06,
+			            "codigo_existencia_07" 			=> $codigo_existencia_07,
+			            "codigo_catalogo_08" 			=> $codigo_catalogo_08,
+			            "codigo_cubso_09" 				=> $codigo_cubso_09,
+			            "comp_fecha_10" 				=> $comp_fecha_10,
+			            "comp_tipo_11" 					=> $comp_tipo_11,
+			            "comp_serie_12" 				=> $comp_serie_12,
+			            "comp_numero_13"				=> $comp_numero_13,
+			            "tipo_op_efectu_14" 			=> $tipo_op_efectu_14,
+			            "exis_descrip_15" 				=> $exis_descrip_15,
+			            "unidad_medida_16" 				=> $unidad_medida_16,
+			            "metodo_valuacion_17" 			=> $metodo_valuacion_17,
+			            
+			            "entrada_cantidad" 				=> $entrada_cantidad,
+			            "entrada_cu" 					=> $entrada_cu,
+			            "entrada_importe" 				=> $entrada_importe,
+			            "salida_cantidad" 				=> $salida_cantidad,
+			            "salida_cu" 					=> $salida_cu,
+			            "salida_importe" 				=> $salida_importe,
+			            "saldo_cantidad" 				=> $saldo_cantidad,
+			            "saldo_cu" 						=> $saldo_cu,
+			            "saldo_importe" 				=> $saldo_importe,
+			            "estado"     					=> $estado,
+			            "libre"     					=> $libre
+					);
+					array_push($array_detalle_asiento,$array_nuevo_asiento);
+		    	}
+
+
+
+		    }
+		}
+	    fclose($datos);
+	    return $array_detalle_asiento;
+    }
+
+
+
+
+
+
+
+	public function ar_identificador_fijo(){
+        $identificador_fijo  		    = 		'LE';
+        return $identificador_fijo;
+    }
+
+	public function kd_crear_nombre_venta($anio,$mes){
+
+		$identificador 					=       $this->ar_identificador_fijo();
+		$ruc 							=       Session::get('empresas_meta')->NRO_DOCUMENTO;
+		$dd 							= 		'00';
+		$identificador_libro 			= 		'130100';
+		$cc 							= 		'00';
+		$identificador_operaciones 		= 		'1';
+		$i 								= 		'1';
+		$m 								= 		'1';
+		$g 								= 		'1';
+        $nombre_archivo  		    	= 		$identificador.$ruc.$anio.$mes.$dd.$identificador_libro.$cc.$identificador_operaciones.$i.$m.$g;
+
+        return $nombre_archivo;
+    }
+
 
 	public function kd_insertar_envases_saldoinicial_kardex($empresa_id,$tipo_producto_id)
 	{
@@ -219,7 +401,7 @@ trait KardexTraits
 	    $listasaldoincial 	= 	WEBKardexProducto::where('empresa_id','=',$empresa_id)
 	    							->where('tipo_producto_id','=',$tipo_producto_id)
 	    							->where('activo','=',1)
-	    							//->where('id','=','1CIX00000050')
+	    							//->where('id','=','1CIX00000126')
 	    							//->take(51)
 									->orderBy('id', 'asc')
 			    					->get();

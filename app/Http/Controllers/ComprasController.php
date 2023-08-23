@@ -360,7 +360,6 @@ class ComprasController extends Controller
 
 		if($empresa_id == 'EMP0000000000007'){ $cuenta_igv_rev = '406111'; }else{ $cuenta_igv_rev = '401161'; }
 
-
 		$cabecera 				=   $this->movilidad_cabecera_asiento($periodo,$empresa_id,($monto_total+$monto_total_nc),$glosa,$moneda_id,$moneda,$tipo_cambio,$tipo_referencia);
 		$detalle 				=   $this->co_detalle_asiento_reversion($cuentas_id,$asientos_igv,$periodo,$empresa_id,$moneda_id,$moneda,$monto_total,$tipo_cambio,$cuenta_igv_rev,$monto_total_nc);
 

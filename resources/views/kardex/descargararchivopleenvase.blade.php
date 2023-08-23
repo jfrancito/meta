@@ -22,18 +22,13 @@
                         <span class="tooltiptext">Buscar PLE</span>
                         <span class="icon mdi mdi-search"></span>
                       </a>
-
-
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
                         <li>
-                          <a href="#" class='descargararchivo' data_archivo = 'ple'><b>Descargar archivo txt</b> <span class="mdi mdi-check-circle"></span></a>
+                          <a href="#" class='descargararchivo' data_archivo = 'ple'><b>Descargar ple txt</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
-
-
                         <li>
-                          <a href="#" class='descargararchivo' data_archivo = 'registrocompra'><b>Resumen compra excel</b> <span class="mdi mdi-check-circle"></span></a>
+                          <a href="#" class='descargararchivo' data_archivo = 'registro'><b>Descarga excel</b> <span class="mdi mdi-check-circle"></span></a>
                         </li>
-
                       </ul>
                     </div>
 
@@ -50,7 +45,7 @@
                       <form method="POST"
                       id="formdescargar"
                       target="_blank"
-                      action="{{ url('/descargar-archivo-ple') }}" 
+                      action="{{ url('/descargar-archivo-ple-kardex') }}" 
                       style="border-radius: 0px;" 
                       >
                         {{ csrf_field() }}
@@ -82,13 +77,7 @@
                         <input type="hidden" name="data_archivo" id='data_archivo' value=''>
 
                       </form>
-
-
                     </div>
-
-
-
-
 
                   </div>
 

@@ -78,12 +78,10 @@ class RegistroDiarioController extends Controller
 	    							->where('WEB.asientos.COD_EMPR','=',Session::get('empresas_meta')->COD_EMPR)
 	    							->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    							->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
+	    							->select('WEB.asientomovimientos.*','WEB.asientos.*','WEB.asientomovimientos.TXT_GLOSA AS GLOSA')
 	    							->orderby('WEB.asientos.COD_ASIENTO','asc')
 	    							->orderby('WEB.asientomovimientos.NRO_LINEA','asc')
 	    							->get();					
-
-
-
 
 
 	    $funcion 				= 	$this;

@@ -27,6 +27,9 @@ Route::group(['middleware' => ['guestaw']], function () {
 
 Route::get('/cerrarsession', 'UserController@actionCerrarSesion');
 Route::get('/cambiarperfil', 'UserController@actionCambiarPerfil');
+
+
+
 Route::get('/migrar-ventas', 'MigrarVentaController@actionMigrarVentas');
 Route::get('/migrar-ventas-comercial', 'MigrarVentaComercialController@actionMigrarVentasComercial');
 Route::get('/migrar-ventas-internacional', 'MigrarVentaInternacionalController@actionMigrarVentasInternacional');
@@ -130,6 +133,9 @@ Route::group(['middleware' => ['authaw']], function () {
 
 
 	Route::any('/gestion-ple-kardex-envases/{idopcion}', 'KardexController@actionGestionKardexEnvasesPle');
+	Route::any('/ajax-buscar-lista-ple-kardex', 'KardexController@actionAjaxBuscarListaPleKardex');
+	Route::any('/descargar-archivo-ple-kardex', 'KardexController@actionDescargarArchivoPle');
+
 
 
 
