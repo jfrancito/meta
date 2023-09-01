@@ -31,6 +31,36 @@ trait MigrarVentaTraits
         return $array_empresas;
     }
 	
+
+	private function mv_lista_ventas_migrar_agrupado_anulado_nuevo()
+	{
+		
+		$array_empresas  		    = 		$this->mv_array_empresa_venta();
+
+		$array_periodo				=		CONPeriodo::where('COD_ANIO','>=',2023)
+											->whereIn('COD_EMPR',$array_empresas)
+											->where('COD_ESTADO','=','1')
+											->pluck('COD_PERIODO')
+											->toArray();
+
+		$lista_migrar_ventas		=		WEBViewMigrarVenta::leftJoin('WEB.historialmigrar', function ($join) {
+									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+									                 ->where('WEB.historialmigrar.IND_ANULADO', '=', 1);
+									        })
+											->where('WEB.historialmigrar.IND_ERROR','=','1')
+											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
+											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
+											//->where('WEB.viewmigrarventas.FEC_EMISION','=','2022-01-07')
+											->where('WEB.viewmigrarventas.NOM_ESTADO','=','ANULADO')
+											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
+											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+											->get();
+
+
+		return $lista_migrar_ventas;
+
+	}
+
 	private function mv_lista_ventas_migrar_agrupado_emitido()
 	{
 		
@@ -70,7 +100,7 @@ trait MigrarVentaTraits
 											->pluck('COD_PERIODO')
 											->toArray();
 
-		$lista_migrar_ventas		=		WEBViewMigrarVenta::leftJoin('WEB.historialmigrar', function ($join) {
+		/*$lista_migrar_ventas		=		WEBViewMigrarVenta::leftJoin('WEB.historialmigrar', function ($join) {
 									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
 									                 ->where('WEB.historialmigrar.IND_ANULADO', '=', 1);
 									        })
@@ -81,7 +111,26 @@ trait MigrarVentaTraits
 											->where('WEB.viewmigrarventas.NOM_ESTADO','=','ANULADO')
 											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
 											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+											->get();*/
+
+
+		$lista_migrar_ventas		=		WEBViewMigrarVenta::leftJoin('WEB.historialmigrar', function ($join) {
+									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
+									                 ->where('WEB.historialmigrar.IND_ANULADO', '=', 1);
+									        })
+											->join("WEB.asientos","WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE", "=", "WEB.asientos.TXT_REFERENCIA")
+											->where('WEB.asientos.IND_EXTORNO','<>','1')
+											->whereIn('WEB.asientos.COD_EMPR',$array_empresas)
+
+											//->whereNull('WEB.historialmigrar.COD_REFERENCIA')
+											->whereIn('WEB.viewmigrarventas.COD_PERIODO',$array_periodo)
+											->whereIn('WEB.viewmigrarventas.COD_EMPR',$array_empresas)
+											//->where('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE','=','ISBEBL0000036961')
+											->where('WEB.viewmigrarventas.NOM_ESTADO','=','ANULADO')
+											->select(DB::raw('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE'))
+											->groupBy('WEB.viewmigrarventas.COD_DOCUMENTO_CTBLE')
 											->get();
+
 
 		return $lista_migrar_ventas;
 

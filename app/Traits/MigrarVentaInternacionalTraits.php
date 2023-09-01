@@ -328,22 +328,6 @@ trait MigrarVentaInternacionalTraits
 		      		}
 
 		      	}
-
-
-
-
-
-	   //    		$historialmigrar 						=   WEBHistorialMigrar::where('COD_REFERENCIA','=',$documento_ctble_cod)
-	   //    													->where('COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento)->first();
-
-    //   			$historialmigrar->IND_ERROR 			=   1;
-				// $historialmigrar->IND_ASIENTO_MODELO 	=   -1;
-				// $historialmigrar->COD_ASIENTO_MODELO 	=   '';
-				// $historialmigrar->TXT_ERROR 			=   'Docuemento con item con IVAP y Afecto';
-				// $historialmigrar->IND_CORREO 			=   0;
-				// $historialmigrar->save();
-
-
 		}
 
       	return "se realizo con exito";

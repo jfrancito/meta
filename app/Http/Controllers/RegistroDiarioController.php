@@ -43,7 +43,7 @@ class RegistroDiarioController extends Controller
 
 	    $listaasiento 			= 	WEBAsiento::join('WEB.asientomovimientos', 'WEB.asientomovimientos.COD_ASIENTO', '=', 'WEB.asientos.COD_ASIENTO')
 	    							->orderBy('NRO_LINEA', 'asc')
-	    							->select('WEB.asientomovimientos.*','WEB.asientos.*',
+	    							->select('WEB.asientomovimientos.*','WEB.asientos.*','WEB.asientomovimientos.TXT_GLOSA AS GLOSA',
 	    							'WEB.asientos.TXT_TIPO_REFERENCIA as TXT_TIPO_REFERENCIA_CAB')
 	    							->where('WEB.asientos.COD_ASIENTO','=',$cod_asiento)
 	    							->get();					

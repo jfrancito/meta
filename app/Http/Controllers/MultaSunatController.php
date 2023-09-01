@@ -217,7 +217,9 @@ class MultaSunatController extends Controller
         $movimiento = CONItemMovimiento::where('COD_EMPR', $empresa_id)->where('TXT_NOMBRE', 'LIKE', '%MULTA%')->first();
         $movimiento_id = $movimiento['COD_ITEM_MOVIMIENTO']; // 'IICHFI0000000010';
 
-        $lista_multa_sunat = $this->lista_multa_sunat($empresa_id, $periodo_registrado, $movimiento_id);
+        $lista_multa_sunat = $this->lista_multa_sunat_todo($empresa_id, $periodo_registrado, $movimiento_id);
+
+        //dd($lista_multa_sunat);
 
         $glosa = '';
         $tipo_referencia = '';
@@ -236,10 +238,18 @@ class MultaSunatController extends Controller
         $moneda_id = 'MON0000000000001';
         $moneda = 'SOLES';
 
+        //dd($periodo->FEC_FIN);
         $fecha_cambio = date_format(date_create(substr($periodo->FEC_FIN, 0, 10)), 'Ymd');
+
+
         $tipo_cambio = $this->gn_tipo_cambio($fecha_cambio);
 
+
+
         $array_asiento_modelo = $this->multa_sunat_asiento_modelo($data_archivo);
+
+
+
         $cabecera = $this->multa_sunat_cabecera_asiento($periodo, $empresa_id, $monto_total, $glosa, $moneda_id, $moneda, $tipo_cambio, $tipo_referencia);
         $detalle = $this->multa_sunat_detalle_asiento($array_asiento_modelo, $periodo, $empresa_id, $moneda_id, $moneda, $monto_total, $tipo_cambio);
 
@@ -340,7 +350,9 @@ class MultaSunatController extends Controller
         $movimiento = CONItemMovimiento::where('COD_EMPR', $empresa_id)->where('TXT_NOMBRE', 'LIKE', '%MULTA%')->first();
         $movimiento_id = $movimiento['COD_ITEM_MOVIMIENTO']; //'IICHFI0000000010';
 
-        $lista_multa_sunat = $this->lista_multa_sunat($empresa_id, $sel_periodo, $movimiento_id);
+        $lista_multa_sunat = $this->lista_multa_sunat_todo($empresa_id, $sel_periodo, $movimiento_id);
+
+        //dd($lista_multa_sunat);
 
         $anio = $this->anio;
         $array_bancos = $this->gn_array_bancos(Session::get('empresas_meta')->COD_EMPR);
@@ -375,7 +387,7 @@ class MultaSunatController extends Controller
         $movimiento = CONItemMovimiento::where('COD_EMPR', $empresa_id)->where('TXT_NOMBRE', 'LIKE', '%MULTA%')->first();
         $movimiento_id = $movimiento['COD_ITEM_MOVIMIENTO']; //'IICHFI0000000010';
 
-        $lista_multa_sunat = $this->lista_multa_sunat($empresa_id, $periodo_id, $movimiento_id);
+        $lista_multa_sunat = $this->lista_multa_sunat_todo($empresa_id, $periodo_id, $movimiento_id);
 
         $funcion = $this;
 

@@ -213,6 +213,8 @@ class LeasingController extends Controller
         $data_archivo = $request['data_archivo'];
         $idopcion = $request['idopcion'];
 
+
+
         $lista_leasing = $this->lista_leasing($empresa_id, $periodo_registrado, '');
 
         $glosa = '';
@@ -240,14 +242,22 @@ class LeasingController extends Controller
             $tipo_cambio = $this->gn_tipo_cambio($fecha_cambio);
 
             $array_asiento_modelo = $this->leasing_asiento_modelo($data_archivo, $nro_linea, $registro['cod_banco'], $empresa_id);
+            //dd($array_asiento_modelo);
+
             $detalle[$i] = $this->leasing_detalle_asiento($array_asiento_modelo, $periodo, $empresa_id, $moneda_id, $moneda, $monto_total, $tipo_cambio);
+
+
+
 
             $nro_linea = $nro_linea + 4;
             $i++;
             $montos_totales = $montos_totales + $monto_total;
             $monto_total = 0;
 
+
         }
+
+
 
         $detalles = array();
         for ($i = 0; $i < count($detalle); $i++) {

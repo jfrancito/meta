@@ -214,10 +214,8 @@ class MigrarVentaController extends Controller
 		$tipo_asiento 						=	'TAS0000000000003';	
 		//buscar asiento 
 		$lista_ventas_migrar_emitido 		= 	$this->mv_lista_ventas_migrar_agrupado_emitido();
-
-		//dd($lista_ventas_migrar_emitido);
-
 		$lista_ventas_migrar_anulado 		= 	$this->mv_lista_ventas_migrar_agrupado_anulado();
+		$lista_ventas_migrar_anulado_nuevo  = 	$this->mv_lista_ventas_migrar_agrupado_anulado_nuevo();
 
 		//dd($lista_ventas_migrar_anulado);
 
@@ -228,6 +226,10 @@ class MigrarVentaController extends Controller
 			$respuesta = $this->mv_update_historial_ventas($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
 		}
 		foreach($lista_ventas_migrar_anulado as $index => $item){
+			$respuesta = $this->mv_update_historial_ventas($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
+		}	
+
+		foreach($lista_ventas_migrar_anulado_nuevo as $index => $item){
 			$respuesta = $this->mv_update_historial_ventas($item->COD_DOCUMENTO_CTBLE,$tipo_asiento);
 		}	
 

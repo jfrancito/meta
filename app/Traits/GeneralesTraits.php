@@ -30,9 +30,21 @@ use PDO;
 trait GeneralesTraits
 {
 
+	private function indicadores_asientos_contables($empresa_id, $tiponotificacion)
+	{
+        $stmt 		= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.notificacion_asientos 
+							@empresa_id = ?,
+							@tiponotificacion = ?');
+
+        $stmt->bindParam(1, $empresa_id ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $tiponotificacion  ,PDO::PARAM_STR);
+        $stmt->execute();
+		return $stmt;
+	}
+
 	private function gn_array_bancos($empresa_id)
 	{
-	    $array_banco_pc 			= 	TESCajaBanco::where('COD_EMPR','=',$empresa_id)
+	    $array_banco_pc 		= 	TESCajaBanco::where('COD_EMPR','=',$empresa_id)
 									->where('COD_ESTADO','=',1)
 									->where('COD_BANCO','!=','')
 									->groupBy('COD_BANCO','TXT_BANCO')

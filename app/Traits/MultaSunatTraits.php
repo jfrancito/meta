@@ -6,6 +6,7 @@ use App\Modelos\TESOperacionCaja;
 use App\Modelos\WEBAsiento;
 use App\Modelos\WEBAsientoMovimiento;
 use App\Modelos\WEBCuentaContable;
+use App\Modelos\CONItemMovimiento;
 use ZipArchive;
 
 trait MultaSunatTraits
@@ -51,6 +52,37 @@ trait MultaSunatTraits
 
         return $multa_sunat;
     }
+
+    private function lista_multa_sunat_todo($empresa_id, $periodo_id, $movimiento_id)
+    {
+
+        $asientos_registrados = WEBAsiento::where('COD_CATEGORIA_TIPO_ASIENTO', 'TAS0000000000002')
+            ->where('COD_PERIODO', $periodo_id)
+            ->pluck('TXT_REFERENCIA')
+            ->toArray();
+
+        $array_movimiento = CONItemMovimiento::where('COD_EMPR', $empresa_id)
+                            ->where('TXT_NOMBRE', 'LIKE', '%MULTA%')
+                            ->pluck('COD_ITEM_MOVIMIENTO')
+                            ->toArray();
+
+        $multa_sunat = TESOperacionCaja::whereIn('TES.OPERACION_CAJA.COD_ITEM_MOVIMIENTO', $array_movimiento) //'IICHIM0000000020')
+        //->whereNotIn('TES.OPERACION_CAJA.COD_OPERACION_CAJA', $asientos_registrados)
+        ->where('TES.OPERACION_CAJA.COD_EMPR', $empresa_id)
+        //->where('TES.OPERACION_CAJA.COD_PERIODO_CONCILIA', $periodo_id)
+        ->whereNotIn('TES.OPERACION_CAJA.COD_OPERACION_CAJA', $asientos_registrados)
+        ->join('TES.CAJA_BANCO', 'TES.OPERACION_CAJA.COD_CAJA_BANCO', '=', 'TES.CAJA_BANCO.COD_CAJA_BANCO')
+        ->orderBy('TES.OPERACION_CAJA.FEC_OPERACION')
+        ->get();
+
+        //dd($multa_sunat);
+
+        return $multa_sunat;
+    }
+
+
+
+
 
     public function multa_sunat_monto_total_asiento($lista_multa_sunat, $seleccionados)
     {

@@ -175,6 +175,8 @@ class UserController extends Controller
 
 	    $tipo_asiento_venta 			=	'TAS0000000000003';
 	    $tipo_asiento_compra 			=	'TAS0000000000004';
+	    $empresa_id 					= 	Session::get('empresas_meta')->COD_EMPR;
+
 
 		$lista_ventas 					= 	$this->mv_lista_ventas_observadas($tipo_asiento_venta,Session::get('empresas_meta')->COD_EMPR,$anio);
 		$lista_productos_sc 		 	= 	$this->mv_lista_productos_sin_configuracion($tipo_asiento_venta,Session::get('empresas_meta')->COD_EMPR,$anio);
@@ -188,8 +190,12 @@ class UserController extends Controller
         $array_anio_pc     				= 	$this->pc_array_anio_cuentas_contable(Session::get('empresas_meta')->COD_EMPR);
 		$combo_anio_pc  				= 	$this->gn_generacion_combo_array('Seleccione año', '' , $array_anio_pc);
 
-		$empresa_id 					= 	Session::get('empresas_meta')->COD_EMPR;
+		//indicadores
+		$diferencimontos  				= 	$this->indicadores_asientos_contables($empresa_id, 'DIFERENCIA_MONTOS');
+		$documentositemcero  			= 	$this->indicadores_asientos_contables($empresa_id, 'DOCUMENTO_ITEM_CERO');
+		$documentosdiferenciadestino    = 	$this->indicadores_asientos_contables($empresa_id, 'DIFERENCIAS_DESTINO');
 
+		$empresa_id 					= 	Session::get('empresas_meta')->COD_EMPR;
 
 		return View::make('bienvenido',
 						 [
@@ -202,6 +208,9 @@ class UserController extends Controller
 						 	'anio' 				 			=> $anio,
 						 	'combo_anio_pc' 				=> $combo_anio_pc,
 						 	'empresa_id' 					=> $empresa_id,
+						 	'diferencimontos' 				=> $diferencimontos,
+						 	'documentositemcero' 			=> $documentositemcero,
+						 	'documentosdiferenciadestino' 	=> $documentosdiferenciadestino,
 
 						 ]);
 	}
