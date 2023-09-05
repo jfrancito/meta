@@ -48,6 +48,7 @@
 	    <thead>
 	      <tr>
 	      	<th>Linea</th>
+	      	<th>Correlativo</th>
 	        <th>Cuenta</th>
 	        <th>Glosa</th>
 	        <th>Debe MN</th>
@@ -60,6 +61,7 @@
 	    @foreach($listaasientomovimiento as $index => $item)
 	      	<tr>
 	      	   <td>{{$item->NRO_LINEA}}</td>
+	      	   <td>{{$item->CODIGO_CONTABLE}}</td>
 		       <td>{{$item->TXT_CUENTA_CONTABLE}}</td>
 		       <td>{{$item->TXT_GLOSA}}</td>
 		       <td>{{number_format($item->CAN_DEBE_MN, $redondeo, '.', ',')}}</td>
@@ -72,7 +74,7 @@
 
 	    <tfoot>
 	      <tr>
-	      	<th colspan="3">Totales</th>
+	      	<th colspan="4">Totales</th>
 	      	<th>{{number_format($listaasientomovimiento->sum("CAN_DEBE_MN"), $redondeo, '.', ',')}}</th>
 	      	<th>{{number_format($listaasientomovimiento->sum("CAN_HABER_MN"), $redondeo, '.', ',')}}</th>
 	      	<th>{{number_format($listaasientomovimiento->sum("CAN_DEBE_ME"), $redondeo, '.', ',')}}</th>

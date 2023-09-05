@@ -2,6 +2,8 @@
   <thead>
     <tr>
       <th>Item</th>
+      <th>Codigo</th>
+
       <th>Periodo</th>
       <th>Fecha</th>
       <th>Glosa</th>
@@ -18,6 +20,8 @@
         class='dobleclickpc seleccionar {{$funcion->gn_background_fila_ind_extorno($item->IND_EXTORNO)}}'
         style="cursor: pointer;">
         <td>{{$index + 1}}</td>
+        <td>{{$item->CODIGO_CONTABLE}}</td>
+        
         <td>{{$item->TXT_NOMBRE}}</td>
         <td>{{date_format(date_create($item->FEC_ASIENTO), 'd-m-Y')}}</td>
         <td>{{$item->TXT_GLOSA}}</td>

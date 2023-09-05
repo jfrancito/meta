@@ -91,7 +91,7 @@ class WEBAsiento extends Model
         if($tipoasiento == 'TAS0000000000004'){
             $query->orderBy('WEB.asientos.FEC_USUARIO_MODIF_AUD','ASC');
         }else{
-            $query->orderBy('WEB.asientos.FEC_ASIENTO','ASC');
+            $query->orderBy('WEB.asientos.CODIGO_CONTABLE','ASC');
         }
     }
 
