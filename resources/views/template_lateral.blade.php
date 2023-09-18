@@ -21,6 +21,9 @@
 
 
     @yield('style')
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('public/css/jquery-confirm.min.css') }} "/>
+    
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css/style.css?v='.$version) }} "/>
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css/meta.css?v='.$version) }} "/>
 
@@ -56,7 +59,7 @@
     <script src="{{ asset('public/lib/scroll/js/scroll.js') }}" type="text/javascript"></script>   
     <script src="{{ asset('public/js/general/general.js?v='.$version) }}" type="text/javascript"></script>
     <script src="{{ asset('public/js/general/gmeta.js?v='.$version) }}" type="text/javascript"></script>
-
+    <script src="{{ asset('public/js/general/jquery-confirm.min.js?v='.$version) }}" type="text/javascript"></script>
     @yield('script')
 
   </body>

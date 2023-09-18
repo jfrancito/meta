@@ -872,7 +872,6 @@ class AsientoController extends Controller
 		if($_POST)
 		{
 
-
 				$nrocomprobante = '';
 				if($request['nrocomprobante'] !=''){
 					$nrocomprobante = str_pad($request['nrocomprobante'], 7, "0", STR_PAD_LEFT);

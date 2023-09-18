@@ -112,8 +112,6 @@ class MovilidadController extends Controller
 			$anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
 																		Session::get('usuario_meta')->name,$this->fechaactual);
 
-
-
     		$asientocontable     	= 	$this->gn_crear_asiento_contable($IND_TIPO_OPERACION,
 												$COD_ASIENTO,
 												$COD_EMPR,
@@ -219,7 +217,6 @@ class MovilidadController extends Controller
 
 		}	
 
-
 		Session::flash('periodo_id_confirmar', $periodo->COD_PERIODO);
 		return Redirect::to('/gestion-planilla-movilidad/'.$idopcion)->with('bienhecho', 'Registro cuenta contable exitoso');
 
@@ -235,6 +232,7 @@ class MovilidadController extends Controller
 	{
 		
 		$datastring 			=   json_encode($request['datastring'],false);
+
 		$data_tabla 			=   $request['data_tabla'];
 		$periodo_registrado 	=   $request['periodo_registrado'];
 		$periodo 				= 	CONPeriodo::where('COD_PERIODO','=',$periodo_registrado)->first();
@@ -246,6 +244,7 @@ class MovilidadController extends Controller
     	$listamovilidad     	= 	$this->movilidad_lista_movilidad('LISTA_MOVILIDAD',$empresa_id,$periodo_registrado);
 		$array_asoc  			=   $this->movilidad_array_asociacion_proviciones('CC_MOBILIDAD_CONTABLE', $periodo_registrado, $empresa_id,$data_archivo);
 		$monto_total 			=   $this->movilidad_monto_total_asiento($listamovilidad,$array_asoc);
+		//$glosanumdoc			=	$this->movilidad_glosa_asiento($listamovilidad,$array_asoc);
 
 		$glosa   				=	'';
 		$tipo_referencia   		=	'';
@@ -259,6 +258,7 @@ class MovilidadController extends Controller
 		}
 		$moneda_id   			=	'MON0000000000001';
 		$moneda   				=	'SOLES';
+		//$glosa   				=	$glosa.' ('.$glosanumdoc.')';
 
 
 		$fecha_cambio			=   date_format(date_create(substr($periodo->FEC_FIN, 0, 10)), 'Ymd');
@@ -305,6 +305,10 @@ class MovilidadController extends Controller
 		$descripcion 			=	'CC_MOBILIDAD_CONTABLE';
 		$referencia    			=	$opcion_val;
 
+		$centro_id 				=	'CEN0000000000001';
+		$tipo_asiento_id		=	'TAS0000000000007';
+		$tipo_referencia		=	'TAS0000000000007';
+
 		foreach($data_archivo as $key => $obj){
 
 			$periodo_id 		=   $obj['periodo_id'];
@@ -315,35 +319,54 @@ class MovilidadController extends Controller
 				$quitar  		=   $this->movilidad_extornar_asociacion_proviciones('CC_MOBILIDAD_CONTABLE', $periodo_id, $empresa_id,$documento_id);
 			}else{
 
-				$existeasoc  	=   $this->movilidad_existe_asociacion_proviciones('CC_MOBILIDAD_CONTABLE', $periodo_id, $empresa_id,$documento_id);
+				if($opcion_val=='eliminarmobilidadgeneral'){
+					$quitar  		=   $this->movilidad_extornar_asociacion_proviciones('CC_MOBILIDAD_CONTABLE', $periodo_id, $empresa_id,$documento_id);
 
-				if(count($existeasoc)>0){
+					$asiento_id				=   $this->gn_encontrar_cod_asiento($empresa_id, $centro_id, 
+																$periodo_id, $tipo_asiento_id,'MOVILIDAD');
 
-		        	$existeasoc->TXT_TABLA_ASOC = 'IACHTE0000000032';
-		        	$existeasoc->TXT_REFERENCIA = $referencia;
-		        	$existeasoc->COD_ESTADO = 1;
-		        	$existeasoc->save();
+					$anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
+																				Session::get('usuario_meta')->name,$this->fechaactual);
 
-		        }else{
+				}else{
 
-		        	$asociacionmobilidad     = 	$this->movilidad_guardar_asociacion(
-		        								$accion,//@IND_TIPO_OPERACION='I',
-		        								$periodo_id,//@COD_TABLA='IILMNC0000000495',
-		        								$documento_id,//@COD_TABLA_ASOC='IILMFC0000005728',
-		        								$empresa_id,//@TXT_TABLA='CMP.DOCUMENTO_CTBLE',
-		        								$estado,//@TXT_TABLA_ASOC='CMP.DOCUMENTO_CTBLE',
-		        								$glosa,//@TXT_GLOSA='NOTA DE CREDITO F005-00000420 / ',
-		        								$vacio,//@TXT_TIPO_REFERENCIA='',
-		        								$referencia,//@TXT_REFERENCIA='',
-		        								$codestado,//@COD_ESTADO=1,
-		        								$vacio,//@COD_USUARIO_REGISTRO='PHORNALL',
-		        								$descripcion,//@TXT_DESCRIPCION='',
-		        								$valor_cero,//@CAN_AUX1=0,
-		        								$valor_cero,//@CAN_AUX2=0,
-		        								$valor_cero//@CAN_AUX3=0,
-		        								);
+					if($opcion_val=='eliminarmobilidadreparacion'){
+						$quitar  		=   $this->movilidad_extornar_asociacion_proviciones('CC_MOBILIDAD_CONTABLE', $periodo_id, $empresa_id,$documento_id);
 
-		        }
+						$asiento_id				=   $this->gn_encontrar_cod_asiento($empresa_id, $centro_id, 
+																	$periodo_id, $tipo_asiento_id,'MOVILIDAD_REPARABLE');
+
+						$anular_asiento 		=   $this->movilidad_anular_asiento($asiento_id,
+																					Session::get('usuario_meta')->name,$this->fechaactual);
+
+					}else{
+								$existeasoc  	=   $this->movilidad_existe_asociacion_proviciones('CC_MOBILIDAD_CONTABLE', $periodo_id, $empresa_id,$documento_id);
+								if(count($existeasoc)>0){
+						        	$existeasoc->TXT_TABLA_ASOC = 'IACHTE0000000032';
+						        	$existeasoc->TXT_REFERENCIA = $referencia;
+						        	$existeasoc->COD_ESTADO = 1;
+						        	$existeasoc->save();
+						        }else{
+						        	$asociacionmobilidad     = 	$this->movilidad_guardar_asociacion(
+						        								$accion,//@IND_TIPO_OPERACION='I',
+						        								$periodo_id,//@COD_TABLA='IILMNC0000000495',
+						        								$documento_id,//@COD_TABLA_ASOC='IILMFC0000005728',
+						        								$empresa_id,//@TXT_TABLA='CMP.DOCUMENTO_CTBLE',
+						        								$estado,//@TXT_TABLA_ASOC='CMP.DOCUMENTO_CTBLE',
+						        								$glosa,//@TXT_GLOSA='NOTA DE CREDITO F005-00000420 / ',
+						        								$vacio,//@TXT_TIPO_REFERENCIA='',
+						        								$referencia,//@TXT_REFERENCIA='',
+						        								$codestado,//@COD_ESTADO=1,
+						        								$vacio,//@COD_USUARIO_REGISTRO='PHORNALL',
+						        								$descripcion,//@TXT_DESCRIPCION='',
+						        								$valor_cero,//@CAN_AUX1=0,
+						        								$valor_cero,//@CAN_AUX2=0,
+						        								$valor_cero//@CAN_AUX3=0,
+						        								);
+						        }
+					}
+
+				}
 			}
 		}	
 

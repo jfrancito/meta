@@ -31,6 +31,59 @@ $(document).ready(function(){
     });
 
 
+    $(".movilidad").on('click','.eliminarcuentacontable', function() {
+
+        debugger;
+        event.preventDefault();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();
+        var enviardata              =   $(this).attr('data_archivo');
+        var data_tabla              =   $(this).attr('data_tabla');
+        var idopcion                =   $('#idopcion').val();
+        var _token                  =   $('#token').val();
+
+
+
+        $('input[type=search]').val('').change();
+        $("#nso").DataTable().search("").draw();
+        var array_item              =   dataenviargeneralsinchecktbody(data_tabla);
+        if(array_item.length<=0){alerterrorajax('Seleccione por lo menos una fila'); return false;}
+        datastring = JSON.stringify(array_item);
+
+        console.log(datastring);
+        //return false;
+
+        if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
+        if(periodo_id ==''){ alerterrorajax("Seleccione un periodo."); return false;}
+        $('#opcion_val').val(enviardata);
+        $('#data_archivo').val(datastring);
+
+        $.confirm({
+            title: '¿Confirma el Extorno?',
+            content: 'Extornar Asiento',
+            buttons: {
+                confirmar: function () {
+                    abrircargando();
+                    $('#formguardar').submit();
+                },
+                cancelar: function () {
+                    $.alert('Se cancelo el extorno');
+                }
+            }
+        });
+
+
+
+
+    });
+
+
+
+
+
+
+
+
     $(".movilidad").on('change','#anio', function() {
 
         event.preventDefault();
@@ -153,7 +206,9 @@ function dataenviargeneral(data_tabla){
 
 function dataenviargeneralsincheck(data_tabla){
     var data = [];
+
     $(".listatabla"+data_tabla+" tr").each(function(){
+
         nombre          = $(this).find('.input_asignar').attr('id');
         if(nombre != 'todo_asignar'){
             check            = $(this).find('.input_asignar');
@@ -165,10 +220,29 @@ function dataenviargeneralsincheck(data_tabla){
             });              
         }
     });
+
     return data;
 }
 
+function dataenviargeneralsinchecktbody(data_tabla){
+    var data = [];
 
+    $(".listatabla"+data_tabla+" tbody tr").each(function(){
+
+        nombre          = $(this).find('.input_asignar').attr('id');
+        if(nombre != 'todo_asignar'){
+            check            = $(this).find('.input_asignar');
+            documento_id     = $(this).attr('data_documento_id');
+            periodo_id       = $(this).attr('data_periodo_id');
+            data.push({
+                documento_id     : documento_id,
+                periodo_id       : periodo_id
+            });              
+        }
+    });
+
+    return data;
+}
 
 
 function dataenviar(){

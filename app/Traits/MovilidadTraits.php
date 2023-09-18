@@ -177,6 +177,25 @@ trait MovilidadTraits
 
     }
 
+    public function movilidad_glosa_asiento($listamovilidad,$array_asoc){
+
+        $glosa      =  '';
+
+        foreach($listamovilidad as $index => $item){
+
+            dd($listamovilidad);
+
+            if(in_array($item['COD_DOCUMENTO_CTBLE_MOVILIDAD'], $array_asoc)){
+                //$glosa      =  $glosa .$item['NUMERO_DOC'];
+            }
+        }
+    
+        return $glosa;
+
+    }
+
+
+
 
 
     public function movilidad_array_asiento_modelo($data_archivo){

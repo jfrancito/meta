@@ -8,7 +8,11 @@
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
                             <li>
                               <a href="#" class='crearcuentacontable' data_tabla = 'reparacion' data_archivo = 'agregarmobilidadreparacion' >
-                                <b>Crear Asiento Contable</b> <span class="mdi mdi-check-circle"></span>
+                                <b>Crear Asiento Contable Total</b> <span class="mdi mdi-check-circle"></span>
+                              </a>
+
+                              <a href="#" class='eliminarcuentacontable' data_tabla = 'reparacion' data_archivo = 'eliminarmobilidadreparacion' >
+                                <b>Extornar Asiento Contable Total</b> <span class="mdi mdi-check-circle"></span>
                               </a>
 
                               <a href="#" class='quitardata' data_archivo = 'quitarmobilidad' data_tabla = 'reparacion'><b>Quitar item</b> <span class="mdi mdi-close-circle"></span></a>
@@ -33,18 +37,7 @@
       <th>FECHA DOCUMENTO</th>
       <th>NRO DOCUMENTO</th>
       <th>IMPORTE</th>
-      <th>
-<!--         <div class="text-center be-checkbox be-checkbox-sm has-primary">
-          <input  type="checkbox"
-                  class="todo_asignar input_asignar"
-                  id="todo_asignar"
-          >
-          <label  for="todo_asignar"
-                  data-atr = "todas_asignar"
-                  class = "checkbox_asignar"                    
-                  name="todo_asignar"
-            ></label>
-        </div> -->
+      <th>ELIMINAR
       </th>
     </tr>
   </thead>

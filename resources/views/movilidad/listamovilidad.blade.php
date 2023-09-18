@@ -51,31 +51,18 @@
                             </div>
                           </div>
                       </div>
-
-
                       <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte ajax_anio">
                           @include('general.combo.cperiodo', ['sel_periodo' => $sel_periodo])
-
                       </div>
-
-                      
                         <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
                         <input type="hidden" name="data_archivo" id='data_archivo' value=''>
                         <input type="hidden" name="opcion_val" id='opcion_val' value=''>
                       </form>
-
-
                     </div>
-
-
                   </div>
-
-
                   <div class='listajax'>
                     @include('movilidad.ajax.alistamovilidad')
                   </div>
-
-
                 </div>
               </div>
             </div>

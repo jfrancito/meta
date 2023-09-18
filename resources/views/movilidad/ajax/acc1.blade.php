@@ -11,7 +11,10 @@
 
                             <li>
                               <a href="#" class='crearcuentacontable' data_tabla = 'general' data_archivo = 'agregarmobilidadgeneral' >
-                                <b>Crear Asiento Contable</b> <span class="mdi mdi-check-circle"></span>
+                                <b>Crear Asiento Contable Total</b> <span class="mdi mdi-check-circle"></span>
+                              </a>
+                              <a href="#" class='eliminarcuentacontable' data_tabla = 'general' data_archivo = 'eliminarmobilidadgeneral' >
+                                <b>Extornar Asiento Contable Total</b> <span class="mdi mdi-check-circle"></span>
                               </a>
                               <a href="#" class='quitardata' data_archivo = 'quitarmobilidad' data_tabla = 'general'>
                                 <b>Quitar item</b> <span class="mdi mdi-close-circle"></span>
@@ -39,20 +42,7 @@
       <th>FECHA DOCUMENTO</th>
       <th>NRO DOCUMENTO</th>
       <th>IMPORTE</th>
-      <th>
-<!--         <div class="text-center be-checkbox be-checkbox-sm has-primary">
-          <input  type="checkbox"
-                  class="todo_asignar_general input_asignar"
-                  id="todo_asignar_general"
-          >
-          <label  for="todo_asignar_general"
-                  data-atr = "todas_asignar"
-                  class = "checkbox_asignar_otro" 
-                  data_tabla = 'general'                   
-                  name="todo_asignar_general"
-            ></label>
-        </div>
- -->      </th>
+      <th>ELIMINAR</th>
     </tr>
   </thead>
   <tbody>
