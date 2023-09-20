@@ -26,6 +26,19 @@ $(document).ready(function(){
     });
 
 
+    $(".cajaybanco").on('click','.btn-modificar-asiento', function() {
+
+        abrircargando();
+        return true;
+
+    });
+
+
+
+
+
+
+
 
 
     $(".cajaybanco").on('dblclick','.dobleclickpc', function(e) {
