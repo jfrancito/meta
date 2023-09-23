@@ -606,7 +606,7 @@ trait GeneralesTraits
 										->where('activo','=',1)
 										->first();
 
-			dd($cuentacontable->id);								
+			//dd($cuentacontable->id);								
 
 		$array 						= 	DB::table('WEB.cuentacontables')
         								->where('activo','=',1)

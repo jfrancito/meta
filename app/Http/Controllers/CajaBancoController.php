@@ -302,6 +302,8 @@ class CajaBancoController extends Controller
 		$nro_referencia 			=   $request['nro_referencia'];
 		$fec_movimiento_caja 		=   $request['fec_movimiento_caja'];
 
+
+
 		$idopcion 					=   $request['idopcion'];
 	    $funcion 					= 	$this;
 	    $anio  						=   $this->anio;
@@ -323,6 +325,7 @@ class CajaBancoController extends Controller
 	    $abreviatura_asiento_modelo = 	$this->am_abreviatura_asiento_modelo($pago_cobro,$empresa_rel_ter,$movimiento);
 
 	    $buscar_modelo_asiento 		= 	$this->am_buscar_asiento_modelo($movimiento,$tipo_asiento,$anio,$pago_cobro,$empresa_rel_ter);
+
 
 
 	    $asiento_array 				= 	$this->am_asiento_array($movimiento,$tipo_asiento,$anio,$pago_cobro,$empresa_rel_ter,$buscar_modelo_asiento,$nro_operacion,$nro_referencia,$glosa,$text_pago_cobro);

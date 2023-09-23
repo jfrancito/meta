@@ -861,6 +861,9 @@ trait AsientoModeloTraits
 			
 		//	tiene asociada caja y banco
 		$tescajabanco 		= 	TESCajaBanco::where('COD_CAJA_BANCO','=',$movimiento->COD_CAJA_BANCO)->first();
+
+	    //dd($tescajabanco);
+
 	    $cuentacontable 	= 	WEBCuentaContable::where('empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
 								->where('anio','=',$anio)
 								->where('id','=',$tescajabanco->TXT_TIPO_REFERENCIA)
