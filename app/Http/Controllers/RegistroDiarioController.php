@@ -243,7 +243,8 @@ class RegistroDiarioController extends Controller
 		$asiento_id 			=   $request['asiento_id'];
 		$idopcion 				=   $request['idopcion'];
 	    $asiento 				= 	WEBAsiento::where('COD_ASIENTO','=',$asiento_id)->first();
-	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)->orderBy('NRO_LINEA', 'asc')->get();
+	    $listaasientomovimiento = 	WEBAsientoMovimiento::where('COD_ASIENTO','=',$asiento_id)
+	    							->where('COD_ESTADO','=',1)->orderBy('NRO_LINEA', 'asc')->get();
 		$funcion 				= 	$this;
 		
 		return View::make('registrodiario/modal/ajax/mdetalleasiento',

@@ -36,64 +36,17 @@
 	            <li><a href="#configuracion" data-toggle="tab">Configuración</a></li>
 	          </ul>
 	          <div class="tab-content" style="margin-bottom: 0px;">
+
+
 	            <div id="asientocontable" class="tab-pane active cont">
 
-<!-- 					<div class="form-group quitar-tb">
-					      <label class="col-sm-1 control-label izquierda">Fecha Emision</label>
-					      <div class="col-sm-3">
-					          <div data-min-view="2" 
-					                 data-date-format="dd-mm-yyyy"  
-					                 class="input-group date datetimepicker2" style = 'padding: 0px 0;margin-top: -3px;'>
-					                 <input size="16" type="text"  
-					                        placeholder="Fecha emision"
-					                        id='fechaemision' 
-					                        name='fechaemision' 
-					                        value = "{{date_format(date_create($asiento->FEC_ASIENTO), 'd-m-Y')}}"
-					                        class="form-control input-sm"/>
-					                  <span class="input-group-addon btn btn-primary"><i class="icon-th mdi mdi-calendar"></i></span>
-					            </div>
+	            	<div class='tablageneral'>
+	            		@include('recibohonorario.listadetalleasientomovimiento')
+	            	</div>
 
-					      </div>
-					</div>
-					<button type="button" data-dismiss="modal" class="btn btn-primary btn-space generarasiento">Generar asientos</button> -->
-
-					<table class="table table-condensed table-striped">
-					    <thead>
-					      <tr>
-					      	<th>Linea</th>
-					        <th>Cuenta</th>
-					        <th>Glosa</th>
-					        <th>Debe MN</th>
-					        <th>Haber MN</th>
-					        <th>Debe ME</th>
-					        <th>Haber ME</th>
-					      </tr>
-					    </thead>
-					    <tbody>
-					    @foreach($listaasientomovimiento as $index => $item)
-					      	<tr>
-					      	   <td>{{$item->NRO_LINEA}}</td>
-						       <td>{{$item->TXT_CUENTA_CONTABLE}}</td>
-						       <td>{{$item->TXT_GLOSA}}</td>
-						       <td>{{number_format($item->CAN_DEBE_MN, $redondeo, '.', ',')}}</td>
-						       <td>{{number_format($item->CAN_HABER_MN, $redondeo, '.', ',')}}</td>
-						       <td>{{number_format($item->CAN_DEBE_ME, $redondeo, '.', ',')}}</td>
-						       <td>{{number_format($item->CAN_HABER_ME, $redondeo, '.', ',')}}</td>
-					      	</tr>                  
-					    @endforeach
-					    </tbody>
-					    <tfoot>
-					      <tr>
-					      	<th colspan="3">Totales</th>
-					      	<th>{{number_format($listaasientomovimiento->sum("CAN_DEBE_MN"), $redondeo, '.', ',')}}</th>
-					      	<th>{{number_format($listaasientomovimiento->sum("CAN_HABER_MN"), $redondeo, '.', ',')}}</th>
-					      	<th>{{number_format($listaasientomovimiento->sum("CAN_DEBE_ME"), $redondeo, '.', ',')}}</th>
-					      	<th>{{number_format($listaasientomovimiento->sum("CAN_HABER_ME"), $redondeo, '.', ',')}}</th>
-					      </tr>
-					    </tfoot>
-					</table>
-
-
+	           		<div class='editarcuentas'>
+						@include('recibohonorario.form.feditarasientomovimiento')
+	            	</div>
 
 	            </div>
 	            <div id="configuracion" class="tab-pane cont">

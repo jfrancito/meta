@@ -153,6 +153,9 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/asiento-contables-confirmado-rh-configuracion-xdocumentos/{idopcion}/{idasiento}', 'ReciboHonorarioController@actionGonfirmarConfiguracionAsientoRHContablesXDocumentos');
 	Route::any('/ajax-modal-detalle-rh-asiento-transicion', 'ReciboHonorarioController@actionAjaxModalDetalleAsientoRHTransicion');
 	Route::any('/asiento-contables-transicion-configuracion-rh-xdocumentos/{idopcion}/{idasiento}', 'ReciboHonorarioController@actionTransicionConfiguracionAsientoContablesRHXDocumentos');
+	Route::any('/ajax-editar-asiento-contable-movimiento-rh', 'ReciboHonorarioController@actionAjaxEditarAsientoContableMovimientoRH');
+
+
 
 	Route::any('/gestion-listado-compras/{idopcion}', 'ComprasController@actionListarCompras');
 	Route::any('/ajax-combo-periodo-xanio-xempresa', 'RegistroDiarioController@actionAjaxComboPeriodoAnioEmpresa');

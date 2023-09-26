@@ -61,10 +61,8 @@
 
 	            <div id="asientocontable" class="tab-pane active cont">
 
-	            	<div class='tablageneral '>
-
+	            	<div class='tablageneral'>
 	            		@include('compras.listadetalleasientomovimiento')
-
 	            	</div>
 
 	           		<div class='editarcuentas'>
