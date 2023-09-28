@@ -615,8 +615,9 @@ trait KardexTraits
 
 
 
+
 	    $montomovikac 		= 	WEBKardexTransferencia::join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.kardextransferencias.COD_PERIODO')
-	    						->where('WEB.kardextransferencias.empresa_id','=',Session::get('empresas_meta')->NOM_EMPR)
+	    						->where('WEB.kardextransferencias.empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
 	    						->where('WEB.kardextransferencias.producto_id','=',$producto_id)
 	    						->where('WEB.kardextransferencias.activo','=',1)
 	    						->where('CON.PERIODO.COD_MES','<=',$mes)
@@ -625,7 +626,7 @@ trait KardexTraits
 
 
 	    $montomovikav 		= 	WEBKardexTransferencia::join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.kardextransferencias.COD_PERIODO')
-	    						->where('WEB.kardextransferencias.empresa_id','=',Session::get('empresas_meta')->NOM_EMPR)
+	    						->where('WEB.kardextransferencias.empresa_id','=',Session::get('empresas_meta')->COD_EMPR)
 	    						->where('WEB.kardextransferencias.producto_id','=',$producto_id)
 	    						->where('WEB.kardextransferencias.activo','=',1)
 	    						->where('CON.PERIODO.COD_MES','<=',$mes)
