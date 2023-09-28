@@ -14,9 +14,9 @@
       <tr>
         <td>{{$index + 1 }}</td>
         <td>{{$item->producto->NOM_PRODUCTO}}</td>
-        <td><b>{{number_format($item->unidades, 2, '.', ',')}}</b></td>
-        <td><b>{{number_format($item->cu_soles, 2, '.', ',')}}</b></td>
-        <td><b>{{number_format($item->inicial_soles, 2, '.', ',')}}</b></td>
+        <td><b>{{number_format($item->unidades, 2, '.', '')}}</b></td>
+        <td><b>{{number_format($item->cu_soles, 2, '.', '')}}</b></td>
+        <td><b>{{number_format($item->inicial_soles, 2, '.', '')}}</b></td>
         <td>{{$item->tipoproducto->NOM_CATEGORIA}}</td>
       </tr>                    
     @endforeach
@@ -26,9 +26,9 @@
       <tr>
         <td></td>
         <td>TOTALES</td>
-        <td><b>{{number_format($listasaldoinicial->sum('unidades'), 2, '.', ',')}}</b></td>
-        <td><b>{{number_format($listasaldoinicial->sum('cu_soles'), 2, '.', ',')}}</b></td>
-        <td><b>{{number_format($listasaldoinicial->sum('inicial_soles'), 2, '.', ',')}}</b></td>
+        <td><b>{{number_format($listasaldoinicial->sum('unidades'), 2, '.', '')}}</b></td>
+        <td><b>{{number_format($listasaldoinicial->sum('cu_soles'), 2, '.', '')}}</b></td>
+        <td><b>{{number_format($listasaldoinicial->sum('inicial_soles'), 2, '.', '')}}</b></td>
         <td></td>
       </tr>                    
   </tfoot>
