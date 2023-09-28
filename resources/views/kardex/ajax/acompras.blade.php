@@ -42,8 +42,7 @@
           @php 
             $monto     =   $funcion->kd_cantidad_producto_venta_totales($listamovimientocommpra,$itemp->COD_PERIODO);
            @endphp
-          <td>
-            <b>{{number_format($monto, 2, '.', '')}}</b>
+          <td>{{number_format($monto, 2, '.', '')}}
           </td>
         @endforeach
       </tr>                    

@@ -54,7 +54,7 @@
                   periodo = "{{$cmes}}"
                   data_anio = "{{$anio}}"
                   >
-                <b>{{number_format($array_totales[$i], 2, '.', ',')}}</b>
+                {{number_format($array_totales[$i], 2, '.', ',')}}
               </td>
               @php $cmes      =   $cmes - 1 ; @endphp
           @endfor

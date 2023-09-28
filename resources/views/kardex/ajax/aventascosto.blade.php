@@ -48,7 +48,7 @@
 
           @for ($i = 0; $i < count($listaperido); $i++)
               <td>
-                <b>{{number_format($array_totales[$i], 2, '.', ',')}}</b>
+                {{number_format($array_totales[$i], 2, '.', '')}}
               </td>
           @endfor
       </tr>                    

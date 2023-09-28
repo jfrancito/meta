@@ -20,7 +20,7 @@
             data_mes = ""
             data_anio = "{{$anio}}"
             data_tipo_asiento_id = "">{{$item->producto->NOM_PRODUCTO}}</td>
-        <td><b>{{number_format($item->unidades, 2, '.', '')}}</b></td>
+        <td>{{number_format($item->unidades, 2, '.', '')}}</td>
         <td>{{number_format($item->cu_soles, 2, '.', '')}}</td>
         <td>{{number_format($item->inicial_soles, 2, '.', '')}}</td>
         <td>{{$item->tipoproducto->NOM_CATEGORIA}}</td>
@@ -31,9 +31,9 @@
       <tr>
         <td></td>
         <td>TOTALES</td>
-        <td><b>{{number_format($listasaldoinicial->sum('unidades'), 2, '.', '')}}</b></td>
-        <td><b>{{number_format($listasaldoinicial->sum('cu_soles'), 2, '.', '')}}</b></td>
-        <td><b>{{number_format($listasaldoinicial->sum('inicial_soles'), 2, '.', '')}}</b></td>
+        <td>{{number_format($listasaldoinicial->sum('unidades'), 2, '.', '')}}</td>
+        <td>{{number_format($listasaldoinicial->sum('cu_soles'), 2, '.', '')}}</td>
+        <td>{{number_format($listasaldoinicial->sum('inicial_soles'), 2, '.', '')}}</td>
         <td></td>
       </tr>                    
   </tfoot>
