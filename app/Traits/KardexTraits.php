@@ -18,6 +18,8 @@ use App\Modelos\WEBListaCVProductoKardex;
 use App\Modelos\CMPTipoCambio;
 use App\Modelos\STDEmpresa;
 use App\Modelos\CMPOrden;
+use App\Modelos\WEBKardexTransferencia;
+
 
 use View;
 use Session;
@@ -456,7 +458,6 @@ trait KardexTraits
 	    						->groupBy('CON.PERIODO.COD_MES')
 	    						->groupBy('CON.PERIODO.TXT_NOMBRE')->get();
 
-
 		return $listamovimiento;
 
 	}
@@ -611,11 +612,33 @@ trait KardexTraits
 	{
 
 		$mes 				= 	(int)$mes;
+
+
+
+
+	    $montomovikac 		= 	WEBKardexTransferencia::join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.kardextransferencias.COD_PERIODO')
+	    						->where('WEB.kardextransferencias.empresa_id','=',Session::get('empresas_meta')->NOM_EMPR)
+	    						->where('WEB.kardextransferencias.activo','=',1)
+	    						->where('CON.PERIODO.COD_MES','<=',$mes)
+	    						->where('WEB.kardextransferencias.ingreso_salida','=','INGRESO')
+	    						->sum('cantidad');
+
+
+
+	    $montomovikav 		= 	WEBKardexTransferencia::join('CON.PERIODO', 'CON.PERIODO.COD_PERIODO', '=', 'WEB.kardextransferencias.COD_PERIODO')
+	    						->where('WEB.kardextransferencias.empresa_id','=',Session::get('empresas_meta')->NOM_EMPR)
+	    						->where('WEB.kardextransferencias.activo','=',1)
+	    						->where('CON.PERIODO.COD_MES','<=',$mes)
+	    						->where('WEB.kardextransferencias.ingreso_salida','=','SALIDA')
+	    						->sum('cantidad');
+
+
 		//compra
 		$montocom 			= 	0;
 	    $montomovic 		= 	$listamovimientocompra->where('COD_PRODUCTO','=',$producto_id)
 	    						->where('COD_MES','<=',$mes)
 	    						->sum('CAN_PRODUCTO');
+
 
 		//venta
 		$montoven 			= 	0;
@@ -623,8 +646,9 @@ trait KardexTraits
 	    						->where('COD_MES','<=',$mes)
 	    						->sum('CAN_PRODUCTO');
 
+
 	    $monto 				= 	0;
-		$monto 				= 	(float)$cantii+$montomovic-$montomoviv;
+		$monto 				= 	(float)$cantii+($montomovic-$montomoviv)+($montomovikac-$montomovikav);
 
 
 		return $monto;
@@ -704,11 +728,13 @@ trait KardexTraits
 
 				$entrada_cantidad       =   $row['CAN_PRODUCTO'];
 				$monedo_conversion      =   $row['COD_CATEGORIA_MONEDA_CONVERSION'];
-				if($monedo_conversion =='MON0000000000002'){
+
+				if($monedo_conversion == 'MON0000000000002'){
 					$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV']*$tipo_cambio_cp->CAN_VENTA_SBS;
 				}else{
 					$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV'];
 				}
+
 				$entrada_cu           	=   $entrada_importe/$entrada_cantidad;
 				if($row['NRO_SERIE']=='INGRESO'){
 					$entrada_cantidad   =   $row['CAN_PRODUCTO'];

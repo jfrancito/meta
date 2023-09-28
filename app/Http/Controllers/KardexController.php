@@ -186,13 +186,14 @@ class KardexController extends Controller
 		}else{
 
 
-			$tipo_asiento_id    	=   'TAS0000000000003';
+			$tipo_asiento_id    		 =   'TAS0000000000003';
 
-		    $listasaldoinicial 		= 	$this->kd_lista_saldo_inicial(Session::get('empresas_meta')->COD_EMPR,$tipo_producto_id);
-			$listamovimiento 		= 	$this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
+		    $listasaldoinicial 			 = 	 $this->kd_lista_saldo_inicial(Session::get('empresas_meta')->COD_EMPR,$tipo_producto_id);
+			$listamovimiento 			 = 	 $this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
 
-			$tipo_asiento_id    	=   'TAS0000000000004';
-			$listamovimientocommpra = 	$this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
+			$tipo_asiento_id    		 =   'TAS0000000000004';
+			$listamovimientocommpra 	 = 	$this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
+
 
 			$titulo 				=   'KARDEX-'.$tipoproducto->NOM_CATEGORIA.'-'.Session::get('empresas_meta')->NOM_EMPR;
 
@@ -928,7 +929,7 @@ class KardexController extends Controller
 	    $listasaldoinicial 		= 	$this->kd_lista_saldo_inicial(Session::get('empresas_meta')->COD_EMPR,$tipo_producto_id);
 		$tipo_asiento_id    	=   'TAS0000000000003';
 
-		
+
 		$listamovimiento 		= 	$this->kd_lista_movimiento(Session::get('empresas_meta')->COD_EMPR, $anio, $tipo_producto_id,$tipo_asiento_id);
 
 
