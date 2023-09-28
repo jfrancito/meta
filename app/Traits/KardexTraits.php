@@ -434,6 +434,9 @@ trait KardexTraits
 	    						//->where('WEB.asientos.COD_CATEGORIA_TIPO_ASIENTO','=',$tipo_asiento_id)
 	    						->TipoAsiento($tipo_asiento_id)
 	    						->where('WEB.asientos.COD_EMPR','=',$empresa_id)
+
+	    						->where('WEB.kardexproductos.empresa_id','=',$empresa_id)
+	    						
 	    						->where('WEB.kardexproductos.tipo_producto_id','=',$tipo_producto_id)
 	    						->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    						->where('CON.PERIODO.COD_ANIO','=',$anio)
