@@ -41,10 +41,13 @@ class MigrarCompraController extends Controller
 
 		set_time_limit(0);
 				
-		//buscar asiento 
+		//buscar asiento
 		$lista_compras_migrar_emitido 		= 	$this->mv_lista_compras_migrar_agrupado_emitido($this->array_empresas,$this->anio_inicio);
 		$lista_compras_migrar_anulado 		= 	$this->mv_lista_compras_migrar_agrupado_anulado($this->array_empresas,$this->anio_inicio);
 		$this->mv_agregar_historial_compras($lista_compras_migrar_emitido,$lista_compras_migrar_anulado,$this->tipo_asiento);
+
+		
+
 
 		foreach($lista_compras_migrar_emitido as $index => $item){
 			$respuesta = $this->mv_update_historial_compras($item->COD_DOCUMENTO_CTBLE,$this->tipo_asiento);

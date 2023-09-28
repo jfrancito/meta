@@ -436,7 +436,7 @@ trait KardexTraits
 	    						->where('WEB.asientos.COD_EMPR','=',$empresa_id)
 
 	    						->where('WEB.kardexproductos.empresa_id','=',$empresa_id)
-	    						
+
 	    						->where('WEB.kardexproductos.tipo_producto_id','=',$tipo_producto_id)
 	    						->where('WEB.asientos.COD_CATEGORIA_ESTADO_ASIENTO','=','IACHTE0000000025')
 	    						->where('CON.PERIODO.COD_ANIO','=',$anio)
@@ -684,6 +684,8 @@ trait KardexTraits
 
 			$periodo 					= 	CONPeriodo::where('COD_PERIODO','=',$row['COD_PERIODO'])->first();
 
+			$monedo_conversion          =   '';
+
 			$entrada_cantidad           =   0;
 			$entrada_cu           		=   0;
 			$entrada_importe           	=   0;
@@ -701,11 +703,13 @@ trait KardexTraits
 				$tipo_cambio_cp   		=   $this->kd_tipo_cambio(date_format(date_create(substr($row['FEC_ASIENTO'], 0, 10)), 'd-m-Y'));
 
 				$entrada_cantidad       =   $row['CAN_PRODUCTO'];
-				//$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV']*$tipo_cambio_cp->CAN_VENTA_SBS;
-				$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV'];
-
+				$monedo_conversion      =   $row['COD_CATEGORIA_MONEDA_CONVERSION'];
+				if($monedo_conversion =='MON0000000000002'){
+					$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV']*$tipo_cambio_cp->CAN_VENTA_SBS;
+				}else{
+					$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV'];
+				}
 				$entrada_cu           	=   $entrada_importe/$entrada_cantidad;
-
 				if($row['NRO_SERIE']=='INGRESO'){
 					$entrada_cantidad   =   $row['CAN_PRODUCTO'];
 					$entrada_cu    		=   $row['cu'];

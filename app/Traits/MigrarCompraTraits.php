@@ -59,12 +59,14 @@ trait MigrarCompraTraits
 											->whereNull('WEB.historialmigrar.COD_REFERENCIA')
 											->whereIn('WEB.viewmigrarcompras.COD_PERIODO',$array_periodo)
 											->whereIn('WEB.viewmigrarcompras.COD_EMPR',$array_empresas)
-											//->where('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE','=','ISCHFC0000013747')
+											//->where('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE','=','ITCHFC0000018027')
 											->where('WEB.viewmigrarcompras.NOM_ESTADO','=','ENVIADO')
 											->select(DB::raw('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE'))
 											->groupBy('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
 											->get();
 
+
+		//dd($lista_migrar_compras);
 
 
 		return $lista_migrar_compras;
