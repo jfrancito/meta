@@ -665,6 +665,16 @@ class KardexController extends Controller
 			$kardexproducto->correlativosalida = $correlativo;
 			$kardexproducto->save();
 
+			$seriesalida 								=   $kardexproducto->seriesalida;
+			$rucsalida									=   $kardexproducto->ruc;
+			if(is_null($seriesalida)){
+				$seriesalida 								=   '';
+				$rucsalida 								=   '';				
+			}
+
+
+
+
 			$id 										=   $this->funciones->getCreateIdMaestra('web.kardextransferencias');
 			$cabecera            	 					=	new WEBKardexTransferencia;
 			$cabecera->id 	     	 					=   $id;
@@ -680,9 +690,9 @@ class KardexController extends Controller
 			$cabecera->ingreso_salida 					=   'SALIDA';
 			$cabecera->cantidad 						=   $cantidad;
 
-			$cabecera->serie 							=   $kardexproducto->seriesalida;
+			$cabecera->serie 							=   $seriesalida;
 			$cabecera->correlativo 						=   $correlativo;
-			$cabecera->ruc 								=   $kardexproducto->ruc;
+			$cabecera->ruc 								=   $rucsalida;
 
 
 			$cabecera->cu 								=   $cu;
@@ -699,6 +709,17 @@ class KardexController extends Controller
 			$kardexproducto 							=	WEBKardexProducto::where('producto_id','=',$productoi->COD_PRODUCTO)
 															->where('empresa_id','=',$empresa_id)
 															->first();
+
+
+
+			$serieingreso 								=   $kardexproducto->serieingreso;
+			$rucingreso 								=   $kardexproducto->ruc;
+			if(is_null($serieingreso)){
+				$serieingreso 								=   '';
+				$rucingreso 								=   '';				
+			}
+
+
 			$correlativo 								= 	$this->funciones->generar_codigo_transferencia($kardexproducto->correlativoingreso,7);
 			$kardexproducto->correlativoingreso 		= 	$correlativo;
 			$kardexproducto->save();
@@ -720,9 +741,9 @@ class KardexController extends Controller
 			$cabecera->ingreso_salida 					=   'INGRESO';
 			$cabecera->cantidad 						=   $cantidad;
 
-			$cabecera->serie 							=   $kardexproducto->serieingreso;
+			$cabecera->serie 							=   $serieingreso;
 			$cabecera->correlativo 						=   $correlativo;
-			$cabecera->ruc 								=   $kardexproducto->ruc;
+			$cabecera->ruc 								=   $rucingreso;
 
 			$cabecera->cu 								=   $cu;
 			$cabecera->importe 							=   $importe;
