@@ -728,15 +728,14 @@ trait KardexTraits
 
 				$entrada_cantidad       =   $row['CAN_PRODUCTO'];
 				$monedo_conversion      =   $row['COD_CATEGORIA_MONEDA_CONVERSION'];
-
 				if($monedo_conversion == 'MON0000000000002'){
 					$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV']*$tipo_cambio_cp->CAN_VENTA_SBS;
 				}else{
 					$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV'];
 				}
-
 				$entrada_cu           	=   $entrada_importe/$entrada_cantidad;
-				if($row['NRO_SERIE']=='INGRESO'){
+
+				if($row['TXT_CATEGORIA_TIPO_ASIENTO']=='INGRESO TRANSFERENCIA'){
 					$entrada_cantidad   =   $row['CAN_PRODUCTO'];
 					$entrada_cu    		=   $row['cu'];
 					$entrada_importe    =   $row['CAN_VALOR_VENTA_IGV'];					
@@ -761,11 +760,26 @@ trait KardexTraits
 				$salida_cu           	=   $cu_antes;
 				$salida_importe         =   $salida_cantidad*$salida_cu;
 
-				if($row['NRO_SERIE']=='SALIDA'){
+				if($row['TXT_CATEGORIA_TIPO_ASIENTO']=='SALIDA TRANSFERENCIA'){
 					$salida_cantidad        =   $row['CAN_PRODUCTO'];
 					$salida_cu           	=   $row['cu'];
 					$salida_importe         =   $row['CAN_VALOR_VENTA_IGV'];					
 				}
+
+				//NOTA DE CREDITO
+				if($row['TXT_CATEGORIA_TIPO_ASIENTO']=='NOTA DE CREDITO'){
+					$tipo_cambio_cp   		=   $this->kd_tipo_cambio(date_format(date_create(substr($row['FECHA_REFERENCIA'], 0, 10)), 'd-m-Y'));
+					$salida_cantidad       	=   $row['CAN_PRODUCTO'];
+					$monedo_conversion      =   $row['COD_CATEGORIA_MONEDA_CONVERSION'];
+					if($monedo_conversion == 'MON0000000000002'){
+						$salida_importe     =   $row['CAN_VALOR_VENTA_IGV_REF']*$tipo_cambio_cp->CAN_VENTA_SBS;
+					}else{
+						$salida_importe     =   $row['CAN_VALOR_VENTA_IGV_REF'];
+					}
+					$salida_cu           	=   $salida_importe/$salida_cantidad;					
+				}
+
+				
 
 				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
 				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;

@@ -7,6 +7,13 @@
       <th>Soles C.U.</th>
       <th>Soles inicial</th>
       <th>Tipo producto</th>
+
+      <th>Serie ingreso</th>
+      <th>Serie salida</th>
+      <th>Correlativo ingreso</th>
+      <th>Correlativo salida</th>
+      <th>Ruc</th>
+
     </tr>
   </thead>
   <tbody>
@@ -24,6 +31,13 @@
         <td>{{number_format($item->cu_soles, 2, '.', '')}}</td>
         <td>{{number_format($item->inicial_soles, 2, '.', '')}}</td>
         <td>{{$item->tipoproducto->NOM_CATEGORIA}}</td>
+
+        <td>{{$item->serieingreso}}</td>
+        <td>{{$item->seriesalida}}</td>
+        <td>{{$item->correlativoingreso}}</td>
+        <td>{{$item->correlativosalida}}</td>
+        <td>{{$item->ruc}}</td>
+        
       </tr>                    
     @endforeach
   </tbody>

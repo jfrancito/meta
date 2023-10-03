@@ -7,6 +7,7 @@
       <th>Soles C.U.</th>
       <th>Soles inicial</th>
       <th>Tipo producto</th>
+
     </tr>
   </thead>
   <tbody>
@@ -18,6 +19,9 @@
         <td>{{number_format($item->cu_soles, 2, '.', '')}}</td>
         <td>{{number_format($item->inicial_soles, 2, '.', '')}}</td>
         <td>{{$item->tipoproducto->NOM_CATEGORIA}}</td>
+
+
+          
       </tr>                    
     @endforeach
   </tbody>
