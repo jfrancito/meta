@@ -715,6 +715,25 @@ trait GeneralesTraits
 	 	return  $combo;					 			
 	}
 
+
+	public function gn_combo_caja_banco_efectivo($todo,$titulo)
+	{
+		$array 						= 	TESCajaBanco::whereIn('COD_CAJA_BANCO', array('ITRJCB0000000011','ITRJCB0000000008','ITRJCB0000000006'))
+		        						->pluck('TXT_CAJA_BANCO','COD_CAJA_BANCO')
+										->toArray();
+
+		if($todo=='TODO'){
+			$combo  				= 	array('' => $titulo , $todo => $todo) + $array;
+		}else{
+			$combo  				= 	array('' => $titulo) + $array;
+		}
+
+	 	return  $combo;	
+
+
+	}
+
+
 	private function gn_generacion_combo_pago_cobro($txt_grupo,$titulo,$todo) {
 		
 		$array 						= 	DB::table('CMP.CATEGORIA')

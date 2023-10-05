@@ -84,6 +84,48 @@ trait CajaBancoTraits
 	}
 
 
+	private function cb_operacion_caja_movimientos_efectivo($cod_operacion_caja)
+	{
+
+		$listamovimientos 			=  	TESOperacionCaja::where('COD_OPERACION_CAJA', '=', $cod_operacion_caja)
+										//->where('IND_EXTORNO','=',0)
+										->select(DB::raw('COD_CAJA_BANCO,
+															COD_OPERACION_CAJA,
+															NRO_CUENTA_BANCARIA,
+															COD_CATEGORIA_ACTIVIDAD_NEGOCIO,
+															NRO_VOUCHER,
+															TXT_CATEGORIA_OPERACION_CAJA,
+															MAX(COD_PERIODO_CONCILIA) AS COD_PERIODO_CONCILIA,
+															MAX(COD_CENTRO) AS COD_CENTRO,
+															COD_CATEGORIA_MONEDA,
+															TXT_CATEGORIA_MONEDA,
+															FEC_MOVIMIENTO_CAJABANCO,
+															FEC_OPERACION,
+															COD_ASIENTO,
+															MAX(COD_EMPR_AFECTA) AS COD_EMPR_AFECTA,
+															SUM(CAN_DEBE_MN) AS CAN_DEBE_MN,
+															SUM(CAN_DEBE_ME) AS CAN_DEBE_ME,
+															SUM(CAN_HABER_MN) AS CAN_HABER_MN,
+															SUM(CAN_HABER_ME) AS CAN_HABER_ME,
+															CAN_TIPO_CAMBIO'))
+										->groupBy('COD_CATEGORIA_ACTIVIDAD_NEGOCIO')
+										->groupBy('COD_OPERACION_CAJA')
+										->groupBy('COD_CAJA_BANCO')
+										->groupBy('NRO_CUENTA_BANCARIA')
+										->groupBy('NRO_VOUCHER')
+										->groupBy('TXT_CATEGORIA_OPERACION_CAJA')
+										->groupBy('COD_CATEGORIA_MONEDA')
+										->groupBy('TXT_CATEGORIA_MONEDA')
+										->groupBy('CAN_TIPO_CAMBIO')
+										->groupBy('FEC_MOVIMIENTO_CAJABANCO')
+										->groupBy('FEC_OPERACION')
+										->groupBy('COD_ASIENTO')
+										->first();
+	    return $listamovimientos;
+
+	}
+
+
 	private function cb_operacion_caja_movimientos_first($cuenta_referencia,$nrooperacion,$cod_caja_banco,$fec_movimiento_caja)
 	{
 
@@ -138,6 +180,47 @@ trait CajaBancoTraits
 
 	}
 
+
+	private function cb_detalle_operacion_caja_movimientos_efectivo($cod_operacion_caja)
+	{
+
+		$listadetallemovimientos 	=  	TESOperacionCaja::join('TES.CAJA_BANCO', 'TES.CAJA_BANCO.COD_CAJA_BANCO', '=', 'TES.OPERACION_CAJA.COD_CAJA_BANCO')
+										->join('CON.ASIENTO', 'CON.ASIENTO.COD_ASIENTO', '=', 'TES.OPERACION_CAJA.COD_ASIENTO')
+										->join('CON.ASIENTO_MOVIMIENTO', 'CON.ASIENTO_MOVIMIENTO.COD_ASIENTO', '=', 'CON.ASIENTO.COD_ASIENTO')
+										->join('CMP.DOCUMENTO_CTBLE', 'CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE', '=', 'CON.ASIENTO_MOVIMIENTO.TXT_REFERENCIA')
+										->where('COD_OPERACION_CAJA', '=', $cod_operacion_caja)
+										->whereNotIn('CON.ASIENTO_MOVIMIENTO.TXT_TIPO_REFERENCIA',['TES.OPERACION_CAJA'])
+										->select(DB::raw('	TES.CAJA_BANCO.TXT_BANCO,
+															TES.CAJA_BANCO.TXT_NRO_CCI,
+															TES.OPERACION_CAJA.FEC_OPERACION,
+															TES.OPERACION_CAJA.FEC_MOVIMIENTO_CAJABANCO,
+															TES.OPERACION_CAJA.COD_EMPR_AFECTA,
+															TES.OPERACION_CAJA.TXT_EMPR_AFECTA,
+															TES.OPERACION_CAJA.COD_CONTRATO_AFECTA,
+															TES.OPERACION_CAJA.TXT_FLUJO_CAJA,
+															TES.OPERACION_CAJA.NRO_VOUCHER,
+															CON.ASIENTO_MOVIMIENTO.COD_ASIENTO_MOVIMIENTO,
+															CON.ASIENTO_MOVIMIENTO.TXT_TIPO_REFERENCIA,
+															CON.ASIENTO_MOVIMIENTO.TXT_REFERENCIA,
+															CON.ASIENTO_MOVIMIENTO.TXT_GLOSA,
+															CON.ASIENTO_MOVIMIENTO.CAN_DEBE_MN,
+															CON.ASIENTO_MOVIMIENTO.CAN_DEBE_ME,
+															CON.ASIENTO_MOVIMIENTO.CAN_HABER_MN,
+															CON.ASIENTO_MOVIMIENTO.CAN_HABER_ME,
+															CMP.DOCUMENTO_CTBLE.COD_DOCUMENTO_CTBLE,
+															CMP.DOCUMENTO_CTBLE.COD_CATEGORIA_TIPO_DOC,
+															CMP.DOCUMENTO_CTBLE.TXT_CATEGORIA_TIPO_DOC,
+															CMP.DOCUMENTO_CTBLE.TXT_CATEGORIA_MONEDA,
+															CMP.DOCUMENTO_CTBLE.NRO_SERIE,
+															CMP.DOCUMENTO_CTBLE.FEC_EMISION,
+															CMP.DOCUMENTO_CTBLE.CAN_TOTAL,
+															(CMP.DOCUMENTO_CTBLE.CAN_TOTAL*CMP.DOCUMENTO_CTBLE.CAN_TIPO_CAMBIO) as CAN_TOTAL_SOLES,
+															CMP.DOCUMENTO_CTBLE.CAN_TIPO_CAMBIO,
+															CMP.DOCUMENTO_CTBLE.NRO_DOC'))
+										->get();
+	    return $listadetallemovimientos;
+
+	}
 
 
 
@@ -220,6 +303,24 @@ trait CajaBancoTraits
 		}
 	    return $cod_pago_cobro;
 	}
+
+
+	private function cb_cod_pago_cobro_efectivo($cuenta_referencia)
+	{
+		$cod_pago_cobro = '';
+		//12: Cliente(ingreso)
+		if($cuenta_referencia == 'IACHAN0000000004'){
+			$cod_pago_cobro = 'EPC0000000000004';
+		}
+		//42: Proveedor(egreso)
+		if($cuenta_referencia == 'IACHAN0000000005'){
+			$cod_pago_cobro = 'EPC0000000000003';
+		}
+	    return $cod_pago_cobro;
+	}
+
+
+
 
 	private function cb_txt_pago_cobro($pago_cobro)
 	{

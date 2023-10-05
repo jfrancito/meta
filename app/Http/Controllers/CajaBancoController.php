@@ -340,6 +340,8 @@ class CajaBancoController extends Controller
 	    	$asientomodelo 			= 	WEBAsientoModelo::where('id','=',$buscar_modelo_asiento['msg'])->first();
 	    }
 
+	    
+
 		return View::make('cajaybanco/ajax/alistadetallemovimientos',
 						 [		 	
 						 	'listadetallemovimientos' 		=> $listadetallemovimientos,

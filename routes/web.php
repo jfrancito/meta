@@ -220,7 +220,10 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-calcular-ultimo-cu', 'KardexController@actionAjaxCalcularUltimoCU');
 
 
-
+	Route::any('/gestion-pago-cobro-efectivo/{idopcion}', 'PagoCobroEfectivoController@actionListarMovimiento');
+	Route::any('/ajax-registro-movimiento-efectivo', 'PagoCobroEfectivoController@actionAjaxRegistroMovimientoEfectivo');
+	Route::any('/ajax-modal-configuracion-movimiento-efectivo', 'PagoCobroEfectivoController@actionAjaxModalConfiguracionMovimientoEfectivo');
+	
 
 	Route::any('/gestion-planilla-movilidad/{idopcion}', 'MovilidadController@actionListarMovilidad');
 	Route::any('/ajax-registro-movilidad', 'MovilidadController@actionAjaxRegistroMovilidad');

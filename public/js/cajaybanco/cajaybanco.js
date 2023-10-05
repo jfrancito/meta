@@ -2,6 +2,53 @@ $(document).ready(function(){
 
     var carpeta = $("#carpeta").val();
 
+    $(".cajaybanco").on('click','.buscarmovimientofectivo', function() {
+
+        event.preventDefault();
+        var anio                    =   $('#anio').val();
+        var periodo_id              =   $('#periodo_id').val();
+        var caja_id                 =   $('#caja_id').val();
+
+        var idopcion                =   $('#idopcion').val();
+        var _token                  =   $('#token').val();
+
+        //validacioones
+        if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
+        if(periodo_id ==''){ alerterrorajax("Seleccione un periodo."); return false;}
+        if(caja_id ==''){ alerterrorajax("Seleccione una caja."); return false;}
+
+        data            =   {
+                                _token                  : _token,
+                                anio                    : anio,
+                                periodo_id              : periodo_id,
+                                caja_id                 : caja_id,
+                                idopcion                : idopcion,
+                            };
+        ajax_normal(data,"/ajax-registro-movimiento-efectivo");
+
+    });
+
+
+    $(".cajaybanco").on('dblclick','.dobleclickmc', function(e) {
+
+        var _token                  =   $('#token').val();
+        var cod_operacion_caja      =   $(this).attr('data_cod_operacion_caja');
+        var idopcion                =   $('#idopcion').val();
+
+        data                        =   {
+                                            _token                  : _token,
+                                            cod_operacion_caja      : cod_operacion_caja,
+                                            idopcion                : idopcion,
+                                        };
+
+        debugger;
+
+        ajax_modal(data,"/ajax-modal-configuracion-movimiento-efectivo",
+          "modal-lista-movimiento-caja-banco","modal-lista-movimiento-caja-banco-container");
+
+    });
+
+
 
     $(".cajaybanco").on('click','.buscarmovimiento', function() {
 
