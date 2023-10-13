@@ -577,6 +577,26 @@ trait KardexTraits
 	}
 
 
+	private function kd_lista_producto_periodo_cascara_view($empresa_id, $anio, $tipo_asiento_id,$producto_id,$periodo_id)
+	{
+
+
+        $stmt 		= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.listacvproductokardexcascara 
+							@empresa_id = ?,
+							@anio = ?,
+							@producto_id = ?');
+
+        $stmt->bindParam(1, $empresa_id ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $anio  ,PDO::PARAM_STR);
+        $stmt->bindParam(3, $producto_id  ,PDO::PARAM_STR);
+        $stmt->execute();
+
+
+		return $stmt;
+
+	}
+
+
 	private function kd_lista_producto_periodo_view($empresa_id, $anio, $tipo_asiento_id,$producto_id,$periodo_id)
 	{
 
@@ -654,6 +674,155 @@ trait KardexTraits
 		return $monto;
 
 	}
+
+
+	public function kd_lista_kardex_inventario_cascara_final($empresa_id, 
+	    											$saldoinicial,
+	    											$listadetalleproducto,
+	    											$producto,
+	    											$periodo_enero){
+
+		$array_detalle_asiento 		=	array();
+
+		$cantidad_antes    			= 	$saldoinicial->unidades;
+		$cu_antes    				= 	$saldoinicial->cu_soles;
+		$importe_antes    			= 	$saldoinicial->inicial_soles;
+
+    	$array_nuevo_asiento 		=	array();
+		$array_nuevo_asiento    	=	array(
+
+			"periodo_id" 				=> $periodo_enero->COD_PERIODO,
+			"nombre_periodo" 			=> $periodo_enero->TXT_NOMBRE,
+			"fecha" 					=> substr($periodo_enero->FEC_INICIO, 0, 10),
+
+			"servicio" 					=> 'Apertura',
+			"producto_id" 				=> $producto->COD_PRODUCTO,
+			"nombre_producto" 			=> $producto->NOM_PRODUCTO,
+
+			"serie" 					=> '',
+			"correlativo" 				=> '',
+			"ruc" 						=> '',
+
+			"cliente_id" 				=> '',
+			"nombre_cliente" 			=> '',
+
+			"entrada_cantidad" 			=> 0,
+			"entrada_cu" 				=> 0,
+			"entrada_importe" 			=> 0,
+
+			"salida_cantidad" 			=> 0,
+			"salida_cu" 				=> 0,
+			"salida_importe" 			=> 0,
+
+			"saldo_cantidad" 			=> $saldoinicial->unidades,
+			"saldo_cu" 					=> $saldoinicial->cu_soles,
+			"saldo_importe" 			=> $saldoinicial->inicial_soles
+
+		);
+
+		array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+	    while ($row = $listadetalleproducto->fetch()){
+	    	//{{$row['COD_CARRO_INGRESO_SALIDA']}}
+
+			$periodo 					= 	CONPeriodo::where('COD_PERIODO','=',$row['COD_PERIODO'])->first();
+
+			$monedo_conversion          =   '';
+
+			$entrada_cantidad           =   0;
+			$entrada_cu           		=   0;
+			$entrada_importe           	=   0;
+
+			$salida_cantidad           	=   0;
+			$salida_cu           		=   0;
+			$salida_importe           	=   0;
+
+			$saldo_cantidad           	=   0;
+			$saldo_cu           		=   0;
+			$saldo_importe           	=   0;
+
+			if($row['COD_CATEGORIA_TIPO_ASIENTO'] == 'TAS0000000000004'){
+
+				$tipo_cambio_cp   		=   $this->kd_tipo_cambio(date_format(date_create(substr($row['FEC_ASIENTO'], 0, 10)), 'd-m-Y'));
+				$entrada_cantidad       =   $row['CAN_PRODUCTO'];
+				$entrada_cu           	=   $row['cu'];
+				$entrada_importe        =   $row['CAN_VALOR_VENTA_IGV'];
+
+
+				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
+				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;
+				if($saldo_cantidad==0){
+					$saldo_cu           =   0;
+				}else{
+					$saldo_cu           =   $saldo_importe/$saldo_cantidad;
+				}
+
+				$cantidad_antes    		= 	$saldo_cantidad;
+				$cu_antes    			= 	$saldo_cu;
+				$importe_antes    		= 	$saldo_importe;
+
+			}else{
+
+				$salida_cantidad        =   $row['CAN_PRODUCTO'];
+				$salida_cu           	=   $cu_antes;
+				$salida_importe         =   $salida_cantidad*$salida_cu;
+				$saldo_cantidad         =   $cantidad_antes+$entrada_cantidad-$salida_cantidad;
+				$saldo_importe          =   $importe_antes+$entrada_importe-$salida_importe;
+				if($saldo_cantidad==0){
+					$saldo_cu           	=   0;
+				}else{
+					$saldo_cu           	=   $saldo_importe/$saldo_cantidad;
+				}
+				$cantidad_antes    		= 	$saldo_cantidad;
+				$cu_antes    			= 	$saldo_cu;
+				$importe_antes    		= 	$saldo_importe;
+
+			}
+									
+
+
+	    	$array_nuevo_asiento 		=	array();
+			$array_nuevo_asiento    	=	array(
+				"periodo_id" 				=> $periodo->COD_PERIODO,
+				"nombre_periodo" 			=> $periodo->TXT_NOMBRE,
+				"fecha" 					=> substr($row['FEC_ASIENTO'], 0, 10),
+				"servicio" 					=> $row['TXT_CATEGORIA_TIPO_ASIENTO'],
+				"producto_id" 				=> $row['COD_PRODUCTO'],
+				"nombre_producto" 			=> $row['TXT_NOMBRE_PRODUCTO'],
+				"serie" 					=> $row['NRO_SERIE'],
+				"correlativo" 				=> $row['NRO_DOC'],
+				"ruc" 						=> $row['NRO_DOCUMENTO'],
+				"cliente_id" 				=> $row['COD_EMPR_CLI'],
+				"nombre_cliente" 			=> $row['TXT_EMPR_CLI'],
+
+				"entrada_cantidad" 			=> $entrada_cantidad,
+				"entrada_cu" 				=> $entrada_cu,
+				"entrada_importe" 			=> $entrada_importe,
+
+				"salida_cantidad" 			=> $salida_cantidad,
+				"salida_cu" 				=> $salida_cu,
+				"salida_importe" 			=> $salida_importe,
+
+				"saldo_cantidad" 			=> $saldo_cantidad,
+				"saldo_cu" 					=> $saldo_cu,
+				"saldo_importe" 			=> $saldo_importe
+
+			);
+			array_push($array_detalle_asiento,$array_nuevo_asiento);
+
+
+
+
+	    }
+
+
+	    return $array_detalle_asiento;
+
+    }
+
+
+
 
 
 	public function kd_lista_kardex_inventario_final($empresa_id, 

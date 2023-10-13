@@ -205,6 +205,14 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/ajax-modal-asociar-banco-caja', 'CajaBancoController@actionAjaxModalAsociarBancoCaja');
 	Route::any('/guardar-asociacion-banco-caja/{idopcion}', 'CajaBancoController@actionGuardarAsociacionCajaBanco');
 
+
+
+	Route::any('/gestion-kardex-cascara/{idopcion}', 'KardexCascaraController@actionListarKardexCascara');
+	Route::any('/descargar-excel-kardex-cascara', 'KardexCascaraController@actionDescargarExcelKardexCascara');
+	// Route::any('/ajax-movimiento-kardex', 'KardexController@actionAjaxListarMovimientoKardex');
+
+
+
 	Route::any('/gestion-saldos-inicial/{idopcion}', 'KardexController@actionListarSaldoInicial');
 	Route::any('/ajax-saldo-inicial', 'KardexController@actionAjaxListarSaldoInicial');
 
