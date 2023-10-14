@@ -787,7 +787,7 @@ trait KardexTraits
 				"periodo_id" 				=> $periodo->COD_PERIODO,
 				"nombre_periodo" 			=> $periodo->TXT_NOMBRE,
 				"fecha" 					=> substr($row['FEC_ASIENTO'], 0, 10),
-				"servicio" 					=> $row['TXT_CATEGORIA_TIPO_ASIENTO'],
+				"servicio" 					=> $row['OPERACION'],
 				"producto_id" 				=> $row['COD_PRODUCTO'],
 				"nombre_producto" 			=> $row['TXT_NOMBRE_PRODUCTO'],
 				"serie" 					=> $row['NRO_SERIE'],

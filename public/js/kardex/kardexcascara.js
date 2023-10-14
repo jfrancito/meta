@@ -6,7 +6,7 @@ $(document).ready(function(){
     $(".kardexcascara").on('click','.descargarexcel', function() {
 
         event.preventDefault();
-        var anio                     =   $('#anio').val();
+        // var anio                     =   $('#anio').val();
         //var tipo_movimiento_id       =   $('#tipo_movimiento_id').val();
         // var tipo_movimiento_id       =   '';        
         // var tipo_producto_id         =   $('#tipo_producto_id').val();
@@ -14,7 +14,7 @@ $(document).ready(function(){
         var _token                   =   $('#token').val();
 
         //validacioones
-        if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
+        // if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
         // //if(tipo_movimiento_id ==''){ alerterrorajax("Seleccione un tipo de movimiento."); return false;}
         // if(tipo_producto_id ==''){ alerterrorajax("Seleccione un tipo de producto."); return false;}
 
@@ -197,26 +197,26 @@ $(document).ready(function(){
     $(".kardexcascara").on('click','.buscarmovimientokardex', function() {
 
         event.preventDefault();
-        var anio                     =   $('#anio').val();
+        // var anio                     =   $('#anio').val();
         //var tipo_movimiento_id       =   $('#tipo_movimiento_id').val();
-        var tipo_movimiento_id       =   '';        
-        var tipo_producto_id         =   $('#tipo_producto_id').val();
+        // var tipo_movimiento_id       =   '';        
+        // var tipo_producto_id         =   $('#tipo_producto_id').val();
         var idopcion                =   $('#idopcion').val();
         var _token                  =   $('#token').val();
 
-        //validacioones
-        if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
-        //if(tipo_movimiento_id ==''){ alerterrorajax("Seleccione un tipo de movimiento."); return false;}
-        if(tipo_producto_id ==''){ alerterrorajax("Seleccione un tipo de producto."); return false;}
+        // //validacioones
+        // if(anio ==''){ alerterrorajax("Seleccione un año."); return false;}
+        // //if(tipo_movimiento_id ==''){ alerterrorajax("Seleccione un tipo de movimiento."); return false;}
+        // if(tipo_producto_id ==''){ alerterrorajax("Seleccione un tipo de producto."); return false;}
 
         data            =   {
                                 _token                  : _token,
-                                tipo_movimiento_id      : tipo_movimiento_id,
-                                tipo_producto_id        : tipo_producto_id,
-                                anio                    : anio,
+                                // tipo_movimiento_id      : tipo_movimiento_id,
+                                // tipo_producto_id        : tipo_producto_id,
+                                // anio                    : anio,
                                 idopcion                : idopcion,
                             };
-        ajax_normal(data,"/ajax-movimiento-kardex");
+        ajax_normal(data,"/ajax-movimiento-kardex-cascara");
 
     });
 
@@ -271,12 +271,11 @@ $(document).ready(function(){
     });
 
 
-    $(".kardexcascara").on('dblclick','.dobleclickto', function(e) {
+    $(".kardexcascara").on('dblclick','.dobleclicktoca', function(e) {
 
         var _token                  =   $('#token').val();
         var data_producto_id        =   $(this).attr('data_producto_id');
         var data_periodo_id         =   $(this).attr('data_periodo_id');
-        var data_anio               =   $(this).attr('data_anio');
         var data_tipo_asiento_id    =   '';
         var idopcion                =   $('#idopcion').val();
         var tipo_producto_id        =   $(this).attr('data_tipo_producto_id');
@@ -287,12 +286,11 @@ $(document).ready(function(){
                                             data_producto_id        : data_producto_id,
                                             data_periodo_id         : data_periodo_id,
                                             data_tipo_asiento_id    : data_tipo_asiento_id,
-                                            data_anio               : data_anio,
                                             tipo_producto_id        : tipo_producto_id,
                                             idopcion                : idopcion
                                         };
 
-        ajax_modal(data,"/ajax-modal-detalle-producto-total-kardex",
+        ajax_modal(data,"/ajax-modal-detalle-producto-total-kardex-cascara",
                   "modal-detalle-producto-kardex","modal-detalle-producto-kardex-container");
 
     });

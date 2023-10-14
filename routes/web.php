@@ -209,7 +209,9 @@ Route::group(['middleware' => ['authaw']], function () {
 
 	Route::any('/gestion-kardex-cascara/{idopcion}', 'KardexCascaraController@actionListarKardexCascara');
 	Route::any('/descargar-excel-kardex-cascara', 'KardexCascaraController@actionDescargarExcelKardexCascara');
-	// Route::any('/ajax-movimiento-kardex', 'KardexController@actionAjaxListarMovimientoKardex');
+	Route::any('/ajax-movimiento-kardex-cascara', 'KardexCascaraController@actionAjaxListarMovimientoKardex');
+	Route::any('/ajax-modal-detalle-producto-total-kardex-cascara', 'KardexCascaraController@actionAjaxModalDetalleTotalKardex');
+
 
 
 

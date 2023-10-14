@@ -19,10 +19,10 @@
 
                     <div class="dropdown">
                       <span class="icon mdi mdi-more-vert dropdown-toggle" id="menudespacho" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></span>
-<!--                       <a href="#" class="tooltipcss opciones buscarmovimientokardex">
+                      <a href="#" class="tooltipcss opciones buscarmovimientokardex">
                         <span class="tooltiptext">Buscar Movimiento Kardex</span>
                         <span class="icon mdi mdi-search"></span>
-                      </a> -->
+                      </a>
                       <ul class="dropdown-menu" aria-labelledby="menudespacho" style="margin: 7px -169px 0px;">
                           <li>
                             <a href="#" class='descargarexcel' data_archivo = 'registrocompra'><b>Descargar excel</b> <span class="mdi mdi-check-circle"></span></a>
@@ -50,7 +50,7 @@
                       >
                         {{ csrf_field() }}
 
-                      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
+<!--                       <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
                           <div class="form-group">
                             <label class="col-sm-12 control-label labelleft" >Año :</label>
                             <div class="col-sm-12 abajocaja" >
@@ -63,10 +63,10 @@
                                                 ]) !!}
                             </div>
                           </div>
-                      </div>
+                      </div> -->
 
 
-<!--                  <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
+                 <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 cajareporte">
                           <div class="form-group">
                             <label class="col-sm-12 control-label labelleft" >Tipo Producto :</label>
                             <div class="col-sm-12 abajocaja" >
@@ -76,10 +76,11 @@
                                                   'id'          => 'tipo_producto_id',
                                                   'required'    => '',
                                                   'data-aw'     => '1',
+                                                  'disabled'     => 'disabled',
                                                 ]) !!}
                             </div>
                           </div>
-                      </div> -->
+                      </div>
                       
                       <input type="hidden" name="idopcion" id='idopcion' value='{{$idopcion}}'>
 
@@ -95,7 +96,7 @@
 
 
                   <div class='listajax'>
-                    @include('kardex.ajax.alistakardexenvases')
+                    @include('kardex.ajax.alistakardexcascara')
                   </div>
 
 
