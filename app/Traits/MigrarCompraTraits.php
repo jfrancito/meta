@@ -34,7 +34,7 @@ trait MigrarCompraTraits
 	public function mc_array_empresa_venta(){
 
         //$array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086'];
-        $array_empresas  		    = 		['EMP0000000000007','IACHEM0000007086','IACHEM0000010394'];
+        $array_empresas  		    = 		['IACHEM0000007086','IACHEM0000010394'];
 
         return $array_empresas;
     }
@@ -52,6 +52,7 @@ trait MigrarCompraTraits
 											->toArray();
 
 
+
 		$lista_migrar_compras		=		WEBViewMigrarCompras::leftJoin('WEB.historialmigrar', function ($join) {
 									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
 									                 ->where('WEB.historialmigrar.IND_ASIENTO_MODELO', '=', 1);
@@ -63,10 +64,11 @@ trait MigrarCompraTraits
 											->where('WEB.viewmigrarcompras.NOM_ESTADO','=','ENVIADO')
 											->select(DB::raw('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE'))
 											->groupBy('WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')
+											//->take(1500)
 											->get();
 
 
-		//dd($lista_migrar_compras);
+
 
 
 		return $lista_migrar_compras;
@@ -118,6 +120,8 @@ trait MigrarCompraTraits
 											->where('COD_ESTADO','=','1')
 											->pluck('COD_PERIODO')
 											->toArray();
+
+
 
 		$lista_migrar_compras		=		WEBViewMigrarCompras::leftJoin('WEB.historialmigrar', function ($join) {
 									            $join->on('WEB.historialmigrar.COD_REFERENCIA', '=', 'WEB.viewmigrarcompras.COD_DOCUMENTO_CTBLE')

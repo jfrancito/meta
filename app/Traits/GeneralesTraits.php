@@ -910,6 +910,21 @@ trait GeneralesTraits
 
 	}
 
+	public function gn_lista_periodo_asc($anio,$cod_empresa)
+	{
+		
+		$listaperiodo 				= 	CONPeriodo::where('COD_ESTADO','=',1)
+										->where('COD_ANIO','=',$anio)
+										->where('COD_EMPR','=',$cod_empresa)
+										->orderby('COD_MES','asc')
+										->get();
+
+	 	return  $listaperiodo;	
+
+
+	}
+
+
 	public function gn_periodo_xanio_xmes($anio,$mes,$cod_empresa)
 	{
 		

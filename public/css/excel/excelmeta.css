@@ -1,0 +1,12 @@
+.negrita{
+    font-weight: bold;
+}
+.center{
+	text-align: center;
+}
+.izquierda{
+	text-align: right;
+}
+.titulo{
+	background-color: #A9A9A9 !important;border-bottom-color: #A9A9A9 !important;
+}

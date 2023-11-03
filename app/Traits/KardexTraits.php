@@ -31,6 +31,8 @@ use PDO;
 trait KardexTraits
 {
 
+
+
 	public function kd_archivo_ple_kardex($anio,$mes,$listasaldoinicial,$nombre,$path,$tipo_producto_id){
 
 
@@ -397,13 +399,29 @@ trait KardexTraits
 
 	}
 
+	private function kd_lista_saldo_inicial_producto($empresa_id, $tipo_producto_id)
+	{
+
+	    $listasaldoincial 	= 	WEBKardexProducto::join('ALM.PRODUCTO', 'ALM.PRODUCTO.COD_PRODUCTO', '=', 'WEB.kardexproductos.producto_id')
+	    							->where('WEB.kardexproductos.empresa_id','=',$empresa_id)
+	    							->where('WEB.kardexproductos.tipo_producto_id','=',$tipo_producto_id)
+	    							->where('WEB.kardexproductos.activo','=',1)
+									->orderBy('WEB.kardexproductos.id', 'asc')
+			    					->get();
+
+		return $listasaldoincial;
+
+	}
+
+
+
 	private function kd_lista_saldo_inicial($empresa_id, $tipo_producto_id)
 	{
 
 	    $listasaldoincial 	= 	WEBKardexProducto::where('empresa_id','=',$empresa_id)
 	    							->where('tipo_producto_id','=',$tipo_producto_id)
 	    							->where('activo','=',1)
-	    							//->where('id','=','1CIX00000126')
+	    							//->where('producto_id','=','PRD0000000000642')
 	    							//->take(51)
 									->orderBy('id', 'asc')
 			    					->get();
@@ -575,6 +593,27 @@ trait KardexTraits
 		return $listaproducto;
 
 	}
+
+
+	private function kd_lista_costo_producto_terminado($empresa_id, $anio, $tipo_costo)
+	{
+
+
+        $stmt 		= 		DB::connection('sqlsrv')->getPdo()->prepare('SET NOCOUNT ON;EXEC WEB.listacostoproductoterminado 
+							@empresa_id = ?,
+							@anio = ?,
+							@tipo_costo = ?');
+
+        $stmt->bindParam(1, $empresa_id ,PDO::PARAM_STR);                   
+        $stmt->bindParam(2, $anio  ,PDO::PARAM_STR);
+        $stmt->bindParam(3, $tipo_costo  ,PDO::PARAM_STR);
+        $stmt->execute();
+
+
+		return $stmt;
+
+	}
+
 
 
 	private function kd_lista_producto_periodo_cascara_view($empresa_id, $anio, $tipo_asiento_id,$producto_id,$periodo_id)

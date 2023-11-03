@@ -37,7 +37,6 @@ Route::get('/migrar-recibo-honorario', 'MigrarReciboHonorarioController@actionMi
 Route::get('/migrar-total-ceros', 'MigrarVentaController@actionMigrarTotalCeros');
 Route::get('/actualizar-tipo-cambio-sbs', 'TipoCambioController@actionActualizarTipoCambio');
 Route::get('/actualizar-correlativo-asiento', 'AsientoCorrelativoController@actionActualizarCorrelativo');
-
 Route::get('/actualizar-tipo-cambio', 'TipoCambioController@actionActualizarTipoCambioNormal');
 
 Route::group(['middleware' => ['authaw']], function () {
@@ -211,6 +210,13 @@ Route::group(['middleware' => ['authaw']], function () {
 	Route::any('/descargar-excel-kardex-cascara', 'KardexCascaraController@actionDescargarExcelKardexCascara');
 	Route::any('/ajax-movimiento-kardex-cascara', 'KardexCascaraController@actionAjaxListarMovimientoKardex');
 	Route::any('/ajax-modal-detalle-producto-total-kardex-cascara', 'KardexCascaraController@actionAjaxModalDetalleTotalKardex');
+
+
+
+	Route::any('/gestion-kardex-producto-terminado/{idopcion}', 'KardexProductoTerminadoController@actionListarKardexProductoTerminado');
+	Route::any('/descargar-excel-kardex-producto-terminado', 'KardexProductoTerminadoController@actionDescargarExcelKardexCProductoTerminado');
+	// Route::any('/ajax-movimiento-kardex-cascara', 'KardexCascaraController@actionAjaxListarMovimientoKardex');
+	// Route::any('/ajax-modal-detalle-producto-total-kardex-cascara', 'KardexCascaraController@actionAjaxModalDetalleTotalKardex');
 
 
 

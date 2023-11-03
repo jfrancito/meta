@@ -217,7 +217,7 @@ class MigrarVentaController extends Controller
 		$lista_ventas_migrar_anulado 		= 	$this->mv_lista_ventas_migrar_agrupado_anulado();
 		$lista_ventas_migrar_anulado_nuevo  = 	$this->mv_lista_ventas_migrar_agrupado_anulado_nuevo();
 
-		//dd($lista_ventas_migrar_anulado);
+		//dd($lista_ventas_migrar_emitido);
 
 		$this->mv_agregar_historial_ventas($lista_ventas_migrar_emitido,$lista_ventas_migrar_anulado,$tipo_asiento);
 
@@ -235,6 +235,8 @@ class MigrarVentaController extends Controller
 
 		//asignar asiento
 		$lista_ventas 				= 	$this->mv_lista_ventas_asignar($tipo_asiento);
+
+		//dd($lista_ventas);
 
 		foreach($lista_ventas as $index => $item){
 			$respuesta2 = $this->mv_asignar_asiento_modelo($item,$tipo_asiento);
